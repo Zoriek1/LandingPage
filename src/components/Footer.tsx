@@ -1,4 +1,5 @@
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403";
@@ -8,9 +9,7 @@ const Footer = () => (
     <div className="container">
       <div className="flex flex-col md:flex-row items-center justify-between gap-8">
         <div className="text-center md:text-left">
-          <h3 className="font-display text-2xl font-semibold text-primary-foreground mb-2">
-            Plante Uma Flor
-          </h3>
+          <img src={logo} alt="Plante Uma Flor" className="h-12 w-auto mb-2" />
           <p className="font-body text-primary-foreground/50 text-sm">
             Flores que transformam momentos em memórias.
           </p>
