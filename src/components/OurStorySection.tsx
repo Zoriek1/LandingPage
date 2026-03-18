@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import fachadaImg from "@/assets/fachada.jpg";
 
 const OurStorySection = () => (
   <section id="nossa-historia" className="py-20 md:py-28 bg-secondary">
@@ -26,23 +27,12 @@ const OurStorySection = () => (
           transition={{ duration: 0.7 }}
           className="relative"
         >
-          <div className="w-full aspect-[4/3] rounded shadow-2xl bg-muted flex items-center justify-center border-2 border-dashed border-accent/30">
-            <div className="text-center p-8">
-              <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
-                  <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
-                  <circle cx="9" cy="9" r="2"/>
-                  <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
-                </svg>
-              </div>
-              <p className="font-body text-muted-foreground text-sm">
-                Foto da fachada da floricultura
-              </p>
-              <p className="font-body text-muted-foreground/60 text-xs mt-1">
-                Substitua este espaço pela imagem real
-              </p>
-            </div>
-          </div>
+          <img
+            src={fachadaImg}
+            alt="Fachada da Plante Uma Flor"
+            className="w-full aspect-[4/3] rounded shadow-2xl object-cover"
+            loading="lazy"
+          />
           <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-accent rounded-br-lg" />
         </motion.div>
 
