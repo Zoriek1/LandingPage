@@ -1,4 +1,5 @@
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403";
