@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
+import { trackWhatsAppClick, trackSiteClick } from "@/lib/tracking";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403";
@@ -49,6 +50,7 @@ const Navbar = () => {
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackSiteClick}
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all"
           >
             Ver Catálogo
@@ -89,6 +91,7 @@ const Navbar = () => {
                 href={SITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={trackSiteClick}
                 className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
               >
                 Ver Catálogo
@@ -97,6 +100,7 @@ const Navbar = () => {
                 href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={trackWhatsAppClick}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
               >
                 Falar no WhatsApp

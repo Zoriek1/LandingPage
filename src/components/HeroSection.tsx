@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Truck, ShieldCheck, Flower2 } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
+import { trackWhatsAppClick, trackSiteClick } from "@/lib/tracking";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403";
@@ -49,6 +50,7 @@ const HeroSection = () => (
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackSiteClick}
             className="bg-accent text-accent-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:brightness-110 transition-all text-center"
           >
             Ver Catálogo no Site
@@ -57,6 +59,7 @@ const HeroSection = () => (
             href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackWhatsAppClick}
             className="border-2 border-primary-foreground/40 text-primary-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
           >
             Falar no WhatsApp
