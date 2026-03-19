@@ -8,7 +8,7 @@ const WHATSAPP_URL = "https://wa.me/+5562996503403";
 
 const badges = [
   { icon: Truck, label: "Entrega com cuidado" },
-  { icon: ShieldCheck, label: "Compra rápida e segura" },
+  { icon: ShieldCheck, label: "Agendamento online disponível" },
   { icon: Flower2, label: "Arranjos para cada ocasião" },
 ];
 
@@ -58,15 +58,20 @@ const HeroSection = () => (
             </svg>
             Falar no WhatsApp
           </a>
-          <a
-            href={SITE_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={trackSiteClick}
-            className="flex items-center justify-center border-2 border-primary-foreground/40 text-primary-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
-          >
-            Ver Catálogo no Site
-          </a>
+          <div className="flex flex-col items-center gap-1">
+            <a
+              href={SITE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={trackSiteClick}
+              className="flex items-center justify-center border-2 border-primary-foreground/40 text-primary-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
+            >
+              Ver Catálogo
+            </a>
+            <span className="font-body text-xs text-primary-foreground/50">
+              agendamento e pedidos online
+            </span>
+          </div>
         </motion.div>
 
         <motion.div
