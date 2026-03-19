@@ -16,7 +16,7 @@ export default function WhatsAppFAB() {
     <div className="fixed bottom-6 right-5 z-50 flex items-center">
       {/* Tooltip */}
       <div
-        className={`mr-3 bg-white text-[#1a2e22] text-sm font-semibold px-3 py-2 rounded-xl shadow-md whitespace-nowrap transition-all duration-300 pointer-events-none select-none ${
+        className={`relative mr-3 bg-white text-[#1a2e22] text-sm font-semibold px-3 py-2 rounded-xl shadow-md whitespace-nowrap transition-all duration-300 pointer-events-none select-none ${
           showTooltip
             ? "opacity-100 translate-x-0"
             : "opacity-0 translate-x-2"
@@ -32,7 +32,7 @@ export default function WhatsAppFAB() {
       </div>
 
       {/* Botão + anel de pulso */}
-      <div className="relative">
+      <div className="relative w-14 h-14">
         {/* Anel de pulso */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping" />
 

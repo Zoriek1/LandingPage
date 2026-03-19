@@ -18,7 +18,7 @@ const HeroSection = () => (
     <div className="absolute inset-0">
       <img src={heroImg} alt="Arranjo floral elegante" className="w-full h-full object-cover" loading="eager" />
       <div className="absolute inset-0" style={{ background: "var(--hero-overlay)" }} />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/60 to-primary/25" />
     </div>
 
     <div className="container relative z-10 py-32 md:py-40">
@@ -45,7 +45,7 @@ const HeroSection = () => (
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 mb-16"
+          className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-14"
         >
           <a
             href={WHATSAPP_URL}
@@ -74,12 +74,12 @@ const HeroSection = () => (
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.7 }}
-          className="flex flex-wrap gap-6"
+          className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-5"
         >
           {badges.map((b) => (
-            <div key={b.label} className="flex items-center gap-2 text-primary-foreground/70">
+            <div key={b.label} className="flex items-center gap-2 text-primary-foreground/90">
               <b.icon size={18} className="text-accent" />
-              <span className="font-body text-sm">{b.label}</span>
+              <span className="font-body text-sm font-medium">{b.label}</span>
             </div>
           ))}
         </motion.div>
