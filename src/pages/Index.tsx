@@ -10,6 +10,7 @@ import FAQSection from "@/components/FAQSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
 import WhatsAppFAB from "@/components/WhatsAppFAB";
+import BackToTop from "@/components/BackToTop";
 
 const Index = () => (
   <>
@@ -27,6 +28,7 @@ const Index = () => (
     </main>
     <Footer />
     <WhatsAppFAB />
+    <BackToTop />
   </>
 );
 

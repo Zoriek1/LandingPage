@@ -42,7 +42,7 @@ const BenefitsSection = () => (
         </p>
       </motion.div>
 
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
         {benefits.map((b, i) => (
           <motion.div
             key={b.title}
@@ -50,7 +50,7 @@ const BenefitsSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.1 }}
-            className="bg-secondary/50 rounded p-8 text-center group hover:shadow-lg transition-shadow"
+            className="bg-secondary/50 rounded p-5 md:p-8 text-center group hover:shadow-lg transition-shadow"
           >
             <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-5">
               <b.icon size={24} className="text-accent" />

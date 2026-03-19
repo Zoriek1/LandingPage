@@ -56,7 +56,7 @@ const CategoriesSection = () => (
               <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2">
                 {cat.title}
               </h3>
-              <span className="font-body text-sm text-accent font-semibold uppercase tracking-wider group-hover:underline">
+              <span className="inline-block bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full group-hover:bg-white/35 transition-colors">
                 Ver no site →
               </span>
             </div>

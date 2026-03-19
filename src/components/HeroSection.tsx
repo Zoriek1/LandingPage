@@ -18,6 +18,7 @@ const HeroSection = () => (
     <div className="absolute inset-0">
       <img src={heroImg} alt="Arranjo floral elegante" className="w-full h-full object-cover" loading="eager" />
       <div className="absolute inset-0" style={{ background: "var(--hero-overlay)" }} />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/60 via-primary/30 to-transparent" />
     </div>
 
     <div className="container relative z-10 py-32 md:py-40">
@@ -58,20 +59,15 @@ const HeroSection = () => (
             </svg>
             Falar no WhatsApp
           </a>
-          <div className="flex flex-col items-center gap-1">
-            <a
-              href={SITE_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={trackSiteClick}
-              className="flex items-center justify-center border-2 border-primary-foreground/40 text-primary-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
-            >
-              Ver Catálogo
-            </a>
-            <span className="font-body text-xs text-primary-foreground/50">
-              agendamento e pedidos online
-            </span>
-          </div>
+          <a
+            href={SITE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={trackSiteClick}
+            className="flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/80 px-5 py-3 rounded font-body text-sm font-medium tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
+          >
+            Ver Catálogo
+          </a>
         </motion.div>
 
         <motion.div
