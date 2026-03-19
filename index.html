@@ -31,9 +31,13 @@
     </script>
 
     <!-- UTMify Pixel -->
-    <script async src="https://cdn.utmify.com/utmify-pixel.js"
-      id="utmify-pixel"
-      data-id="69bafab797b6705e90a63977">
+    <script>
+      window.pixelId = "69bafab797b6705e90a63977";
+      var a = document.createElement("script");
+      a.setAttribute("async", "");
+      a.setAttribute("defer", "");
+      a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+      document.head.appendChild(a);
     </script>
 
     <!-- Google Ads + Google Tag -->
