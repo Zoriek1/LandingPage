@@ -15,25 +15,32 @@ function getUtmsFromStorage(): Record<string, string> {
   return utms;
 }
 
+function getFbclid(): string | undefined {
+  const fromUrl = new URLSearchParams(window.location.search).get('fbclid');
+  if (fromUrl) return fromUrl;
+  const stored = localStorage.getItem('fbclid') || sessionStorage.getItem('fbclid');
+  return stored ?? undefined;
+}
+
 function sendLead(event: string) {
   const utms = getUtmsFromStorage();
-  const payload = {
+  const fbclid = getFbclid();
+  const payload: Record<string, string | undefined> = {
     event,
     url: window.location.href,
     referrer: document.referrer || undefined,
+    fbclid,
     ...utms,
   };
-  navigator.sendBeacon
-    ? navigator.sendBeacon(
-        'https://gestaopedidos.planteumaflor.online/api/leads',
-        new Blob([JSON.stringify(payload)], { type: 'application/json' })
-      )
-    : fetch('https://gestaopedidos.planteumaflor.online/api/leads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-        keepalive: true,
-      }).catch(() => undefined);
+  // Remove undefined fields
+  Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);
+
+  fetch('https://gestaopedidos.planteumaflor.online/api/leads', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => undefined);
 }
 
 export function trackWhatsAppClick() {
