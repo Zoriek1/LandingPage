@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { trackWhatsAppClick } from "@/lib/tracking";
+import { openWhatsAppModal } from "@/lib/whatsappModal";
 
 const WHATSAPP_URL =
   "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
@@ -36,14 +36,10 @@ export default function WhatsAppFAB() {
         {/* Anel de pulso */}
         <span className="absolute inset-0 rounded-full bg-[#25D366] opacity-40 animate-ping" />
 
-        <a
-          href={WHATSAPP_URL}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
           aria-label="Falar no WhatsApp"
-          data-wa-fab="true"
           onClick={() => {
-            trackWhatsAppClick();
+            openWhatsAppModal(WHATSAPP_URL);
             setShowTooltip(false);
           }}
           onMouseEnter={() => setShowTooltip(true)}
@@ -61,7 +57,7 @@ export default function WhatsAppFAB() {
               fill="#fff"
             />
           </svg>
-        </a>
+        </button>
       </div>
     </div>
   );

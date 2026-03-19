@@ -5,6 +5,15 @@ declare global {
   }
 }
 
+// Persiste fbclid e phone assim que o módulo carrega
+const _params = new URLSearchParams(window.location.search);
+const _fbclid = _params.get('fbclid');
+if (_fbclid) sessionStorage.setItem('fbclid', _fbclid);
+
+export function setLeadPhone(phone: string) {
+  sessionStorage.setItem('lead_phone', phone);
+}
+
 function getUtmsFromStorage(): Record<string, string> {
   const keys = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term', 'src', 'sck'];
   const utms: Record<string, string> = {};
@@ -16,10 +25,11 @@ function getUtmsFromStorage(): Record<string, string> {
 }
 
 function getFbclid(): string | undefined {
-  const fromUrl = new URLSearchParams(window.location.search).get('fbclid');
-  if (fromUrl) return fromUrl;
-  const stored = localStorage.getItem('fbclid') || sessionStorage.getItem('fbclid');
-  return stored ?? undefined;
+  return sessionStorage.getItem('fbclid') ?? undefined;
+}
+
+function getPhone(): string | undefined {
+  return sessionStorage.getItem('lead_phone') ?? undefined;
 }
 
 const LEADS_ENDPOINT = 'https://gestaopedidos.planteumaflor.online/api/leads/';
@@ -39,12 +49,12 @@ function postLead(payload: Record<string, string | undefined>) {
 
 function sendLead(event: string) {
   const utms = getUtmsFromStorage();
-  const fbclid = getFbclid();
   const payload: Record<string, string | undefined> = {
     event,
     url: window.location.href,
     referrer: document.referrer || undefined,
-    fbclid,
+    fbclid: getFbclid(),
+    phone: getPhone(),
     ...utms,
   };
   Object.keys(payload).forEach(k => payload[k] === undefined && delete payload[k]);

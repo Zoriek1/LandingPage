@@ -2,7 +2,8 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
-import { trackWhatsAppClick, trackSiteClick } from "@/lib/tracking";
+import { trackSiteClick } from "@/lib/tracking";
+import { openWhatsAppModal } from "@/lib/whatsappModal";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
@@ -96,15 +97,12 @@ const Navbar = () => {
               >
                 Ver Catálogo
               </a>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={trackWhatsAppClick}
+              <button
+                onClick={() => { openWhatsAppModal(WHATSAPP_URL); setMobileOpen(false); }}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
               >
                 Falar no WhatsApp
-              </a>
+              </button>
             </div>
           </motion.div>
         )}

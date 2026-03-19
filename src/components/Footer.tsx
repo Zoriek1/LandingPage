@@ -1,6 +1,7 @@
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
-import { trackWhatsAppClick, trackSiteClick } from "@/lib/tracking";
+import { trackSiteClick } from "@/lib/tracking";
+import { openWhatsAppModal } from "@/lib/whatsappModal";
 
 const SITE_URL = "https://www.planteumaflor.com";
 const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
@@ -17,16 +18,13 @@ const Footer = () => (
         </div>
 
         <div className="flex items-center gap-4">
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={trackWhatsAppClick}
+          <button
+            onClick={() => openWhatsAppModal(WHATSAPP_URL)}
             className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
             aria-label="WhatsApp"
           >
             <MessageCircle size={18} />
-          </a>
+          </button>
           <a
             href="#"
             className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
