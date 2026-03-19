@@ -12,19 +12,6 @@
     <meta property="og:type" content="website" />
     <link rel="canonical" href="https://www.planteumaflor.com" />
 
-    <!-- UTMify — captura UTMs e injeta no link do WhatsApp -->
-    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js"
-      data-utmify-prevent-xcod-sck
-      data-utmify-prevent-subids
-      async>
-    </script>
-
-    <!-- UTMfy Pixel -->
-    <script async src="https://cdn.utmify.com/utmify-pixel.js"
-      id="utmify-pixel"
-      data-id="69bafab797b6705e90a63977">
-    </script>
-
     <!-- Meta Pixel -->
     <script>
       !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -40,6 +27,19 @@
         src="https://www.facebook.com/tr?id=370300471997593&ev=PageView&noscript=1"/>
     </noscript>
 
+    <!-- UTMify — captura UTMs e injeta no link do WhatsApp -->
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+      data-utmify-prevent-xcod-sck
+      data-utmify-prevent-subids
+      async>
+    </script>
+
+    <!-- UTMify Pixel -->
+    <script async src="https://cdn.utmify.com/utmify-pixel.js"
+      id="utmify-pixel"
+      data-id="69bafab797b6705e90a63977">
+    </script>
+
     <!-- Google Ads + Google Tag -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11455088769"></script>
     <script>
@@ -54,5 +54,15 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- Evento Lead no clique do WhatsApp -->
+    <script>
+      document.addEventListener('click', function(e) {
+        var link = e.target.closest('a[href*="wa.me"], a[href*="whatsapp.com"]');
+        if (link && typeof fbq === 'function') {
+          fbq('track', 'Lead', { content_name: 'whatsapp_click' });
+        }
+      });
+    </script>
   </body>
 </html>
