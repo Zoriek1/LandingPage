@@ -3,7 +3,7 @@ import logo from "@/assets/logo.png";
 import { trackWhatsAppClick, trackSiteClick } from "@/lib/tracking";
 
 const SITE_URL = "https://www.planteumaflor.com";
-const WHATSAPP_URL = "https://wa.me/+5562996503403";
+const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
 
 const Footer = () => (
   <footer className="bg-primary py-12 border-t border-primary-foreground/10">
