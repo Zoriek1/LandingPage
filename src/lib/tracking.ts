@@ -28,6 +28,12 @@ function getFbclid(): string | undefined {
   return sessionStorage.getItem('fbclid') ?? undefined;
 }
 
+function getFbCookies(): { fbp?: string; fbc?: string } {
+  const get = (name: string) =>
+    document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'))?.[1];
+  return { fbp: get('_fbp'), fbc: get('_fbc') };
+}
+
 function getPhone(): string | undefined {
   return sessionStorage.getItem('lead_phone') ?? undefined;
 }
@@ -49,11 +55,14 @@ function postLead(payload: Record<string, string | undefined>) {
 
 function sendLead(event: string) {
   const utms = getUtmsFromStorage();
+  const { fbp, fbc } = getFbCookies();
   const payload: Record<string, string | undefined> = {
     event,
     url: window.location.href,
     referrer: document.referrer || undefined,
     fbclid: getFbclid(),
+    fbp,
+    fbc,
     phone: getPhone(),
     ...utms,
   };
