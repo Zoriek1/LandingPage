@@ -9,6 +9,7 @@ import OurStorySection from "@/components/OurStorySection";
 import FAQSection from "@/components/FAQSection";
 import FinalCTASection from "@/components/FinalCTASection";
 import Footer from "@/components/Footer";
+import WhatsAppFAB from "@/components/WhatsAppFAB";
 
 const Index = () => (
   <>
@@ -25,6 +26,7 @@ const Index = () => (
       <FinalCTASection />
     </main>
     <Footer />
+    <WhatsAppFAB />
   </>
 );
 
