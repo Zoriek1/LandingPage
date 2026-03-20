@@ -2,13 +2,17 @@ declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
     gtag?: (...args: unknown[]) => void;
+    __trackingIds?: { pageview: string };
   }
 }
 
 // Persiste fbclid e phone assim que o módulo carrega
 const _params = new URLSearchParams(window.location.search);
 const _fbclid = _params.get('fbclid');
-if (_fbclid) sessionStorage.setItem('fbclid', _fbclid);
+if (_fbclid) {
+  sessionStorage.setItem('fbclid', _fbclid);
+  sessionStorage.setItem('fbclid_ts', Date.now().toString());
+}
 
 export function setLeadPhone(phone: string) {
   sessionStorage.setItem('lead_phone', phone);
@@ -34,6 +38,21 @@ function getFbCookies(): { fbp?: string; fbc?: string } {
   return { fbp: get('_fbp'), fbc: get('_fbc') };
 }
 
+function buildFbc(): string | undefined {
+  const cookie = document.cookie.match(/(?:^|;\s*)_fbc=([^;]*)/)?.[1];
+  if (cookie) return cookie;
+  const fbclid = sessionStorage.getItem('fbclid');
+  const ts = sessionStorage.getItem('fbclid_ts');
+  if (fbclid && ts) {
+    return `fb.1.${Math.floor(Number(ts) / 1000)}.${fbclid}`;
+  }
+  return undefined;
+}
+
+function generateEventId(): string {
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
 function getPhone(): string | undefined {
   return sessionStorage.getItem('lead_phone') ?? undefined;
 }
@@ -53,16 +72,17 @@ function postLead(payload: Record<string, string | undefined>) {
   });
 }
 
-function sendLead(event: string) {
+function sendLead(event: string, eventId?: string) {
   const utms = getUtmsFromStorage();
-  const { fbp, fbc } = getFbCookies();
+  const { fbp } = getFbCookies();
   const payload: Record<string, string | undefined> = {
     event,
+    event_id: eventId,
     url: window.location.href,
     referrer: document.referrer || undefined,
     fbclid: getFbclid(),
     fbp,
-    fbc,
+    fbc: buildFbc(),
     phone: getPhone(),
     ...utms,
   };
@@ -71,13 +91,21 @@ function sendLead(event: string) {
 }
 
 export function trackWhatsAppClick() {
+  const eventId = generateEventId();
   window.gtag?.('event', 'conversion', { send_to: 'AW-11455088769' });
   window.gtag?.('event', 'whatsapp_click');
-  sendLead('whatsapp_click');
+  window.fbq?.('track', 'Lead', {}, { eventID: eventId });
+  sendLead('whatsapp_click', eventId);
 }
 
 export function trackSiteClick() {
-  window.fbq?.('track', 'ViewContent');
+  const eventId = generateEventId();
+  window.fbq?.('track', 'ViewContent', {}, { eventID: eventId });
   window.gtag?.('event', 'site_click');
-  sendLead('site_click');
+  sendLead('site_click', eventId);
+}
+
+export function trackPageView() {
+  const eventId = window.__trackingIds?.pageview;
+  sendLead('PageView', eventId);
 }
