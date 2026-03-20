@@ -3,9 +3,7 @@ import { Truck, ShieldCheck, Flower2 } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-
-const SITE_URL = "https://www.planteumaflor.com";
-const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
+import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
 
 const badges = [
   { icon: Truck, label: "Entrega com cuidado" },

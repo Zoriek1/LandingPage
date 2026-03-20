@@ -4,8 +4,8 @@ import catPresentes from "@/assets/cat-presentes.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
 import catDatas from "@/assets/cat-datas.jpg";
-
-const SITE_URL = "https://www.planteumaflor.com";
+import { trackSiteClick } from "@/lib/tracking";
+import { SITE_URL } from "@/lib/config";
 
 const categories = [
   { img: catBuques, title: "Buquês Românticos", span: "lg:col-span-2 lg:row-span-2" },
@@ -39,6 +39,7 @@ const CategoriesSection = () => (
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={trackSiteClick}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

@@ -4,9 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-
-const SITE_URL = "https://www.planteumaflor.com";
-const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
+import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);

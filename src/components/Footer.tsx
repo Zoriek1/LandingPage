@@ -2,9 +2,7 @@ import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-
-const SITE_URL = "https://www.planteumaflor.com";
-const WHATSAPP_URL = "https://wa.me/+5562996503403?text=Olá, vim pela sua landing page e gostaria de saber mais sobre os produtos";
+import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
 
 const Footer = () => (
   <footer className="bg-primary py-12 border-t border-primary-foreground/10">
