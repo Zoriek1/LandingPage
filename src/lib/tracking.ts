@@ -15,12 +15,34 @@ type TrackingOptions = {
 
 const TRACKING_TIMEOUT_MS = 1200;
 
-// Persiste fbclid e phone assim que o modulo carrega
+// Persiste params de tracking assim que o modulo carrega
 const _params = new URLSearchParams(window.location.search);
+
+// fbclid
 const _fbclid = _params.get("fbclid");
 if (_fbclid) {
   sessionStorage.setItem("fbclid", _fbclid);
   sessionStorage.setItem("fbclid_ts", Date.now().toString());
+}
+
+// gclid
+const _gclid = _params.get("gclid");
+if (_gclid) {
+  sessionStorage.setItem("gclid", _gclid);
+}
+
+// UTMs — salva no localStorage para persistir entre visitas
+const _UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
+for (const key of _UTM_KEYS) {
+  const val = _params.get(key);
+  if (val) localStorage.setItem(key, val);
+}
+
+// Camada de sessao — salva apenas na primeira visita
+if (!localStorage.getItem("session_first_landing_url")) {
+  localStorage.setItem("session_first_landing_url", window.location.href);
+  localStorage.setItem("session_referrer", document.referrer || "");
+  localStorage.setItem("session_start_ts", Date.now().toString());
 }
 
 export function setLeadPhone(phone: string) {
@@ -41,6 +63,21 @@ function getUtmsFromStorage(): Record<string, string> {
 
 function getFbclid(): string | undefined {
   return sessionStorage.getItem("fbclid") ?? undefined;
+}
+
+function getGclid(): string | undefined {
+  return sessionStorage.getItem("gclid") ?? undefined;
+}
+
+function getSessionData(): Record<string, string> {
+  const data: Record<string, string> = {};
+  const first_landing_url = localStorage.getItem("session_first_landing_url");
+  const session_referrer = localStorage.getItem("session_referrer");
+  const session_start_ts = localStorage.getItem("session_start_ts");
+  if (first_landing_url) data.first_landing_url = first_landing_url;
+  if (session_referrer) data.session_referrer = session_referrer;
+  if (session_start_ts) data.session_start_ts = session_start_ts;
+  return data;
 }
 
 function getFbCookies(): { fbp?: string; fbc?: string } {
@@ -141,13 +178,16 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
   const payload: Record<string, string | undefined> = {
     event,
     event_id: eventId,
+    timestamp: new Date().toISOString(),
     url: window.location.href,
     referrer: document.referrer || undefined,
     fbclid: getFbclid(),
+    gclid: getGclid(),
     fbp,
     fbc: buildFbc(),
     phone: getPhone(),
     ...utms,
+    ...getSessionData(),
     ...toLeadPayload(extra),
   };
 
