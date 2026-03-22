@@ -88,6 +88,54 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         document.head.appendChild(style);
       })();
     </script>
+
+    <!-- Protecao: evita UTM em iframe interno do Tag Assistant -->
+    <script>
+      (function () {
+        function normalizeTagAssistantBadgeSrc(target) {
+          if (!(target instanceof HTMLIFrameElement)) return;
+          if (!target.classList.contains("__TAG_ASSISTANT_BADGE")) return;
+
+          var src = target.getAttribute("src") || "";
+          if (/^about:blank\?/i.test(src)) {
+            target.setAttribute("src", "about:blank");
+          }
+        }
+
+        function scanExistingBadges() {
+          var badges = document.querySelectorAll("iframe.__TAG_ASSISTANT_BADGE");
+          badges.forEach(normalizeTagAssistantBadgeSrc);
+        }
+
+        var observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
+            if (mutation.type === "attributes") {
+              normalizeTagAssistantBadgeSrc(mutation.target);
+              return;
+            }
+
+            mutation.addedNodes.forEach(function (node) {
+              if (node instanceof HTMLIFrameElement) {
+                normalizeTagAssistantBadgeSrc(node);
+                return;
+              }
+
+              if (!(node instanceof Element)) return;
+              var nestedBadges = node.querySelectorAll("iframe.__TAG_ASSISTANT_BADGE");
+              nestedBadges.forEach(normalizeTagAssistantBadgeSrc);
+            });
+          });
+        });
+
+        scanExistingBadges();
+        observer.observe(document.documentElement, {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          attributeFilter: ["src", "class"],
+        });
+      })();
+    </script>
   </head>
 
   <body>
