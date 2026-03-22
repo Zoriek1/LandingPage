@@ -39,7 +39,13 @@ const CategoriesSection = () => (
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={trackSiteClick}
+            onClick={() =>
+              trackSiteClick({
+                cta_location: "categorias",
+                cta_label: "ver_no_site",
+                destination_url: SITE_URL,
+              })
+            }
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}

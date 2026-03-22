@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import whyImg from "@/assets/why-choose.jpg";
+import { trackSiteClick } from "@/lib/tracking";
 
 const points = [
   "Atendimento cuidadoso e personalizado",
@@ -61,6 +62,13 @@ const WhyChooseSection = () => (
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              trackSiteClick({
+                cta_location: "why_choose",
+                cta_label: "conheca_nosso_catalogo",
+                destination_url: SITE_URL,
+              })
+            }
             className="inline-block bg-accent text-accent-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:brightness-110 transition-all"
           >
             Conheça Nosso Catálogo

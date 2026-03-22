@@ -37,7 +37,11 @@ export default function WhatsAppFAB() {
         <button
           aria-label="Falar no WhatsApp"
           onClick={() => {
-            openWhatsAppModal(WHATSAPP_URL);
+            openWhatsAppModal(WHATSAPP_URL, {
+              cta_location: "whatsapp_fab",
+              cta_label: "floating_button",
+              destination_url: WHATSAPP_URL,
+            });
             setShowTooltip(false);
           }}
           onMouseEnter={() => setShowTooltip(true)}

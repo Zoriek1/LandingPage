@@ -1,27 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
 import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
+import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
+
+const NAV_LINKS = [
+  { label: "Categorias", href: "#categorias" },
+  { label: "Sobre", href: "#sobre" },
+  { label: "Depoimentos", href: "#depoimentos" },
+  { label: "FAQ", href: "#faq" },
+];
 
 const Navbar = () => {
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useScrollThreshold(40);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const navLinks = [
-    { label: "Categorias", href: "#categorias" },
-    { label: "Sobre", href: "#sobre" },
-    { label: "Depoimentos", href: "#depoimentos" },
-    { label: "FAQ", href: "#faq" },
-  ];
 
   return (
     <nav
@@ -36,7 +31,7 @@ const Navbar = () => {
 
         {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <a
               key={link.href}
               href={link.href}
@@ -49,7 +44,13 @@ const Navbar = () => {
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={trackSiteClick}
+            onClick={() =>
+              trackSiteClick({
+                cta_location: "navbar_desktop",
+                cta_label: "ver_catalogo",
+                destination_url: SITE_URL,
+              })
+            }
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all"
           >
             Ver Catálogo
@@ -76,7 +77,7 @@ const Navbar = () => {
             className="md:hidden bg-primary/95 backdrop-blur-md overflow-hidden"
           >
             <div className="container py-4 flex flex-col gap-4">
-              {navLinks.map((link) => (
+              {NAV_LINKS.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}
@@ -90,13 +91,26 @@ const Navbar = () => {
                 href={SITE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={trackSiteClick}
+                onClick={() =>
+                  trackSiteClick({
+                    cta_location: "navbar_mobile",
+                    cta_label: "ver_catalogo",
+                    destination_url: SITE_URL,
+                  })
+                }
                 className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
               >
                 Ver Catálogo
               </a>
               <button
-                onClick={() => { openWhatsAppModal(WHATSAPP_URL); setMobileOpen(false); }}
+                onClick={() => {
+                  openWhatsAppModal(WHATSAPP_URL, {
+                    cta_location: "navbar_mobile",
+                    cta_label: "falar_no_whatsapp",
+                    destination_url: WHATSAPP_URL,
+                  });
+                  setMobileOpen(false);
+                }}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
               >
                 Falar no WhatsApp

@@ -1,22 +1,27 @@
 import { useState, useEffect, useRef } from "react";
 import { registerWhatsAppModal } from "@/lib/whatsappModal";
-import { trackWhatsAppClick, setLeadPhone } from "@/lib/tracking";
+import { trackWhatsAppClick, setLeadPhone, type TrackingParams } from "@/lib/tracking";
 
 export default function WhatsAppLeadModal() {
   const [open, setOpen] = useState(false);
   const [url, setUrl] = useState("");
   const [phone, setPhone] = useState("");
+  const [context, setContext] = useState<TrackingParams>({});
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    registerWhatsAppModal((targetUrl) => {
+    registerWhatsAppModal(({ url: targetUrl, context: nextContext }) => {
       setUrl(targetUrl);
+      setContext(nextContext);
       setOpen(true);
     });
   }, []);
 
   useEffect(() => {
-    if (open) setTimeout(() => inputRef.current?.focus(), 100);
+    if (!open) return;
+
+    const timer = window.setTimeout(() => inputRef.current?.focus(), 100);
+    return () => window.clearTimeout(timer);
   }, [open]);
 
   function formatPhone(raw: string) {
@@ -32,11 +37,34 @@ export default function WhatsAppLeadModal() {
 
   function proceed() {
     if (!isValid) return;
-    setLeadPhone(phone.replace(/\D/g, ""));
-    trackWhatsAppClick();
-    window.open(url, "_blank", "noopener,noreferrer");
+    const normalizedPhone = phone.replace(/\D/g, "");
+    setLeadPhone(normalizedPhone);
+
+    const popup = window.open("", "_blank", "noopener,noreferrer");
+    const openDestination = () => {
+      if (popup && !popup.closed) {
+        popup.location.href = url;
+        return;
+      }
+
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    trackWhatsAppClick(
+      {
+        cta_location: context.cta_location ?? "whatsapp_modal",
+        cta_label: context.cta_label ?? "continuar_no_whatsapp",
+        destination_url: context.destination_url ?? url,
+        ...context,
+      },
+      {
+        eventCallback: openDestination,
+      },
+    );
+
     setOpen(false);
     setPhone("");
+    setContext({});
   }
 
   if (!open) return null;

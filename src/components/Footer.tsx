@@ -17,7 +17,13 @@ const Footer = () => (
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() => openWhatsAppModal(WHATSAPP_URL)}
+            onClick={() =>
+              openWhatsAppModal(WHATSAPP_URL, {
+                cta_location: "footer",
+                cta_label: "icone_whatsapp",
+                destination_url: WHATSAPP_URL,
+              })
+            }
             className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
             aria-label="WhatsApp"
           >
@@ -43,7 +49,13 @@ const Footer = () => (
           href={SITE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={trackSiteClick}
+          onClick={() =>
+            trackSiteClick({
+              cta_location: "footer",
+              cta_label: "link_site",
+              destination_url: SITE_URL,
+            })
+          }
           className="font-body text-accent text-sm font-semibold hover:underline"
         >
           www.planteumaflor.com

@@ -47,7 +47,13 @@ const HeroSection = () => (
           className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-14"
         >
           <button
-            onClick={() => openWhatsAppModal(WHATSAPP_URL)}
+            onClick={() =>
+              openWhatsAppModal(WHATSAPP_URL, {
+                cta_location: "hero",
+                cta_label: "falar_no_whatsapp",
+                destination_url: WHATSAPP_URL,
+              })
+            }
             className="flex items-center justify-center gap-3 bg-[#25D366] text-white px-8 py-4 rounded-2xl font-body text-sm font-semibold tracking-widest uppercase hover:brightness-110 transition-all text-center shadow-lg shadow-[#25D366]/30"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -59,7 +65,13 @@ const HeroSection = () => (
             href={SITE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={trackSiteClick}
+            onClick={() =>
+              trackSiteClick({
+                cta_location: "hero",
+                cta_label: "ver_catalogo",
+                destination_url: SITE_URL,
+              })
+            }
             className="flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/80 px-5 py-3 rounded font-body text-sm font-medium tracking-widest uppercase hover:bg-primary-foreground/10 transition-all text-center"
           >
             Ver Catálogo

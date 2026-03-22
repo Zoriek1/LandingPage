@@ -25,7 +25,13 @@ const FinalCTASection = () => (
           href={SITE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          onClick={trackSiteClick}
+          onClick={() =>
+            trackSiteClick({
+              cta_location: "final_cta",
+              cta_label: "acessar_o_site",
+              destination_url: SITE_URL,
+            })
+          }
           className="inline-block bg-accent text-accent-foreground px-10 py-5 rounded font-body text-base font-bold tracking-widest uppercase hover:brightness-110 transition-all shadow-lg"
         >
           Acessar o Site
