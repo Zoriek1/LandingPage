@@ -5,10 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <title>Plante Uma Flor | Buquês, Arranjos e Flores para Presente</title>
-    <meta name="description" content="Floricultura com buquês, arranjos florais e flores para presente. Entrega com cuidado, compra rápida e segura. Surpreenda quem você ama." />
+    <meta
+      name="description"
+      content="Floricultura com buquês, arranjos florais e flores para presente. Entrega com cuidado, compra rápida e segura. Surpreenda quem você ama."
+    />
     <meta name="author" content="Plante Uma Flor" />
     <meta property="og:title" content="Plante Uma Flor | Floricultura Premium" />
-    <meta property="og:description" content="Buquês, arranjos e flores para presente criados com elegância. Entrega com cuidado." />
+    <meta
+      property="og:description"
+      content="Buquês, arranjos e flores para presente criados com elegância. Entrega com cuidado."
+    />
     <meta property="og:type" content="website" />
     <meta name="facebook-domain-verification" content="neezjodfejjwka6crvfsxpfcwhq7gj" />
     <link rel="canonical" href="https://www.planteumaflor.com" />
@@ -16,51 +22,42 @@
     <!-- Meta Pixel -->
     <script>
       window.__trackingIds = {
-        pageview: Math.random().toString(36).slice(2) + Date.now().toString(36)
+        pageview: Math.random().toString(36).slice(2) + Date.now().toString(36),
       };
-      !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-      n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-      n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-      t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-      document,'script','https://connect.facebook.net/en_US/fbevents.js');
-      fbq('init', '370300471997593');
-      fbq('track', 'PageView', {}, { eventID: window.__trackingIds.pageview });
-    </script>
-    <!-- UTMify — captura UTMs e injeta no link do WhatsApp -->
-    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js"
-      data-utmify-prevent-xcod-sck
-      data-utmify-prevent-subids
-      async>
-    </script>
-
-    <!-- Abre WhatsApp via evento confiável antes do pixel.js interceptar -->
-    <script>
-      document.addEventListener('click', function(e) {
-        if (!e.isTrusted) return;
-        var link = e.target.closest('a[href*="wa.me"], a[href*="whatsapp.com"]');
-        if (link) {
-          window.open(link.href, '_blank', 'noopener,noreferrer');
-        }
-      }, true);
-    </script>
-
-    <!-- UTMify Pixel -->
-    <script>
-      window.pixelId = "69bafab797b6705e90a63977";
-      var a = document.createElement("script");
-      a.setAttribute("async", "");
-      a.setAttribute("defer", "");
-      a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
-      document.head.appendChild(a);
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = "2.0";
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+      fbq("init", "370300471997593");
+      fbq("track", "PageView", {}, { eventID: window.__trackingIds.pageview });
     </script>
 
     <!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-KCRTLDV4');</script>
-<!-- End Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-KCRTLDV4");
+    </script>
+    <!-- End Google Tag Manager -->
 
     <!-- Debug workaround: garante visibilidade do painel do Tag Assistant -->
     <script>
@@ -88,67 +85,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         document.head.appendChild(style);
       })();
     </script>
-
-    <!-- Protecao: evita UTM em iframe interno do Tag Assistant -->
-    <script>
-      (function () {
-        function normalizeTagAssistantBadgeSrc(target) {
-          if (!(target instanceof HTMLIFrameElement)) return;
-          if (!target.classList.contains("__TAG_ASSISTANT_BADGE")) return;
-
-          var src = target.getAttribute("src") || "";
-          if (/^about:blank\?/i.test(src)) {
-            target.setAttribute("src", "about:blank");
-          }
-        }
-
-        function scanExistingBadges() {
-          var badges = document.querySelectorAll("iframe.__TAG_ASSISTANT_BADGE");
-          badges.forEach(normalizeTagAssistantBadgeSrc);
-        }
-
-        var observer = new MutationObserver(function (mutations) {
-          mutations.forEach(function (mutation) {
-            if (mutation.type === "attributes") {
-              normalizeTagAssistantBadgeSrc(mutation.target);
-              return;
-            }
-
-            mutation.addedNodes.forEach(function (node) {
-              if (node instanceof HTMLIFrameElement) {
-                normalizeTagAssistantBadgeSrc(node);
-                return;
-              }
-
-              if (!(node instanceof Element)) return;
-              var nestedBadges = node.querySelectorAll("iframe.__TAG_ASSISTANT_BADGE");
-              nestedBadges.forEach(normalizeTagAssistantBadgeSrc);
-            });
-          });
-        });
-
-        scanExistingBadges();
-        observer.observe(document.documentElement, {
-          subtree: true,
-          childList: true,
-          attributes: true,
-          attributeFilter: ["src", "class"],
-        });
-      })();
-    </script>
   </head>
 
   <body>
     <!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-KCRTLDV4"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-<!-- End Google Tag Manager (noscript) -->
     <noscript>
-      <img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=370300471997593&ev=PageView&noscript=1"/>
+      <iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-KCRTLDV4"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <noscript>
+      <img
+        height="1"
+        width="1"
+        style="display: none"
+        src="https://www.facebook.com/tr?id=370300471997593&ev=PageView&noscript=1"
+      />
     </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
   </body>
 </html>

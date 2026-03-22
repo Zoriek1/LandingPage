@@ -28,7 +28,7 @@ export function setLeadPhone(phone: string) {
 }
 
 function getUtmsFromStorage(): Record<string, string> {
-  const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "src", "sck"];
+  const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
   const utms: Record<string, string> = {};
 
   for (const key of keys) {
