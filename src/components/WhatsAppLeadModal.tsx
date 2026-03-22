@@ -1,6 +1,11 @@
 import { useState, useEffect, useRef } from "react";
 import { registerWhatsAppModal } from "@/lib/whatsappModal";
-import { trackWhatsAppClick, setLeadPhone, type TrackingParams } from "@/lib/tracking";
+import {
+  trackWhatsAppClick,
+  trackWhatsAppModalOpen,
+  setLeadPhone,
+  type TrackingParams,
+} from "@/lib/tracking";
 
 export default function WhatsAppLeadModal() {
   const [open, setOpen] = useState(false);
@@ -14,6 +19,12 @@ export default function WhatsAppLeadModal() {
       setUrl(targetUrl);
       setContext(nextContext);
       setOpen(true);
+      trackWhatsAppModalOpen({
+        cta_location: nextContext.cta_location ?? "whatsapp_modal",
+        cta_label: nextContext.cta_label ?? "abrir_modal_whatsapp",
+        destination_url: nextContext.destination_url ?? targetUrl,
+        ...nextContext,
+      });
     });
   }, []);
 

@@ -164,7 +164,20 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
 
   pushDataLayerEvent("whatsapp_click", eventPayload, options);
   window.fbq?.("track", "Lead", {}, { eventID: eventId });
+  window.fbq?.("track", "Contact", {}, { eventID: eventId });
   sendLead("whatsapp_click", eventId, payload);
+}
+
+export function trackWhatsAppModalOpen(payload: TrackingParams = {}) {
+  const eventId = generateEventId();
+  const eventPayload: TrackingParams = {
+    event_id: eventId,
+    ...payload,
+  };
+
+  pushDataLayerEvent("whatsapp_modal_open", eventPayload);
+  window.fbq?.("trackCustom", "WhatsAppModalOpen", {}, { eventID: eventId });
+  sendLead("whatsapp_modal_open", eventId, payload);
 }
 
 // site_click = click para catalogo/site externo
