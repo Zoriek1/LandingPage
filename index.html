@@ -61,6 +61,33 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-KCRTLDV4');</script>
 <!-- End Google Tag Manager -->
+
+    <!-- Debug workaround: garante visibilidade do painel do Tag Assistant -->
+    <script>
+      (function () {
+        var qs = window.location.search || "";
+        var isTagDebug = /(?:[?&])(?:_dbg|gtm_debug)=?/i.test(qs);
+        if (!isTagDebug) return;
+
+        var style = document.createElement("style");
+        style.setAttribute("data-debug", "tag-assistant-visibility-fix");
+        style.textContent = [
+          'iframe[src*="tagassistant.google.com"],',
+          'iframe[src*="googletagmanager.com"][src*="debug"],',
+          '[id*="tag-assistant"],',
+          '[class*="tag-assistant"] {',
+          "  opacity: 1 !important;",
+          "  visibility: visible !important;",
+          "  pointer-events: auto !important;",
+          "  z-index: 2147483647 !important;",
+          "  mix-blend-mode: normal !important;",
+          "  filter: none !important;",
+          "}",
+        ].join("\n");
+
+        document.head.appendChild(style);
+      })();
+    </script>
   </head>
 
   <body>
