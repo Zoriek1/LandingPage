@@ -50,14 +50,14 @@ Arquivos principais:
 
 1. Usuario preenche telefone no modal.
 2. Telefone e salvo em `sessionStorage` (`lead_phone`).
-3. `trackWhatsAppClick(payload, { eventCallback })` e executado:
-   - envia `whatsapp_click` para `dataLayer` com `event_id`, `cta_location`, `cta_label`, `destination_url`.
+3. `trackWhatsAppClick(payload)` e executado (sem `eventCallback` de navegacao):
+   - envia `whatsapp_click` para `dataLayer` com `event_id`, `cta_location`, `cta_label`, `destination_url` (GTM: trigger Custom Event `whatsapp_click` inalterado).
    - envia Meta `Lead` e `Contact` com o mesmo `eventID`.
    - envia `whatsapp_click` para o endpoint de leads.
-4. Navegacao para WhatsApp:
-   - abre popup `about:blank` imediatamente.
-   - a URL final e aplicada no `event_callback` (ou fallback por timeout de 1200ms).
-   - objetivo: reduzir perda de conversao em clique com redirecionamento externo.
+4. Navegacao para WhatsApp, **no mesmo tick do clique** (`openWhatsAppDestination` em `whatsappModal.ts`):
+   - tenta `window.open(url, "_blank")` e, se abrir, define `opener = null`.
+   - se o browser bloquear popup, fallback `window.location.assign(url)` (mesma aba).
+5. Se o modal React ainda nao estiver registrado (caso raro), `openWhatsAppModal` dispara o mesmo par: `trackWhatsAppClick` + `openWhatsAppDestination`.
 
 ## 3.4) Ao clicar para ir ao catalogo/site externo
 

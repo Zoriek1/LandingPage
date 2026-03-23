@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { registerWhatsAppModal } from "@/lib/whatsappModal";
+import { openWhatsAppDestination, registerWhatsAppModal } from "@/lib/whatsappModal";
 import {
   trackWhatsAppClick,
   trackWhatsAppModalOpen,
@@ -57,27 +57,13 @@ export default function WhatsAppLeadModal() {
     const normalizedPhone = phone.replace(/\D/g, "");
     setLeadPhone(normalizedPhone);
 
-    const popup = window.open("", "_blank", "noopener,noreferrer");
-    const openDestination = () => {
-      if (popup && !popup.closed) {
-        popup.location.href = url;
-        return;
-      }
-
-      window.open(url, "_blank", "noopener,noreferrer");
-    };
-
-    trackWhatsAppClick(
-      {
-        cta_location: context.cta_location ?? "whatsapp_modal",
-        cta_label: context.cta_label ?? "continuar_no_whatsapp",
-        destination_url: context.destination_url ?? url,
-        ...context,
-      },
-      {
-        eventCallback: openDestination,
-      },
-    );
+    trackWhatsAppClick({
+      cta_location: context.cta_location ?? "whatsapp_modal",
+      cta_label: context.cta_label ?? "continuar_no_whatsapp",
+      destination_url: context.destination_url ?? url,
+      ...context,
+    });
+    openWhatsAppDestination(url);
 
     setOpen(false);
     setPhone("");
@@ -158,39 +144,24 @@ export default function WhatsAppLeadModal() {
                 />
               </svg>
             </div>
-            <h2
-              className="font-display text-white leading-snug"
-              style={{ fontSize: 20, fontWeight: 600, letterSpacing: "-0.01em" }}
-            >
+            <h2 className="font-display text-white leading-snug text-xl sm:text-2xl font-semibold tracking-tight">
               Atendimento pelo WhatsApp
             </h2>
           </div>
 
           {/* Subtítulo */}
-          <div
-            className="font-body mt-3 relative space-y-2"
-            style={{ color: "rgba(255,255,255,0.65)", fontSize: 12.5, lineHeight: 1.6, fontWeight: 300 }}
-          >
+          <div className="font-body mt-3 relative space-y-2.5 text-sm sm:text-base leading-relaxed font-normal text-white/[0.82]">
             <p>
               Seu número será usado exclusivamente para este contato. Não enviamos promoções, listas de
               transmissão ou mensagens não solicitadas.
             </p>
-            <p>Ao continuar, abrimos o WhatsApp em uma nova aba para você falar com a equipe.</p>
+            <p>Ao continuar, você segue para o WhatsApp e fala com a equipe.</p>
           </div>
         </div>
 
         {/* Body */}
         <div className="px-6 pt-5 pb-6">
-          <label
-            className="block font-body mb-2"
-            style={{
-              fontSize: 11,
-              fontWeight: 500,
-              color: "#7a6f63",
-              textTransform: "uppercase",
-              letterSpacing: "0.08em",
-            }}
-          >
+          <label className="block font-body mb-2 text-xs sm:text-sm font-semibold text-[#5c5349] uppercase tracking-[0.08em]">
             Número do WhatsApp
           </label>
           <input
@@ -213,7 +184,7 @@ export default function WhatsAppLeadModal() {
           <button
             onClick={proceed}
             disabled={!isValid}
-            className="w-full flex items-center justify-center gap-2 text-white font-semibold text-sm tracking-wide uppercase py-4 hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 font-body"
+            className="w-full flex items-center justify-center gap-2 text-white font-semibold text-base tracking-wide uppercase py-4 min-h-[52px] hover:brightness-110 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 font-body"
             style={{
               background: "linear-gradient(135deg, #25D366 0%, #1fba56 100%)",
               borderRadius: 14,
