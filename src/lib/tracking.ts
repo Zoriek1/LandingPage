@@ -108,6 +108,61 @@ function getPhone(): string | undefined {
   return sessionStorage.getItem("lead_phone") ?? undefined;
 }
 
+function normalizeCurrency(value: unknown): string | undefined {
+  if (typeof value !== "string") return undefined;
+
+  const normalized = value.trim().toUpperCase();
+  return /^[A-Z]{3}$/.test(normalized) ? normalized : undefined;
+}
+
+function normalizeMonetaryValue(value: unknown): number | undefined {
+  if (typeof value === "number") {
+    return Number.isFinite(value) && value >= 0 ? value : undefined;
+  }
+
+  if (typeof value !== "string") return undefined;
+
+  const trimmed = value.trim().replace(/\s+/g, "");
+  if (!trimmed) return undefined;
+
+  let normalized = trimmed;
+  const hasComma = trimmed.includes(",");
+  const hasDot = trimmed.includes(".");
+
+  if (hasComma && hasDot) {
+    normalized =
+      trimmed.lastIndexOf(",") > trimmed.lastIndexOf(".")
+        ? trimmed.replace(/\./g, "").replace(",", ".")
+        : trimmed.replace(/,/g, "");
+  } else if (hasComma) {
+    normalized = trimmed.replace(",", ".");
+  }
+
+  if (!normalized) return undefined;
+
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+}
+
+const DEFAULT_META_CURRENCY =
+  normalizeCurrency(import.meta.env.VITE_META_CONTACT_CURRENCY) ?? "BRL";
+const DEFAULT_META_CONTACT_VALUE =
+  normalizeMonetaryValue(import.meta.env.VITE_META_CONTACT_VALUE) ?? 1;
+
+function getConversionPayload(payload: TrackingParams = {}) {
+  const value =
+    normalizeMonetaryValue(payload.value) ??
+    normalizeMonetaryValue(payload.price) ??
+    DEFAULT_META_CONTACT_VALUE;
+
+  const currency =
+    normalizeCurrency(payload.currency) ??
+    normalizeCurrency(payload.currency_code) ??
+    DEFAULT_META_CURRENCY;
+
+  return { value, currency };
+}
+
 function toDataLayerPayload(payload: TrackingParams): Record<string, string | number | boolean> {
   const nextPayload: Record<string, string | number | boolean> = {};
 
@@ -197,14 +252,16 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
 
 export function trackWhatsAppClick(payload: TrackingParams = {}, options: TrackingOptions = {}) {
   const eventId = generateEventId();
+  const conversionPayload = getConversionPayload(payload);
   const eventPayload: TrackingParams = {
     event_id: eventId,
     ...payload,
+    ...conversionPayload,
   };
 
   pushDataLayerEvent("whatsapp_click", eventPayload, options);
   window.fbq?.("track", "Lead", {}, { eventID: eventId });
-  window.fbq?.("track", "Contact", {}, { eventID: eventId });
+  window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
   sendLead("whatsapp_click", eventId, payload);
 }
 
