@@ -45,10 +45,6 @@ if (!localStorage.getItem("session_first_landing_url")) {
   localStorage.setItem("session_start_ts", Date.now().toString());
 }
 
-export function setLeadPhone(phone: string) {
-  sessionStorage.setItem("lead_phone", phone);
-}
-
 function getUtmsFromStorage(): Record<string, string> {
   const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
   const utms: Record<string, string> = {};
@@ -102,10 +98,6 @@ function buildFbc(): string | undefined {
 
 function generateEventId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
-}
-
-function getPhone(): string | undefined {
-  return sessionStorage.getItem("lead_phone") ?? undefined;
 }
 
 function normalizeCurrency(value: unknown): string | undefined {
@@ -240,7 +232,6 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
     gclid: getGclid(),
     fbp,
     fbc: buildFbc(),
-    phone: getPhone(),
     ...utms,
     ...getSessionData(),
     ...toLeadPayload(extra),
@@ -263,18 +254,6 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
   window.fbq?.("track", "Lead", {}, { eventID: eventId });
   window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
   sendLead("whatsapp_click", eventId, payload);
-}
-
-export function trackWhatsAppModalOpen(payload: TrackingParams = {}) {
-  const eventId = generateEventId();
-  const eventPayload: TrackingParams = {
-    event_id: eventId,
-    ...payload,
-  };
-
-  pushDataLayerEvent("whatsapp_modal_open", eventPayload);
-  window.fbq?.("trackCustom", "WhatsAppModalOpen", {}, { eventID: eventId });
-  sendLead("whatsapp_modal_open", eventId, payload);
 }
 
 // site_click = click para catalogo/site externo

@@ -70,4 +70,28 @@ describe("trackWhatsAppClick", () => {
       expect.objectContaining({ eventID: expect.any(String) }),
     );
   });
+
+  it("includes token/status and destination URL in lead payload", async () => {
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+
+    trackWhatsAppClick({
+      cta_label: "falar_no_whatsapp",
+      destination_url: "https://wa.me/5562996503403?text=Ola%20[Cod%3A%20A3F9]",
+      token_rastreio: "A3F9",
+      status: "pendente_whatsapp",
+    });
+
+    const fetchMock = vi.mocked(fetch);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const payload = JSON.parse(String(requestOptions.body)) as Record<string, string>;
+
+    expect(payload.token_rastreio).toBe("A3F9");
+    expect(payload.status).toBe("pendente_whatsapp");
+    expect(payload.destination_url).toBe(
+      "https://wa.me/5562996503403?text=Ola%20[Cod%3A%20A3F9]",
+    );
+    expect(payload.phone).toBeUndefined();
+  });
 });
