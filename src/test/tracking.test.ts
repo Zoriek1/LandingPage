@@ -94,4 +94,47 @@ describe("trackWhatsAppClick", () => {
     );
     expect(payload.phone).toBeUndefined();
   });
+
+  it("does not fire Contact/Lead/POST on second click within 4h window", async () => {
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+    localStorage.setItem("utm_campaign", "natal_2025");
+
+    trackWhatsAppClick({ cta_label: "cta_1" });
+    expect(window.fbq).toHaveBeenCalledTimes(2); // Lead + Contact
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+
+    // Segundo clique — mesma campanha, dentro da janela
+    trackWhatsAppClick({ cta_label: "cta_2" });
+    expect(window.fbq).toHaveBeenCalledTimes(2); // sem novos disparos
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1); // sem novo POST
+    // DataLayer ainda registra o segundo clique (para GTM/remarketing)
+    expect(window.dataLayer).toHaveLength(2);
+  });
+
+  it("fires Contact again after the dedup window expires", async () => {
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+    localStorage.setItem("utm_campaign", "natal_2025");
+    // Simula último Contact enviado há 5 horas
+    localStorage.setItem("contact_dedup_ts", (Date.now() - 5 * 60 * 60 * 1000).toString());
+    localStorage.setItem("contact_dedup_campaign", "natal_2025");
+
+    trackWhatsAppClick({ cta_label: "cta_after_window" });
+
+    expect(window.fbq).toHaveBeenCalledTimes(2); // dispara normalmente
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+  });
+
+  it("fires Contact for a different campaign even within the dedup window", async () => {
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+
+    localStorage.setItem("utm_campaign", "natal_2025");
+    trackWhatsAppClick({ cta_label: "cta_campanha_a" });
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
+
+    // Campanha diferente → novo evento
+    localStorage.setItem("utm_campaign", "pascoa_2026");
+    trackWhatsAppClick({ cta_label: "cta_campanha_b" });
+    expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
+    expect(window.fbq).toHaveBeenCalledTimes(4); // +2 (Lead + Contact)
+  });
 });

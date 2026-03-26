@@ -241,6 +241,24 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
   postLead(payload);
 }
 
+const DEDUP_TS_KEY = "contact_dedup_ts";
+const DEDUP_CAMPAIGN_KEY = "contact_dedup_campaign";
+const DEDUP_WINDOW_MS = 4 * 60 * 60 * 1000; // 4 horas
+
+function isContactDuplicated(): boolean {
+  const storedTs = localStorage.getItem(DEDUP_TS_KEY);
+  const storedCampaign = localStorage.getItem(DEDUP_CAMPAIGN_KEY);
+  const currentCampaign = localStorage.getItem("utm_campaign") ?? "";
+  if (!storedTs || storedCampaign !== currentCampaign) return false;
+  return Date.now() - Number(storedTs) < DEDUP_WINDOW_MS;
+}
+
+function markContactSent(): void {
+  const currentCampaign = localStorage.getItem("utm_campaign") ?? "";
+  localStorage.setItem(DEDUP_TS_KEY, Date.now().toString());
+  localStorage.setItem(DEDUP_CAMPAIGN_KEY, currentCampaign);
+}
+
 export function trackWhatsAppClick(payload: TrackingParams = {}, options: TrackingOptions = {}) {
   const eventId = generateEventId();
   const conversionPayload = getConversionPayload(payload);
@@ -251,9 +269,13 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
   };
 
   pushDataLayerEvent("whatsapp_click", eventPayload, options);
-  window.fbq?.("track", "Lead", {}, { eventID: eventId });
-  window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
-  sendLead("whatsapp_click", eventId, payload);
+
+  if (!isContactDuplicated()) {
+    window.fbq?.("track", "Lead", {}, { eventID: eventId });
+    window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
+    sendLead("whatsapp_click", eventId, payload);
+    markContactSent();
+  }
 }
 
 // site_click = click para catalogo/site externo
