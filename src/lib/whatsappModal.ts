@@ -6,6 +6,28 @@ const WHATSAPP_MESSAGES = [
   "Olá! Vi o anúncio de vocês e gostei muito dos buquês. Gostaria de encomendar um buquê.",
 ];
 
+const STORED_TOKEN_KEY = "wa_tracking_token";
+const STORED_TOKEN_CAMPAIGN_KEY = "wa_tracking_token_campaign";
+
+function getCurrentCampaign(): string {
+  return localStorage.getItem("utm_campaign") ?? "";
+}
+
+function getOrCreateToken(): string {
+  const stored = localStorage.getItem(STORED_TOKEN_KEY);
+  const storedCampaign = localStorage.getItem(STORED_TOKEN_CAMPAIGN_KEY);
+  const currentCampaign = getCurrentCampaign();
+
+  if (stored && isTrackingTokenValid(stored) && storedCampaign === currentCampaign) {
+    return stored;
+  }
+
+  const token = generateTrackingToken();
+  localStorage.setItem(STORED_TOKEN_KEY, token);
+  localStorage.setItem(STORED_TOKEN_CAMPAIGN_KEY, currentCampaign);
+  return token;
+}
+
 const TRACKING_TOKEN_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const TOKEN_RANDOM_LENGTH = 4;
 const TOKEN_TIME_LENGTH = 4;
@@ -91,7 +113,7 @@ export function openWhatsAppDestination(url: string) {
 }
 
 export function openWhatsAppModal(url: string, context: TrackingParams = {}) {
-  const token = generateTrackingToken();
+  const token = getOrCreateToken();
   const destinationUrl = appendTokenToWhatsAppUrl(url, token);
 
   trackWhatsAppClick({
