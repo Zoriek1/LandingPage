@@ -1,5 +1,11 @@
 import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
+const WHATSAPP_MESSAGES = [
+  "Olá! Vi o anúncio de vocês e gostaria de encomendar um buquê.",
+  "Olá! Vi o anúncio de vocês e achei o trabalho de vocês lindo. Gostaria de encomendar um buquê.",
+  "Olá! Vi o anúncio de vocês e gostei muito dos buquês. Gostaria de encomendar um buquê.",
+];
+
 const TRACKING_TOKEN_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 const TOKEN_RANDOM_LENGTH = 4;
 const TOKEN_TIME_LENGTH = 4;
@@ -67,17 +73,16 @@ export function generateTrackingToken() {
 }
 
 export function appendTokenToWhatsAppUrl(url: string, token: string) {
-  const code = `[Cod: ${token}]`;
+  const phrase = WHATSAPP_MESSAGES[Math.floor(Math.random() * WHATSAPP_MESSAGES.length)];
+  const text = `${phrase}\n\n(código de atendimento: ${token})`;
 
   try {
     const parsed = new URL(url);
-    const currentText = parsed.searchParams.get("text")?.trim();
-    const nextText = currentText ? `${currentText} ${code}` : code;
-    parsed.searchParams.set("text", nextText);
+    parsed.searchParams.set("text", text);
     return parsed.toString();
   } catch {
     const separator = url.includes("?") ? "&" : "?";
-    return `${url}${separator}text=${encodeURIComponent(code)}`;
+    return `${url}${separator}text=${encodeURIComponent(text)}`;
   }
 }
 

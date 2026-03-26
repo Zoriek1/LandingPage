@@ -33,7 +33,9 @@ describe("whatsappModal", () => {
     );
 
     const parsed = new URL(url);
-    expect(parsed.searchParams.get("text")).toBe("Ola, vim pela LP [Cod: A3F9]");
+    const text = parsed.searchParams.get("text") ?? "";
+    expect(text).toContain("(código de atendimento: A3F9)");
+    expect(text).toMatch(/^Olá! Vi o anúncio/);
   });
 
   it("tracks pending lead and redirects in same tab", async () => {
@@ -57,7 +59,7 @@ describe("whatsappModal", () => {
     expect(payload.token_rastreio).toMatch(/^[A-Z0-9]{10}$/);
 
     const destination = new URL(payload.destination_url);
-    expect(destination.searchParams.get("text")).toContain("[Cod: ");
+    expect(destination.searchParams.get("text")).toContain("(código de atendimento: ");
   });
 
   it("does not open WhatsApp in a popup window", async () => {
