@@ -264,6 +264,8 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
   const conversionPayload = getConversionPayload(payload);
   const eventPayload: TrackingParams = {
     event_id: eventId,
+    meta_event_name: "Contact",
+    lead_stage: "whatsapp_click",
     ...payload,
     ...conversionPayload,
   };
@@ -271,9 +273,13 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
   pushDataLayerEvent("whatsapp_click", eventPayload, options);
 
   if (!isContactDuplicated()) {
-    window.fbq?.("track", "Lead", {}, { eventID: eventId });
     window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
-    sendLead("whatsapp_click", eventId, payload);
+    sendLead("whatsapp_click", eventId, {
+      meta_event_name: "Contact",
+      lead_stage: "whatsapp_click",
+      ...payload,
+      ...conversionPayload,
+    });
     markContactSent();
   }
 }

@@ -36,7 +36,7 @@ describe("trackWhatsAppClick", () => {
     );
 
     expect(window.fbq).toHaveBeenNthCalledWith(
-      2,
+      1,
       "track",
       "Contact",
       { value: 1, currency: "BRL" },
@@ -63,7 +63,7 @@ describe("trackWhatsAppClick", () => {
     );
 
     expect(window.fbq).toHaveBeenNthCalledWith(
-      2,
+      1,
       "track",
       "Contact",
       { value: 1234.56, currency: "BRL" },
@@ -89,23 +89,27 @@ describe("trackWhatsAppClick", () => {
 
     expect(payload.token_rastreio).toBe("A3F9");
     expect(payload.status).toBe("pendente_whatsapp");
+    expect(payload.meta_event_name).toBe("Contact");
+    expect(payload.lead_stage).toBe("whatsapp_click");
+    expect(payload.value).toBe("1");
+    expect(payload.currency).toBe("BRL");
     expect(payload.destination_url).toBe(
       "https://wa.me/5562996503403?text=Ola%20[Cod%3A%20A3F9]",
     );
     expect(payload.phone).toBeUndefined();
   });
 
-  it("does not fire Contact/Lead/POST on second click within 4h window", async () => {
+  it("does not fire Contact/POST on second click within 4h window", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
     localStorage.setItem("utm_campaign", "natal_2025");
 
     trackWhatsAppClick({ cta_label: "cta_1" });
-    expect(window.fbq).toHaveBeenCalledTimes(2); // Lead + Contact
+    expect(window.fbq).toHaveBeenCalledTimes(1); // Contact
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
 
     // Segundo clique — mesma campanha, dentro da janela
     trackWhatsAppClick({ cta_label: "cta_2" });
-    expect(window.fbq).toHaveBeenCalledTimes(2); // sem novos disparos
+    expect(window.fbq).toHaveBeenCalledTimes(1); // sem novos disparos
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1); // sem novo POST
     // DataLayer ainda registra o segundo clique (para GTM/remarketing)
     expect(window.dataLayer).toHaveLength(2);
@@ -120,7 +124,7 @@ describe("trackWhatsAppClick", () => {
 
     trackWhatsAppClick({ cta_label: "cta_after_window" });
 
-    expect(window.fbq).toHaveBeenCalledTimes(2); // dispara normalmente
+    expect(window.fbq).toHaveBeenCalledTimes(1); // dispara normalmente
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
   });
 
@@ -135,6 +139,6 @@ describe("trackWhatsAppClick", () => {
     localStorage.setItem("utm_campaign", "pascoa_2026");
     trackWhatsAppClick({ cta_label: "cta_campanha_b" });
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
-    expect(window.fbq).toHaveBeenCalledTimes(4); // +2 (Lead + Contact)
+    expect(window.fbq).toHaveBeenCalledTimes(2); // +1 Contact
   });
 });
