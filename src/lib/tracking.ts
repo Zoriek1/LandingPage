@@ -208,15 +208,17 @@ const LEADS_ENDPOINT = "https://gestaopedidos.planteumaflor.online/api/leads/";
 
 function postLead(payload: Record<string, string | undefined>) {
   const body = JSON.stringify(payload);
+  const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
+
+  if (navigator.sendBeacon(LEADS_ENDPOINT, blob)) return;
+
   fetch(LEADS_ENDPOINT, {
     method: "POST",
     keepalive: true,
     mode: "cors",
     headers: { "Content-Type": "text/plain;charset=UTF-8" },
     body,
-  }).catch(() => {
-    navigator.sendBeacon(LEADS_ENDPOINT, new Blob([body], { type: "text/plain;charset=UTF-8" }));
-  });
+  }).catch(() => {});
 }
 
 function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
