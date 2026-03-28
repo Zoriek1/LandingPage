@@ -278,6 +278,7 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
     window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
     sendLead("whatsapp_click", eventId, {
       meta_event_name: "Contact",
+      meta_event_id_contact: eventId,
       lead_stage: "whatsapp_click",
       ...payload,
       ...conversionPayload,
