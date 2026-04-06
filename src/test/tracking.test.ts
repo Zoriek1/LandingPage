@@ -91,6 +91,8 @@ describe("trackWhatsAppClick", () => {
     expect(payload.status).toBe("pendente_whatsapp");
     expect(payload.meta_event_name).toBe("Contact");
     expect(payload.lead_stage).toBe("whatsapp_click");
+    expect(payload.meta_event_id_contact).toBe(payload.event_id);
+    expect(payload.capi_event_id).toBe(payload.event_id);
     expect(payload.value).toBe("1");
     expect(payload.currency).toBe("BRL");
     expect(payload.destination_url).toBe(

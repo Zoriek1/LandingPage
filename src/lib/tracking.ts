@@ -262,11 +262,16 @@ function markContactSent(): void {
 export function trackWhatsAppClick(payload: TrackingParams = {}, options: TrackingOptions = {}) {
   const eventId = generateEventId();
   const conversionPayload = getConversionPayload(payload);
+  const capiDedupPayload: TrackingParams = {
+    meta_event_id_contact: eventId,
+    capi_event_id: eventId,
+  };
   const eventPayload: TrackingParams = {
     event_id: eventId,
     meta_event_name: "Contact",
     lead_stage: "whatsapp_click",
     ...payload,
+    ...capiDedupPayload,
     ...conversionPayload,
   };
 
@@ -278,6 +283,7 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
       meta_event_name: "Contact",
       lead_stage: "whatsapp_click",
       ...payload,
+      ...capiDedupPayload,
       ...conversionPayload,
     });
     markContactSent();

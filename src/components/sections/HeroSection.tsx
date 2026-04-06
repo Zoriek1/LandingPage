@@ -28,7 +28,7 @@ const HeroSection = () => (
           transition={{ duration: 0.8 }}
           className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight mb-6"
         >
-          Flores que transformam momentos em memórias
+          Buquês e arranjos em Goiânia que transformam momentos em memórias
         </motion.h1>
 
         <motion.p
