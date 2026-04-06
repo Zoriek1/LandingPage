@@ -208,15 +208,17 @@ const LEADS_ENDPOINT = "https://gestaopedidos.planteumaflor.online/api/leads/";
 
 function postLead(payload: Record<string, string | undefined>) {
   const body = JSON.stringify(payload);
+  const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
+
+  if (navigator.sendBeacon(LEADS_ENDPOINT, blob)) return;
+
   fetch(LEADS_ENDPOINT, {
     method: "POST",
     keepalive: true,
     mode: "cors",
     headers: { "Content-Type": "text/plain;charset=UTF-8" },
     body,
-  }).catch(() => {
-    navigator.sendBeacon(LEADS_ENDPOINT, new Blob([body], { type: "text/plain;charset=UTF-8" }));
-  });
+  }).catch(() => {});
 }
 
 function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
@@ -281,6 +283,7 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
     window.fbq?.("track", "Contact", conversionPayload, { eventID: eventId });
     sendLead("whatsapp_click", eventId, {
       meta_event_name: "Contact",
+      meta_event_id_contact: eventId,
       lead_stage: "whatsapp_click",
       ...payload,
       ...capiDedupPayload,
