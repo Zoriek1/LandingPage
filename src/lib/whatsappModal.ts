@@ -1,9 +1,20 @@
 import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
-const WHATSAPP_MESSAGES = [
-  "Olá! Vi o anúncio de vocês e gostaria de encomendar um buquê.",
-  "Olá! Vi o anúncio de vocês e achei o trabalho de vocês lindo. Gostaria de encomendar um buquê.",
-  "Olá! Vi o anúncio de vocês e gostei muito dos buquês. Gostaria de encomendar um buquê.",
+/** LP de anúncios de buquê; mensagem pré-formatada para qualificar faixa de valor. */
+const WHATSAPP_BOUQUET_CHECKLIST = `Me conta por onde você quer começar, marca com X numa das opções:
+
+[ ] Até R$ 149,90: um mimo bonito que cabe no bolso
+[ ] Até R$ 299,90: aquele buquê médio, bem à altura da ocasião
+[ ] Acima de R$ 299,90: pra caprichar de verdade e impressionar
+
+_É só marcar com *X* na que mais combina com você._
+
+Se puder, manda também a data da entrega e o bairro aqui em Goiânia.`;
+
+const WHATSAPP_INTROS = [
+  "Olá! Vi o anúncio de vocês e quero encomendar um buquê.",
+  "Olá! Vi o anúncio de vocês e quero pedir um buquê.",
+  "Olá! Vi o anúncio de vocês e quero fechar um buquê.",
 ];
 
 const STORED_TOKEN_KEY = "wa_tracking_token";
@@ -95,8 +106,8 @@ export function generateTrackingToken() {
 }
 
 export function appendTokenToWhatsAppUrl(url: string, token: string) {
-  const phrase = WHATSAPP_MESSAGES[Math.floor(Math.random() * WHATSAPP_MESSAGES.length)];
-  const text = `${phrase}\n\n(código de atendimento: ${token})`;
+  const phrase = WHATSAPP_INTROS[Math.floor(Math.random() * WHATSAPP_INTROS.length)];
+  const text = `${phrase}\n\n${WHATSAPP_BOUQUET_CHECKLIST}\n\n(código de atendimento: ${token})`;
 
   try {
     const parsed = new URL(url);

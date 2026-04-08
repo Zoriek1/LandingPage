@@ -36,7 +36,9 @@ describe("whatsappModal", () => {
     const parsed = new URL(url);
     const text = parsed.searchParams.get("text") ?? "";
     expect(text).toContain("(código de atendimento: A3F9)");
-    expect(text).toMatch(/^Olá! Vi o anúncio/);
+    expect(text).toMatch(/^Olá!/);
+    expect(text).toContain("R$ 149,90");
+    expect(text).toContain("[ ] Até R$ 149,90");
   });
 
   it("tracks pending lead and redirects in same tab", async () => {
