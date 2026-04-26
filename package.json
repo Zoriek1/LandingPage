@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "sync:mothers-day-products": "node ./scripts/mothers-day-products/sync.mjs",
+    "build": "npm run sync:mothers-day-products && vite build",
+    "build:dev": "npm run sync:mothers-day-products && vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",

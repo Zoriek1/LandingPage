@@ -7,6 +7,7 @@ import BenefitsSection from "@/features/mothers-day/components/sections/Benefits
 import CategoriesSection from "@/features/mothers-day/components/sections/CategoriesSection";
 import FAQSection from "@/features/mothers-day/components/sections/FAQSection";
 import FinalCTASection from "@/features/mothers-day/components/sections/FinalCTASection";
+import FeaturedProductsSection from "@/features/mothers-day/components/sections/FeaturedProductsSection";
 import HeroSection from "@/features/mothers-day/components/sections/HeroSection";
 import TestimonialsSection from "@/features/mothers-day/components/sections/TestimonialsSection";
 import { MOTHERS_DAY_META } from "@/features/mothers-day/meta";
@@ -18,6 +19,7 @@ const MothersDayPage = () => (
     <Navbar />
     <main>
       <HeroSection />
+      <FeaturedProductsSection />
       <BenefitsSection />
       <CategoriesSection />
       <TestimonialsSection />

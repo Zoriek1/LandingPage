@@ -38,7 +38,7 @@ const HeroSection = () => {
   const { days, hours, minutes, seconds } = useCountdown(MOTHERS_DAY);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative flex min-h-screen items-center overflow-hidden">
       <div className="absolute inset-0">
         <img
           src={heroImg}
@@ -47,18 +47,18 @@ const HeroSection = () => {
           loading="eager"
         />
         <div className="absolute inset-0" style={{ background: "var(--hero-overlay)" }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/90 via-primary/68 via-[54%] to-primary/32" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#13231c]/84 via-[#11211b]/74 to-[#0e1813]/90 md:bg-gradient-to-r md:from-primary/92 md:via-primary/70 md:via-[54%] md:to-primary/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/52 via-transparent to-black/18 md:from-black/45 md:to-black/20" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_42%,rgba(14,24,19,0.74)_0%,rgba(14,24,19,0.58)_24%,rgba(14,24,19,0.32)_46%,rgba(14,24,19,0.12)_62%,transparent_78%)]" />
       </div>
 
-      <div className="container relative z-10 py-32 md:py-40">
+      <div className="container relative z-10 py-28 md:py-40">
         <div className="max-w-2xl">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="inline-block bg-accent text-accent-foreground px-4 py-1.5 rounded-full font-body text-xs font-bold tracking-widest uppercase mb-5 shadow-lg shadow-black/20"
+            className="mb-5 inline-flex w-full items-center justify-center rounded-full bg-accent px-5 py-2 text-center font-body text-[10px] font-bold uppercase tracking-[0.1em] text-accent-foreground shadow-lg shadow-black/20 sm:w-auto md:text-xs"
           >
             10 de Maio · Montado à mão em Goiânia
           </motion.span>
@@ -67,7 +67,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="font-display text-3xl sm:text-4xl md:text-5xl font-bold text-primary-foreground leading-snug mb-5 [text-shadow:0_10px_30px_rgba(0,0,0,0.34)]"
+            className="mb-7 max-w-[12ch] font-display text-[2.7rem] font-bold leading-[1.04] tracking-[-0.02em] text-primary-foreground [text-shadow:0_12px_36px_rgba(0,0,0,0.38)] sm:max-w-[12ch] sm:text-[3.15rem] md:mb-6 md:max-w-none md:text-5xl md:leading-[1.06]"
           >
             Buquês, cestas e plantas para o Dia das Mães em Goiânia
           </motion.h1>
@@ -76,7 +76,8 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-body text-base md:text-lg text-primary-foreground/95 mb-8 max-w-xl leading-relaxed [text-shadow:0_4px_22px_rgba(0,0,0,0.3)]"
+            className="mb-9 max-w-[32ch] font-body text-[1.06rem] font-medium leading-8 [text-shadow:0_10px_28px_rgba(0,0,0,0.66)] md:mb-8 md:max-w-xl md:text-lg md:font-normal"
+            style={{ color: "rgba(236, 245, 239, 0.96)" }}
           >
             Você escolhe pelo catálogo e encomenda pelo WhatsApp. A gente confirma endereço, horário e pagamento na hora, com foto do pedido antes da entrega.
           </motion.p>
@@ -86,7 +87,7 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex gap-3 sm:gap-5 mb-8"
+              className="mb-8 flex gap-2 sm:gap-4"
             >
               {[
                 { label: "Dias", value: days },
@@ -96,7 +97,7 @@ const HeroSection = () => {
               ].map((unit) => (
                 <div
                   key={unit.label}
-                  className="bg-primary/30 backdrop-blur-md border border-primary-foreground/35 rounded-lg px-3 py-2 sm:px-5 sm:py-3 min-w-[60px] sm:min-w-[78px] text-center shadow-lg shadow-black/15"
+                  className="min-w-[58px] rounded-lg border border-primary-foreground/35 bg-primary/30 px-2.5 py-2 text-center shadow-lg shadow-black/15 backdrop-blur-md sm:min-w-[78px] sm:px-5 sm:py-3"
                 >
                   <div className="font-display text-2xl sm:text-3xl font-bold text-primary-foreground tabular-nums">
                     {pad(unit.value)}
@@ -151,7 +152,7 @@ const HeroSection = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-5"
+            className="hidden flex-col flex-wrap gap-2 sm:flex sm:flex-row sm:gap-5"
           >
             {badges.map((b) => (
               <div

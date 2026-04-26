@@ -9,6 +9,12 @@ export default defineConfig({
     hmr: {
       overlay: false,
     },
+    fs: {
+      allow: [
+        path.resolve(__dirname),
+        path.resolve(__dirname, "../LandingPageMaes/node_modules"),
+      ],
+    },
   },
   plugins: [react()],
   build: {
