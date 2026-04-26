@@ -1,0 +1,6 @@
+.mothers-day-theme {
+  --accent: 340 65% 60%;
+  --accent-foreground: 40 33% 98%;
+  --gold-gradient: linear-gradient(135deg, hsl(340 65% 60%), hsl(335 60% 50%));
+  --hero-overlay: linear-gradient(135deg, hsl(148 30% 10% / 0.82), hsl(148 28% 8% / 0.52));
+}
