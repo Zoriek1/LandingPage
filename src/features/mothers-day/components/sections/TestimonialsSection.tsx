@@ -6,21 +6,25 @@ const STAR_SLOTS = [0, 1, 2, 3, 4];
 const testimonials = [
   {
     name: "Camila R.",
+    date: "Maio/2025",
     text: "Encomendei pro Dia das Mães do ano passado. Chegou no horário e minha mãe chorou. Ano que vem peço de novo.",
     stars: 5,
   },
   {
     name: "Ana Paula S.",
+    date: "Maio/2025",
     text: "Comprei pra minha sogra e foi um sucesso. Mandaram a foto antes de entregar, achei super profissional. Recomendo demais.",
     stars: 5,
   },
   {
     name: "Rodrigo M.",
+    date: "Junho/2025",
     text: "Moro fora de Goiânia e queria surpreender minha mãe. Combinamos tudo pelo WhatsApp e a entrega saiu certinha.",
     stars: 5,
   },
   {
     name: "Fernanda L.",
+    date: "Maio/2024",
     text: "Cesta linda, bem caprichada. Minha mãe adorou os chocolates junto com o buquê. Atendimento de primeira.",
     stars: 5,
   },
@@ -36,7 +40,7 @@ const TestimonialsSection = () => (
         className="text-center mb-16"
       >
         <h2 className="font-display text-3xl md:text-4xl font-semibold text-primary-foreground mb-4">
-          Quem já encomendou
+          Histórias de quem já presenteou pelo Dia das Mães
         </h2>
         <p className="font-body text-primary-foreground/60 max-w-md mx-auto">
           Famílias que voltaram pra um segundo Dia das Mães com a gente.
@@ -61,7 +65,10 @@ const TestimonialsSection = () => (
             <p className="font-body text-primary-foreground/80 text-sm leading-relaxed mb-4 italic">
               "{t.text}"
             </p>
-            <p className="font-body text-accent text-sm font-semibold">{t.name}</p>
+            <div className="flex items-baseline justify-between gap-2">
+              <p className="font-body text-accent text-sm font-semibold">{t.name}</p>
+              <span className="font-body text-primary-foreground/40 text-xs">{t.date}</span>
+            </div>
           </motion.div>
         ))}
       </div>

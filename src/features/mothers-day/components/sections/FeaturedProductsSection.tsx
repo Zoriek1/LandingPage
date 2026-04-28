@@ -44,13 +44,13 @@ const FeaturedProductsSection = () => {
               Mais pedidos para presentear agora
             </h2>
             <p className="mt-3 max-w-xl font-body text-sm leading-7 text-muted-foreground md:text-base">
-              Escolha um dos favoritos e va direto para a pagina do produto com foto, preco e link prontos para compra.
+              Escolha um dos favoritos e vá direto para a página do produto com foto, preço e link prontos para compra.
             </p>
           </div>
 
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="font-body">
-              {isRefreshing ? "Atualizando a vitrine da loja..." : "Precos sincronizados no build."}
+              {isRefreshing ? "Atualizando a vitrine da loja..." : "Preços sincronizados no build."}
             </span>
             <Button
               asChild
@@ -69,7 +69,7 @@ const FeaturedProductsSection = () => {
                   })
                 }
               >
-                Ver catalogo completo
+                Ver Catálogo completo
               </a>
             </Button>
           </div>
@@ -134,7 +134,7 @@ const FeaturedProductsSection = () => {
                       <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-2">
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1a231d]/70">
-                            Preco no site
+                            Preço no site
                           </p>
                           <p className="font-body text-[1.66rem] font-semibold leading-none text-[#121915] md:text-[1.85rem]">
                             {product.priceLabel}
@@ -160,7 +160,7 @@ const FeaturedProductsSection = () => {
                   className="bottom-3 left-3 top-auto hidden border-white/15 bg-[#0e1813]/72 text-white hover:bg-[#0e1813] hover:text-white lg:flex"
                 />
                 <CarouselNext
-                  aria-label="Proximo produto"
+                  aria-label="Próximo produto"
                   className="bottom-3 right-3 top-auto hidden border-white/15 bg-[#0e1813]/72 text-white hover:bg-[#0e1813] hover:text-white lg:flex"
                 />
               </>

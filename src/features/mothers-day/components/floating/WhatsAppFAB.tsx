@@ -35,7 +35,7 @@ export default function WhatsAppFAB() {
         <span className="absolute inset-0 rounded-full bg-accent opacity-40 animate-ping" />
 
         <button
-          aria-label="Encomendar no WhatsApp"
+          aria-label="Encomendar pelo WhatsApp"
           onClick={() => {
             openWhatsAppModal(WHATSAPP_URL, {
               cta_location: "whatsapp_fab",

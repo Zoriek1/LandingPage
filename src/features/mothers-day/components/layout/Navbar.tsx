@@ -114,7 +114,7 @@ const Navbar = () => {
                 }}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
               >
-                Encomendar no WhatsApp
+                Encomendar pelo WhatsApp
               </button>
             </div>
           </motion.div>
