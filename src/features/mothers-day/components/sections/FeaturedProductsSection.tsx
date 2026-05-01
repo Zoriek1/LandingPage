@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/carousel";
 import { useFeaturedProducts } from "@/features/mothers-day/hooks/useFeaturedProducts";
 import type { FeaturedProduct } from "@/features/mothers-day/types";
-import { SITE_URL } from "@/lib/config";
+import { CATALOG_URL } from "@/lib/config";
 import { trackSiteClick } from "@/lib/tracking";
 
 const fallbackImages = [catBuques, catCestas, catPlantas, heroImg];
@@ -58,14 +58,14 @@ const FeaturedProductsSection = () => {
               className="rounded-full border-primary/15 bg-transparent px-4 text-primary hover:bg-primary hover:text-primary-foreground"
             >
               <a
-                href={SITE_URL}
+                href={CATALOG_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
                   trackSiteClick({
                     cta_location: "featured_products_header",
                     cta_label: "open_catalog",
-                    destination_url: SITE_URL,
+                    destination_url: CATALOG_URL,
                   })
                 }
               >
