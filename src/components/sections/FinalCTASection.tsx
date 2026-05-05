@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { trackSiteClick } from "@/lib/tracking";
-import { SITE_URL } from "@/lib/config";
+import { CATALOG_URL } from "@/lib/config";
 
 const FinalCTASection = () => (
   <section className="py-20 md:py-28 bg-primary relative overflow-hidden">
@@ -22,14 +22,14 @@ const FinalCTASection = () => (
           Veja o catálogo completo e encontre flores especiais para cada momento.
         </p>
         <a
-          href={SITE_URL}
+          href={CATALOG_URL}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() =>
             trackSiteClick({
               cta_location: "final_cta",
               cta_label: "acessar_o_site",
-              destination_url: SITE_URL,
+              destination_url: CATALOG_URL,
             })
           }
           className="inline-block bg-accent text-accent-foreground px-10 py-5 rounded font-body text-base font-bold tracking-widest uppercase hover:brightness-110 transition-all shadow-lg"

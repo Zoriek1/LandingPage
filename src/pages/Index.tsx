@@ -1,16 +1,18 @@
+import { lazy, Suspense } from "react";
 import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
 import HeroSection from "@/components/sections/HeroSection";
 import BenefitsSection from "@/components/sections/BenefitsSection";
-import CategoriesSection from "@/components/sections/CategoriesSection";
-import WhyChooseSection from "@/components/sections/WhyChooseSection";
-import TestimonialsSection from "@/components/sections/TestimonialsSection";
-import ProcessSection from "@/components/sections/ProcessSection";
-import OurStorySection from "@/components/sections/OurStorySection";
-import FAQSection from "@/components/sections/FAQSection";
-import FinalCTASection from "@/components/sections/FinalCTASection";
-import WhatsAppFAB from "@/components/floating/WhatsAppFAB";
-import BackToTop from "@/components/floating/BackToTop";
+
+const CategoriesSection = lazy(() => import("@/components/sections/CategoriesSection"));
+const WhyChooseSection = lazy(() => import("@/components/sections/WhyChooseSection"));
+const TestimonialsSection = lazy(() => import("@/components/sections/TestimonialsSection"));
+const ProcessSection = lazy(() => import("@/components/sections/ProcessSection"));
+const OurStorySection = lazy(() => import("@/components/sections/OurStorySection"));
+const FAQSection = lazy(() => import("@/components/sections/FAQSection"));
+const FinalCTASection = lazy(() => import("@/components/sections/FinalCTASection"));
+const Footer = lazy(() => import("@/components/layout/Footer"));
+const WhatsAppFAB = lazy(() => import("@/components/floating/WhatsAppFAB"));
+const BackToTop = lazy(() => import("@/components/floating/BackToTop"));
 
 const Index = () => (
   <>
@@ -18,17 +20,21 @@ const Index = () => (
     <main>
       <HeroSection />
       <BenefitsSection />
-      <CategoriesSection />
-      <WhyChooseSection />
-      <TestimonialsSection />
-      <ProcessSection />
-      <OurStorySection />
-      <FAQSection />
-      <FinalCTASection />
+      <Suspense fallback={null}>
+        <CategoriesSection />
+        <WhyChooseSection />
+        <TestimonialsSection />
+        <ProcessSection />
+        <OurStorySection />
+        <FAQSection />
+        <FinalCTASection />
+      </Suspense>
     </main>
-    <Footer />
-    <WhatsAppFAB />
-    <BackToTop />
+    <Suspense fallback={null}>
+      <Footer />
+      <WhatsAppFAB />
+      <BackToTop />
+    </Suspense>
   </>
 );
 

@@ -32,6 +32,7 @@ const OurStorySection = () => (
             alt="Fachada da Plante Uma Flor"
             className="w-full aspect-[4/3] rounded shadow-2xl object-cover"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-accent rounded-br-lg" />
         </motion.div>

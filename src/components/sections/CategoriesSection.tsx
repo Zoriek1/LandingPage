@@ -5,7 +5,7 @@ import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
 import catDatas from "@/assets/cat-datas.jpg";
 import { trackSiteClick } from "@/lib/tracking";
-import { SITE_URL } from "@/lib/config";
+import { CATALOG_URL } from "@/lib/config";
 
 const categories = [
   { img: catBuques, title: "Buquês Românticos", span: "lg:col-span-2 lg:row-span-2" },
@@ -36,14 +36,14 @@ const CategoriesSection = () => (
         {categories.map((cat, i) => (
           <motion.a
             key={cat.title}
-            href={SITE_URL}
+            href={CATALOG_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
               trackSiteClick({
                 cta_location: "categorias",
                 cta_label: "ver_no_site",
-                destination_url: SITE_URL,
+                destination_url: CATALOG_URL,
               })
             }
             initial={{ opacity: 0, y: 30 }}
@@ -57,6 +57,7 @@ const CategoriesSection = () => (
               alt={cat.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               loading="lazy"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">

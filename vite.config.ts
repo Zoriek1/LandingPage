@@ -18,10 +18,26 @@ export default defineConfig({
   },
   plugins: [react()],
   build: {
+    target: "es2020",
+    cssCodeSplit: true,
+    reportCompressedSize: false,
     rollupOptions: {
       input: {
         main: path.resolve(__dirname, "index.html"),
         mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
+      },
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "motion": ["framer-motion"],
+          "radix": [
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-tooltip",
+            "@radix-ui/react-slot",
+          ],
+          "query": ["@tanstack/react-query"],
+        },
       },
     },
   },

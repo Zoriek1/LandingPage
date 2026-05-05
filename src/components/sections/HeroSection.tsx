@@ -3,7 +3,7 @@ import { Truck, ShieldCheck, Flower2 } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
+import { CATALOG_URL, WHATSAPP_URL } from "@/lib/config";
 
 const badges = [
   { icon: Truck, label: "Entrega agendada em Goiânia" },
@@ -15,7 +15,14 @@ const HeroSection = () => (
   <section className="relative min-h-screen flex items-center overflow-hidden">
     {/* Background image */}
     <div className="absolute inset-0">
-      <img src={heroImg} alt="Arranjo floral elegante" className="w-full h-full object-cover" loading="eager" />
+      <img
+        src={heroImg}
+        alt="Arranjo floral elegante"
+        className="w-full h-full object-cover"
+        loading="eager"
+        fetchPriority="high"
+        decoding="async"
+      />
       <div className="absolute inset-0" style={{ background: "var(--hero-overlay)" }} />
       <div className="absolute inset-0 bg-gradient-to-r from-primary/85 via-primary/60 to-primary/25" />
     </div>
@@ -62,19 +69,19 @@ const HeroSection = () => (
             Comprar no WhatsApp
           </button>
           <a
-            href={SITE_URL}
+            href={CATALOG_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
               trackSiteClick({
                 cta_location: "hero",
-                cta_label: "ver_catalogo",
-                destination_url: SITE_URL,
+                cta_label: "ver_site",
+                destination_url: CATALOG_URL,
               })
             }
             className="flex items-center justify-center border border-primary-foreground/30 text-primary-foreground/90 px-5 py-3 rounded font-body text-sm font-medium tracking-wide uppercase hover:bg-primary-foreground/10 transition-all text-center"
           >
-            Ver Catálogo
+            Ver Site
           </a>
         </motion.div>
 

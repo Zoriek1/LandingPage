@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import whyImg from "@/assets/why-choose.jpg";
 import { trackSiteClick } from "@/lib/tracking";
+import { CATALOG_URL } from "@/lib/config";
 
 const points = [
   "Atendimento cuidadoso e personalizado",
@@ -10,8 +11,6 @@ const points = [
   "Confiança e segurança em toda a compra",
   "Uma experiência especial do início ao fim",
 ];
-
-const SITE_URL = "https://www.planteumaflor.com";
 
 const WhyChooseSection = () => (
   <section id="sobre" className="py-20 md:py-28 bg-background">
@@ -29,6 +28,7 @@ const WhyChooseSection = () => (
             alt="Florista preparando arranjo"
             className="w-full rounded shadow-2xl"
             loading="lazy"
+            decoding="async"
           />
           <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-accent rounded-br-lg" />
         </motion.div>
@@ -59,14 +59,14 @@ const WhyChooseSection = () => (
           </ul>
 
           <a
-            href={SITE_URL}
+            href={CATALOG_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
               trackSiteClick({
                 cta_location: "why_choose",
                 cta_label: "conheca_nosso_catalogo",
-                destination_url: SITE_URL,
+                destination_url: CATALOG_URL,
               })
             }
             className="inline-block bg-accent text-accent-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:brightness-110 transition-all"
