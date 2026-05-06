@@ -4,7 +4,7 @@ import { Truck, Camera, MessageCircle } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { CATALOG_URL, WHATSAPP_URL } from "@/lib/config";
+import { MOTHERS_DAY_URL, WHATSAPP_URL } from "@/lib/config";
 
 const MOTHERS_DAY = new Date("2026-05-10T00:00:00-03:00").getTime();
 
@@ -141,14 +141,14 @@ const HeroSection = () => {
               Encomendar pelo WhatsApp
             </button>
             <a
-              href={CATALOG_URL}
+              href={MOTHERS_DAY_URL}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() =>
                 trackSiteClick({
                   cta_location: "hero",
                   cta_label: "ver_catalogo",
-                  destination_url: CATALOG_URL,
+                  destination_url: MOTHERS_DAY_URL,
                 })
               }
               className="flex items-center justify-center border border-primary-foreground/55 bg-primary/22 text-primary-foreground px-5 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase hover:bg-primary/34 transition-all text-center backdrop-blur-sm shadow-lg shadow-black/10"

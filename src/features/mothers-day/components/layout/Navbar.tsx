@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { CATALOG_URL, WHATSAPP_URL } from "@/lib/config";
+import { MOTHERS_DAY_URL, WHATSAPP_URL } from "@/lib/config";
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
 
 const NAV_LINKS = [
@@ -42,14 +42,14 @@ const Navbar = () => {
             </a>
           ))}
           <a
-            href={CATALOG_URL}
+            href={MOTHERS_DAY_URL}
             target="_blank"
             rel="noopener noreferrer"
             onClick={() =>
               trackSiteClick({
                 cta_location: "navbar_desktop",
                 cta_label: "ver_catalogo",
-                destination_url: CATALOG_URL,
+                destination_url: MOTHERS_DAY_URL,
               })
             }
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all shadow-lg shadow-black/20"
@@ -89,14 +89,14 @@ const Navbar = () => {
                 </a>
               ))}
               <a
-                href={CATALOG_URL}
+                href={MOTHERS_DAY_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() =>
                   trackSiteClick({
                     cta_location: "navbar_mobile",
                     cta_label: "ver_catalogo",
-                    destination_url: CATALOG_URL,
+                    destination_url: MOTHERS_DAY_URL,
                   })
                 }
                 className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
