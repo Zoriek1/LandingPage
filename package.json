@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "google:reviews": "node ./scripts/google-business-reviews.mjs",
     "sync:mothers-day-products": "node ./scripts/mothers-day-products/sync.mjs",
     "build": "npm run sync:mothers-day-products && vite build",
     "build:dev": "npm run sync:mothers-day-products && vite build --mode development",

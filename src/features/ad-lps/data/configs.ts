@@ -1,0 +1,617 @@
+export type Accent = "rose" | "lily" | "sun" | "urgent" | "classic";
+export type HeroMode = "overlay" | "standalone";
+
+export type FAQItem = {
+  question: string;
+  answer: string;
+};
+
+export type Product = {
+  id: string;
+  storeSlug: string;
+  name: string;
+  priceBrl: string;
+  installments: string;
+  image: string;
+  waText: string;
+};
+
+export type Testimonial = {
+  image: string;
+  alt: string;
+  author: string;
+};
+
+export type BrandBonus = {
+  icon: "card" | "package" | "truck";
+  title: string;
+  body: string;
+};
+
+export type LPConfig = {
+  slug: string;
+  accent: Accent;
+  heroImage: string;
+  heroImageAlt: string;
+  heroMode: HeroMode;
+  headline: string;
+  subheadline: string;
+  priceAnchor?: string;
+  ctaText: string;
+  testimonialOrder: string[];
+  vitrineTitle: string;
+  vitrineSubtitle: string;
+  vitrineProductIds: string[];
+  vitrineHighlightId?: string;
+  faq: FAQItem[];
+  pageTitle: string;
+  pageDescription: string;
+};
+
+export const BRAND_DOMAIN = "lpb.planteumaflor.com";
+export const WHATSAPP_NUMBER = "5562996503403";
+export const WHATSAPP_BASE_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+
+export const GLOBAL_CONFIG = {
+  brandName: "Plante Uma Flor",
+  brandTagline: "Floricultura",
+  googleRating: "4.9",
+  googleReviewsCount: "184",
+  cityRegion: "Goiânia e região metropolitana",
+} as const;
+
+export const COMMON_FAQ: FAQItem[] = [
+  {
+    question: "Como funciona o pedido?",
+    answer:
+      "É bem simples: você chama a gente no WhatsApp dizendo qual flor te chamou atenção, a data e o endereço. Em poucos minutos a gente confirma o valor, combina o horário e ainda escreve o cartão pra você.",
+  },
+  {
+    question: "Como posso pagar?",
+    answer:
+      "Pix, cartão de crédito em até 3x sem juros, débito ou dinheiro na hora da entrega. Você escolhe o que ficar melhor. A gente acerta tudo no WhatsApp.",
+  },
+  {
+    question: "Vocês entregam onde?",
+    answer:
+      "Goiânia inteira, Aparecida de Goiânia e Senador Canedo. Se você for de outra região, manda o CEP que a gente confere pra você.",
+  },
+];
+
+export const BRAND_BONUS: BrandBonus[] = [
+  {
+    icon: "card",
+    title: "Cartão escrito à mão, grátis",
+    body: "Você manda a mensagem no WhatsApp e a gente escreve no cartão pra entregar junto.",
+  },
+  {
+    icon: "package",
+    title: "Embalagem caprichada",
+    body: "Papel artesanal e fita de cetim. Acabamento que valoriza a flor.",
+  },
+  {
+    icon: "truck",
+    title: "Entrega no mesmo dia",
+    body: "Goiânia e região. Pedidos fechados até 16h saem hoje.",
+  },
+];
+
+export const TESTIMONIALS: Record<string, Testimonial> = {
+  sheila: {
+    image: "/lpb/reviews/review-sheila.jpg",
+    alt: "Avaliação 5 estrelas de Sheila Santos",
+    author: "Sheila Santos",
+  },
+  taina: {
+    image: "/lpb/reviews/review-taina.jpg",
+    alt: "Avaliação 5 estrelas de Tainá Santos",
+    author: "Tainá Santos",
+  },
+  rafaella: {
+    image: "/lpb/reviews/review-rafaella.jpg",
+    alt: "Avaliação 5 estrelas de Rafaella Martins",
+    author: "Rafaella Martins",
+  },
+};
+
+export const PRODUCTS: Record<string, Product> = {
+  "arranjo-3-rosas": {
+    id: "arranjo-3-rosas",
+    storeSlug: "arranjo-de-mao-rosas",
+    name: "Arranjo de Mão Rosas Vermelhas",
+    priceBrl: "R$ 139,90",
+    installments: "3x s/ juros de R$ 46,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/4-9c54ee7764b808caff17739768549369-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo de Mão Rosas Vermelhas (R$ 139,90).",
+  },
+  "arranjo-4-rosas-ferrero": {
+    id: "arranjo-4-rosas-ferrero",
+    storeSlug: "arranjo-de-mao-4-rosas-vermelhas-balao-vermelho-4uni-ferrero",
+    name: "Arranjo 4 Rosas com Balão e Ferrero",
+    priceBrl: "R$ 224,90",
+    installments: "3x s/ juros de R$ 74,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/101-a8d58e663b48716da117589320248185-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo 4 Rosas com Balão e Ferrero (R$ 224,90).",
+  },
+  "buque-6-rosas": {
+    id: "buque-6-rosas",
+    storeSlug: "buque-classico-rosas",
+    name: "Buquê Clássico de Rosas Vermelhas",
+    priceBrl: "R$ 249,90",
+    installments: "3x s/ juros de R$ 83,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buque-classico-rosas-d2fa59866d0ab5edcd17739777570911-1024-1024.webp",
+    waText: "Oi! Quero o Buquê Clássico de Rosas Vermelhas (R$ 249,90).",
+  },
+  "buque-12-rosas-rosa": {
+    id: "buque-12-rosas-rosa",
+    storeSlug: "buque-12-rosas-rosa",
+    name: "Buquê de 12 Rosas Cor de Rosa",
+    priceBrl: "R$ 299,90",
+    installments: "3x s/ juros de R$ 99,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/22-5d679a53a5b0b1108917739795779563-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de 12 Rosas Cor de Rosa (R$ 299,90).",
+  },
+  "buque-12-rosas-vermelhas": {
+    id: "buque-12-rosas-vermelhas",
+    storeSlug: "buque-rosas-astromelias",
+    name: "Buquê de Rosas com Astromélias",
+    priceBrl: "R$ 224,90",
+    installments: "3x s/ juros de R$ 74,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/92-b8cda4a238fee8ca5f17739802507996-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Rosas com Astromélias (R$ 224,90).",
+  },
+  "box-rosas": {
+    id: "box-rosas",
+    storeSlug: "box-coracao-rosas",
+    name: "Box Coração de Rosas Vermelhas",
+    priceBrl: "R$ 698,90",
+    installments: "3x s/ juros de R$ 232,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/71-3785d54256d5ef690217739784959341-1024-1024.webp",
+    waText: "Oi! Quero o Box Coração de Rosas Vermelhas (R$ 698,90).",
+  },
+  "buque-24-rosas": {
+    id: "buque-24-rosas",
+    storeSlug: "buque-30-rosas",
+    name: "Buquê Especial 30 Rosas Vermelhas",
+    priceBrl: "R$ 634,90",
+    installments: "3x s/ juros de R$ 211,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-jutninhos-4-80740d0bed120f8d2c17739790243094-1024-1024.webp",
+    waText: "Oi! Quero o Buquê Especial 30 Rosas Vermelhas (R$ 634,90).",
+  },
+  "arranjo-lirios-p": {
+    id: "arranjo-lirios-p",
+    storeSlug: "arranjo-mao-lirios",
+    name: "Arranjo de Mão Lírios P",
+    priceBrl: "R$ 169,90",
+    installments: "3x s/ juros de R$ 56,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo de Mão Lírios P (R$ 169,90).",
+  },
+  "arranjo-mao-lirios": {
+    id: "arranjo-mao-lirios",
+    storeSlug: "arranjo-mao-lirios",
+    name: "Arranjo de Mão Lírios M",
+    priceBrl: "R$ 229,90",
+    installments: "3x s/ juros de R$ 76,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo de Mão Lírios M (R$ 229,90).",
+  },
+  "arranjo-lirios-m": {
+    id: "arranjo-lirios-m",
+    storeSlug: "arranjo-mao-lirios",
+    name: "Arranjo de Mão Lírios G",
+    priceBrl: "R$ 279,90",
+    installments: "3x s/ juros de R$ 93,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo de Mão Lírios G (R$ 279,90).",
+  },
+  "buque-lirios-m": {
+    id: "buque-lirios-m",
+    storeSlug: "buque-lirios",
+    name: "Buquê de Lírios M",
+    priceBrl: "R$ 399,90",
+    installments: "3x s/ juros de R$ 133,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Lírios M (R$ 399,90).",
+  },
+  "buque-lirios": {
+    id: "buque-lirios",
+    storeSlug: "buque-lirios",
+    name: "Buquê de Lírios P",
+    priceBrl: "R$ 334,90",
+    installments: "3x s/ juros de R$ 111,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Lírios P (R$ 334,90).",
+  },
+  "buque-lirios-g": {
+    id: "buque-lirios-g",
+    storeSlug: "buque-lirios",
+    name: "Buquê de Lírios G",
+    priceBrl: "R$ 459,90",
+    installments: "3x s/ juros de R$ 153,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Lírios G (R$ 459,90).",
+  },
+  "girassol-cone": {
+    id: "girassol-cone",
+    storeSlug: "girassol-avulso",
+    name: "Girassol Avulso",
+    priceBrl: "R$ 64,90",
+    installments: "3x s/ juros de R$ 21,63",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/1c7815aceda84b7a9d73eee1083c5282-2bd7098f1afe7dac8c17580374273171-640-0-160efa30343dc676a817739814757412-1024-1024.webp",
+    waText: "Oi! Quero o Girassol Avulso (R$ 64,90).",
+  },
+  "girassol-unitario": {
+    id: "girassol-unitario",
+    storeSlug: "arranjo-de-mao-2-girassois-com-balao-vermelho",
+    name: "Arranjo 2 Girassóis com Balão",
+    priceBrl: "R$ 134,90",
+    installments: "3x s/ juros de R$ 44,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/167-3ad6b0b2fafcecba1b17589313460597-1024-1024.webp",
+    waText: "Oi! Quero o Arranjo 2 Girassóis com Balão (R$ 134,90).",
+  },
+  "buque-girassois-m": {
+    id: "buque-girassois-m",
+    storeSlug: "buque-girassois",
+    name: "Buquê de Girassóis P",
+    priceBrl: "R$ 249,90",
+    installments: "3x s/ juros de R$ 83,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Girassóis P (R$ 249,90).",
+  },
+  "buque-girassois": {
+    id: "buque-girassois",
+    storeSlug: "buque-girassois",
+    name: "Buquê de Girassóis M",
+    priceBrl: "R$ 329,90",
+    installments: "3x s/ juros de R$ 109,96",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Girassóis M (R$ 329,90).",
+  },
+  "buque-6-girassois": {
+    id: "buque-6-girassois",
+    storeSlug: "buque-girassois",
+    name: "Buquê de Girassóis P",
+    priceBrl: "R$ 249,90",
+    installments: "3x s/ juros de R$ 83,30",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
+    waText: "Oi! Quero o Buquê de Girassóis P (R$ 249,90).",
+  },
+  "buque-flor-campo-m": {
+    id: "buque-flor-campo-m",
+    storeSlug: "buque-flores-campo",
+    name: "Buquê Flores do Campo M",
+    priceBrl: "R$ 279,00",
+    installments: "3x s/ juros de R$ 93,00",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/21-5388511b355d528bcd17739781847108-1024-1024.webp",
+    waText: "Oi! Quero o Buquê Flores do Campo M (R$ 279,00).",
+  },
+};
+
+export const LP_CONFIGS: Record<string, LPConfig> = {
+  urgencia: {
+    slug: "urgencia",
+    accent: "urgent",
+    heroImage: "/lpb/heros/urgencia.jpg",
+    heroImageAlt: "Buquê de rosas vermelhas com alstroemérias brancas em embalagem vermelha",
+    heroMode: "overlay",
+    headline: "Esqueceu a data? Ainda dá tempo.",
+    subheadline:
+      "Você fecha o pedido até 16h e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
+    priceAnchor: "Entrega hoje",
+    ctaText: "Falar com a gente agora",
+    testimonialOrder: ["sheila", "taina", "rafaella"],
+    vitrineTitle: "Sai para entrega hoje mesmo",
+    vitrineSubtitle: "Tudo aqui é montado na hora. Pronto pra sair em até 4 horas.",
+    vitrineProductIds: [
+      "buque-6-rosas",
+      "arranjo-mao-lirios",
+      "arranjo-3-rosas",
+      "buque-12-rosas-vermelhas",
+      "buque-lirios-m",
+      "buque-girassois-m",
+    ],
+    vitrineHighlightId: "buque-6-rosas",
+    faq: [
+      {
+        question: "Dá tempo mesmo de chegar hoje?",
+        answer:
+          "Se você fechar o pedido até 16h, dá sim. Em Goiânia e região, em 10 minutinhos a gente já te confirma a janela de entrega pelo WhatsApp.",
+      },
+      {
+        question: "E se eu não estiver em Goiânia?",
+        answer:
+          "A gente também entrega em Aparecida de Goiânia e Senador Canedo. Manda seu CEP no WhatsApp que a gente confirma na hora.",
+      },
+      {
+        question: "Dá pra escrever um recado no cartão?",
+        answer:
+          "Claro, sem custo. Você manda a mensagem no WhatsApp e a gente escreve no cartão à mão pra entregar junto.",
+      },
+    ],
+    pageTitle: "Flores com entrega hoje em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Esqueceu a data? Ainda dá tempo. Pedido até 16h e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
+  },
+  aniversario: {
+    slug: "aniversario",
+    accent: "classic",
+    heroImage: "/lpb/heros/aniversario.jpg",
+    heroImageAlt: "Buquê multicolorido de flores do campo com girassóis para aniversário",
+    heroMode: "overlay",
+    headline: "Um presente que diz tudo, no dia certo.",
+    subheadline:
+      "Você escolhe a data e a gente entrega em Goiânia. Buquê montado com capricho e cartão escrito à mão. Por nossa conta.",
+    priceAnchor: "Agende a data com a gente",
+    ctaText: "Quero agendar",
+    testimonialOrder: ["sheila", "rafaella", "taina"],
+    vitrineTitle: "Buquês para aniversário",
+    vitrineSubtitle: "Do clássico ao surpreendente. Escolhe o que combina com ela.",
+    vitrineProductIds: [
+      "buque-12-rosas-vermelhas",
+      "buque-12-rosas-rosa",
+      "buque-flor-campo-m",
+      "buque-6-girassois",
+      "buque-lirios-m",
+      "buque-6-rosas",
+      "box-rosas",
+      "buque-24-rosas",
+    ],
+    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    faq: [
+      {
+        question: "Como faço pra agendar o dia exato?",
+        answer:
+          "É só chamar a gente no WhatsApp e dizer a data. A gente confirma o horário com você e entrega no dia combinado, sem stress.",
+      },
+      {
+        question: "E se ela não estiver em casa na hora?",
+        answer:
+          "A gente combina o melhor horário com você. Se mesmo assim ela não estiver, podemos deixar com o porteiro ou vizinho. Sempre com a sua autorização.",
+      },
+      {
+        question: "Dá pra mandar com cartão escrito à mão?",
+        answer:
+          "Dá sim, e é cortesia da casa. Você manda a mensagem no WhatsApp e a gente escreve em letra cursiva pra entregar junto.",
+      },
+      {
+        question: "Vocês entregam em Aparecida?",
+        answer:
+          "Entregamos sim. Atendemos Goiânia, Aparecida de Goiânia e Senador Canedo. Manda o CEP que a gente confirma rapidinho.",
+      },
+    ],
+    pageTitle: "Flores para Aniversário em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Buquês de aniversário com entrega agendada em Goiânia. Embalagem caprichada, cartão escrito à mão e entrega no dia que você combinar.",
+  },
+  "rosas-apt": {
+    slug: "rosas-apt",
+    accent: "rose",
+    heroImage: "/lpb/heros/rosas-apt.jpg",
+    heroImageAlt: "Buquê de rosas vermelhas com alstroemérias brancas",
+    heroMode: "standalone",
+    headline: "Buquê de rosas a partir de R$ 204,90.",
+    subheadline:
+      "A gente entrega hoje em Goiânia, com embalagem caprichada e cartão escrito à mão. Sem cobrar a parte.",
+    priceAnchor: "A partir de R$ 204,90",
+    ctaText: "Quero presentear hoje",
+    testimonialOrder: ["rafaella", "sheila", "taina"],
+    vitrineTitle: "Buquês de rosas",
+    vitrineSubtitle: "Do menor ao maior. Todas frescas, vindas direto do produtor.",
+    vitrineProductIds: [
+      "arranjo-3-rosas",
+      "arranjo-4-rosas-ferrero",
+      "buque-6-rosas",
+      "buque-12-rosas-rosa",
+      "buque-12-rosas-vermelhas",
+      "box-rosas",
+      "buque-24-rosas",
+    ],
+    vitrineHighlightId: "buque-12-rosas-rosa",
+    faq: [
+      {
+        question: "R$ 204,90 é o mais barato? Tem opção mais em conta?",
+        answer:
+          "Tem sim. A gente tem rosas a partir de R$ 94,90. O anúncio mostra um dos destaques, mas a vitrine inteira está aqui em cima pra você comparar.",
+      },
+      {
+        question: "Consigo receber hoje mesmo?",
+        answer:
+          "Consegue. Se você fechar o pedido até 16h, a gente entrega ainda hoje em Goiânia e região.",
+      },
+      {
+        question: "As rosas são frescas mesmo?",
+        answer:
+          "São. A gente recebe rosas três vezes por semana direto do produtor, então o que você leva foi colhido faz pouquíssimo tempo.",
+      },
+    ],
+    pageTitle: "Buquê de Rosas a partir de R$ 204,90 | Plante Uma Flor",
+    pageDescription:
+      "Rosas vermelhas frescas, entregues hoje em Goiânia. A partir de R$ 204,90, com embalagem caprichada e cartão escrito à mão por conta da casa.",
+  },
+  "lirios-apt": {
+    slug: "lirios-apt",
+    accent: "lily",
+    heroImage: "/lpb/heros/lirios-apt.jpg",
+    heroImageAlt: "Buquê de lírios rosa em papel jornal artesanal",
+    heroMode: "standalone",
+    headline: "Buquê de lírios a partir de R$ 144,90.",
+    subheadline:
+      "A gente entrega hoje em Goiânia, em papel artesanal que valoriza a flor. E ainda escreve o cartão no capricho.",
+    priceAnchor: "A partir de R$ 144,90",
+    ctaText: "Quero presentear hoje",
+    testimonialOrder: ["taina", "sheila", "rafaella"],
+    vitrineTitle: "Buquês de lírios",
+    vitrineSubtitle: "Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.",
+    vitrineProductIds: [
+      "arranjo-lirios-p",
+      "arranjo-mao-lirios",
+      "arranjo-lirios-m",
+      "buque-12-rosas-vermelhas",
+      "buque-lirios",
+      "buque-lirios-m",
+      "buque-flor-campo-m",
+      "buque-lirios-g",
+    ],
+    vitrineHighlightId: "arranjo-mao-lirios",
+    faq: [
+      {
+        question: "Lírios duram menos que rosas?",
+        answer:
+          "Não. Com cuidado básico, lírios duram de 7 a 10 dias bonitos. A gente já manda as dicas de conservação junto com o buquê.",
+      },
+      {
+        question: "Tem outras cores além de rosa?",
+        answer:
+          "Tem sim, depende do que chegou no dia. Pergunta pra gente no WhatsApp que mando foto na hora.",
+      },
+      {
+        question: "O perfume é forte mesmo?",
+        answer:
+          "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
+      },
+    ],
+    pageTitle: "Buquê de Lírios a partir de R$ 144,90 | Plante Uma Flor",
+    pageDescription:
+      "Buquês de lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 144,90, com cartão escrito à mão por conta da casa.",
+  },
+  "carro-low": {
+    slug: "carro-low",
+    accent: "sun",
+    heroImage: "/lpb/heros/carro-low.jpg",
+    heroImageAlt: "Girassol unitário no cone",
+    heroMode: "overlay",
+    headline: "Presente do dia: bonito sem pesar no bolso.",
+    subheadline:
+      "Arranjos a partir de R$ 64,90, com foco no que cabe em até R$ 149,90. Mesmo capricho dos buquês grandes: embalagem artesanal e cartão escrito à mão por nossa conta.",
+    priceAnchor: "A partir de R$ 64,90",
+    ctaText: "Quero ver as opções",
+    testimonialOrder: ["taina", "sheila", "rafaella"],
+    vitrineTitle: "Presentes do dia",
+    vitrineSubtitle: "Os mais em conta primeiro. Tamanho ideal pra mesa, cabeceira ou escritório.",
+    vitrineProductIds: [
+      "girassol-cone",
+      "girassol-unitario",
+      "arranjo-3-rosas",
+      "arranjo-lirios-p",
+      "buque-12-rosas-vermelhas",
+      "arranjo-4-rosas-ferrero",
+    ],
+    vitrineHighlightId: "arranjo-3-rosas",
+    faq: [
+      {
+        question: "Vai parecer um presente pequeno demais?",
+        answer:
+          "Não vai não. Aqui os arranjos menores levam a mesma embalagem artesanal e o mesmo cartão escrito à mão dos buquês grandes. O que muda é só o tamanho.",
+      },
+      {
+        question: "A embalagem é simples?",
+        answer:
+          "Nada disso. Papel artesanal, fita de cetim e o mesmo acabamento dos buquês maiores. A gente não economiza nesse detalhe.",
+      },
+      {
+        question: "Dá pra parcelar mesmo nos valores menores?",
+        answer:
+          "Dá sim, no cartão em 3x sem juros. Sai a partir de R$ 21,63 por mês.",
+      },
+    ],
+    pageTitle: "Flores e arranjos até R$ 149,90 em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Presentes do dia em Goiânia, todos por até R$ 149,90: arranjos e girassóis com embalagem caprichada e cartão escrito à mão por conta da casa.",
+  },
+  "carro-high": {
+    slug: "carro-high",
+    accent: "rose",
+    heroImage: "/lpb/heros/carro-high.jpg",
+    heroImageAlt: "Buquê 12 rosas vermelhas premium",
+    heroMode: "overlay",
+    headline: "Buquês memoráveis a partir de R$ 164,90.",
+    subheadline:
+      "Pra quem quer impressionar de verdade. A gente entrega hoje em Goiânia, com embalagem artesanal e cartão escrito à mão. Sem cobrar a parte.",
+    priceAnchor: "A partir de R$ 164,90",
+    ctaText: "Quero presentear hoje",
+    testimonialOrder: ["rafaella", "sheila", "taina"],
+    vitrineTitle: "Buquês premium",
+    vitrineSubtitle: "Porte, frescor e embalagem que fazem a flor falar antes de você abrir a boca.",
+    vitrineProductIds: [
+      "buque-6-rosas",
+      "buque-12-rosas-rosa",
+      "buque-flor-campo-m",
+      "buque-girassois",
+      "buque-12-rosas-vermelhas",
+      "buque-6-girassois",
+      "buque-lirios-m",
+      "buque-lirios",
+      "buque-lirios-g",
+      "box-rosas",
+      "buque-24-rosas",
+    ],
+    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    faq: [
+      {
+        question: "O que muda de um buquê de R$ 264 pra um de R$ 100?",
+        answer:
+          "Muda a quantidade de flores nobres, o porte do arranjo, a embalagem (papel artesanal e fita de cetim no topo de linha) e a durabilidade. Você sente a diferença na hora.",
+      },
+      {
+        question: "A embalagem está à altura do preço?",
+        answer:
+          "Tá sim. Papel artesanal, fita de cetim e acabamento à mão, no mesmo padrão do que a gente faz pros buquês mais caros.",
+      },
+      {
+        question: "Dá pra ver foto do produto antes de fechar?",
+        answer:
+          "Claro. Manda mensagem no WhatsApp que a gente envia foto do que tá disponível hoje, real e atualizada.",
+      },
+    ],
+    pageTitle: "Buquês premium a partir de R$ 164,90 | Plante Uma Flor",
+    pageDescription:
+      "Buquês memoráveis entregues hoje em Goiânia. A partir de R$ 164,90, com embalagem artesanal e cartão escrito à mão por conta da casa.",
+  },
+  "qual-b": {
+    slug: "qual-b",
+    accent: "sun",
+    heroImage: "/lpb/heros/qual-b.jpg",
+    heroImageAlt: "Buquê multicolorido de flores do campo com girassol e alstroemérias",
+    heroMode: "overlay",
+    headline: "Flores do campo: bonito porque é diferente.",
+    subheadline:
+      "Buquês originais, com girassol e alstroemérias, daqueles que ninguém mais leva. A gente entrega hoje em Goiânia, com cartão escrito à mão por nossa conta.",
+    priceAnchor: "A partir de R$ 134,90",
+    ctaText: "Quero presentear hoje",
+    testimonialOrder: ["sheila", "taina", "rafaella"],
+    vitrineTitle: "Campo & girassol",
+    vitrineSubtitle: "Charme rústico, alegria visível. Flor de campo é pra quem gosta de fugir do óbvio.",
+    vitrineProductIds: [
+      "girassol-cone",
+      "girassol-unitario",
+      "buque-girassois-m",
+      "buque-flor-campo-m",
+      "buque-girassois",
+      "buque-6-girassois",
+    ],
+    vitrineHighlightId: "buque-flor-campo-m",
+    faq: [
+      {
+        question: "Flor do campo é mais barata porque é inferior?",
+        answer:
+          "De jeito nenhum. É uma escolha de estilo. Quem gosta de flor do campo gosta da personalidade e do visual mais natural, fora do óbvio das rosas.",
+      },
+      {
+        question: "Quanto tempo o girassol dura?",
+        answer:
+          "Em média de 5 a 8 dias com cuidados simples. A gente já manda as dicas junto pra ele aguentar bonito até o final.",
+      },
+      {
+        question: "Dá pra fazer buquê só de girassol ou só flor do campo?",
+        answer:
+          "Dá sim, dos dois jeitos. Manda no WhatsApp como você quer e a gente monta exatamente como pediu.",
+      },
+    ],
+    pageTitle: "Buquês de Campo e Girassol em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Buquês de flor do campo e girassol entregues hoje em Goiânia. A partir de R$ 134,90, com embalagem caprichada e cartão escrito à mão por conta da casa.",
+  },
+};
+
+export const AD_LP_SLUGS = Object.keys(LP_CONFIGS);

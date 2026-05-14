@@ -1,0 +1,442 @@
+{
+  "source": "manual_google_copy",
+  "businessName": "Floricultura Plante Uma Flor",
+  "businessRating": 4.9,
+  "businessReviewCount": 184,
+  "savedAt": "2026-05-14",
+  "count": 41,
+  "reviews": [
+    {
+      "reviewId": "gabm-gm",
+      "authorName": "GabM (GM)",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 15 semanas",
+      "reviewCountLabel": "2 avaliações • 4 fotos",
+      "comment": "Atendimento muito bom, flores lindas e de alta qualidade, entrega bem rápida.",
+      "ownerReply": "Muito obrigado!"
+    },
+    {
+      "reviewId": "hellen-araujo",
+      "authorName": "Hellen Araújo",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 17 semanas",
+      "reviewCountLabel": "3 avaliações • 1 foto",
+      "comment": "Atendimento excepcional!! O moço que me atendeu foi muito atencioso e cuidadoso em cada detalhe! Trabalho impecável!!",
+      "ownerReply": "Que bom que gostou, sempre buscamos as flores mais bonitas para nossos clientes!"
+    },
+    {
+      "reviewId": "vitoria-moura",
+      "authorName": "Vitória Moura",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 23 semanas",
+      "reviewCountLabel": "1 avaliação • 1 foto",
+      "comment": "Gostaria de deixar um feedback pelo ótimo atendimento. O funcionário Caio foi extremamente atencioso, educado e cuidadoso.",
+      "ownerReply": "Ficamos felizes que gostou do atendimento!! Obrigado por compartilhar sua experiência aqui."
+    },
+    {
+      "reviewId": "fabiana-moraes",
+      "authorName": "Fabiana Moraes",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 15 semanas",
+      "reviewCountLabel": "4 avaliações • 1 foto",
+      "comment": "Extremamente satisfeita, ótimo atendimento. As flores, mais que perfeitas! Obrigada pelo trabalho excelente!!",
+      "ownerReply": "Ficamos muito felizes que gostou do buquê, obrigado pelo pedido!"
+    },
+    {
+      "reviewId": "sheila-santos",
+      "authorName": "sheila santos",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 18 semanas",
+      "reviewCountLabel": "Local Guide • 41 avaliações • 170 fotos",
+      "comment": "Incrível, primeira vez que pedi, tive um pequeno contratempo e precisei antes da data previamente agendada. Se superaram no atendimento.",
+      "ownerReply": "Fico muito feliz que gostou, sempre fazemos o possível para atender mudanças!"
+    },
+    {
+      "reviewId": "rayline-carvalho",
+      "authorName": "rayline carvalho",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 35 semanas",
+      "reviewCountLabel": "3 avaliações • 0 foto",
+      "comment": "Fui muito bem atendida! O atendimento foi rápido, o Caio foi maravilhoso e extremamente educado. Adorei a experiência e com certeza voltarei a comprar. Parabéns pelo excelente trabalho!",
+      "ownerReply": ""
+    },
+    {
+      "reviewId": "rafaella-martins",
+      "authorName": "Rafaella Martins",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 13 semanas",
+      "reviewCountLabel": "4 avaliações • 0 foto",
+      "comment": "Atendimento maravilhoso, a qualidade das rosas e a perfeição do buquê não tem explicação. Fui atendida pelo Caio, super recomendo.",
+      "ownerReply": "Fico muito feliz que gostou de nosso atendimento!"
+    },
+    {
+      "reviewId": "deborah-lira",
+      "authorName": "Deborah Lira",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 10 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Muito prático o uso do app! Ótimo atendimento ao cliente. Parabéns!",
+      "ownerReply": "Fico feliz que gostou, sempre tentamos facilitar a forma de pedir."
+    },
+    {
+      "reviewId": "taina-santos",
+      "authorName": "Tainá Santos",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 24 semanas",
+      "reviewCountLabel": "4 avaliações • 1 foto",
+      "comment": "O atendimento foi ótimo e muito cordial. Os arranjos são lindos e com valores justos, além do diferencial de fazerem entrega.",
+      "ownerReply": "Muito obrigado Tainá, sempre tentamos nos aprimorar e adaptar aos novos tempos."
+    },
+    {
+      "reviewId": "calebegferreira-guimaraesferreira",
+      "authorName": "Calebegferreira Guimaraesferreira",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 10 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Ótimo atendimento, e bastante compreensão. Com certeza indico esta floricultura!!",
+      "ownerReply": "Muito obrigado! Te aguardamos mais vezes em nossa floricultura."
+    },
+    {
+      "reviewId": "lucas-fernandes-de-souza",
+      "authorName": "Lucas Fernandes de Souza",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 26 semanas",
+      "reviewCountLabel": "Local Guide • 2 avaliações • 0 foto",
+      "comment": "Atendimento muito bom, rápido e de ótima qualidade!! Recomendo muito.",
+      "ownerReply": "Muito obrigado!! Fico feliz que gostou de nosso atendimento."
+    },
+    {
+      "reviewId": "marcos-vinicius",
+      "authorName": "Marcos Vinícius",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 12 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Produto chegou no dia e na hora combinado, muito lindo, surpreendeu e superou minhas expectativas.",
+      "ownerReply": "Muito obrigado, ficamos muito felizes que gostou de nosso atendimento e entrega!"
+    },
+    {
+      "reviewId": "thalita-stella",
+      "authorName": "Thalita Stella",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 27 semanas",
+      "reviewCountLabel": "Local Guide • 32 avaliações • 2 fotos",
+      "comment": "Ótimas opções e atendimento atencioso! Pedidos pelo site super práticos de fazer, amei!",
+      "ownerReply": "Que bom que gostou! Estamos buscando sempre melhorar."
+    },
+    {
+      "reviewId": "calmon-de-a-xavier",
+      "authorName": "Calmon De A. Xavier",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 30 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Minha experiência foi ótima com o local, o atendimento foi muito atencioso e me ajudou na melhor escolha!",
+      "ownerReply": "Muito obrigado! Foi um prazer te atender."
+    },
+    {
+      "reviewId": "jackson-pinheiro",
+      "authorName": "Jackson Pinheiro",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 24 semanas",
+      "reviewCountLabel": "5 avaliações • 1 foto",
+      "comment": "Responde sempre rápido, atendimento humanizado, e entrega muito rápido. Gostei de mais!",
+      "ownerReply": "Obrigado!"
+    },
+    {
+      "reviewId": "sffart-gamer",
+      "authorName": "sffart gamer",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 26 semanas",
+      "reviewCountLabel": "10 avaliações • 0 foto",
+      "comment": "Flores lindas e cheirosas, além de um atendimento direto, sem ser grosseiro, e solícito. Muito obrigado pela experiência.",
+      "ownerReply": "Muito obrigada."
+    },
+    {
+      "reviewId": "diego-willian-ximenes-correia",
+      "authorName": "Diego willian Ximenes correia",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 12 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Muito atencioso(a), vou pedir mais vezes!!",
+      "ownerReply": "Muito obrigado, ficamos muito felizes que gostou de nosso atendimento!"
+    },
+    {
+      "reviewId": "glenda-araujo",
+      "authorName": "Glenda Araujo",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 13 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Muito bom! Ótimo atendimento e compreensível.",
+      "ownerReply": "Muito obrigado! Ficamos felizes com sua avaliação."
+    },
+    {
+      "reviewId": "patricia-gusmao",
+      "authorName": "Patricia Gusmao",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "17 de abr. de 2024",
+      "reviewCountLabel": "1 avaliação • 1 foto",
+      "comment": "MARAVILHOSO!!! Já é a segunda vez que peço nesta loja. Trabalho em Brasília e achei uma opção muito cuidadosa para presentear.",
+      "ownerReply": "Muito obrigado Patricia, tratamos todos nossos pedidos com carinho."
+    },
+    {
+      "reviewId": "alan-braz",
+      "authorName": "Alan Braz",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "29 de mai. de 2020",
+      "reviewCountLabel": "Local Guide • 399 avaliações • 2186 fotos",
+      "comment": "Ótimo atendimento, pessoal muito prestativo, educados sempre prontos pra atender. Um ótimo trabalho, entrega extremamente rápida, indico sempre pra amigos!",
+      "ownerReply": "Agradecemos a sua avaliação Alan. Que bom que gostou, volte sempre."
+    },
+    {
+      "reviewId": "isaque-maia",
+      "authorName": "Isaque Maia",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 33 semanas",
+      "reviewCountLabel": "7 avaliações • 0 foto",
+      "comment": "Muito bom o atendimento. Atendente Caio muito prestativo. Com certeza irei comprar outras.",
+      "ownerReply": "Muito obrigado Isaque, fico muito feliz que gostou."
+    },
+    {
+      "reviewId": "daniela-kobus-cruvinel",
+      "authorName": "Daniela Kobus Cruvinel",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 26 semanas",
+      "reviewCountLabel": "3 avaliações • 2 fotos",
+      "comment": "Experiência magnífica, obrigada pelo cuidado e zelo com o cliente.",
+      "ownerReply": "Muito obrigado, foi um prazer presentear sua pessoa mais querida."
+    },
+    {
+      "reviewId": "guibson-roberto",
+      "authorName": "guibson roberto",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 35 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Ótimo atendimento e rapidez na entrega! O buquê veio muito bem montado. Agradeço ao Caio pelo atendimento, sempre muito educado.",
+      "ownerReply": "Muito obrigado."
+    },
+    {
+      "reviewId": "adriane-vieira-silva",
+      "authorName": "Adriane Vieira silva",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 36 semanas",
+      "reviewCountLabel": "Local Guide • 31 avaliações • 1 foto",
+      "comment": "Tive uma experiência maravilhosa com a floricultura. Vendedor Caio, muito atencioso, educado, me deu dicas de flores para presentear, além de ótimos preços e entrega rápida. Amei.",
+      "ownerReply": "Obrigado Adriane."
+    },
+    {
+      "reviewId": "maduz",
+      "authorName": "maduz",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 30 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Foi excelente atendimento, super atenciosos e rápidos com os pedidos!!",
+      "ownerReply": "Fico feliz que gostou!!"
+    },
+    {
+      "reviewId": "victoria-ribeiro",
+      "authorName": "Victoria Ribeiro",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 26 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Caio extremamente atencioso e cuidadoso no atendimento. Amei.",
+      "ownerReply": "Ficamos muito felizes que você gostou de nosso atendimento!"
+    },
+    {
+      "reviewId": "fide-acessorios",
+      "authorName": "Fide Acessórios",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 51 semanas",
+      "reviewCountLabel": "2 avaliações • 1 foto",
+      "comment": "Atendimento muito bom, fácil e prático!! Preços razoáveis e as opções são muito boas!! Ficou perfeito meu pedido.",
+      "ownerReply": "Ainda bem que gostou de seu pedido. Agradecemos a preferência."
+    },
+    {
+      "reviewId": "gustavo-cardoso",
+      "authorName": "Gustavo Cardoso",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 40 semanas",
+      "reviewCountLabel": "3 avaliações • 0 foto",
+      "comment": "O atendimento foi perfeito, humanizado, soube escutar qual era a ocasião e me ajudar a escolher o buquê correto.",
+      "ownerReply": "Muito obrigado pelo elogio! Foi um prazer te atender."
+    },
+    {
+      "reviewId": "daniel-vitor",
+      "authorName": "Daniel Vitor",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 35 semanas",
+      "reviewCountLabel": "3 avaliações • 0 foto",
+      "comment": "Excelente. Muito bem atendido.",
+      "ownerReply": "Muito obrigado."
+    },
+    {
+      "reviewId": "dhyorrana-vitoria",
+      "authorName": "Dhyorrana Vitoria",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 30 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Ótimo atendimento, trabalho impecável.",
+      "ownerReply": "Muito obrigado! Agradeço o carinho."
+    },
+    {
+      "reviewId": "mariana-estevam",
+      "authorName": "Mariana Estevam",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "28 de jan. de 2025",
+      "reviewCountLabel": "9 avaliações • 4 fotos",
+      "comment": "Ótimo atendimento, rápidos, arranjo perfeito.",
+      "ownerReply": "Muito obrigado Mariana, agradecemos muito seu pedido."
+    },
+    {
+      "reviewId": "pedro-soares-2d",
+      "authorName": "Pedro Soares 2D",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 13 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Atendimento exemplar, bem executado.",
+      "ownerReply": "Muito obrigado!"
+    },
+    {
+      "reviewId": "pedro-gustavo-meneses-silva-santos",
+      "authorName": "Pedro Gustavo Meneses Silva Santos",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 12 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Muito educado e atencioso!",
+      "ownerReply": "Muito obrigado, ficamos muito felizes que gostou de nosso atendimento!"
+    },
+    {
+      "reviewId": "romario-silva",
+      "authorName": "Romario Silva",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "20 de jun. de 2024",
+      "reviewCountLabel": "9 avaliações • 1 foto",
+      "comment": "Produto de qualidade, o atendimento foi maravilhoso, muito atenciosos tanto nas informações quanto no serviço e na preparação do produto. Indico para todos.",
+      "ownerReply": "Muito obrigado! Estamos aqui para sempre melhor atendê-lo."
+    },
+    {
+      "reviewId": "diego-almeida",
+      "authorName": "Diego Almeida",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 29 semanas",
+      "reviewCountLabel": "2 avaliações • 0 foto",
+      "comment": "Ótimo, muito bom o atendimento.",
+      "ownerReply": "Muito obrigado!"
+    },
+    {
+      "reviewId": "filipe-pereira-barbosa",
+      "authorName": "Filipe Pereira Barbosa",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "12 de fev. de 2025",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Foi um ótimo atendimento, ele foi super educado, adorei, irei comprar mais vezes aqui.",
+      "ownerReply": "Muito obrigado pela avaliação, tentamos sempre manter o respeito e a compreensão."
+    },
+    {
+      "reviewId": "melissa-pimentel",
+      "authorName": "Melissa Pimentel",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "16 de abr. de 2025",
+      "reviewCountLabel": "3 avaliações • 1 foto",
+      "comment": "Conversei com a empresa por WhatsApp e me responderam muito rápido! Funcionário Caio me atendeu, hiper simpático e paciente, com certeza vou comprar mais vezes. Flores lindas!!",
+      "ownerReply": "Foi um grande prazer fazer esse lindo buquê, muito obrigado por sua avaliação."
+    },
+    {
+      "reviewId": "mylla-luiza",
+      "authorName": "Mylla Luiza",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "20 de fev. de 2024",
+      "reviewCountLabel": "13 avaliações • 8 fotos",
+      "comment": "Trabalho feito com muito amor e dedicação. Amei.",
+      "ownerReply": "Nós amamos o que fazemos mesmo."
+    },
+    {
+      "reviewId": "gisele-galdiano",
+      "authorName": "Gisele Galdiano",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "12 de fev. de 2025",
+      "reviewCountLabel": "6 avaliações • 1 foto",
+      "comment": "Simplesmente perfeito, tanto as flores quanto o atendimento! Já é a segunda vez que compro com eles e tudo encantador. As presenteadas com as flores amaram também!",
+      "ownerReply": "Muito obrigado, fazemos o melhor sempre."
+    },
+    {
+      "reviewId": "pedro-hall",
+      "authorName": "Pedro Hall",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "23 de ago. de 2024",
+      "reviewCountLabel": "8 avaliações • 1 foto",
+      "comment": "Perfeito o buquê que pedi. Maravilhoso e surpreendeu minhas expectativas.",
+      "ownerReply": "Muito obrigado."
+    },
+    {
+      "reviewId": "turismo-pelo-mundo-thatiany-guimaraes",
+      "authorName": "Turismo Pelo Mundo por Thatiany Guimarães",
+      "authorPhotoUrl": null,
+      "rating": 5,
+      "relativeTime": "Há 41 semanas",
+      "reviewCountLabel": "Local Guide • 655 avaliações • 1776 fotos",
+      "comment": "Atendimento excelente. Entrei para comprar um adubo e saí com dicas maravilhosas para as minhas orquídeas.",
+      "ownerReply": "Obrigada, pode voltar sempre que quiser."
+    }
+  ],
+  "hiddenReviews": [
+    {
+      "reviewId": "yuri-quintal",
+      "authorName": "yuri quintal",
+      "authorPhotoUrl": null,
+      "rating": 1,
+      "relativeTime": "Há 33 semanas",
+      "reviewCountLabel": "12 avaliações • 0 foto",
+      "comment": "Resposta demorada e falta de atenção. Paguei adiantado, mandei o bilhete que queria e pedi atenção no tempo.",
+      "ownerReply": "Pedimos perdão novamente pelo acontecido."
+    },
+    {
+      "reviewId": "morvan-cabral",
+      "authorName": "Morvan Cabral",
+      "authorPhotoUrl": null,
+      "rating": 1,
+      "relativeTime": "Há 11 semanas",
+      "reviewCountLabel": "1 avaliação • 0 foto",
+      "comment": "Péssimo, não tive coragem de entregar o buquê.",
+      "ownerReply": "Olá Morvan, gostaríamos de falar com você para entender melhor o ocorrido."
+    }
+  ]
+}

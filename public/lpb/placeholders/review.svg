@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="900" viewBox="0 0 720 900" role="img" aria-label="Review temporário">
+  <rect width="720" height="900" rx="24" fill="#fffdf8"/>
+  <rect x="58" y="64" width="604" height="772" rx="18" fill="#f3efe6" stroke="#dfd5c6" stroke-width="3"/>
+  <text x="360" y="206" text-anchor="middle" font-family="Arial, sans-serif" font-size="46" fill="#f4b400">★★★★★</text>
+  <text x="360" y="320" text-anchor="middle" font-family="Georgia, serif" font-size="44" fill="#1f2a24">Avaliação Google</text>
+  <text x="360" y="404" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#6f685f">Imagem do review será</text>
+  <text x="360" y="446" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#6f685f">substituída pelo asset real.</text>
+  <line x1="180" y1="560" x2="540" y2="560" stroke="#d6c7b4" stroke-width="3"/>
+  <circle cx="360" cy="660" r="54" fill="#c95b68"/>
+</svg>

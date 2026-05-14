@@ -41,6 +41,23 @@ describe("whatsappModal", () => {
     expect(text).toContain("[ ] Até R$ 149,90");
   });
 
+  it("uses a custom WhatsApp message when provided", async () => {
+    const { appendTokenToWhatsAppUrl } = await import("@/lib/whatsappModal");
+
+    const url = appendTokenToWhatsAppUrl(
+      "https://wa.me/5562996503403",
+      "A3F9",
+      "Oi! Quero o Buquê 6 Rosas.\n\n[ref: urgencia]",
+    );
+
+    const parsed = new URL(url);
+    const text = parsed.searchParams.get("text") ?? "";
+    expect(text).toContain("Oi! Quero o Buquê 6 Rosas.");
+    expect(text).toContain("[ref: urgencia]");
+    expect(text).toContain("(código de atendimento: A3F9)");
+    expect(text).not.toContain("[ ] Até R$ 149,90");
+  });
+
   it("tracks pending lead and redirects in same tab", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 
