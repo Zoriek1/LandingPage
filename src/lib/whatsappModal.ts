@@ -105,10 +105,16 @@ export function generateTrackingToken() {
   return `${baseToken}${calculateTrackingTokenChecksum(baseToken)}`;
 }
 
-export function appendTokenToWhatsAppUrl(url: string, token: string, messageText?: string) {
+export function appendTokenToWhatsAppUrl(
+  url: string,
+  token: string,
+  messageText?: string,
+  extraRef?: string,
+) {
   const phrase = WHATSAPP_INTROS[Math.floor(Math.random() * WHATSAPP_INTROS.length)];
   const baseText = messageText?.trim() || `${phrase}\n\n${WHATSAPP_BOUQUET_CHECKLIST}`;
-  const text = `${baseText}\n\n(código de atendimento: ${token})`;
+  const refSuffix = extraRef ? ` · ${extraRef}` : "";
+  const text = `${baseText}\n\n(código de atendimento: ${token}${refSuffix})`;
 
   try {
     const parsed = new URL(url);
@@ -124,9 +130,14 @@ export function openWhatsAppDestination(url: string) {
   window.location.assign(url);
 }
 
-export function openWhatsAppModal(url: string, context: TrackingParams = {}, messageText?: string) {
+export function openWhatsAppModal(
+  url: string,
+  context: TrackingParams = {},
+  messageText?: string,
+  extraRef?: string,
+) {
   const token = getOrCreateToken();
-  const destinationUrl = appendTokenToWhatsAppUrl(url, token, messageText);
+  const destinationUrl = appendTokenToWhatsAppUrl(url, token, messageText, extraRef);
 
   trackWhatsAppClick({
     cta_location: context.cta_location ?? "whatsapp_direct_open",

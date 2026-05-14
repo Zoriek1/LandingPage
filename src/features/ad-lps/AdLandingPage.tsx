@@ -1,13 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
   CalendarCheck2,
+  Camera,
+  ChevronLeft,
+  ChevronRight,
   CreditCard,
+  Flower2,
+  Gift,
   Heart,
+  MessageCircle,
   Package,
-  Search,
+  Ruler,
+  ShieldCheck,
   Sparkles,
   Star,
   Truck,
@@ -21,11 +28,15 @@ import {
   BRAND_DOMAIN,
   COMMON_FAQ,
   GLOBAL_CONFIG,
+  GUARANTEE,
   LP_CONFIGS,
   PRODUCTS,
+  inferProductBadge,
   type BrandBonus,
+  type CtaOriginKey,
   type LPConfig,
   type Product,
+  type ProductBadge,
 } from "@/features/ad-lps/data/configs";
 import {
   buildAdLpWhatsAppUrl,
@@ -177,6 +188,21 @@ function WhatsAppIcon() {
   );
 }
 
+type CtaOrigin =
+  | "hero"
+  | "vitrine"
+  | "faq"
+  | "sticky"
+  | "como_funciona"
+  | "final"
+  | "guarantee";
+
+function resolveCtaLabel(config: LPConfig, origin: CtaOrigin): string {
+  if (origin === "vitrine") return "Comprar no WhatsApp";
+  const key = origin as CtaOriginKey;
+  return config.ctaCopy?.[key] ?? config.ctaCopy?.hero ?? "Falar no WhatsApp";
+}
+
 function CtaButton({
   config,
   origin,
@@ -185,7 +211,7 @@ function CtaButton({
   className = "",
 }: {
   config: LPConfig;
-  origin: "hero" | "vitrine" | "faq" | "sticky" | "como_funciona" | "final";
+  origin: CtaOrigin;
   product?: Product;
   children?: ReactNode;
   className?: string;
@@ -200,7 +226,7 @@ function CtaButton({
         openAdLpWhatsApp({ config, origin, product });
       }}
     >
-      <span>{children || "Comprar no WhatsApp"}</span>
+      <span>{children || resolveCtaLabel(config, origin)}</span>
       <WhatsAppIcon />
     </a>
   );
@@ -210,7 +236,11 @@ function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   const props = { size: 22, strokeWidth: 1.7 };
   if (icon === "card") return <CreditCard {...props} />;
   if (icon === "package") return <Package {...props} />;
-  return <Truck {...props} />;
+  if (icon === "truck") return <Truck {...props} />;
+  if (icon === "camera") return <Camera {...props} />;
+  if (icon === "message") return <MessageCircle {...props} />;
+  if (icon === "shield") return <ShieldCheck {...props} />;
+  return <Sparkles {...props} />;
 }
 
 function getInitials(name: string) {
@@ -334,10 +364,10 @@ function BrandBar() {
         <img src={logoUrl} alt="Plante Uma Flor" />
       </a>
       <nav className="ad-lp-nav" aria-label="Seções da página">
-        <a href="#bonus">Diferenciais</a>
-        <a href="#como-funciona">Como funciona</a>
+        <a href="#como-funciona">Diferenciais</a>
         <a href="#vitrine">Produtos</a>
         <a href="#depoimentos">Depoimentos</a>
+        <a href="#bonus">Por que nós</a>
         <a href="#faq">FAQ</a>
       </nav>
       <div
@@ -382,30 +412,33 @@ function BrandBonusSection() {
   );
 }
 
-const PROCESS_STEPS = [
+const DIFFERENTIAL_PILLARS = [
   {
     num: "01",
-    Icon: Search,
-    title: "Escolha o arranjo",
-    body: "Olha a vitrine aqui embaixo ou dá uma passada no catálogo completo.",
+    Icon: Heart,
+    title: "Por que somos diferentes",
+    body:
+      "Flores recebidas direto do produtor 3× por semana. Cada buquê é montado na hora, com a mesma flor que iríamos colocar na nossa casa.",
   },
   {
     num: "02",
     Icon: Sparkles,
-    title: "Acerta tudo no WhatsApp",
-    body: "A gente confirma a data, escreve o cartão à mão e ainda manda foto antes de sair pra entrega.",
+    title: "O que está incluso",
+    body:
+      "Cartão escrito à mão, embalagem artesanal e foto real antes da entrega. Sem custo adicional. Faz parte do nosso jeito.",
   },
   {
     num: "03",
-    Icon: Heart,
-    title: "Encante quem você ama",
-    body: "Entrega cuidadosa em Goiânia e região, no dia e na hora combinados.",
+    Icon: ShieldCheck,
+    title: "Garantia de qualidade",
+    body:
+      "Não gostou de algum detalhe? A gente refaz, troca ou devolve o valor no mesmo dia. Sem letra miúda, sem enrolação.",
   },
 ];
 
-function ProcessSection({ config }: { config: LPConfig }) {
+function DifferentialsSection({ config }: { config: LPConfig }) {
   return (
-    <section id="como-funciona" className="ad-lp-process" aria-label="Como funciona">
+    <section id="como-funciona" className="ad-lp-process" aria-label="Por que somos diferentes">
       <motion.header
         className="ad-lp-section-head"
         initial={{ opacity: 0, y: 18 }}
@@ -413,33 +446,90 @@ function ProcessSection({ config }: { config: LPConfig }) {
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.45 }}
       >
-        <h2>Como funciona</h2>
-        <p>Três passos para presentear com flores especiais, sem complicação.</p>
+        <h2>Por que somos diferentes</h2>
+        <p>O cuidado de uma floricultura tradicional, com o frescor e a transparência que você merece.</p>
       </motion.header>
       <ol className="ad-lp-process__grid">
-        {PROCESS_STEPS.map((step, index) => (
+        {DIFFERENTIAL_PILLARS.map((pillar, index) => (
           <motion.li
             className="ad-lp-process__item"
-            key={step.num}
+            key={pillar.num}
             initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
             transition={{ duration: 0.5, delay: index * 0.1 }}
           >
-            <span className="ad-lp-process__num" aria-hidden="true">{step.num}</span>
+            <span className="ad-lp-process__num" aria-hidden="true">{pillar.num}</span>
             <span className="ad-lp-process__icon" aria-hidden="true">
-              <step.Icon size={26} strokeWidth={1.6} />
+              <pillar.Icon size={26} strokeWidth={1.6} />
             </span>
-            <h3>{step.title}</h3>
-            <p>{step.body}</p>
+            <h3>{pillar.title}</h3>
+            <p>{pillar.body}</p>
           </motion.li>
         ))}
       </ol>
       <div className="ad-lp-process__cta">
-        <CtaButton config={config} origin="como_funciona">{config.ctaText}</CtaButton>
+        <CtaButton config={config} origin="como_funciona" />
       </div>
     </section>
   );
+}
+
+const HIGHLIGHT_PHRASES = [
+  "mais bonito que na foto",
+  "entrega super rápida",
+  "atendimento impecável",
+  "super recomendo",
+  "qualidade das rosas",
+  "trabalho impecável",
+  "extremamente satisfeita",
+  "mais que perfeitas",
+  "superou minhas expectativas",
+];
+
+function renderHighlightedComment(comment: string): ReactNode {
+  const lower = comment.toLowerCase();
+  const ranges: { start: number; end: number }[] = [];
+  HIGHLIGHT_PHRASES.forEach((phrase) => {
+    let cursor = 0;
+    while (true) {
+      const index = lower.indexOf(phrase, cursor);
+      if (index === -1) break;
+      ranges.push({ start: index, end: index + phrase.length });
+      cursor = index + phrase.length;
+    }
+  });
+
+  if (!ranges.length) return comment;
+
+  ranges.sort((a, b) => a.start - b.start);
+  const merged: { start: number; end: number }[] = [];
+  for (const range of ranges) {
+    const last = merged[merged.length - 1];
+    if (last && range.start <= last.end) {
+      last.end = Math.max(last.end, range.end);
+    } else {
+      merged.push({ ...range });
+    }
+  }
+
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  merged.forEach((range, idx) => {
+    if (range.start > cursor) {
+      parts.push(comment.slice(cursor, range.start));
+    }
+    parts.push(
+      <mark className="ad-lp-proof__highlight" key={`hl-${idx}`}>
+        {comment.slice(range.start, range.end)}
+      </mark>,
+    );
+    cursor = range.end;
+  });
+  if (cursor < comment.length) {
+    parts.push(comment.slice(cursor));
+  }
+  return parts;
 }
 
 function ReviewCard({ review }: { review: GoogleReview }) {
@@ -469,15 +559,76 @@ function ReviewCard({ review }: { review: GoogleReview }) {
           />
         ))}
       </div>
-      <blockquote>{review.comment}</blockquote>
+      <blockquote>{renderHighlightedComment(review.comment)}</blockquote>
       {review.relativeTime ? <p className="ad-lp-proof__date">{review.relativeTime}</p> : null}
     </figure>
   );
 }
 
+function HeroReviewCard({ review }: { review: GoogleReview }) {
+  return (
+    <motion.figure
+      className="ad-lp-proof__hero"
+      initial={{ opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.45 }}
+    >
+      <div className="ad-lp-proof__hero-stars" aria-label={`${review.rating} estrelas`}>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Star key={i} size={20} fill="currentColor" aria-hidden="true" />
+        ))}
+      </div>
+      <blockquote>{renderHighlightedComment(review.comment)}</blockquote>
+      <figcaption className="ad-lp-proof__hero-author">
+        <span className="ad-lp-proof__avatar" aria-hidden="true">
+          {review.authorPhotoUrl ? (
+            <img src={review.authorPhotoUrl} alt="" loading="lazy" />
+          ) : (
+            getInitials(review.authorName)
+          )}
+        </span>
+        <span>
+          <strong>{review.authorName}</strong>
+          <span> · {review.relativeTime || "Avaliação no Google"}</span>
+        </span>
+      </figcaption>
+    </motion.figure>
+  );
+}
+
 function SocialProofSection() {
   const reviews = useGoogleReviews();
-  const marqueeTrack = [...reviews, ...reviews];
+  const [heroReview, ...restReviews] = reviews;
+  const carouselReviews = restReviews.length ? restReviews : reviews;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused) return;
+    const interval = window.setInterval(() => {
+      const el = viewportRef.current;
+      if (!el) return;
+      const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: "smooth" });
+      } else {
+        el.scrollBy({ left: 340, behavior: "smooth" });
+      }
+    }, 4500);
+    return () => window.clearInterval(interval);
+  }, [paused]);
+
+  const handleNav = (direction: "prev" | "next") => {
+    const el = viewportRef.current;
+    if (!el) return;
+    setPaused(true);
+    el.scrollBy({
+      left: direction === "next" ? 340 : -340,
+      behavior: "smooth",
+    });
+    window.setTimeout(() => setPaused(false), 8000);
+  };
 
   return (
     <section id="depoimentos" className="ad-lp-proof" aria-label="Avaliações de clientes">
@@ -491,21 +642,118 @@ function SocialProofSection() {
         <p>{GLOBAL_CONFIG.googleReviewsCount} avaliações · Google {GLOBAL_CONFIG.googleRating}★</p>
         <h2>Quem comprou, indica.</h2>
       </motion.header>
-      <div className="ad-lp-proof__marquee" aria-hidden="false">
-        <div className="ad-lp-proof__track">
-          {marqueeTrack.map((review, index) => (
-            <ReviewCard
-              key={`${review.reviewId || review.authorName}-${index}`}
-              review={review}
-            />
-          ))}
+      {heroReview ? <HeroReviewCard review={heroReview} /> : null}
+      <div className="ad-lp-proof__carousel">
+        <button
+          type="button"
+          className="ad-lp-proof__nav ad-lp-proof__nav--prev"
+          aria-label="Avaliação anterior"
+          onClick={() => handleNav("prev")}
+        >
+          <ChevronLeft size={22} strokeWidth={2.2} aria-hidden="true" />
+        </button>
+        <div
+          className="ad-lp-proof__viewport"
+          ref={viewportRef}
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div className="ad-lp-proof__track">
+            {carouselReviews.map((review, index) => (
+              <ReviewCard
+                key={`${review.reviewId || review.authorName}-${index}`}
+                review={review}
+              />
+            ))}
+          </div>
         </div>
+        <button
+          type="button"
+          className="ad-lp-proof__nav ad-lp-proof__nav--next"
+          aria-label="Próxima avaliação"
+          onClick={() => handleNav("next")}
+        >
+          <ChevronRight size={22} strokeWidth={2.2} aria-hidden="true" />
+        </button>
       </div>
     </section>
   );
 }
 
-function VitrineSection({ config, products }: { config: LPConfig; products: Product[] }) {
+function ProductBadgePill({ badge }: { badge: ProductBadge }) {
+  const label =
+    badge === "mais-vendido"
+      ? "Mais vendido"
+      : badge === "custo-beneficio"
+      ? "Custo-benefício"
+      : "Premium";
+  return (
+    <span
+      className={`ad-lp-card__badge ad-lp-card__badge--${badge}`}
+      aria-label={label}
+    >
+      {label}
+    </span>
+  );
+}
+
+function ProductDetailsList({ product }: { product: Product }) {
+  const details = product.details;
+  if (!details) return null;
+  const items: { icon: ReactNode; label: string }[] = [];
+  if (details.flowerCount) {
+    items.push({
+      icon: <Flower2 size={14} strokeWidth={1.8} aria-hidden="true" />,
+      label: `${details.flowerCount} ${details.flowerCount === 1 ? "flor" : "flores"}`,
+    });
+  }
+  if (details.size && details.heightCm) {
+    items.push({
+      icon: <Ruler size={14} strokeWidth={1.8} aria-hidden="true" />,
+      label: `${details.size} · ~${details.heightCm}cm`,
+    });
+  } else if (details.size) {
+    items.push({
+      icon: <Ruler size={14} strokeWidth={1.8} aria-hidden="true" />,
+      label: `Tamanho ${details.size}`,
+    });
+  } else if (details.heightCm) {
+    items.push({
+      icon: <Ruler size={14} strokeWidth={1.8} aria-hidden="true" />,
+      label: `~${details.heightCm}cm`,
+    });
+  }
+  if (details.includes?.length) {
+    items.push({
+      icon: <Gift size={14} strokeWidth={1.8} aria-hidden="true" />,
+      label: details.includes.slice(0, 2).join(" + "),
+    });
+  }
+  if (!items.length) return null;
+  return (
+    <ul className="ad-lp-card__details">
+      {items.map((item, idx) => (
+        <li className="ad-lp-card__detail" key={idx}>
+          {item.icon}
+          <span>{item.label}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function VitrineSection({
+  config,
+  products,
+}: {
+  config: LPConfig;
+  products: Product[];
+}) {
+  const initialCount = Math.min(config.vitrineVisibleCount ?? 6, products.length);
+  const [expanded, setExpanded] = useState(false);
+  const visibleProducts = expanded ? products : products.slice(0, initialCount);
+  const hasMore = products.length > initialCount;
+
   return (
     <section id="vitrine" className="ad-lp-vitrine" aria-label={config.vitrineTitle}>
       <header className="ad-lp-section-head">
@@ -513,41 +761,102 @@ function VitrineSection({ config, products }: { config: LPConfig; products: Prod
         <p>{config.vitrineSubtitle}</p>
       </header>
       <div className="ad-lp-vitrine__grid">
-        {products.map((product, index) => (
-          <motion.article
-            className={`ad-lp-card ${
-              product.id === config.vitrineHighlightId ? "ad-lp-card--featured" : ""
-            }`}
-            key={product.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.16 }}
-            transition={{ duration: 0.42, delay: Math.min(index * 0.04, 0.18) }}
-          >
-            <a
-              href={buildStoreProductUrl(product)}
-              className="ad-lp-card__link"
-              data-testid={`product-card-${product.id}`}
-              onClick={() => trackStoreProductClick(config, product)}
+        {visibleProducts.map((product, index) => {
+          const badge = inferProductBadge(product, products, config.vitrineHighlightId);
+          const showScarcity =
+            !!config.scarcityMessage &&
+            (badge === "mais-vendido" || badge === "custo-beneficio");
+          return (
+            <motion.article
+              className={`ad-lp-card ${
+                product.id === config.vitrineHighlightId ? "ad-lp-card--featured" : ""
+              }`}
+              key={product.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.16 }}
+              transition={{ duration: 0.42, delay: Math.min(index * 0.04, 0.18) }}
             >
-              <span className="ad-lp-card__media">
-                <ImageWithFallback
-                  src={product.image}
-                  fallback={PRODUCT_PLACEHOLDER}
-                  alt={product.name}
-                />
-              </span>
-              <span className="ad-lp-card__body">
-                <span className="ad-lp-card__name">{product.name}</span>
-                <span className="ad-lp-card__price">{product.priceBrl}</span>
-                <span className="ad-lp-card__installments">{product.installments}</span>
-                <span className="ad-lp-card__cta">
-                  Ver no site <ArrowRight size={16} />
+              {badge ? <ProductBadgePill badge={badge} /> : null}
+              {showScarcity ? (
+                <span className="ad-lp-card__scarcity" aria-label={config.scarcityMessage}>
+                  {config.scarcityMessage}
                 </span>
-              </span>
-            </a>
-          </motion.article>
-        ))}
+              ) : null}
+              <a
+                href={buildStoreProductUrl(product)}
+                className="ad-lp-card__link"
+                data-testid={`product-card-${product.id}`}
+                onClick={() => trackStoreProductClick(config, product)}
+              >
+                <span className="ad-lp-card__media">
+                  <ImageWithFallback
+                    src={product.image}
+                    fallback={PRODUCT_PLACEHOLDER}
+                    alt={product.name}
+                  />
+                </span>
+                <span className="ad-lp-card__body">
+                  <span className="ad-lp-card__name">{product.name}</span>
+                  <ProductDetailsList product={product} />
+                  <span className="ad-lp-card__price">{product.priceBrl}</span>
+                  <span className="ad-lp-card__installments">{product.installments}</span>
+                  <span className="ad-lp-card__cta">
+                    Ver no site <ArrowRight size={16} />
+                  </span>
+                </span>
+              </a>
+            </motion.article>
+          );
+        })}
+      </div>
+      {hasMore && !expanded ? (
+        <div className="ad-lp-vitrine__more">
+          <button type="button" onClick={() => setExpanded(true)}>
+            Ver mais buquês ({products.length - initialCount})
+          </button>
+        </div>
+      ) : null}
+    </section>
+  );
+}
+
+function NossaHistoriaSection({ config }: { config: LPConfig }) {
+  const { nossaHistoria } = config;
+  return (
+    <section id="nossa-historia" className="ad-lp-historia" aria-label="Nossa História">
+      <div className="ad-lp-historia__grid">
+        <motion.figure
+          className="ad-lp-historia__media"
+          initial={{ opacity: 0, x: -24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55 }}
+        >
+          <img src={fachadaUrl} alt={nossaHistoria.imageAlt} loading="lazy" />
+        </motion.figure>
+        <motion.div
+          className="ad-lp-historia__body"
+          initial={{ opacity: 0, x: 24 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.55 }}
+        >
+          <h2>{nossaHistoria.title}</h2>
+          {nossaHistoria.paragraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
+          ))}
+          {nossaHistoria.stats?.length ? (
+            <dl className="ad-lp-historia__stats">
+              {nossaHistoria.stats.map((stat) => (
+                <div className="ad-lp-historia__stat" key={stat.label}>
+                  <dt className="ad-lp-historia__stat-value">{stat.value}</dt>
+                  <dd className="ad-lp-historia__stat-label">{stat.label}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
+        </motion.div>
       </div>
     </section>
   );
@@ -589,6 +898,32 @@ function StickyCta({ config }: { config: LPConfig }) {
     <div className="ad-lp-sticky" data-visible={visible} aria-hidden={!visible}>
       <CtaButton config={config} origin="sticky" className="ad-lp-sticky__cta" />
     </div>
+  );
+}
+
+function GuaranteeSection({ config }: { config: LPConfig }) {
+  return (
+    <section className="ad-lp-guarantee" aria-label="Garantia">
+      <motion.div
+        className="ad-lp-guarantee__inner"
+        initial={{ opacity: 0, y: 18 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.5 }}
+      >
+        <span className="ad-lp-guarantee__icon" aria-hidden="true">
+          <ShieldCheck size={36} strokeWidth={1.6} />
+        </span>
+        <span className="ad-lp-guarantee__badge">{GUARANTEE.badge}</span>
+        <h2 className="ad-lp-guarantee__title">{GUARANTEE.title}</h2>
+        <p className="ad-lp-guarantee__body">{GUARANTEE.body}</p>
+        <div className="ad-lp-guarantee__cta">
+          <CtaButton config={config} origin="guarantee">
+            {config.ctaCopy.guarantee ?? GUARANTEE.ctaLabel}
+          </CtaButton>
+        </div>
+      </motion.div>
+    </section>
   );
 }
 
@@ -646,11 +981,13 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       <main>
         <div id="hero" />
         <HeroSection config={config} />
-        <BrandBonusSection />
-        <ProcessSection config={config} />
-        <VitrineSection config={config} products={products} />
+        <DifferentialsSection config={config} />
         <SocialProofSection />
+        <VitrineSection config={config} products={products} />
+        <NossaHistoriaSection config={config} />
+        <BrandBonusSection />
         <FaqSection config={config} />
+        <GuaranteeSection config={config} />
         <FinalCtaSection config={config} />
       </main>
       <Footer />

@@ -6,6 +6,15 @@ export type FAQItem = {
   answer: string;
 };
 
+export type ProductDetails = {
+  flowerCount?: number;
+  size?: "P" | "M" | "G";
+  heightCm?: number;
+  includes?: string[];
+};
+
+export type ProductBadge = "mais-vendido" | "custo-beneficio" | "premium";
+
 export type Product = {
   id: string;
   storeSlug: string;
@@ -14,6 +23,7 @@ export type Product = {
   installments: string;
   image: string;
   waText: string;
+  details?: ProductDetails;
 };
 
 export type Testimonial = {
@@ -23,9 +33,41 @@ export type Testimonial = {
 };
 
 export type BrandBonus = {
-  icon: "card" | "package" | "truck";
+  icon: "card" | "package" | "truck" | "camera" | "message" | "shield";
   title: string;
   body: string;
+};
+
+export type Stat = {
+  label: string;
+  value: string;
+};
+
+export type NossaHistoriaContent = {
+  title: string;
+  paragraphs: string[];
+  imageAlt: string;
+  stats?: Stat[];
+};
+
+export type CtaOriginKey =
+  | "hero"
+  | "como_funciona"
+  | "faq"
+  | "sticky"
+  | "final"
+  | "guarantee";
+
+export type CtaCopy = Partial<Record<CtaOriginKey, string>> & {
+  hero: string;
+  final: string;
+};
+
+export type GuaranteeContent = {
+  badge: string;
+  title: string;
+  body: string;
+  ctaLabel: string;
 };
 
 export type LPConfig = {
@@ -37,13 +79,16 @@ export type LPConfig = {
   headline: string;
   subheadline: string;
   priceAnchor?: string;
-  ctaText: string;
+  ctaCopy: CtaCopy;
   testimonialOrder: string[];
   vitrineTitle: string;
   vitrineSubtitle: string;
   vitrineProductIds: string[];
   vitrineHighlightId?: string;
+  vitrineVisibleCount?: number;
+  scarcityMessage?: string;
   faq: FAQItem[];
+  nossaHistoria: NossaHistoriaContent;
   pageTitle: string;
   pageDescription: string;
 };
@@ -62,6 +107,21 @@ export const GLOBAL_CONFIG = {
 
 export const COMMON_FAQ: FAQItem[] = [
   {
+    question: "Posso agendar para outro dia?",
+    answer:
+      "Pode sim. Você diz a data no WhatsApp e a gente já bloqueia ali na agenda. Em datas comemorativas a gente confirma o horário com antecedência pra não dar nenhum aperto.",
+  },
+  {
+    question: "O buquê vai igual à foto?",
+    answer:
+      "Vai. E pra você ter certeza, antes de sair pra entrega a gente manda uma foto real do arranjo pronto. Só sai depois que você aprovar.",
+  },
+  {
+    question: "Vocês enviam foto antes de entregar?",
+    answer:
+      "Sempre. É padrão da casa. Você recebe a foto do buquê real pelo WhatsApp e libera a entrega antes da gente sair com ele.",
+  },
+  {
     question: "Como funciona o pedido?",
     answer:
       "É bem simples: você chama a gente no WhatsApp dizendo qual flor te chamou atenção, a data e o endereço. Em poucos minutos a gente confirma o valor, combina o horário e ainda escreve o cartão pra você.",
@@ -78,23 +138,55 @@ export const COMMON_FAQ: FAQItem[] = [
   },
 ];
 
+export const DEFAULT_NOSSA_HISTORIA: NossaHistoriaContent = {
+  title: "Quatro décadas plantando flores em Goiânia.",
+  paragraphs: [
+    "A Plante Uma Flor é uma família de floricultores tradicional de Goiânia há 40 anos. Começamos pequenininhos, vendendo rosas no bairro, e seguimos com o mesmo princípio: cada buquê sai daqui como se fosse pra alguém da nossa família.",
+    "Hoje a gente recebe flor direto do produtor três vezes por semana, monta na hora e ainda manda foto do arranjo pronto antes da entrega. Não é mágica — é cuidado de quem faz isso desde sempre.",
+  ],
+  imageAlt: "Fachada da Plante Uma Flor em Goiânia",
+  stats: [
+    { label: "Buquês entregues", value: "+3.000" },
+    { label: "Tradição em Goiânia", value: "40 anos" },
+    { label: "Avaliação no Google", value: "4.9 ★" },
+  ],
+};
+
 export const BRAND_BONUS: BrandBonus[] = [
-  {
-    icon: "card",
-    title: "Cartão escrito à mão, grátis",
-    body: "Você manda a mensagem no WhatsApp e a gente escreve no cartão pra entregar junto.",
-  },
-  {
-    icon: "package",
-    title: "Embalagem caprichada",
-    body: "Papel artesanal e fita de cetim. Acabamento que valoriza a flor.",
-  },
   {
     icon: "truck",
     title: "Entrega no mesmo dia",
-    body: "Goiânia e região. Pedidos fechados até 16h saem hoje.",
+    body: "Goiânia, Aparecida e Senador Canedo. Pedido até 16h sai hoje.",
+  },
+  {
+    icon: "camera",
+    title: "Foto real antes do envio",
+    body: "Você aprova o buquê pelo WhatsApp antes da gente sair pra entrega.",
+  },
+  {
+    icon: "card",
+    title: "Cartão personalizado grátis",
+    body: "Você manda o recado e a gente escreve à mão pra entregar junto.",
+  },
+  {
+    icon: "message",
+    title: "Atendimento humano",
+    body: "Sem bot, sem espera. Quem responde no WhatsApp é da floricultura.",
+  },
+  {
+    icon: "shield",
+    title: "Garantia de satisfação",
+    body: "Não gostou? A gente refaz, troca ou devolve o valor no mesmo dia.",
   },
 ];
+
+export const GUARANTEE: GuaranteeContent = {
+  badge: "Garantia Plante Uma Flor",
+  title: "Se você não gostou, a gente resolve no mesmo dia.",
+  body:
+    "Recebeu e não ficou exatamente do jeito que imaginou? Sem letra miúda: refazemos o buquê, trocamos a flor ou devolvemos o valor. Em até 24 horas, direto pelo WhatsApp.",
+  ctaLabel: "Falar com o atendente agora",
+};
 
 export const TESTIMONIALS: Record<string, Testimonial> = {
   sheila: {
@@ -123,6 +215,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 46,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/4-9c54ee7764b808caff17739768549369-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Rosas Vermelhas (R$ 139,90).",
+    details: {
+      flowerCount: 3,
+      size: "P",
+      heightCm: 30,
+      includes: ["Cartão à mão", "Embalagem artesanal"],
+    },
   },
   "arranjo-4-rosas-ferrero": {
     id: "arranjo-4-rosas-ferrero",
@@ -132,6 +230,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 74,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/101-a8d58e663b48716da117589320248185-1024-1024.webp",
     waText: "Oi! Quero o Arranjo 4 Rosas com Balão e Ferrero (R$ 224,90).",
+    details: {
+      flowerCount: 4,
+      size: "P",
+      heightCm: 35,
+      includes: ["4 Ferrero Rocher", "Balão", "Cartão à mão"],
+    },
   },
   "buque-6-rosas": {
     id: "buque-6-rosas",
@@ -141,6 +245,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 83,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buque-classico-rosas-d2fa59866d0ab5edcd17739777570911-1024-1024.webp",
     waText: "Oi! Quero o Buquê Clássico de Rosas Vermelhas (R$ 249,90).",
+    details: {
+      flowerCount: 6,
+      size: "M",
+      heightCm: 40,
+      includes: ["Papel artesanal", "Cartão à mão"],
+    },
   },
   "buque-12-rosas-rosa": {
     id: "buque-12-rosas-rosa",
@@ -150,6 +260,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 99,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/22-5d679a53a5b0b1108917739795779563-1024-1024.webp",
     waText: "Oi! Quero o Buquê de 12 Rosas Cor de Rosa (R$ 299,90).",
+    details: {
+      flowerCount: 12,
+      size: "M",
+      heightCm: 45,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "buque-12-rosas-vermelhas": {
     id: "buque-12-rosas-vermelhas",
@@ -159,6 +275,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 74,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/92-b8cda4a238fee8ca5f17739802507996-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Rosas com Astromélias (R$ 224,90).",
+    details: {
+      flowerCount: 6,
+      size: "M",
+      heightCm: 42,
+      includes: ["Astromélias mistas", "Cartão à mão"],
+    },
   },
   "box-rosas": {
     id: "box-rosas",
@@ -168,6 +290,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 232,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/71-3785d54256d5ef690217739784959341-1024-1024.webp",
     waText: "Oi! Quero o Box Coração de Rosas Vermelhas (R$ 698,90).",
+    details: {
+      flowerCount: 50,
+      size: "G",
+      heightCm: 28,
+      includes: ["Caixa em formato de coração", "Cartão à mão"],
+    },
   },
   "buque-24-rosas": {
     id: "buque-24-rosas",
@@ -177,6 +305,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 211,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-jutninhos-4-80740d0bed120f8d2c17739790243094-1024-1024.webp",
     waText: "Oi! Quero o Buquê Especial 30 Rosas Vermelhas (R$ 634,90).",
+    details: {
+      flowerCount: 30,
+      size: "G",
+      heightCm: 55,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "arranjo-lirios-p": {
     id: "arranjo-lirios-p",
@@ -186,6 +320,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 56,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios P (R$ 169,90).",
+    details: {
+      size: "P",
+      heightCm: 35,
+      includes: ["Papel jornal artesanal", "Cartão à mão"],
+    },
   },
   "arranjo-mao-lirios": {
     id: "arranjo-mao-lirios",
@@ -195,6 +334,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 76,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios M (R$ 229,90).",
+    details: {
+      size: "M",
+      heightCm: 42,
+      includes: ["Papel jornal artesanal", "Cartão à mão"],
+    },
   },
   "arranjo-lirios-m": {
     id: "arranjo-lirios-m",
@@ -204,6 +348,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 93,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios G (R$ 279,90).",
+    details: {
+      size: "G",
+      heightCm: 50,
+      includes: ["Papel jornal artesanal", "Cartão à mão"],
+    },
   },
   "buque-lirios-m": {
     id: "buque-lirios-m",
@@ -213,6 +362,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 133,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Lírios M (R$ 399,90).",
+    details: {
+      size: "M",
+      heightCm: 50,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "buque-lirios": {
     id: "buque-lirios",
@@ -222,6 +376,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 111,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Lírios P (R$ 334,90).",
+    details: {
+      size: "P",
+      heightCm: 42,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "buque-lirios-g": {
     id: "buque-lirios-g",
@@ -231,6 +390,11 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 153,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Lírios G (R$ 459,90).",
+    details: {
+      size: "G",
+      heightCm: 60,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "girassol-cone": {
     id: "girassol-cone",
@@ -240,6 +404,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 21,63",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/1c7815aceda84b7a9d73eee1083c5282-2bd7098f1afe7dac8c17580374273171-640-0-160efa30343dc676a817739814757412-1024-1024.webp",
     waText: "Oi! Quero o Girassol Avulso (R$ 64,90).",
+    details: {
+      flowerCount: 1,
+      size: "P",
+      heightCm: 30,
+      includes: ["Cone de papel artesanal", "Cartão à mão"],
+    },
   },
   "girassol-unitario": {
     id: "girassol-unitario",
@@ -249,6 +419,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 44,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/167-3ad6b0b2fafcecba1b17589313460597-1024-1024.webp",
     waText: "Oi! Quero o Arranjo 2 Girassóis com Balão (R$ 134,90).",
+    details: {
+      flowerCount: 2,
+      size: "P",
+      heightCm: 35,
+      includes: ["Balão", "Cartão à mão"],
+    },
   },
   "buque-girassois-m": {
     id: "buque-girassois-m",
@@ -258,6 +434,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 83,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Girassóis P (R$ 249,90).",
+    details: {
+      flowerCount: 6,
+      size: "P",
+      heightCm: 40,
+      includes: ["Papel artesanal", "Cartão à mão"],
+    },
   },
   "buque-girassois": {
     id: "buque-girassois",
@@ -267,6 +449,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 109,96",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Girassóis M (R$ 329,90).",
+    details: {
+      flowerCount: 8,
+      size: "M",
+      heightCm: 48,
+      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+    },
   },
   "buque-6-girassois": {
     id: "buque-6-girassois",
@@ -276,6 +464,12 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 83,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Girassóis P (R$ 249,90).",
+    details: {
+      flowerCount: 6,
+      size: "P",
+      heightCm: 40,
+      includes: ["Papel artesanal", "Cartão à mão"],
+    },
   },
   "buque-flor-campo-m": {
     id: "buque-flor-campo-m",
@@ -285,8 +479,40 @@ export const PRODUCTS: Record<string, Product> = {
     installments: "3x s/ juros de R$ 93,00",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/21-5388511b355d528bcd17739781847108-1024-1024.webp",
     waText: "Oi! Quero o Buquê Flores do Campo M (R$ 279,00).",
+    details: {
+      size: "M",
+      heightCm: 45,
+      includes: ["Mix de flores do campo", "Papel artesanal", "Cartão à mão"],
+    },
   },
 };
+
+function parsePrice(brl: string): number {
+  const cleaned = brl.replace(/[^\d,.-]/g, "").replace(",", ".");
+  const value = Number(cleaned);
+  return Number.isFinite(value) ? value : 0;
+}
+
+export function inferProductBadge(
+  product: Product,
+  allInLp: Product[],
+  highlightId?: string,
+): ProductBadge | undefined {
+  if (highlightId && product.id === highlightId) return "mais-vendido";
+  if (allInLp.length < 2) return undefined;
+  const sorted = [...allInLp].sort(
+    (a, b) => parsePrice(a.priceBrl) - parsePrice(b.priceBrl),
+  );
+  const cheapest = sorted[0];
+  const priciest = sorted[sorted.length - 1];
+  if (product.id === cheapest.id && product.id !== highlightId) {
+    return "custo-beneficio";
+  }
+  if (product.id === priciest.id && product.id !== highlightId) {
+    return "premium";
+  }
+  return undefined;
+}
 
 export const LP_CONFIGS: Record<string, LPConfig> = {
   urgencia: {
@@ -299,7 +525,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Você fecha o pedido até 16h e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
     priceAnchor: "Entrega hoje",
-    ctaText: "Falar com a gente agora",
+    scarcityMessage: "Pedido até 16h sai hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Garantir entrega hoje",
+      como_funciona: "Quero entregar ainda hoje",
+      faq: "Falar com atendente agora",
+      sticky: "Pedir agora",
+      final: "Quero presentear hoje",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["sheila", "taina", "rafaella"],
     vitrineTitle: "Sai para entrega hoje mesmo",
     vitrineSubtitle: "Tudo aqui é montado na hora. Pronto pra sair em até 4 horas.",
@@ -329,6 +564,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "Claro, sem custo. Você manda a mensagem no WhatsApp e a gente escreve no cartão à mão pra entregar junto.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Flores com entrega hoje em Goiânia | Plante Uma Flor",
     pageDescription:
       "Esqueceu a data? Ainda dá tempo. Pedido até 16h e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
@@ -343,7 +579,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Você escolhe a data e a gente entrega em Goiânia. Buquê montado com capricho e cartão escrito à mão. Por nossa conta.",
     priceAnchor: "Agende a data com a gente",
-    ctaText: "Quero agendar",
+    scarcityMessage: "Alta demanda nesta data",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Quero surpreender",
+      como_funciona: "Agendar pelo WhatsApp",
+      faq: "Tirar dúvida no WhatsApp",
+      sticky: "Agendar agora",
+      final: "Quero agendar",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["sheila", "rafaella", "taina"],
     vitrineTitle: "Buquês para aniversário",
     vitrineSubtitle: "Do clássico ao surpreendente. Escolhe o que combina com ela.",
@@ -380,6 +625,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "Entregamos sim. Atendemos Goiânia, Aparecida de Goiânia e Senador Canedo. Manda o CEP que a gente confirma rapidinho.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Flores para Aniversário em Goiânia | Plante Uma Flor",
     pageDescription:
       "Buquês de aniversário com entrega agendada em Goiânia. Embalagem caprichada, cartão escrito à mão e entrega no dia que você combinar.",
@@ -394,7 +640,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "A gente entrega hoje em Goiânia, com embalagem caprichada e cartão escrito à mão. Sem cobrar a parte.",
     priceAnchor: "A partir de R$ 204,90",
-    ctaText: "Quero presentear hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Quero presentear hoje",
+      como_funciona: "Falar com a floricultura",
+      faq: "Falar com atendente",
+      sticky: "Pedir agora",
+      final: "Encomendar agora",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["rafaella", "sheila", "taina"],
     vitrineTitle: "Buquês de rosas",
     vitrineSubtitle: "Do menor ao maior. Todas frescas, vindas direto do produtor.",
@@ -425,6 +679,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "São. A gente recebe rosas três vezes por semana direto do produtor, então o que você leva foi colhido faz pouquíssimo tempo.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Buquê de Rosas a partir de R$ 204,90 | Plante Uma Flor",
     pageDescription:
       "Rosas vermelhas frescas, entregues hoje em Goiânia. A partir de R$ 204,90, com embalagem caprichada e cartão escrito à mão por conta da casa.",
@@ -439,7 +694,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "A gente entrega hoje em Goiânia, em papel artesanal que valoriza a flor. E ainda escreve o cartão no capricho.",
     priceAnchor: "A partir de R$ 144,90",
-    ctaText: "Quero presentear hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Encantar com lírios",
+      como_funciona: "Combinar entrega",
+      faq: "Tirar dúvida",
+      sticky: "Pedir agora",
+      final: "Quero encomendar",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["taina", "sheila", "rafaella"],
     vitrineTitle: "Buquês de lírios",
     vitrineSubtitle: "Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.",
@@ -471,6 +734,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Buquê de Lírios a partir de R$ 144,90 | Plante Uma Flor",
     pageDescription:
       "Buquês de lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 144,90, com cartão escrito à mão por conta da casa.",
@@ -485,7 +749,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Arranjos a partir de R$ 64,90, com foco no que cabe em até R$ 149,90. Mesmo capricho dos buquês grandes: embalagem artesanal e cartão escrito à mão por nossa conta.",
     priceAnchor: "A partir de R$ 64,90",
-    ctaText: "Quero ver as opções",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Quero ver opções",
+      como_funciona: "Combinar entrega",
+      faq: "Falar com atendente",
+      sticky: "Ver opções",
+      final: "Encomendar agora",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["taina", "sheila", "rafaella"],
     vitrineTitle: "Presentes do dia",
     vitrineSubtitle: "Os mais em conta primeiro. Tamanho ideal pra mesa, cabeceira ou escritório.",
@@ -515,6 +787,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "Dá sim, no cartão em 3x sem juros. Sai a partir de R$ 21,63 por mês.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Flores e arranjos até R$ 149,90 em Goiânia | Plante Uma Flor",
     pageDescription:
       "Presentes do dia em Goiânia, todos por até R$ 149,90: arranjos e girassóis com embalagem caprichada e cartão escrito à mão por conta da casa.",
@@ -529,7 +802,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Pra quem quer impressionar de verdade. A gente entrega hoje em Goiânia, com embalagem artesanal e cartão escrito à mão. Sem cobrar a parte.",
     priceAnchor: "A partir de R$ 164,90",
-    ctaText: "Quero presentear hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Encomendar agora",
+      como_funciona: "Falar com a floricultura",
+      faq: "Tirar dúvida",
+      sticky: "Encomendar",
+      final: "Quero encomendar",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["rafaella", "sheila", "taina"],
     vitrineTitle: "Buquês premium",
     vitrineSubtitle: "Porte, frescor e embalagem que fazem a flor falar antes de você abrir a boca.",
@@ -564,6 +845,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "Claro. Manda mensagem no WhatsApp que a gente envia foto do que tá disponível hoje, real e atualizada.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Buquês premium a partir de R$ 164,90 | Plante Uma Flor",
     pageDescription:
       "Buquês memoráveis entregues hoje em Goiânia. A partir de R$ 164,90, com embalagem artesanal e cartão escrito à mão por conta da casa.",
@@ -578,7 +860,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Buquês originais, com girassol e alstroemérias, daqueles que ninguém mais leva. A gente entrega hoje em Goiânia, com cartão escrito à mão por nossa conta.",
     priceAnchor: "A partir de R$ 134,90",
-    ctaText: "Quero presentear hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Quero ver os buquês",
+      como_funciona: "Falar no WhatsApp",
+      faq: "Tirar dúvida",
+      sticky: "Ver buquês",
+      final: "Falar agora",
+      guarantee: "Falar com o atendente",
+    },
     testimonialOrder: ["sheila", "taina", "rafaella"],
     vitrineTitle: "Campo & girassol",
     vitrineSubtitle: "Charme rústico, alegria visível. Flor de campo é pra quem gosta de fugir do óbvio.",
@@ -608,6 +898,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "Dá sim, dos dois jeitos. Manda no WhatsApp como você quer e a gente monta exatamente como pediu.",
       },
     ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Buquês de Campo e Girassol em Goiânia | Plante Uma Flor",
     pageDescription:
       "Buquês de flor do campo e girassol entregues hoje em Goiânia. A partir de R$ 134,90, com embalagem caprichada e cartão escrito à mão por conta da casa.",
