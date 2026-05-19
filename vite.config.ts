@@ -25,6 +25,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
         mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
+        namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
       },
       output: {
         manualChunks: {

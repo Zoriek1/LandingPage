@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import AdLandingPage from "@/features/ad-lps/AdLandingPage";
 import { AD_LP_SLUGS } from "@/features/ad-lps/data/configs";
 import MothersDayPage from "@/features/mothers-day/MothersDayPage";
+import NamoradosPage from "@/features/namorados/NamoradosPage";
 import Index from "./pages/Index.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -20,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/dia-das-maes" element={<MothersDayPage />} />
+          <Route path="/dia-dos-namorados" element={<NamoradosPage />} />
           {AD_LP_SLUGS.map((slug) => (
             <Route key={slug} path={`/${slug}`} element={<AdLandingPage slug={slug} />} />
           ))}
