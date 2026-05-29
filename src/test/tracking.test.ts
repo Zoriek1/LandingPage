@@ -21,7 +21,7 @@ describe("trackWhatsAppClick", () => {
     });
   });
 
-  it("sends a valid default value and currency to Meta Contact", async () => {
+  it("sends Meta Contact without value or currency", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
 
     trackWhatsAppClick({ cta_label: "continuar_no_whatsapp" });
@@ -30,43 +30,16 @@ describe("trackWhatsAppClick", () => {
       expect.objectContaining({
         event: "whatsapp_click",
         cta_label: "continuar_no_whatsapp",
-        value: 1,
-        currency: "BRL",
       }),
     );
+    expect(window.dataLayer[0]).not.toHaveProperty("value");
+    expect(window.dataLayer[0]).not.toHaveProperty("currency");
 
     expect(window.fbq).toHaveBeenNthCalledWith(
       1,
       "track",
       "Contact",
-      { value: 1, currency: "BRL" },
-      expect.objectContaining({ eventID: expect.any(String) }),
-    );
-  });
-
-  it("normalizes provided monetary data before sending Meta Contact", async () => {
-    const { trackWhatsAppClick } = await import("@/lib/tracking");
-
-    trackWhatsAppClick({
-      price: "1.234,56",
-      currency: "brl",
-      cta_label: "continuar_no_whatsapp",
-    });
-
-    expect(window.dataLayer).toContainEqual(
-      expect.objectContaining({
-        event: "whatsapp_click",
-        cta_label: "continuar_no_whatsapp",
-        value: 1234.56,
-        currency: "BRL",
-      }),
-    );
-
-    expect(window.fbq).toHaveBeenNthCalledWith(
-      1,
-      "track",
-      "Contact",
-      { value: 1234.56, currency: "BRL" },
+      {},
       expect.objectContaining({ eventID: expect.any(String) }),
     );
   });
@@ -93,8 +66,8 @@ describe("trackWhatsAppClick", () => {
     expect(payload.lead_stage).toBe("whatsapp_click");
     expect(payload.meta_event_id_contact).toBe(payload.event_id);
     expect(payload.capi_event_id).toBe(payload.event_id);
-    expect(payload.value).toBe("1");
-    expect(payload.currency).toBe("BRL");
+    expect(payload.value).toBeUndefined();
+    expect(payload.currency).toBeUndefined();
     expect(payload.destination_url).toBe(
       "https://wa.me/5562996503403?text=Ola%20[Cod%3A%20A3F9]",
     );
