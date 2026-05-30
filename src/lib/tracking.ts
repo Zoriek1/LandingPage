@@ -1,3 +1,5 @@
+import { captureUtmsFromUrl, getCampaign, getUtms } from "@/lib/attribution";
+
 declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
@@ -31,30 +33,16 @@ if (_gclid) {
   sessionStorage.setItem("gclid", _gclid);
 }
 
-// UTMs — salva no localStorage para persistir entre visitas
-const _UTM_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"] as const;
-for (const key of _UTM_KEYS) {
-  const val = _params.get(key);
-  if (val) localStorage.setItem(key, val);
-}
+// UTMs — captura da URL para sessionStorage (fallback do clique na mesma aba).
+// URL vence na hora de montar o payload; ver src/lib/attribution.ts.
+captureUtmsFromUrl(window.location.search);
 
-// Camada de sessao — salva apenas na primeira visita
-if (!localStorage.getItem("session_first_landing_url")) {
-  localStorage.setItem("session_first_landing_url", window.location.href);
-  localStorage.setItem("session_referrer", document.referrer || "");
-  localStorage.setItem("session_start_ts", Date.now().toString());
-}
-
-function getUtmsFromStorage(): Record<string, string> {
-  const keys = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"];
-  const utms: Record<string, string> = {};
-
-  for (const key of keys) {
-    const val = localStorage.getItem(key);
-    if (val) utms[key] = val;
-  }
-
-  return utms;
+// Camada de sessao — sessionStorage para refletir A SESSAO atual (por aba),
+// nao a primeira visita de sempre. Salva apenas no primeiro hit da sessao.
+if (!sessionStorage.getItem("session_first_landing_url")) {
+  sessionStorage.setItem("session_first_landing_url", window.location.href);
+  sessionStorage.setItem("session_referrer", document.referrer || "");
+  sessionStorage.setItem("session_start_ts", Date.now().toString());
 }
 
 function getFbclid(): string | undefined {
@@ -67,9 +55,9 @@ function getGclid(): string | undefined {
 
 function getSessionData(): Record<string, string> {
   const data: Record<string, string> = {};
-  const first_landing_url = localStorage.getItem("session_first_landing_url");
-  const session_referrer = localStorage.getItem("session_referrer");
-  const session_start_ts = localStorage.getItem("session_start_ts");
+  const first_landing_url = sessionStorage.getItem("session_first_landing_url");
+  const session_referrer = sessionStorage.getItem("session_referrer");
+  const session_start_ts = sessionStorage.getItem("session_start_ts");
   if (first_landing_url) data.first_landing_url = first_landing_url;
   if (session_referrer) data.session_referrer = session_referrer;
   if (session_start_ts) data.session_start_ts = session_start_ts;
@@ -167,7 +155,7 @@ function postLead(payload: Record<string, string | undefined>) {
 }
 
 function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
-  const utms = getUtmsFromStorage();
+  const utms = getUtms();
   const { fbp } = getFbCookies();
   const payload: Record<string, string | undefined> = {
     event,
@@ -195,13 +183,13 @@ const DEDUP_WINDOW_MS = 4 * 60 * 60 * 1000; // 4 horas
 function isContactDuplicated(): boolean {
   const storedTs = localStorage.getItem(DEDUP_TS_KEY);
   const storedCampaign = localStorage.getItem(DEDUP_CAMPAIGN_KEY);
-  const currentCampaign = localStorage.getItem("utm_campaign") ?? "";
+  const currentCampaign = getCampaign();
   if (!storedTs || storedCampaign !== currentCampaign) return false;
   return Date.now() - Number(storedTs) < DEDUP_WINDOW_MS;
 }
 
 function markContactSent(): void {
-  const currentCampaign = localStorage.getItem("utm_campaign") ?? "";
+  const currentCampaign = getCampaign();
   localStorage.setItem(DEDUP_TS_KEY, Date.now().toString());
   localStorage.setItem(DEDUP_CAMPAIGN_KEY, currentCampaign);
 }

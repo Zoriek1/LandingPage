@@ -1,3 +1,4 @@
+import { getCampaign } from "@/lib/attribution";
 import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
 /** LP de anúncios de buquê; mensagem pré-formatada para qualificar faixa de valor. */
@@ -21,7 +22,8 @@ const STORED_TOKEN_KEY = "wa_tracking_token";
 const STORED_TOKEN_CAMPAIGN_KEY = "wa_tracking_token_campaign";
 
 function getCurrentCampaign(): string {
-  return localStorage.getItem("utm_campaign") ?? "";
+  // URL do clique vence; sessionStorage como fallback (ver attribution.ts).
+  return getCampaign();
 }
 
 function getOrCreateToken(): string {

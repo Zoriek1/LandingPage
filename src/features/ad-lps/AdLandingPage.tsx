@@ -42,19 +42,13 @@ import {
   buildAdLpWhatsAppUrl,
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
+import { getUtms } from "@/lib/attribution";
 import "./theme.css";
 const HERO_PLACEHOLDER = heroFallbackUrl;
 const PRODUCT_PLACEHOLDER = "/lpb/placeholders/product.svg";
 const STORE_BASE_URL = "https://www.planteumaflor.com";
-const ATTRIBUTION_KEYS = [
-  "utm_source",
-  "utm_medium",
-  "utm_campaign",
-  "utm_content",
-  "utm_term",
-  "fbclid",
-  "gclid",
-];
+// click ids encaminhados pro site; utm_* vão pelo getUtms() (com fallback).
+const CLICK_ID_KEYS = ["fbclid", "gclid"];
 
 type AdLandingPageProps = {
   slug: string;
@@ -289,11 +283,17 @@ function buildStoreProductUrl(product: Product) {
   const url = new URL(`${STORE_BASE_URL}/produtos/${product.storeSlug}`);
 
   if (typeof window !== "undefined") {
+    // utm_*: URL vence, sessionStorage como fallback — não perde atribuição pro
+    // site quando a query já sumiu da URL (SPA/webview). Ver attribution.ts.
+    for (const [key, value] of Object.entries(getUtms())) {
+      url.searchParams.set(key, value);
+    }
+    // click ids: URL vence, sessionStorage como fallback (gravados em tracking.ts).
     const currentParams = new URLSearchParams(window.location.search);
-    ATTRIBUTION_KEYS.forEach((key) => {
-      const value = currentParams.get(key);
+    for (const key of CLICK_ID_KEYS) {
+      const value = currentParams.get(key) ?? sessionStorage.getItem(key);
       if (value) url.searchParams.set(key, value);
-    });
+    }
   }
 
   return url.toString();

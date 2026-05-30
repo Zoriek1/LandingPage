@@ -10,6 +10,8 @@ describe("whatsappModal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    sessionStorage.clear();
+    window.history.replaceState({}, "", "/");
   });
 
   it("generates a token with checksum", async () => {
@@ -85,7 +87,7 @@ describe("whatsappModal", () => {
   it("reuses the same token when the campaign has not changed", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 
-    localStorage.setItem("utm_campaign", "natal_2025");
+    sessionStorage.setItem("utm_campaign", "natal_2025");
 
     try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
     const firstToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
@@ -101,13 +103,13 @@ describe("whatsappModal", () => {
   it("generates a new token when the campaign changes", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 
-    localStorage.setItem("utm_campaign", "natal_2025");
+    sessionStorage.setItem("utm_campaign", "natal_2025");
     try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
     const firstToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     vi.clearAllMocks();
 
-    localStorage.setItem("utm_campaign", "pascoa_2026");
+    sessionStorage.setItem("utm_campaign", "pascoa_2026");
     try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
     const secondToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 

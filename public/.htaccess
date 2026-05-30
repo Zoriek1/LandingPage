@@ -1,5 +1,11 @@
 RewriteEngine On
 RewriteBase /
+
+# Canonicaliza www -> sem-www (sem-www e o host canonico, pra onde os anuncios
+# apontam). Preserva path e querystring/UTM via QSA. Roda ANTES do fallback SPA.
+RewriteCond %{HTTP_HOST} ^www\.lpb\.planteumaflor\.com$ [NC]
+RewriteRule ^(.*)$ https://lpb.planteumaflor.com/$1 [R=301,L,QSA]
+
 RewriteRule ^index\.html$ - [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

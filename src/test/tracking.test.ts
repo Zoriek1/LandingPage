@@ -7,6 +7,7 @@ describe("trackWhatsAppClick", () => {
 
     localStorage.clear();
     sessionStorage.clear();
+    window.history.replaceState({}, "", "/");
     window.dataLayer = [];
     window.fbq = vi.fn();
 
@@ -74,9 +75,25 @@ describe("trackWhatsAppClick", () => {
     expect(payload.phone).toBeUndefined();
   });
 
+  it("usa a UTM da URL no payload do lead (URL vence o storage)", async () => {
+    // Storage tem campanha antiga; a URL do clique traz a campanha correta.
+    sessionStorage.setItem("utm_campaign", "campanha_velha");
+    window.history.replaceState({}, "", "?utm_campaign=campanha_url&utm_source=ig");
+
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+    trackWhatsAppClick({ cta_label: "falar_no_whatsapp" });
+
+    const fetchMock = vi.mocked(fetch);
+    const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
+    const payload = JSON.parse(String(requestOptions.body)) as Record<string, string>;
+
+    expect(payload.utm_campaign).toBe("campanha_url");
+    expect(payload.utm_source).toBe("ig");
+  });
+
   it("does not fire Contact/POST on second click within 4h window", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
-    localStorage.setItem("utm_campaign", "natal_2025");
+    sessionStorage.setItem("utm_campaign", "natal_2025");
 
     trackWhatsAppClick({ cta_label: "cta_1" });
     expect(window.fbq).toHaveBeenCalledTimes(1); // Contact
@@ -92,7 +109,7 @@ describe("trackWhatsAppClick", () => {
 
   it("fires Contact again after the dedup window expires", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
-    localStorage.setItem("utm_campaign", "natal_2025");
+    sessionStorage.setItem("utm_campaign", "natal_2025");
     // Simula último Contact enviado há 5 horas
     localStorage.setItem("contact_dedup_ts", (Date.now() - 5 * 60 * 60 * 1000).toString());
     localStorage.setItem("contact_dedup_campaign", "natal_2025");
@@ -106,12 +123,12 @@ describe("trackWhatsAppClick", () => {
   it("fires Contact for a different campaign even within the dedup window", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
 
-    localStorage.setItem("utm_campaign", "natal_2025");
+    sessionStorage.setItem("utm_campaign", "natal_2025");
     trackWhatsAppClick({ cta_label: "cta_campanha_a" });
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
 
     // Campanha diferente → novo evento
-    localStorage.setItem("utm_campaign", "pascoa_2026");
+    sessionStorage.setItem("utm_campaign", "pascoa_2026");
     trackWhatsAppClick({ cta_label: "cta_campanha_b" });
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
     expect(window.fbq).toHaveBeenCalledTimes(2); // +1 Contact
