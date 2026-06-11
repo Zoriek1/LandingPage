@@ -3,8 +3,8 @@ import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { NAMORADOS_URL, WHATSAPP_URL } from "@/lib/config";
+import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
+import { NAMORADOS_URL } from "@/lib/config";
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
 
 const NAV_LINKS = [
@@ -105,11 +105,7 @@ const Navbar = () => {
               </a>
               <button
                 onClick={() => {
-                  openWhatsAppModal(WHATSAPP_URL, {
-                    cta_location: "navbar_mobile",
-                    cta_label: "falar_no_whatsapp",
-                    destination_url: WHATSAPP_URL,
-                  });
+                  openNamoradosWhatsApp("navbar_mobile", "falar_no_whatsapp");
                   setMobileOpen(false);
                 }}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"

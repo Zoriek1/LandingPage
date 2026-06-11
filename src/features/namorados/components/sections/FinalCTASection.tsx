@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { WHATSAPP_URL } from "@/lib/config";
+import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
 
 const FinalCTASection = () => (
   <section className="py-20 md:py-28 bg-primary relative overflow-hidden">
@@ -25,13 +24,7 @@ const FinalCTASection = () => (
         </p>
 
         <button
-          onClick={() =>
-            openWhatsAppModal(WHATSAPP_URL, {
-              cta_location: "final_cta",
-              cta_label: "encomendar_agora",
-              destination_url: WHATSAPP_URL,
-            })
-          }
+          onClick={() => openNamoradosWhatsApp("final_cta", "encomendar_agora")}
           className="inline-flex items-center justify-center gap-3 bg-accent text-accent-foreground px-8 py-4 rounded-2xl font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all shadow-xl shadow-black/30"
         >
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

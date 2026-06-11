@@ -1,8 +1,8 @@
 import { Instagram, Facebook, MessageCircle } from "lucide-react";
 import logo from "@/assets/logo.png";
 import { trackSiteClick } from "@/lib/tracking";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
+import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
+import { SITE_URL } from "@/lib/config";
 
 const Footer = () => (
   <footer className="bg-primary py-12 border-t border-primary-foreground/10">
@@ -17,13 +17,7 @@ const Footer = () => (
 
         <div className="flex items-center gap-4">
           <button
-            onClick={() =>
-              openWhatsAppModal(WHATSAPP_URL, {
-                cta_location: "footer",
-                cta_label: "icone_whatsapp",
-                destination_url: WHATSAPP_URL,
-              })
-            }
+            onClick={() => openNamoradosWhatsApp("footer", "icone_whatsapp")}
             className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
             aria-label="WhatsApp"
           >

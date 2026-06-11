@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import { Truck, Camera, MessageCircle } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
 import { trackSiteClick } from "@/lib/tracking";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { NAMORADOS_URL, WHATSAPP_URL } from "@/lib/config";
+import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
+import { NAMORADOS_URL } from "@/lib/config";
 
 // 12/06/2026 — sexta-feira
 const VALENTINES_DAY = new Date("2026-06-12T00:00:00-03:00").getTime();
@@ -79,7 +79,7 @@ const HeroSection = () => {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="mb-5 font-body text-sm font-semibold tracking-wide text-accent [text-shadow:0_6px_18px_rgba(0,0,0,0.45)] md:text-base"
           >
-            A partir de R$ 139,90 · Pix com 5% off · Cartão escrito à mão grátis
+            Agenda de entregas do dia 12/06 fechando · Pix 5% off · Cartão à mão grátis
           </motion.p>
 
           <motion.p
@@ -127,13 +127,7 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row gap-4 mb-8 md:mb-14"
           >
             <button
-              onClick={() =>
-                openWhatsAppModal(WHATSAPP_URL, {
-                  cta_location: "hero",
-                  cta_label: "pedir_pelo_whatsapp",
-                  destination_url: WHATSAPP_URL,
-                })
-              }
+              onClick={() => openNamoradosWhatsApp("hero", "pedir_pelo_whatsapp")}
               className="flex items-center justify-center gap-3 bg-accent text-accent-foreground px-7 py-3.5 rounded-2xl font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all text-center shadow-xl shadow-black/20"
             >
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { WHATSAPP_URL } from "@/lib/config";
+import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
 
 export default function WhatsAppFAB() {
   const [showTooltip, setShowTooltip] = useState(false);
@@ -37,11 +36,7 @@ export default function WhatsAppFAB() {
         <button
           aria-label="Encomendar pelo WhatsApp"
           onClick={() => {
-            openWhatsAppModal(WHATSAPP_URL, {
-              cta_location: "whatsapp_fab",
-              cta_label: "floating_button",
-              destination_url: WHATSAPP_URL,
-            });
+            openNamoradosWhatsApp("whatsapp_fab", "floating_button");
             setShowTooltip(false);
           }}
           onMouseEnter={() => setShowTooltip(true)}
