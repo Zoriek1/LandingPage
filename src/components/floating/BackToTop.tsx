@@ -8,7 +8,7 @@ export default function BackToTop() {
   return (
     <button
       onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className="fixed bottom-6 left-5 z-40 flex items-center justify-center w-10 h-10 bg-primary/80 backdrop-blur-sm text-primary-foreground rounded-full shadow-md hover:bg-primary transition-all"
+      className="fixed bottom-24 left-5 z-40 flex items-center justify-center w-10 h-10 bg-primary/80 backdrop-blur-sm text-primary-foreground rounded-full shadow-md hover:bg-primary transition-all md:bottom-6"
       aria-label="Voltar ao topo"
     >
       <svg

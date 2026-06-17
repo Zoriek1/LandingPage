@@ -11,7 +11,7 @@ export default function WhatsAppFAB() {
   }, []);
 
   return (
-    <div className="fixed bottom-6 right-5 z-50 flex items-center">
+    <div className="fixed bottom-6 right-5 z-50 hidden items-center md:flex">
       {/* Tooltip */}
       <div
         className={`relative mr-3 bg-white text-[#1a2e22] text-sm font-semibold px-3 py-2 rounded-xl shadow-md whitespace-nowrap transition-all duration-300 pointer-events-none select-none ${

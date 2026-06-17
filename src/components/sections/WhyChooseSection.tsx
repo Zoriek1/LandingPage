@@ -13,9 +13,9 @@ const points = [
 ];
 
 const WhyChooseSection = () => (
-  <section id="sobre" className="py-20 md:py-28 bg-background">
+  <section id="sobre" className="bg-background py-20 md:py-28">
     <div className="container">
-      <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+      <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           whileInView={{ opacity: 1, x: 0 }}
@@ -25,12 +25,12 @@ const WhyChooseSection = () => (
         >
           <img
             src={whyImg}
-            alt="Florista preparando arranjo"
-            className="w-full rounded shadow-2xl"
+            alt="Florista preparando arranjo na Plante Uma Flor"
+            className="w-full rounded-2xl shadow-2xl"
             loading="lazy"
             decoding="async"
           />
-          <div className="absolute -bottom-4 -right-4 w-24 h-24 border-2 border-accent rounded-br-lg" />
+          <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-2 border-accent" />
         </motion.div>
 
         <motion.div
@@ -39,18 +39,20 @@ const WhyChooseSection = () => (
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-primary mb-6">
+          <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+            Por que escolher
+          </span>
+          <h2 className="mb-6 font-display text-3xl font-semibold text-primary md:text-4xl">
             Por que escolher a Plante Uma Flor?
           </h2>
-          <p className="font-body text-muted-foreground mb-8 leading-relaxed">
-            Somos apaixonados por transformar sentimentos em arranjos. Cada flor é escolhida a dedo para 
-            criar composições que emocionam e surpreendem, com a qualidade e o cuidado que você merece.
+          <p className="mb-8 font-body leading-relaxed text-muted-foreground">
+            Somos apaixonados por transformar sentimentos em arranjos. Cada flor é escolhida a dedo para criar composições que emocionam e surpreendem, com a qualidade e o cuidado que você merece.
           </p>
 
-          <ul className="space-y-4 mb-10">
+          <ul className="mb-10 space-y-4">
             {points.map((p) => (
               <li key={p} className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="mt-0.5 flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-accent/20">
                   <Check size={14} className="text-accent" />
                 </div>
                 <span className="font-body text-foreground">{p}</span>
@@ -69,7 +71,7 @@ const WhyChooseSection = () => (
                 destination_url: CATALOG_URL,
               })
             }
-            className="inline-block bg-accent text-accent-foreground px-8 py-4 rounded font-body text-sm font-semibold tracking-widest uppercase hover:brightness-110 transition-all"
+            className="inline-block rounded-2xl bg-accent px-8 py-4 font-body text-sm font-semibold uppercase tracking-widest text-accent-foreground shadow-lg transition-all hover:brightness-110"
           >
             Conheça Nosso Catálogo
           </a>

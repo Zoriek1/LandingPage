@@ -2,11 +2,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Truck, Camera, MessageCircle } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
-import { trackSiteClick } from "@/lib/tracking";
 import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
-import { NAMORADOS_URL } from "@/lib/config";
 
-// 12/06/2026 — sexta-feira
+// 12/06/2026 (sexta-feira)
 const VALENTINES_DAY = new Date("2026-06-12T00:00:00-03:00").getTime();
 
 const badges = [
@@ -135,21 +133,6 @@ const HeroSection = () => {
               </svg>
               Encomendar pelo WhatsApp
             </button>
-            <a
-              href={NAMORADOS_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() =>
-                trackSiteClick({
-                  cta_location: "hero",
-                  cta_label: "ver_catalogo",
-                  destination_url: NAMORADOS_URL,
-                })
-              }
-              className="flex items-center justify-center border border-primary-foreground/55 bg-primary/22 text-primary-foreground px-5 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase hover:bg-primary/34 transition-all text-center backdrop-blur-sm shadow-lg shadow-black/10"
-            >
-              Ver Catálogo
-            </a>
           </motion.div>
 
           <motion.div

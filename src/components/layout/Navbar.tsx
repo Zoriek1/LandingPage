@@ -51,7 +51,7 @@ const Navbar = () => {
                 destination_url: CATALOG_URL,
               })
             }
-            className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all"
+            className="bg-accent text-accent-foreground px-6 py-2.5 rounded-xl font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all"
           >
             Ver Site
           </a>
@@ -98,7 +98,7 @@ const Navbar = () => {
                     destination_url: CATALOG_URL,
                   })
                 }
-                className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
+                className="bg-accent text-accent-foreground px-6 py-3 rounded-xl font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
               >
                 Ver Site
               </a>
@@ -111,7 +111,7 @@ const Navbar = () => {
                   });
                   setMobileOpen(false);
                 }}
-                className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
+                className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded-xl font-body text-sm font-medium tracking-wide uppercase text-center"
               >
                 Falar no WhatsApp
               </button>

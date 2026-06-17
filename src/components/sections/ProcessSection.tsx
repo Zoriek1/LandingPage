@@ -1,30 +1,33 @@
 import { motion } from "framer-motion";
-import { Search, CreditCard, Heart } from "lucide-react";
+import { Search, MessageCircle, Heart } from "lucide-react";
 
 const steps = [
-  { icon: Search, num: "01", title: "Escolha no Site", desc: "Navegue pelo nosso catálogo e encontre o arranjo perfeito." },
-  { icon: CreditCard, num: "02", title: "Finalize seu Pedido", desc: "Compra rápida e segura com diversas formas de pagamento." },
-  { icon: Heart, num: "03", title: "Encante quem Você Ama", desc: "Entregamos com cuidado para surpreender quem importa." },
+  { icon: Search, num: "01", title: "Escolha no Catálogo", desc: "Navegue pelo nosso catálogo e encontre o arranjo perfeito." },
+  { icon: MessageCircle, num: "02", title: "Encomende no WhatsApp", desc: "Confirme data, endereço e mensagem do cartão. A gente cuida do resto." },
+  { icon: Heart, num: "03", title: "Encante quem Você Ama", desc: "Mandamos foto do arranjo pronto antes de sair pra entrega." },
 ];
 
 const ProcessSection = () => (
-  <section className="py-20 md:py-28 bg-background">
+  <section className="bg-background py-20 md:py-28">
     <div className="container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-14 text-center md:mb-16"
       >
-        <h2 className="font-display text-3xl md:text-4xl font-semibold text-primary mb-4">
+        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
           Como Funciona
+        </span>
+        <h2 className="mb-4 font-display text-3xl font-semibold text-primary md:text-4xl">
+          Três passos simples
         </h2>
-        <p className="font-body text-muted-foreground max-w-md mx-auto">
-          Três passos simples para presentear com flores especiais.
+        <p className="mx-auto max-w-md font-body text-muted-foreground">
+          Do catálogo à entrega, sem complicação.
         </p>
       </motion.div>
 
-      <div className="grid md:grid-cols-3 gap-8 md:gap-12 max-w-4xl mx-auto">
+      <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-3 md:gap-12">
         {steps.map((s, i) => (
           <motion.div
             key={s.title}
@@ -32,14 +35,14 @@ const ProcessSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.15 }}
-            className="text-center relative"
+            className="relative text-center"
           >
-            <div className="text-accent/20 font-display text-7xl font-bold mb-2">{s.num}</div>
-            <div className="w-16 h-16 rounded-full bg-accent/10 flex items-center justify-center mx-auto mb-4 -mt-10 relative z-10">
+            <div className="mb-2 font-display text-7xl font-bold text-accent/20">{s.num}</div>
+            <div className="relative z-10 mx-auto -mt-10 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
               <s.icon size={28} className="text-accent" />
             </div>
-            <h3 className="font-display text-xl font-semibold text-primary mb-2">{s.title}</h3>
-            <p className="font-body text-sm text-muted-foreground leading-relaxed">{s.desc}</p>
+            <h3 className="mb-2 font-display text-xl font-semibold text-primary">{s.title}</h3>
+            <p className="font-body text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
           </motion.div>
         ))}
       </div>

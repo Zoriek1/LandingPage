@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import catBuques from "@/assets/cat-buques.jpg";
 import catPresentes from "@/assets/cat-presentes.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
@@ -16,23 +17,26 @@ const categories = [
 ];
 
 const CategoriesSection = () => (
-  <section id="categorias" className="py-20 md:py-28 bg-secondary/30">
+  <section id="categorias" className="bg-secondary/30 py-20 md:py-28">
     <div className="container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
-        className="text-center mb-16"
+        className="mb-14 text-center md:mb-16"
       >
-        <h2 className="font-display text-3xl md:text-4xl font-semibold text-primary mb-4">
+        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
           Nossas Categorias
+        </span>
+        <h2 className="mb-4 font-display text-3xl font-semibold text-primary md:text-4xl">
+          Para cada momento, o arranjo certo
         </h2>
-        <p className="font-body text-muted-foreground max-w-md mx-auto">
-          Encontre o arranjo perfeito para cada momento especial.
+        <p className="mx-auto max-w-md font-body text-muted-foreground">
+          Explore o catálogo e encontre o presente perfeito.
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
         {categories.map((cat, i) => (
           <motion.a
             key={cat.title}
@@ -50,22 +54,23 @@ const CategoriesSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
-            className={`group relative overflow-hidden rounded aspect-[4/5] ${cat.span}`}
+            className={`group relative aspect-[4/5] overflow-hidden rounded-2xl ${cat.span}`}
           >
             <img
               src={cat.img}
               alt={cat.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/25 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
-              <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2">
+              <h3 className="mb-2 font-display text-xl font-semibold text-primary-foreground md:text-2xl">
                 {cat.title}
               </h3>
-              <span className="inline-block bg-white/20 backdrop-blur-sm border border-white/30 text-white text-xs font-semibold uppercase tracking-wider px-3 py-1.5 rounded-full group-hover:bg-white/35 transition-colors">
-                Ver no site →
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm transition-colors group-hover:bg-white/35">
+                Ver no site
+                <ArrowUpRight size={14} />
               </span>
             </div>
           </motion.a>
