@@ -91,7 +91,7 @@ describe("ad landing pages", () => {
     const card = screen.getByTestId("product-card-buque-6-rosas") as HTMLAnchorElement;
     expect(card).toHaveAttribute("href", "https://wa.me/5562996503403");
     expect(card).toHaveTextContent("Buquê Clássico de Rosas Vermelhas");
-    expect(card).toHaveTextContent("R$ 325,90");
+    expect(card).toHaveTextContent("R$ 249,90");
 
     fireEvent.click(card);
 
@@ -103,10 +103,10 @@ describe("ad landing pages", () => {
         cta_label: "produto_whatsapp",
         product_id: "buque-6-rosas",
         product_name: "Buquê Clássico de Rosas Vermelhas",
-        product_price: "R$ 325,90",
+        product_price: "R$ 249,90",
         delivery_intent: "entrega hoje em Goiania",
       }),
-      expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 325,90"),
+      expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 249,90"),
       "pagina=urgencia",
     );
   });

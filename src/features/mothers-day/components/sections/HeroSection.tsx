@@ -77,7 +77,7 @@ const HeroSection = () => {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="mb-5 font-body text-sm font-semibold tracking-wide text-accent [text-shadow:0_6px_18px_rgba(0,0,0,0.4)] md:text-base"
           >
-            A partir de R$ 124,90 · Pix com 5% off
+            A partir de R$ 99,90 · Pix com 5% off
           </motion.p>
 
           <motion.p
