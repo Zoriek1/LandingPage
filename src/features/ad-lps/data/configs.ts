@@ -850,6 +850,172 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     pageDescription:
       "Buquês memoráveis entregues hoje em Goiânia. A partir de R$ 229,90, com embalagem artesanal e cartão escrito à mão por conta da casa.",
   },
+  "presente-hoje": {
+    slug: "presente-hoje",
+    accent: "urgent",
+    heroImage: "/lpb/heros/presente-hoje.jpg",
+    heroImageAlt: "Buquê pronto para presente com embalagem artesanal",
+    heroMode: "overlay",
+    headline: "Presente bonito para entregar hoje.",
+    subheadline:
+      "Você escolhe uma opção pronta, manda o recado do cartão e a gente entrega em Goiânia ainda hoje para pedidos fechados até 16h.",
+    priceAnchor: "Entrega hoje em Goiânia",
+    scarcityMessage: "Pedido até 16h sai hoje",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Escolher presente de hoje",
+      como_funciona: "Ver opções disponíveis",
+      faq: "Confirmar entrega hoje",
+      sticky: "Pedir para hoje",
+      final: "Quero entregar hoje",
+      guarantee: "Ver detalhes da garantia",
+    },
+    testimonialOrder: ["taina", "rafaella", "sheila"],
+    vitrineTitle: "Presentes para hoje",
+    vitrineSubtitle: "Opções com boa presença, embalagem caprichada e entrega rápida.",
+    vitrineProductIds: [
+      "arranjo-3-rosas",
+      "girassol-unitario",
+      "arranjo-lirios-p",
+      "buque-6-rosas",
+      "buque-flor-campo-m",
+      "buque-12-rosas-vermelhas",
+      "buque-lirios-m",
+      "box-rosas",
+    ],
+    vitrineHighlightId: "buque-6-rosas",
+    faq: [
+      {
+        question: "Consigo resolver tudo ainda hoje?",
+        answer:
+          "Consegue. Você chama no WhatsApp, escolhe uma opção disponível, manda o texto do cartão e a gente confirma a janela de entrega em poucos minutos.",
+      },
+      {
+        question: "Vocês ajudam a escolher se eu estiver em dúvida?",
+        answer:
+          "Ajudamos sim. Diz pra quem é o presente, o orçamento e o bairro da entrega que a gente indica as melhores opções do dia.",
+      },
+      {
+        question: "O presente já vai pronto para entregar?",
+        answer:
+          "Vai sim. Montamos com embalagem artesanal, cartão escrito à mão e enviamos foto real antes de sair da loja.",
+      },
+    ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    pageTitle: "Presente com flores para entregar hoje em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Presentes com flores para entregar hoje em Goiânia. Buquês e arranjos com embalagem caprichada, cartão escrito à mão e foto antes da entrega.",
+  },
+  "tradicao-comprovacao": {
+    slug: "tradicao-comprovacao",
+    accent: "classic",
+    heroImage: "/lpb/heros/tradicao-comprovacao.jpg",
+    heroImageAlt: "Fachada da Plante Uma Flor em Goiânia",
+    heroMode: "overlay",
+    headline: "Floricultura tradicional, com prova antes da entrega.",
+    subheadline:
+      "São 40 anos em Goiânia, avaliação 4.9 no Google e foto real do arranjo antes de sair da loja. Você compra sabendo exatamente o que vai chegar.",
+    priceAnchor: "40 anos em Goiânia",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Falar com a floricultura",
+      como_funciona: "Ver como funciona",
+      faq: "Tirar dúvida no WhatsApp",
+      sticky: "Falar agora",
+      final: "Quero comprar com segurança",
+      guarantee: "Ver detalhes da garantia",
+    },
+    testimonialOrder: ["sheila", "rafaella", "taina"],
+    vitrineTitle: "Mais pedidos da floricultura",
+    vitrineSubtitle: "Escolhas frequentes de quem quer acertar sem depender só de foto bonita.",
+    vitrineProductIds: [
+      "buque-6-rosas",
+      "buque-12-rosas-vermelhas",
+      "arranjo-mao-lirios",
+      "buque-flor-campo-m",
+      "buque-12-rosas-rosa",
+      "buque-lirios-m",
+      "box-rosas",
+      "buque-24-rosas",
+    ],
+    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    faq: [
+      {
+        question: "Como eu sei que o buquê vai ficar bonito?",
+        answer:
+          "Antes da entrega, mandamos a foto real do arranjo pronto pelo WhatsApp. Se algum detalhe não estiver como combinado, a gente ajusta antes de sair.",
+      },
+      {
+        question: "A loja existe mesmo em Goiânia?",
+        answer:
+          "Sim. A Plante Uma Flor tem loja física em Goiânia e uma história familiar de 40 anos trabalhando com flores.",
+      },
+      {
+        question: "As avaliações são de clientes reais?",
+        answer:
+          "São avaliações públicas no Google. A página mostra depoimentos de clientes que compraram e avaliaram a experiência.",
+      },
+    ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    pageTitle: "Floricultura tradicional em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Floricultura tradicional em Goiânia há 40 anos. Buquês com foto real antes da entrega, avaliação 4.9 no Google e atendimento pelo WhatsApp.",
+  },
+  "sem-erro": {
+    slug: "sem-erro",
+    accent: "rose",
+    heroImage: "/lpb/heros/sem-erro.jpg",
+    heroImageAlt: "Buquê clássico de rosas para presente",
+    heroMode: "standalone",
+    headline: "Na dúvida, escolha o presente que não tem erro.",
+    subheadline:
+      "Se você quer acertar sem conhecer todos os gostos da pessoa, comece pelos buquês mais pedidos: rosas, lírios e flores do campo com cartão escrito à mão.",
+    priceAnchor: "Escolhas mais seguras",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Me ajuda a escolher",
+      como_funciona: "Ver opções certeiras",
+      faq: "Pedir indicação",
+      sticky: "Escolher agora",
+      final: "Quero uma opção sem erro",
+      guarantee: "Ver detalhes da garantia",
+    },
+    testimonialOrder: ["rafaella", "taina", "sheila"],
+    vitrineTitle: "Presentes que costumam acertar",
+    vitrineSubtitle: "Clássicos com boa presença, preço claro e acabamento de presente.",
+    vitrineProductIds: [
+      "arranjo-3-rosas",
+      "buque-6-rosas",
+      "buque-12-rosas-rosa",
+      "buque-12-rosas-vermelhas",
+      "arranjo-mao-lirios",
+      "buque-flor-campo-m",
+      "buque-lirios",
+      "box-rosas",
+    ],
+    vitrineHighlightId: "buque-6-rosas",
+    faq: [
+      {
+        question: "Qual opção é mais segura para presentear?",
+        answer:
+          "Rosas são o clássico mais seguro. Se a pessoa gosta de algo mais marcante, lírios funcionam muito bem. Se prefere algo alegre e leve, flor do campo e girassol são ótimas opções.",
+      },
+      {
+        question: "Dá pra escolher por orçamento?",
+        answer:
+          "Dá sim. Você fala o valor que quer investir e a gente mostra as melhores opções disponíveis dentro dessa faixa.",
+      },
+      {
+        question: "E se eu não souber o que escrever no cartão?",
+        answer:
+          "A gente te ajuda com uma mensagem simples e bonita. Depois escrevemos à mão e enviamos junto com o presente.",
+      },
+    ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    pageTitle: "Flores para presente sem erro em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Flores para presente sem erro em Goiânia. Buquês clássicos, cartão escrito à mão, foto antes da entrega e ajuda pelo WhatsApp para escolher.",
+  },
   "qual-b": {
     slug: "qual-b",
     accent: "sun",

@@ -47,6 +47,21 @@ const AD_LP_CONTEXT: Record<string, { pageLabel: string; deliveryIntent: string;
     deliveryIntent: "entrega de buque premium com data combinada",
     request: "Quero escolher um buque premium e confirmar disponibilidade.",
   },
+  "presente-hoje": {
+    pageLabel: "presente com flores para hoje",
+    deliveryIntent: "entrega hoje em Goiania",
+    request: "Quero escolher um presente com flores para entregar hoje em Goiania.",
+  },
+  "tradicao-comprovacao": {
+    pageLabel: "floricultura tradicional com prova antes da entrega",
+    deliveryIntent: "entrega em Goiania com foto antes do envio",
+    request: "Quero comprar com seguranca e ver as opcoes disponiveis da floricultura.",
+  },
+  "sem-erro": {
+    pageLabel: "flores para presente sem erro",
+    deliveryIntent: "presente recomendado com entrega combinada",
+    request: "Quero ajuda para escolher uma opcao de presente sem erro.",
+  },
   "qual-b": {
     pageLabel: "flores do campo e girassol",
     deliveryIntent: "entrega de flores do campo com data combinada",
