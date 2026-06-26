@@ -52,59 +52,62 @@ describe("ad landing pages", () => {
     expect(openWhatsAppModal).toHaveBeenCalledTimes(3);
     expect(openWhatsAppModal).toHaveBeenNthCalledWith(
       1,
-      "https://wa.me/5562996503403",
+      "https://wa.me/+5562996503403",
       expect.objectContaining({
         lp_slug: "urgencia",
         cta_location: "hero",
         cta_label: "hero_whatsapp",
       }),
+      expect.stringContaining("entregar ainda hoje"),
+      "pagina=urgencia",
     );
     expect(openWhatsAppModal).toHaveBeenNthCalledWith(
       2,
-      "https://wa.me/5562996503403",
+      "https://wa.me/+5562996503403",
       expect.objectContaining({
         lp_slug: "urgencia",
         cta_location: "faq",
         cta_label: "faq_whatsapp",
       }),
+      expect.stringContaining("entregar ainda hoje"),
+      "pagina=urgencia",
     );
     expect(openWhatsAppModal).toHaveBeenNthCalledWith(
       3,
-      "https://wa.me/5562996503403",
+      "https://wa.me/+5562996503403",
       expect.objectContaining({
         lp_slug: "urgencia",
         cta_location: "sticky",
         cta_label: "sticky_whatsapp",
       }),
+      expect.stringContaining("entregar ainda hoje"),
+      "pagina=urgencia",
     );
   });
 
-  it("links vitrine product cards to the storefront and tracks the click", () => {
+  it("opens WhatsApp from vitrine product cards with product context", () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
     const card = screen.getByTestId("product-card-buque-6-rosas") as HTMLAnchorElement;
-    expect(card).toHaveAttribute(
-      "href",
-      "https://www.planteumaflor.com/produtos/buque-classico-rosas?utm_content=ad-criativo-01",
-    );
+    expect(card).toHaveAttribute("href", "https://wa.me/5562996503403");
     expect(card).toHaveTextContent("Buquê Clássico de Rosas Vermelhas");
-    expect(card).toHaveTextContent("R$ 249,90");
+    expect(card).toHaveTextContent("R$ 325,90");
 
     fireEvent.click(card);
 
-    expect(openWhatsAppModal).not.toHaveBeenCalled();
-    expect(window.dataLayer).toContainEqual(
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
       expect.objectContaining({
-        event: "ad_lp_product_click",
         lp_slug: "urgencia",
         cta_location: "vitrine",
-        cta_label: "produto_site",
+        cta_label: "produto_whatsapp",
         product_id: "buque-6-rosas",
         product_name: "Buquê Clássico de Rosas Vermelhas",
-        product_price: "R$ 249,90",
-        destination_url:
-          "https://www.planteumaflor.com/produtos/buque-classico-rosas?utm_content=ad-criativo-01",
+        product_price: "R$ 325,90",
+        delivery_intent: "entrega hoje em Goiania",
       }),
+      expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 325,90"),
+      "pagina=urgencia",
     );
   });
 

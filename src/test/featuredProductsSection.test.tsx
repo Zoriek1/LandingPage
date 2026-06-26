@@ -4,17 +4,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import FeaturedProductsSection from "@/features/mothers-day/components/sections/FeaturedProductsSection";
 import snapshot from "@/features/mothers-day/data/featured-products.snapshot.json";
 
-const { trackSiteClick } = vi.hoisted(() => ({
-  trackSiteClick: vi.fn(),
+const { openWhatsAppModal } = vi.hoisted(() => ({
+  openWhatsAppModal: vi.fn(),
 }));
 
-vi.mock("@/lib/tracking", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/tracking")>("@/lib/tracking");
-  return {
-    ...actual,
-    trackSiteClick,
-  };
-});
+vi.mock("@/lib/whatsappModal", () => ({
+  openWhatsAppModal,
+}));
 
 vi.mock("framer-motion", () => {
   const createMotionComponent =
@@ -70,7 +66,7 @@ describe("FeaturedProductsSection", () => {
     expect(screen.getByText(snapshot[0].priceLabel)).toBeInTheDocument();
   });
 
-  it("tracks the click when a curated product is opened", async () => {
+  it("opens WhatsApp with product context when a curated product is clicked", async () => {
     render(<FeaturedProductsSection />);
 
     const productLink = await screen.findByRole("link", {
@@ -79,14 +75,19 @@ describe("FeaturedProductsSection", () => {
 
     fireEvent.click(productLink);
 
-    expect(trackSiteClick).toHaveBeenCalledWith(
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
       expect.objectContaining({
+        lp_slug: "dia-das-maes",
         cta_location: "featured_products",
-        cta_label: "open_product",
-        destination_url: snapshot[0].url,
+        cta_label: "produto_whatsapp",
+        product_id: snapshot[0].slug,
         product_name: snapshot[0].title,
         product_price: snapshot[0].priceLabel,
+        delivery_intent: "entrega na data combinada",
       }),
+      expect.stringContaining(snapshot[0].title + " - " + snapshot[0].priceLabel),
+      "pagina=dia-das-maes",
     );
   });
 });

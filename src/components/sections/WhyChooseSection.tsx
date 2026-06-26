@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import whyImg from "@/assets/why-choose.jpg";
-import { trackSiteClick } from "@/lib/tracking";
-import { CATALOG_URL } from "@/lib/config";
+import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 
 const points = [
   "Atendimento cuidadoso e personalizado",
@@ -60,21 +59,21 @@ const WhyChooseSection = () => (
             ))}
           </ul>
 
-          <a
-            href={CATALOG_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
             onClick={() =>
-              trackSiteClick({
-                cta_location: "why_choose",
-                cta_label: "conheca_nosso_catalogo",
-                destination_url: CATALOG_URL,
+              openGuidedWhatsApp({
+                pageSlug: "home",
+                pageLabel: "buques",
+                ctaLocation: "why_choose",
+                ctaLabel: "ajuda_escolher",
+                request: "Pode me ajudar a escolher o buque ideal por faixa de preco e ocasiao?",
               })
             }
             className="inline-block rounded-2xl bg-accent px-8 py-4 font-body text-sm font-semibold uppercase tracking-widest text-accent-foreground shadow-lg transition-all hover:brightness-110"
           >
-            Conheça Nosso Catálogo
-          </a>
+            Quero ajuda para escolher
+          </button>
         </motion.div>
       </div>
     </div>

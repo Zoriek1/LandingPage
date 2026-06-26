@@ -16,6 +16,7 @@ export const isFeaturedProduct = (value: unknown): value is FeaturedProduct => {
   }
 
   const pixPriceLabel = value.pixPriceLabel;
+  const waText = value.waText;
 
   return (
     isNonEmptyString(value.slug) &&
@@ -23,7 +24,8 @@ export const isFeaturedProduct = (value: unknown): value is FeaturedProduct => {
     isNonEmptyString(value.url) &&
     typeof value.imageUrl === "string" &&
     isNonEmptyString(value.priceLabel) &&
-    (pixPriceLabel === undefined || isNonEmptyString(pixPriceLabel))
+    (pixPriceLabel === undefined || isNonEmptyString(pixPriceLabel)) &&
+    (waText === undefined || isNonEmptyString(waText))
   );
 };
 

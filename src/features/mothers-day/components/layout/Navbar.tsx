@@ -2,16 +2,34 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
-import { trackSiteClick } from "@/lib/tracking";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
-import { MOTHERS_DAY_URL, WHATSAPP_URL } from "@/lib/config";
+import { WHATSAPP_URL } from "@/lib/config";
+import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
 
 const NAV_LINKS = [
-  { label: "Categorias", href: "#categorias" },
-  { label: "Depoimentos", href: "#depoimentos" },
-  { label: "FAQ", href: "#faq" },
+  {
+    "label": "Categorias",
+    "href": "#categorias"
+  },
+  {
+    "label": "Depoimentos",
+    "href": "#depoimentos"
+  },
+  {
+    "label": "FAQ",
+    "href": "#faq"
+  }
 ];
+
+const openGuidedChoice = (location: string) =>
+  openGuidedWhatsApp({
+    pageSlug: "dia-das-maes",
+    pageLabel: "Dia das Maes",
+    ctaLocation: location,
+    ctaLabel: "ajuda_escolher",
+    request: "Pode me ajudar a escolher por estilo, faixa de preco e data de entrega?",
+  });
 
 const Navbar = () => {
   const scrolled = useScrollThreshold(40);
@@ -30,7 +48,6 @@ const Navbar = () => {
           <img src={logo} alt="Plante Uma Flor" className="h-12 md:h-14 w-auto" />
         </a>
 
-        {/* Desktop */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) => (
             <a
@@ -41,24 +58,15 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <a
-            href={MOTHERS_DAY_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() =>
-              trackSiteClick({
-                cta_location: "navbar_desktop",
-                cta_label: "ver_catalogo",
-                destination_url: MOTHERS_DAY_URL,
-              })
-            }
+          <button
+            type="button"
+            onClick={() => openGuidedChoice("navbar_desktop")}
             className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all shadow-lg shadow-black/20"
           >
-            Ver Catálogo
-          </a>
+            Me ajude a escolher
+          </button>
         </div>
 
-        {/* Mobile toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden text-primary-foreground p-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]"
@@ -68,7 +76,6 @@ const Navbar = () => {
         </button>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -88,21 +95,16 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <a
-                href={MOTHERS_DAY_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackSiteClick({
-                    cta_location: "navbar_mobile",
-                    cta_label: "ver_catalogo",
-                    destination_url: MOTHERS_DAY_URL,
-                  })
-                }
+              <button
+                type="button"
+                onClick={() => {
+                  openGuidedChoice("navbar_mobile");
+                  setMobileOpen(false);
+                }}
                 className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
               >
-                Ver Catálogo
-              </a>
+                Me ajude a escolher
+              </button>
               <button
                 onClick={() => {
                   openWhatsAppModal(WHATSAPP_URL, {
@@ -114,7 +116,7 @@ const Navbar = () => {
                 }}
                 className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
               >
-                Encomendar pelo WhatsApp
+                Falar no WhatsApp
               </button>
             </div>
           </motion.div>

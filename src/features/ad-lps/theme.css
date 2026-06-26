@@ -690,7 +690,9 @@
 }
 
 .ad-lp-footer p {
-  margin: 0.22rem 0;
+  margin: 0.22rem auto;
+  max-width: 860px;
+  line-height: 1.55;
 }
 
 .ad-lp-nav {
@@ -1194,6 +1196,19 @@
 
 .ad-lp-guarantee__cta {
   margin-top: 0.6rem;
+}
+
+.ad-lp-guarantee__link {
+  appearance: none;
+  padding: 0.72rem 1.15rem;
+  color: var(--ad-brand);
+  background: transparent;
+  border: 1px solid rgba(23, 59, 42, 0.26);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .ad-lp-proof__hero {

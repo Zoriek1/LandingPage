@@ -20,23 +20,22 @@ const GuaranteeSection = () => (
           Garantia Plante Uma Flor
         </span>
         <h2 className="mb-4 max-w-xl font-display text-2xl font-semibold text-primary md:text-3xl">
-          Se você não gostou, a gente resolve no mesmo dia.
+          Você aprova a foto antes da entrega.
         </h2>
         <p className="mb-9 max-w-xl font-body text-sm leading-7 text-muted-foreground md:text-base">
-          Recebeu e não ficou exatamente do jeito que imaginou? Sem letra miúda: refazemos o buquê,
-          trocamos a flor ou devolvemos o valor. Em até 24 horas, direto pelo WhatsApp.
+          Antes de sair da loja, mandamos a foto real do arranjo pronto. Se algo não sair como combinado, resolvemos no mesmo dia pelo WhatsApp.
         </p>
         <button
           onClick={() =>
             openWhatsAppModal(WHATSAPP_URL, {
               cta_location: "guarantee",
-              cta_label: "falar_com_atendente",
+              cta_label: "ver_detalhes_garantia",
               destination_url: WHATSAPP_URL,
             })
           }
-          className="inline-flex items-center justify-center rounded-2xl bg-accent px-8 py-4 font-body text-sm font-semibold uppercase tracking-wide text-accent-foreground shadow-lg transition-all hover:brightness-110"
+          className="inline-flex items-center justify-center rounded-2xl border border-primary/20 bg-transparent px-8 py-4 font-body text-sm font-semibold uppercase tracking-wide text-primary transition-all hover:bg-primary hover:text-primary-foreground"
         >
-          Falar com o atendente agora
+          Ver detalhes da garantia
         </button>
       </motion.div>
     </div>

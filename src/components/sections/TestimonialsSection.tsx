@@ -148,7 +148,7 @@ const TestimonialsSection = () => {
                     {review.authorName}
                   </span>
                   <span className="block font-body text-xs text-primary-foreground/50">
-                    {review.relativeTime || review.reviewCountLabel || "Avaliação no Google"}
+                    {review.reviewCountLabel || "Avaliação publica no Google"}
                   </span>
                 </span>
               </figcaption>

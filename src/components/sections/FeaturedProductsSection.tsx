@@ -14,8 +14,8 @@ import {
 } from "@/components/ui/carousel";
 import { useFeaturedProducts } from "@/hooks/useFeaturedProducts";
 import type { FeaturedProduct } from "@/types/featured-product";
-import { CATALOG_URL } from "@/lib/config";
-import { trackSiteClick } from "@/lib/tracking";
+import { WHATSAPP_URL } from "@/lib/config";
+import { openGuidedWhatsApp, openProductWhatsApp } from "@/lib/landing-whatsapp";
 
 const fallbackImages = [catBuques, catCestas, catPlantas, heroImg];
 
@@ -43,36 +43,32 @@ const FeaturedProductsSection = () => {
               Mais pedidos da semana
             </span>
             <h2 className="font-display text-3xl font-semibold text-primary md:text-4xl">
-              Os buquês que mais saem em Goiânia
+              Os buques que mais saem em Goiania
             </h2>
             <p className="mt-3 max-w-xl font-body text-sm leading-7 text-muted-foreground md:text-base">
-              Foto, preço e link prontos pra você escolher e encomendar pelo WhatsApp em minutos.
+              Foto e preco prontos para voce escolher e encomendar pelo WhatsApp em minutos.
             </p>
           </div>
 
           <div className="flex items-center gap-3 text-sm text-muted-foreground">
             <span className="font-body">
-              {isRefreshing ? "Atualizando a vitrine da loja..." : "Preços direto da loja."}
+              {isRefreshing ? "Atualizando a vitrine da loja..." : "Precos direto da loja."}
             </span>
             <Button
-              asChild
+              type="button"
               variant="outline"
+              onClick={() =>
+                openGuidedWhatsApp({
+                  pageSlug: "home",
+                  pageLabel: "buques",
+                  ctaLocation: "featured_products_header",
+                  ctaLabel: "ajuda_escolher",
+                  request: "Pode me ajudar a escolher por faixa de preco e ocasiao?",
+                })
+              }
               className="rounded-full border-primary/15 bg-transparent px-4 text-primary hover:bg-primary hover:text-primary-foreground"
             >
-              <a
-                href={CATALOG_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() =>
-                  trackSiteClick({
-                    cta_location: "featured_products_header",
-                    cta_label: "open_catalog",
-                    destination_url: CATALOG_URL,
-                  })
-                }
-              >
-                Ver catálogo completo
-              </a>
+              Me ajude a escolher
             </Button>
           </div>
         </motion.div>
@@ -97,18 +93,19 @@ const FeaturedProductsSection = () => {
                   className="pl-3 sm:basis-[58%] md:pl-5 lg:basis-[40%] xl:basis-[32%]"
                 >
                   <a
-                    href={product.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() =>
-                      trackSiteClick({
-                        cta_location: "featured_products",
-                        cta_label: "open_product",
-                        destination_url: product.url,
-                        product_name: product.title,
-                        product_price: product.priceLabel,
-                      })
-                    }
+                    href={WHATSAPP_URL}
+                    onClick={(event) => {
+                      event.preventDefault();
+                      openProductWhatsApp({
+                        pageSlug: "home",
+                        pageLabel: "buques",
+                        ctaLocation: "featured_products",
+                        productId: product.slug,
+                        productName: product.title,
+                        productPrice: product.priceLabel,
+                        deliveryIntent: "entrega hoje ou agendada",
+                      });
+                    }}
                     className="group block h-full overflow-hidden rounded-[28px] border border-[#1a231d]/12 bg-[#f6f3eb] shadow-[0_24px_60px_rgba(15,27,22,0.08)] transition-transform duration-500 hover:-translate-y-1"
                   >
                     <div className="relative aspect-[4/5] overflow-hidden">
@@ -136,7 +133,7 @@ const FeaturedProductsSection = () => {
                       <div className="mt-3 flex flex-wrap items-end gap-x-4 gap-y-2">
                         <div>
                           <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#1a231d]/70">
-                            Preço no site
+                            Preco
                           </p>
                           <p className="font-body text-[1.66rem] font-semibold leading-none text-[#121915] md:text-[1.85rem]">
                             {product.priceLabel}
@@ -162,7 +159,7 @@ const FeaturedProductsSection = () => {
                   className="bottom-3 left-3 top-auto hidden border-white/15 bg-[#0e1813]/72 text-white hover:bg-[#0e1813] hover:text-white lg:flex"
                 />
                 <CarouselNext
-                  aria-label="Próximo produto"
+                  aria-label="Proximo produto"
                   className="bottom-3 right-3 top-auto hidden border-white/15 bg-[#0e1813]/72 text-white hover:bg-[#0e1813] hover:text-white lg:flex"
                 />
               </>

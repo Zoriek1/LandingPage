@@ -37,6 +37,14 @@ const OurStorySection = () => (
             decoding="async"
           />
           <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-2 border-accent" />
+          <div className="absolute bottom-4 left-4 max-w-[78%] rounded-xl bg-primary/86 px-4 py-3 text-primary-foreground shadow-xl backdrop-blur-sm">
+            <p className="font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-accent">
+              Loja fisica em Goiania
+            </p>
+            <p className="mt-1 font-body text-sm leading-5 text-primary-foreground/86">
+              Floricultura tradicional ha 40 anos, com atendimento local e entrega propria.
+            </p>
+          </div>
         </motion.div>
 
         <motion.div

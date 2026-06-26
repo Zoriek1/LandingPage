@@ -30,18 +30,20 @@ const sanitizeFeaturedProduct = (product) => ({
   imageUrl: String(product.imageUrl ?? "").trim(),
   priceLabel: String(product.priceLabel ?? "").trim(),
   ...(product.pixPriceLabel ? { pixPriceLabel: String(product.pixPriceLabel).trim() } : {}),
+  ...(product.waText ? { waText: String(product.waText).trim() } : {}),
 });
 
 const mergeWithFallback = (product, fallbackProduct) =>
   sanitizeFeaturedProduct({
-    ...product,
     ...fallbackProduct,
-    slug: fallbackProduct?.slug || product.slug,
-    title: fallbackProduct?.title || product.title,
-    url: fallbackProduct?.url || product.url,
-    imageUrl: fallbackProduct?.imageUrl || product.imageUrl,
-    priceLabel: fallbackProduct?.priceLabel || product.priceLabel,
-    pixPriceLabel: fallbackProduct?.pixPriceLabel || product.pixPriceLabel,
+    ...product,
+    slug: product.slug || fallbackProduct?.slug,
+    title: product.title || fallbackProduct?.title,
+    url: product.url || fallbackProduct?.url,
+    imageUrl: product.imageUrl || fallbackProduct?.imageUrl,
+    priceLabel: product.priceLabel || fallbackProduct?.priceLabel,
+    pixPriceLabel: product.pixPriceLabel || fallbackProduct?.pixPriceLabel,
+    waText: product.waText || fallbackProduct?.waText,
   });
 
 const normalizeForMatch = (value = "") =>
@@ -221,12 +223,16 @@ export const buildFeaturedProductsData = async ({
 
 export const syncFeaturedProducts = async ({
   outputPath = OUTPUT_PATH,
+  snapshotPath = SNAPSHOT_PATH,
   logger = console,
 } = {}) => {
   const featuredProducts = await buildFeaturedProductsData({ logger });
   await ensureDir(outputPath);
+  await ensureDir(snapshotPath);
   await fs.writeFile(outputPath, `${JSON.stringify(featuredProducts, null, 2)}\n`, "utf-8");
+  await fs.writeFile(snapshotPath, `${JSON.stringify(featuredProducts, null, 2)}\n`, "utf-8");
   logger.info(`[home] wrote ${featuredProducts.length} featured products to ${outputPath}`);
+  logger.info(`[home] wrote fallback snapshot to ${snapshotPath}`);
   return featuredProducts;
 };
 

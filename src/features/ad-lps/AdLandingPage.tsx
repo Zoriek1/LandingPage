@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import {
-  ArrowRight,
   CalendarCheck2,
   Camera,
   ChevronLeft,
@@ -42,13 +41,10 @@ import {
   buildAdLpWhatsAppUrl,
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
-import { getUtms } from "@/lib/attribution";
+import { BUSINESS_INFO } from "@/lib/business-info";
 import "./theme.css";
 const HERO_PLACEHOLDER = heroFallbackUrl;
 const PRODUCT_PLACEHOLDER = "/lpb/placeholders/product.svg";
-const STORE_BASE_URL = "https://www.planteumaflor.com";
-// click ids encaminhados pro site; utm_* vão pelo getUtms() (com fallback).
-const CLICK_ID_KEYS = ["fbclid", "gclid"];
 
 type AdLandingPageProps = {
   slug: string;
@@ -279,42 +275,6 @@ function useGoogleReviews() {
   return reviews;
 }
 
-function buildStoreProductUrl(product: Product) {
-  const url = new URL(`${STORE_BASE_URL}/produtos/${product.storeSlug}`);
-
-  if (typeof window !== "undefined") {
-    // utm_*: URL vence, sessionStorage como fallback — não perde atribuição pro
-    // site quando a query já sumiu da URL (SPA/webview). Ver attribution.ts.
-    for (const [key, value] of Object.entries(getUtms())) {
-      url.searchParams.set(key, value);
-    }
-    // click ids: URL vence, sessionStorage como fallback (gravados em tracking.ts).
-    const currentParams = new URLSearchParams(window.location.search);
-    for (const key of CLICK_ID_KEYS) {
-      const value = currentParams.get(key) ?? sessionStorage.getItem(key);
-      if (value) url.searchParams.set(key, value);
-    }
-  }
-
-  return url.toString();
-}
-
-function trackStoreProductClick(config: LPConfig, product: Product) {
-  if (typeof window === "undefined") return;
-
-  const destinationUrl = buildStoreProductUrl(product);
-  window.dataLayer?.push({
-    event: "ad_lp_product_click",
-    lp_slug: config.slug,
-    cta_location: "vitrine",
-    cta_label: "produto_site",
-    product_id: product.id,
-    product_name: product.name,
-    product_price: product.priceBrl,
-    destination_url: destinationUrl,
-  });
-}
-
 function HeroSection({ config }: { config: LPConfig }) {
   return (
     <section className="ad-lp-hero">
@@ -347,7 +307,7 @@ function HeroSection({ config }: { config: LPConfig }) {
             <CtaButton config={config} origin="hero" className="ad-lp-hero__cta" />
           </div>
           <ul className="ad-lp-hero__badges" aria-label="Diferenciais">
-            <li><Truck size={16} aria-hidden="true" />Entrega hoje em Goiânia</li>
+            <li><Truck size={16} aria-hidden="true" />{config.slug === "urgencia" ? "Entrega hoje em Goiania" : "Entrega ou agendamento em Goiania"}</li>
             <li><CalendarCheck2 size={16} aria-hidden="true" />Encomenda com data combinada</li>
             <li><Sparkles size={16} aria-hidden="true" />Embalagem caprichada e cartão grátis</li>
           </ul>
@@ -545,7 +505,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
         </span>
         <span>
           <strong>{review.authorName}</strong>
-          <small>{review.reviewCountLabel || "Avaliação no Google"}</small>
+          <small>{review.reviewCountLabel || "Cliente real no Google"}</small>
         </span>
       </figcaption>
       <div className="ad-lp-proof__stars" aria-label={`${review.rating} estrelas`}>
@@ -560,7 +520,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
         ))}
       </div>
       <blockquote>{renderHighlightedComment(review.comment)}</blockquote>
-      {review.relativeTime ? <p className="ad-lp-proof__date">{review.relativeTime}</p> : null}
+      <p className="ad-lp-proof__date">Avaliacao publica no Google</p>
     </figure>
   );
 }
@@ -590,7 +550,7 @@ function HeroReviewCard({ review }: { review: GoogleReview }) {
         </span>
         <span>
           <strong>{review.authorName}</strong>
-          <span> · {review.relativeTime || "Avaliação no Google"}</span>
+          <span> · Cliente real no Google</span>
         </span>
       </figcaption>
     </motion.figure>
@@ -784,10 +744,13 @@ function VitrineSection({
                 </span>
               ) : null}
               <a
-                href={buildStoreProductUrl(product)}
+                href={buildAdLpWhatsAppUrl(config, product)}
                 className="ad-lp-card__link"
                 data-testid={`product-card-${product.id}`}
-                onClick={() => trackStoreProductClick(config, product)}
+                onClick={(event) => {
+                  event.preventDefault();
+                  openAdLpWhatsApp({ config, origin: "vitrine", product });
+                }}
               >
                 <span className="ad-lp-card__media">
                   <ImageWithFallback
@@ -802,7 +765,7 @@ function VitrineSection({
                   <span className="ad-lp-card__price">{product.priceBrl}</span>
                   <span className="ad-lp-card__installments">{product.installments}</span>
                   <span className="ad-lp-card__cta">
-                    Ver no site <ArrowRight size={16} />
+                    Quero encomendar pelo WhatsApp
                   </span>
                 </span>
               </a>
@@ -813,7 +776,7 @@ function VitrineSection({
       {hasMore && !expanded ? (
         <div className="ad-lp-vitrine__more">
           <button type="button" onClick={() => setExpanded(true)}>
-            Ver mais buquês ({products.length - initialCount})
+Quero ver mais opcoes ({products.length - initialCount})
           </button>
         </div>
       ) : null}
@@ -834,6 +797,9 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
           transition={{ duration: 0.55 }}
         >
           <img src={fachadaUrl} alt={nossaHistoria.imageAlt} loading="lazy" />
+          <figcaption className="ad-lp-historia__caption">
+            Loja fisica em Goiania · 40 anos de tradicao · entrega propria
+          </figcaption>
         </motion.figure>
         <motion.div
           className="ad-lp-historia__body"
@@ -918,9 +884,13 @@ function GuaranteeSection({ config }: { config: LPConfig }) {
         <h2 className="ad-lp-guarantee__title">{GUARANTEE.title}</h2>
         <p className="ad-lp-guarantee__body">{GUARANTEE.body}</p>
         <div className="ad-lp-guarantee__cta">
-          <CtaButton config={config} origin="guarantee">
+          <button
+            type="button"
+            className="ad-lp-guarantee__link"
+            onClick={() => openAdLpWhatsApp({ config, origin: "guarantee" })}
+          >
             {config.ctaCopy.guarantee ?? GUARANTEE.ctaLabel}
-          </CtaButton>
+          </button>
         </div>
       </motion.div>
     </section>
@@ -952,8 +922,11 @@ function FinalCtaSection({ config }: { config: LPConfig }) {
 function Footer() {
   return (
     <footer className="ad-lp-footer">
-      <p>{GLOBAL_CONFIG.brandName} · {GLOBAL_CONFIG.brandTagline} · {GLOBAL_CONFIG.cityRegion}</p>
-      <p>Entregas em Goiânia, Aparecida de Goiânia e Senador Canedo.</p>
+      <p>{BUSINESS_INFO.legalName} · CNPJ {BUSINESS_INFO.taxId}</p>
+      <p>{BUSINESS_INFO.address.full}</p>
+      <p>{BUSINESS_INFO.businessHours}</p>
+      <p>WhatsApp {BUSINESS_INFO.whatsapp} · Tel. {BUSINESS_INFO.phone} · Cel. {BUSINESS_INFO.mobile}</p>
+      <p>Entregas em {BUSINESS_INFO.regions}.</p>
     </footer>
   );
 }

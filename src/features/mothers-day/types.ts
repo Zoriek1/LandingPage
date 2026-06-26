@@ -5,4 +5,5 @@ export type FeaturedProduct = {
   imageUrl: string;
   priceLabel: string;
   pixPriceLabel?: string;
+  waText?: string;
 };

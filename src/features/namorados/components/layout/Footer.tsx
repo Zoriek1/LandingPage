@@ -1,68 +1,11 @@
-import { Instagram, Facebook, MessageCircle } from "lucide-react";
-import logo from "@/assets/logo.png";
-import { trackSiteClick } from "@/lib/tracking";
+import BusinessFooter from "@/components/layout/BusinessFooter";
 import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
-import { SITE_URL } from "@/lib/config";
 
 const Footer = () => (
-  <footer className="bg-primary py-12 border-t border-primary-foreground/10">
-    <div className="container">
-      <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-center md:text-left">
-          <img src={logo} alt="Plante Uma Flor" className="h-12 w-auto mb-2" />
-          <p className="font-body text-primary-foreground/50 text-sm">
-            Floricultura em Goiânia. Montado à mão, entregue no horário.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => openNamoradosWhatsApp("footer", "icone_whatsapp")}
-            className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
-            aria-label="WhatsApp"
-          >
-            <MessageCircle size={18} />
-          </button>
-          <a
-            href="#"
-            className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
-            aria-label="Instagram"
-          >
-            <Instagram size={18} />
-          </a>
-          <a
-            href="#"
-            className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center text-primary-foreground/70 hover:text-accent hover:bg-primary-foreground/20 transition-colors"
-            aria-label="Facebook"
-          >
-            <Facebook size={18} />
-          </a>
-        </div>
-
-        <a
-          href={SITE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() =>
-            trackSiteClick({
-              cta_location: "footer",
-              cta_label: "link_site",
-              destination_url: SITE_URL,
-            })
-          }
-          className="font-body text-accent text-sm font-semibold hover:underline"
-        >
-          www.planteumaflor.com
-        </a>
-      </div>
-
-      <div className="mt-8 pt-8 border-t border-primary-foreground/10 text-center">
-        <p className="font-body text-primary-foreground/40 text-xs">
-          © {new Date().getFullYear()} Plante Uma Flor. Todos os direitos reservados.
-        </p>
-      </div>
-    </div>
-  </footer>
+  <BusinessFooter
+    tagline="Floricultura em Goiania. Montado a mao, entregue no horario."
+    onWhatsAppClick={() => openNamoradosWhatsApp("footer", "icone_whatsapp")}
+  />
 );
 
 export default Footer;

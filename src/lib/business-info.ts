@@ -1,0 +1,20 @@
+export const BUSINESS_INFO = {
+  legalName: "FLORICULTURA PLANTE UMA FLOR LTDA",
+  tradeName: "PLANTE UMA FLOR",
+  taxId: "65.625.103/0001-92",
+  taxRegime: "Simples nacional",
+  address: {
+    street: "Rua 132, 289",
+    district: "Setor Sul",
+    city: "Goiania",
+    state: "GO",
+    zipCode: "74093-210",
+    full: "Rua 132, 289 - Setor Sul - Goiania - GO - CEP 74093-210",
+  },
+  phone: "(62) 3281-9367",
+  mobile: "(62) 99321-9814",
+  whatsapp: "(62) 99650-3403",
+  fiscalEmail: "financeiro@planteumaflor.com",
+  businessHours: "Segunda a sexta, 08h-18h. Sabado, 08h-13h.",
+  regions: "Goiania, Aparecida de Goiania e Senador Canedo",
+} as const;

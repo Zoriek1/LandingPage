@@ -13,6 +13,16 @@ const fixturePath = fileURLToPath(
 
 const loadFixture = async () => fs.readFile(fixturePath, "utf-8");
 
+const titleFromUrl = (url: string) =>
+  new URL(url)
+    .pathname
+    .split("/")
+    .filter(Boolean)
+    .at(-1)!
+    .split("-")
+    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
+    .join(" ");
+
 const formatPrice = (value: number) =>
   new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -23,14 +33,7 @@ const buildFixtureVariant = async (index: number, url: string) => {
   const html = await loadFixture();
   const price = 189.9 + index * 10;
   const pixPrice = Number((price * 0.97).toFixed(2));
-  const expectedTitle = new URL(url)
-    .pathname
-    .split("/")
-    .filter(Boolean)
-    .at(-1)!
-    .split("-")
-    .map((token) => token.charAt(0).toUpperCase() + token.slice(1))
-    .join(" ");
+  const expectedTitle = titleFromUrl(url);
 
   return html
     .replaceAll("Buque de Teste", expectedTitle)
@@ -56,6 +59,7 @@ describe("mothers-day product sync", () => {
       slug: "buque-de-teste",
       title: "Buque de Teste",
       url: "https://www.planteumaflor.com/produtos/buque-de-teste/",
+      canonicalUrl: "https://www.planteumaflor.com/produtos/buque-de-teste/",
       imageUrl: "https://cdn.planteumaflor.com/imagens/buque-teste.webp",
       priceLabel: "R$ 189,90",
       pixPriceLabel: "R$ 184,20",
@@ -88,7 +92,7 @@ describe("mothers-day product sync", () => {
     expect(dataset[0]).toEqual(
       expect.objectContaining({
         slug: new URL(sources[0].url).pathname.split("/").filter(Boolean).at(-1),
-        title: "Ramalhete De Lirios E Girassol",
+        title: titleFromUrl(sources[0].url),
         url: sources[0].url,
       }),
     );

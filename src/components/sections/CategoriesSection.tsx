@@ -5,11 +5,11 @@ import catPresentes from "@/assets/cat-presentes.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
 import catDatas from "@/assets/cat-datas.jpg";
-import { trackSiteClick } from "@/lib/tracking";
-import { CATALOG_URL } from "@/lib/config";
+import { WHATSAPP_URL } from "@/lib/config";
+import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 
 const categories = [
-  { img: catBuques, title: "Buquês Românticos", span: "lg:col-span-2 lg:row-span-2" },
+  { img: catBuques, title: "Buques Romanticos", span: "lg:col-span-2 lg:row-span-2" },
   { img: catPresentes, title: "Flores para Presente", span: "" },
   { img: catCestas, title: "Cestas & Kits Especiais", span: "" },
   { img: catPlantas, title: "Plantas & Arranjos", span: "" },
@@ -32,7 +32,7 @@ const CategoriesSection = () => (
           Para cada momento, o arranjo certo
         </h2>
         <p className="mx-auto max-w-md font-body text-muted-foreground">
-          Explore o catálogo e encontre o presente perfeito.
+          Chame no WhatsApp e receba sugestoes por ocasiao, faixa de preco e data.
         </p>
       </motion.div>
 
@@ -40,22 +40,24 @@ const CategoriesSection = () => (
         {categories.map((cat, i) => (
           <motion.a
             key={cat.title}
-            href={CATALOG_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() =>
-              trackSiteClick({
-                cta_location: "categorias",
-                cta_label: "ver_no_site",
-                destination_url: CATALOG_URL,
-              })
-            }
+            href={WHATSAPP_URL}
+            onClick={(event) => {
+              event.preventDefault();
+              openGuidedWhatsApp({
+                pageSlug: "home",
+                pageLabel: "buques",
+                ctaLocation: "categorias",
+                ctaLabel: `categoria_${cat.title.toLowerCase().replace(/\s+/g, "_")}`,
+                request: `Quero ver opcoes de ${cat.title}. Pode me ajudar por faixa de preco e ocasiao?`,
+              });
+            }}
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
-            className={`group relative aspect-[4/5] overflow-hidden rounded-2xl ${cat.span}`}
+            className={`group relative aspect-[4/5] overflow-hidden rounded-2xl ${cat.span ?? ""}`}
           >
+            
             <img
               src={cat.img}
               alt={cat.title}
@@ -63,13 +65,14 @@ const CategoriesSection = () => (
               loading="lazy"
               decoding="async"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/25 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary/85 via-primary/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-6">
               <h3 className="mb-2 font-display text-xl font-semibold text-primary-foreground md:text-2xl">
                 {cat.title}
               </h3>
+              
               <span className="inline-flex items-center gap-1.5 rounded-full border border-white/30 bg-white/20 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-sm transition-colors group-hover:bg-white/35">
-                Ver no site
+                Quero ajuda
                 <ArrowUpRight size={14} />
               </span>
             </div>
