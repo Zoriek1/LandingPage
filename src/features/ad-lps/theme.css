@@ -185,7 +185,7 @@
 
 .ad-lp-hero__sub {
   max-width: 38rem;
-  margin: 1.15rem 0 1.75rem;
+  margin: 1rem 0 1.05rem;
   color: rgba(255, 255, 255, 0.92);
   font-size: clamp(1rem, 1.6vw, 1.18rem);
   line-height: 1.6;
@@ -195,29 +195,35 @@
 .ad-lp-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem;
-  margin-bottom: 2rem;
+  align-items: center;
+  gap: 0.72rem;
+  margin-bottom: 0.78rem;
 }
 
 .ad-lp-hero__badges {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.85rem 1.4rem;
+  max-width: 580px;
+  gap: 0.38rem 1rem;
   margin: 0;
   padding: 0;
   list-style: none;
-  font-size: 0.88rem;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.76rem;
+  font-style: italic;
+  line-height: 1.35;
 }
 
 .ad-lp-hero__badges li {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: 0.34rem;
 }
 
 .ad-lp-hero__badges svg {
   color: var(--ad-accent);
+  width: 14px;
+  height: 14px;
 }
 
 .ad-lp-cta {
@@ -225,13 +231,13 @@
   align-items: center;
   justify-content: center;
   gap: 0.55rem;
-  min-height: 48px;
-  padding: 0.92rem 1.22rem;
+  min-height: 56px;
+  padding: 1.05rem 1.52rem;
   color: #fff;
   background: var(--ad-whatsapp);
   border-radius: 999px;
   box-shadow: 0 14px 30px rgba(37, 211, 102, 0.26);
-  font-size: 0.94rem;
+  font-size: 1.02rem;
   font-weight: 800;
   text-decoration: none;
   transition:
@@ -248,6 +254,47 @@
 
 .ad-lp-cta__icon {
   flex: 0 0 auto;
+}
+
+.ad-lp-hero__cta {
+  min-height: 60px;
+  padding-inline: 1.78rem;
+  font-size: 1.08rem;
+}
+
+.ad-lp-secondary-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.48rem;
+  min-height: 56px;
+  padding: 1.02rem 1.34rem;
+  color: #fffaf2;
+  background: rgba(255, 250, 242, 0.1);
+  border: 1px solid rgba(255, 250, 242, 0.38);
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.16);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.98rem;
+  font-weight: 800;
+  text-decoration: none;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease,
+    background 180ms ease;
+}
+
+.ad-lp-secondary-cta:hover {
+  background: rgba(255, 250, 242, 0.18);
+  border-color: rgba(255, 250, 242, 0.62);
+  transform: translateY(-2px);
+}
+
+.ad-lp-secondary-cta:focus-visible,
+.ad-lp-cta:focus-visible {
+  outline: 3px solid rgba(255, 250, 242, 0.74);
+  outline-offset: 3px;
 }
 
 .ad-lp-bonus {
@@ -855,8 +902,9 @@
 }
 
 .ad-lp-final__cta .ad-lp-cta {
-  padding: 1.05rem 1.8rem;
-  font-size: 1rem;
+  min-height: 60px;
+  padding: 1.12rem 1.95rem;
+  font-size: 1.06rem;
 }
 
 .ad-lp-historia {
@@ -1275,7 +1323,30 @@
     max-width: 10.4ch;
   }
 
-  .ad-lp-cta {
+  .ad-lp-hero__sub {
+    margin-bottom: 0.85rem;
+  }
+
+  .ad-lp-hero__actions {
+    gap: 0.55rem;
+    margin-bottom: 0.62rem;
+  }
+
+  .ad-lp-cta,
+  .ad-lp-secondary-cta {
     width: 100%;
+  }
+
+  .ad-lp-hero__cta,
+  .ad-lp-secondary-cta {
+    min-height: 58px;
+    padding: 1rem 1.18rem;
+    font-size: 1.04rem;
+  }
+
+  .ad-lp-hero__badges {
+    display: grid;
+    gap: 0.32rem;
+    font-size: 0.72rem;
   }
 }

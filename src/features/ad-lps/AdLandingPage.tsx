@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { motion } from "framer-motion";
 import {
+  ArrowDown,
   CalendarCheck2,
   Camera,
   ChevronLeft,
@@ -276,6 +277,13 @@ function useGoogleReviews() {
 }
 
 function HeroSection({ config }: { config: LPConfig }) {
+  const scrollToProducts = () => {
+    document.getElementById("vitrine")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
+
   return (
     <section className="ad-lp-hero">
       <motion.div
@@ -305,6 +313,15 @@ function HeroSection({ config }: { config: LPConfig }) {
           <p className="ad-lp-hero__sub">{config.subheadline}</p>
           <div className="ad-lp-hero__actions">
             <CtaButton config={config} origin="hero" className="ad-lp-hero__cta" />
+            <button
+              type="button"
+              className="ad-lp-secondary-cta"
+              data-testid="ad-lp-see-products"
+              onClick={scrollToProducts}
+            >
+              <span>Ver produtos</span>
+              <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
+            </button>
           </div>
           <ul className="ad-lp-hero__badges" aria-label="Diferenciais">
             <li><Truck size={16} aria-hidden="true" />{config.slug === "urgencia" ? "Entrega hoje em Goiania" : "Entrega ou agendamento em Goiania"}</li>

@@ -1,4 +1,6 @@
-import { openGuidedWhatsApp, openProductWhatsApp } from "@/lib/landing-whatsapp";
+import { openProductWhatsApp } from "@/lib/landing-whatsapp";
+import { WHATSAPP_URL } from "@/lib/config";
+import { openWhatsAppModal } from "@/lib/whatsappModal";
 import { WHATSAPP_BASE_URL, type LPConfig, type Product } from "@/features/ad-lps/data/configs";
 
 type CtaOrigin =
@@ -97,11 +99,15 @@ export function openAdLpWhatsApp({ config, origin, product }: OpenAdLpWhatsAppAr
     return;
   }
 
-  openGuidedWhatsApp({
-    pageSlug: config.slug,
-    pageLabel: context.pageLabel,
-    ctaLocation: origin,
-    ctaLabel: `${origin}_whatsapp`,
-    request: context.request,
-  });
+  openWhatsAppModal(
+    WHATSAPP_URL,
+    {
+      lp_slug: config.slug,
+      cta_location: origin,
+      cta_label: `${origin}_whatsapp`,
+      destination_url: WHATSAPP_URL,
+    },
+    undefined,
+    `pagina=${config.slug}`,
+  );
 }

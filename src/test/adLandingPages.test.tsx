@@ -42,7 +42,7 @@ describe("ad landing pages", () => {
     expect(screen.getByText("Página não encontrada")).toBeInTheDocument();
   });
 
-  it("passes lp slug and CTA origin for hero, FAQ, and sticky WhatsApp clicks", () => {
+  it("passes lp slug and CTA origin using the default price-band WhatsApp checklist", () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
     fireEvent.click(screen.getByTestId("ad-lp-cta-hero"));
@@ -58,7 +58,7 @@ describe("ad landing pages", () => {
         cta_location: "hero",
         cta_label: "hero_whatsapp",
       }),
-      expect.stringContaining("entregar ainda hoje"),
+      undefined,
       "pagina=urgencia",
     );
     expect(openWhatsAppModal).toHaveBeenNthCalledWith(
@@ -69,7 +69,7 @@ describe("ad landing pages", () => {
         cta_location: "faq",
         cta_label: "faq_whatsapp",
       }),
-      expect.stringContaining("entregar ainda hoje"),
+      undefined,
       "pagina=urgencia",
     );
     expect(openWhatsAppModal).toHaveBeenNthCalledWith(
@@ -80,9 +80,29 @@ describe("ad landing pages", () => {
         cta_location: "sticky",
         cta_label: "sticky_whatsapp",
       }),
-      expect.stringContaining("entregar ainda hoje"),
+      undefined,
       "pagina=urgencia",
     );
+  });
+
+  it("scrolls from the hero shortcut to the products without opening WhatsApp", () => {
+    const scrollIntoView = vi.fn();
+    const originalScrollIntoView = Element.prototype.scrollIntoView;
+    Element.prototype.scrollIntoView = scrollIntoView;
+
+    try {
+      renderAt("/urgencia");
+
+      fireEvent.click(screen.getByTestId("ad-lp-see-products"));
+
+      expect(scrollIntoView).toHaveBeenCalledWith({
+        behavior: "smooth",
+        block: "start",
+      });
+      expect(openWhatsAppModal).not.toHaveBeenCalled();
+    } finally {
+      Element.prototype.scrollIntoView = originalScrollIntoView;
+    }
   });
 
   it("opens WhatsApp from vitrine product cards with product context", () => {
@@ -109,6 +129,7 @@ describe("ad landing pages", () => {
       expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 249,90"),
       "pagina=urgencia",
     );
+    expect(openWhatsAppModal.mock.calls[0]?.[2]).not.toContain("Até R$ 149,90");
   });
 
   it("updates document title and canonical for the active LP", () => {
