@@ -72,6 +72,7 @@ export type GuaranteeContent = {
 
 export type LPConfig = {
   slug: string;
+  canonicalUrl?: string;
   accent: Accent;
   heroImage: string;
   heroImageAlt: string;
@@ -515,6 +516,120 @@ export function inferProductBadge(
 }
 
 export const LP_CONFIGS: Record<string, LPConfig> = {
+  "dia-das-maes": {
+    slug: "dia-das-maes",
+    canonicalUrl: "https://www.planteumaflor.com/dia-das-maes/",
+    accent: "classic",
+    heroImage: "/dia-das-maes/og-maes.jpg",
+    heroImageAlt: "Buquê artesanal preparado para presentear no Dia das Mães",
+    heroMode: "overlay",
+    headline: "Flores para tornar o Dia das Mães inesquecível.",
+    subheadline:
+      "Escolha um buquê, uma cesta ou uma planta e combine tudo pelo WhatsApp. A gente prepara com carinho, escreve o cartão à mão e envia uma foto antes da entrega.",
+    priceAnchor: "Opções a partir de R$ 99,90",
+    scarcityMessage: "Agenda da data sujeita à disponibilidade",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Escolher o presente da minha mãe",
+      como_funciona: "Combinar a entrega",
+      faq: "Tirar uma dúvida",
+      sticky: "Ver opções",
+      final: "Encomendar pelo WhatsApp",
+      guarantee: "Ver detalhes da garantia",
+    },
+    testimonialOrder: ["sheila", "taina", "rafaella"],
+    vitrineTitle: "Presentes para o Dia das Mães",
+    vitrineSubtitle:
+      "Escolhas delicadas, montadas à mão e prontas para emocionar.",
+    vitrineProductIds: [
+      "arranjo-3-rosas",
+      "arranjo-mao-lirios",
+      "buque-flor-campo-m",
+      "buque-12-rosas-rosa",
+      "buque-lirios-m",
+      "buque-6-girassois",
+      "box-rosas",
+    ],
+    vitrineHighlightId: "buque-flor-campo-m",
+    faq: [
+      {
+        question: "Posso agendar a entrega para o Dia das Mães?",
+        answer:
+          "Pode sim. Chame no WhatsApp com o bairro e o melhor período. A gente consulta a agenda e confirma a janela disponível antes de fechar o pedido.",
+      },
+      {
+        question: "O cartão personalizado está incluído?",
+        answer:
+          "Está. Você manda a mensagem pelo WhatsApp e a gente escreve o cartão à mão, sem custo adicional.",
+      },
+      {
+        question: "Vou ver o presente antes da entrega?",
+        answer:
+          "Sim. Enviamos uma foto real do arranjo pronto para você aprovar antes de ele sair da loja.",
+      },
+    ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    pageTitle: "Flores para o Dia das Mães em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Buquês, cestas e plantas para o Dia das Mães em Goiânia. Encomende pelo WhatsApp, receba foto antes do envio e inclua cartão escrito à mão.",
+  },
+  "dia-dos-namorados": {
+    slug: "dia-dos-namorados",
+    canonicalUrl: "https://www.planteumaflor.com/dia-dos-namorados/",
+    accent: "rose",
+    heroImage: "/lpb/heros/rosas-apt.jpg",
+    heroImageAlt: "Buquê romântico de rosas vermelhas para o Dia dos Namorados",
+    heroMode: "overlay",
+    headline: "Um presente à altura da sua história de amor.",
+    subheadline:
+      "Escolha o arranjo, mande o recado do cartão e combine a entrega pelo WhatsApp. Antes de sair da loja, a gente envia uma foto real para você aprovar.",
+    priceAnchor: "Buquês a partir de R$ 99,90",
+    scarcityMessage: "Agenda do dia 12 sujeita à disponibilidade",
+    vitrineVisibleCount: 6,
+    ctaCopy: {
+      hero: "Escolher o presente",
+      como_funciona: "Combinar a surpresa",
+      faq: "Tirar uma dúvida",
+      sticky: "Ver buquês",
+      final: "Encomendar pelo WhatsApp",
+      guarantee: "Ver detalhes da garantia",
+    },
+    testimonialOrder: ["rafaella", "sheila", "taina"],
+    vitrineTitle: "Favoritos para o Dia dos Namorados",
+    vitrineSubtitle:
+      "Dos gestos delicados aos buquês que impressionam de verdade.",
+    vitrineProductIds: [
+      "arranjo-3-rosas",
+      "arranjo-4-rosas-ferrero",
+      "buque-6-rosas",
+      "buque-12-rosas-rosa",
+      "buque-12-rosas-vermelhas",
+      "box-rosas",
+      "buque-24-rosas",
+    ],
+    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    faq: [
+      {
+        question: "Consigo agendar para o dia 12 de junho?",
+        answer:
+          "Sim, enquanto houver horário disponível. Chame no WhatsApp com o bairro e o período desejado para a gente confirmar a agenda.",
+      },
+      {
+        question: "Posso mandar uma mensagem romântica no cartão?",
+        answer:
+          "Claro. Você envia o texto pelo WhatsApp e a gente escreve à mão para acompanhar o presente, sem custo adicional.",
+      },
+      {
+        question: "O buquê vai igual ao anunciado?",
+        answer:
+          "Antes da entrega, enviamos a foto real do buquê pronto. Você confere e aprova antes de ele sair da floricultura.",
+      },
+    ],
+    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    pageTitle: "Flores para o Dia dos Namorados em Goiânia | Plante Uma Flor",
+    pageDescription:
+      "Buquês e presentes para o Dia dos Namorados em Goiânia. Combine a entrega pelo WhatsApp, receba foto antes do envio e inclua cartão escrito à mão.",
+  },
   urgencia: {
     slug: "urgencia",
     accent: "urgent",

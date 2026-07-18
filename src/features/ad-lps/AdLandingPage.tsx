@@ -950,6 +950,7 @@ function Footer() {
 
 export default function AdLandingPage({ slug }: AdLandingPageProps) {
   const config = LP_CONFIGS[slug];
+  const canonicalUrl = config.canonicalUrl ?? `https://${BRAND_DOMAIN}/${config.slug}`;
 
   const products = useMemo(
     () => config.vitrineProductIds.map((id) => PRODUCTS[id]).filter(Boolean),
@@ -961,10 +962,10 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       <DocumentMeta
         title={config.pageTitle}
         description={config.pageDescription}
-        canonical={`https://${BRAND_DOMAIN}/${config.slug}`}
+        canonical={canonicalUrl}
         ogTitle={config.pageTitle}
         ogDescription={config.pageDescription}
-        ogUrl={`https://${BRAND_DOMAIN}/${config.slug}`}
+        ogUrl={canonicalUrl}
         ogImage={`https://${BRAND_DOMAIN}${config.heroImage}`}
       />
       <BrandBar />
