@@ -21,6 +21,9 @@ output
 .claude/settings.local.json
 .claude/memory/
 
+# Isolated agent worktrees
+.worktrees/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
