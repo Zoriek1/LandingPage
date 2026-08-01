@@ -1,4 +1,4 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
 import { LP_CONFIGS } from "@/features/ad-lps/data/configs";
@@ -28,29 +28,29 @@ describe("ad landing pages", () => {
     cleanup();
   });
 
-  it("renders every approved slug with its configured headline", () => {
-    Object.values(LP_CONFIGS).forEach((config) => {
+  it("renders every approved slug with its configured headline", async () => {
+    for (const config of Object.values(LP_CONFIGS)) {
       const { unmount } = renderAt(`/${config.slug}`);
-      expect(screen.getByRole("heading", { level: 1, name: config.headline })).toBeInTheDocument();
+      expect(await screen.findByRole("heading", { level: 1, name: config.headline })).toBeInTheDocument();
       unmount();
-    });
+    }
   });
 
-  it("falls through to NotFound for unknown slugs", () => {
+  it("falls through to NotFound for unknown slugs", async () => {
     renderAt("/slug-inexistente");
-    expect(screen.getByRole("heading", { name: "404" })).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { name: "404" })).toBeInTheDocument();
     expect(screen.getByText("Página não encontrada")).toBeInTheDocument();
   });
 
-  it("opens the price selector from each generic ad CTA without direct conversion", () => {
+  it("opens the price selector from each generic ad CTA without direct conversion", async () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
-    fireEvent.click(screen.getByTestId("ad-lp-cta-hero"));
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(openWhatsAppModal).not.toHaveBeenCalled();
   });
 
-  it("scrolls from the hero shortcut to the products without opening WhatsApp", () => {
+  it("scrolls from the hero shortcut to the products without opening WhatsApp", async () => {
     const scrollIntoView = vi.fn();
     const originalScrollIntoView = Element.prototype.scrollIntoView;
     Element.prototype.scrollIntoView = scrollIntoView;
@@ -58,7 +58,7 @@ describe("ad landing pages", () => {
     try {
       renderAt("/urgencia");
 
-      fireEvent.click(screen.getByTestId("ad-lp-see-products"));
+      fireEvent.click(await screen.findByTestId("ad-lp-see-products"));
 
       expect(scrollIntoView).toHaveBeenCalledWith({
         behavior: "smooth",
@@ -70,10 +70,10 @@ describe("ad landing pages", () => {
     }
   });
 
-  it("opens WhatsApp from vitrine product cards with product context", () => {
+  it("opens WhatsApp from vitrine product cards with product context", async () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
-    const card = screen.getByTestId("product-card-buque-6-rosas") as HTMLAnchorElement;
+    const card = await screen.findByTestId("product-card-buque-6-rosas") as HTMLAnchorElement;
     expect(card).toHaveAttribute("href", "https://wa.me/5562996503403");
     expect(card).toHaveTextContent("Buquê Clássico de Rosas Vermelhas");
     expect(card).toHaveTextContent("R$ 249,90");
@@ -97,10 +97,10 @@ describe("ad landing pages", () => {
     expect(openWhatsAppModal.mock.calls[0]?.[2]).not.toContain("Até R$ 149,90");
   });
 
-  it("updates document title and canonical for the active LP", () => {
+  it("updates document title and canonical for the active LP", async () => {
     renderAt("/qual-b");
 
-    expect(document.title).toBe(LP_CONFIGS["qual-b"].pageTitle);
+    await waitFor(() => expect(document.title).toBe(LP_CONFIGS["qual-b"].pageTitle));
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(
       "https://lpb.planteumaflor.com/qual-b",
     );

@@ -61,7 +61,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
           className="fixed inset-0 z-[100] bg-[#10231c]/75 backdrop-blur-[3px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 motion-reduce:animate-none"
         />
         <Dialog.Content
-          className="fixed inset-x-3 bottom-3 z-[101] max-h-[calc(100dvh-1.5rem)] overflow-y-auto rounded-[28px] border border-[#c6a15b]/35 bg-[#fcfaf4] px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6 text-[#1b3328] shadow-[0_28px_90px_rgba(5,20,14,0.32)] focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4 motion-reduce:animate-none sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[min(92vw,32rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-7 sm:pb-7 sm:pt-7"
+          className="fixed inset-x-3 bottom-3 z-[101] max-h-[calc(100dvh-1.5rem)] overscroll-contain overflow-y-auto rounded-[28px] border border-[#c6a15b]/35 bg-[#fcfaf4] px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-6 text-[#1b3328] shadow-[0_28px_90px_rgba(5,20,14,0.32)] focus:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-bottom-4 data-[state=open]:slide-in-from-bottom-4 motion-reduce:animate-none sm:bottom-auto sm:left-1/2 sm:top-1/2 sm:w-[min(92vw,32rem)] sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-7 sm:pb-7 sm:pt-7"
           onOpenAutoFocus={(event) => {
             event.preventDefault();
             firstChoiceRef.current?.focus();
@@ -79,7 +79,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
           </Dialog.Close>
 
           <div className="pr-12">
-            <p className="mb-2 font-body text-[0.68rem] font-bold uppercase tracking-[0.2em] text-[#9a762f]">
+            <p className="mb-2 font-body text-[0.68rem] font-bold uppercase tracking-[0.2em] text-[#73531c]">
               Vamos por partes
             </p>
             <Dialog.Title className="font-display text-[1.75rem] font-semibold leading-tight text-[#1b3328] sm:text-3xl">
@@ -90,7 +90,8 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
             </Dialog.Description>
           </div>
 
-          <div className="mt-6 grid gap-3" aria-label="Faixas de preço">
+          <fieldset className="mt-6 grid min-w-0 gap-3 border-0 p-0">
+            <legend className="sr-only">Faixas de preço</legend>
             {config.ranges.map((range, index) => (
               <button
                 key={range.key}
@@ -113,7 +114,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
                 </span>
               </button>
             ))}
-          </div>
+          </fieldset>
 
           <p className="mt-5 text-center font-body text-[0.7rem] leading-5 text-[#65766d]">
             Você só abre o WhatsApp depois de escolher.

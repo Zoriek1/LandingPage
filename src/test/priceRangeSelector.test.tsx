@@ -145,7 +145,7 @@ describe("price-range conversion selector", () => {
     window.history.pushState({}, "", "/urgencia?utm_content=ad-criativo-01");
     render(<App />);
 
-    fireEvent.click(screen.getByTestId("product-card-buque-6-rosas"));
+    fireEvent.click(await screen.findByTestId("product-card-buque-6-rosas"));
 
     expect(openWhatsAppModal).toHaveBeenCalledTimes(1);
     expect(openWhatsAppModal).toHaveBeenCalledWith(

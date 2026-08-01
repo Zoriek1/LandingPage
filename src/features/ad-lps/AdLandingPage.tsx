@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
 import {
   ArrowDown,
   CalendarCheck2,
@@ -19,9 +18,13 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import heroFallbackUrl from "@/assets/hero-flowers.jpg";
 import fachadaUrl from "@/assets/fachada.jpg";
 import logoUrl from "@/assets/logo.png";
+import fachadaAvif480Url from "@/assets/generated/fachada-480.avif";
+import fachadaAvif900Url from "@/assets/generated/fachada-900.avif";
+import fachadaWebp480Url from "@/assets/generated/fachada-480.webp";
+import fachadaWebp900Url from "@/assets/generated/fachada-900.webp";
+import logoWebpUrl from "@/assets/generated/logo-240.webp";
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
 import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
 import type { PriceRangeRoute } from "@/lib/price-ranges";
@@ -45,8 +48,8 @@ import {
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
 import { BUSINESS_INFO } from "@/lib/business-info";
+import "./fonts.css";
 import "./theme.css";
-const HERO_PLACEHOLDER = heroFallbackUrl;
 const PRODUCT_PLACEHOLDER = "/lpb/placeholders/product.svg";
 
 type AdLandingPageProps = {
@@ -62,6 +65,10 @@ type GoogleReview = {
   relativeTime?: string;
   reviewCountLabel?: string;
 };
+
+const prefersReducedMotion = () =>
+  typeof window !== "undefined" &&
+  window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 const FALLBACK_REVIEWS: GoogleReview[] = [
   {
@@ -144,12 +151,20 @@ function ImageWithFallback({
   alt,
   className,
   loading = "lazy",
+  width = 1024,
+  height = 1024,
+  srcSet,
+  sizes,
 }: {
   src: string;
   fallback: string;
   alt: string;
   className?: string;
   loading?: "lazy" | "eager";
+  width?: number;
+  height?: number;
+  srcSet?: string;
+  sizes?: string;
 }) {
   return (
     <img
@@ -157,9 +172,16 @@ function ImageWithFallback({
       alt={alt}
       className={className}
       loading={loading}
+      decoding="async"
+      width={width}
+      height={height}
+      srcSet={srcSet}
+      sizes={sizes}
       onError={(event) => {
         const image = event.currentTarget;
         if (image.src.endsWith(fallback)) return;
+        image.removeAttribute("srcset");
+        image.removeAttribute("sizes");
         image.src = fallback;
       }}
     />
@@ -220,6 +242,60 @@ function CtaButton({
   );
 }
 
+function ResponsiveStorefrontImage({
+  alt,
+  className,
+  loading,
+  priority = false,
+  sizes = "100vw",
+  testId,
+}: {
+  alt: string;
+  className?: string;
+  loading?: "lazy";
+  priority?: boolean;
+  sizes?: string;
+  testId?: string;
+}) {
+  return (
+    <picture>
+      <source
+        type="image/avif"
+        srcSet={`${fachadaAvif480Url} 480w, ${fachadaAvif900Url} 900w`}
+        sizes={sizes}
+      />
+      <source
+        type="image/webp"
+        srcSet={`${fachadaWebp480Url} 480w, ${fachadaWebp900Url} 900w`}
+        sizes={sizes}
+      />
+      <img
+        src={fachadaUrl}
+        alt={alt}
+        className={className}
+        loading={loading}
+        decoding="async"
+        fetchPriority={priority ? "high" : undefined}
+        width={900}
+        height={675}
+        data-testid={testId}
+      />
+    </picture>
+  );
+}
+
+function getProductImageSrcSet(src: string) {
+  if (!src.includes("acdn-us.mitiendanube.com") || !/-1024-1024\.webp(?:\?.*)?$/.test(src)) {
+    return undefined;
+  }
+
+  return [
+    `${src.replace(/-1024-1024\.webp(\?.*)?$/, "-480-0.webp$1")} 480w`,
+    `${src.replace(/-1024-1024\.webp(\?.*)?$/, "-640-0.webp$1")} 640w`,
+    `${src} 1024w`,
+  ].join(", ");
+}
+
 function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   const props = { size: 22, strokeWidth: 1.7 };
   if (icon === "card") return <CreditCard {...props} />;
@@ -276,34 +352,23 @@ function useGoogleReviews() {
 function HeroSection({ config }: { config: LPConfig }) {
   const scrollToProducts = () => {
     document.getElementById("vitrine")?.scrollIntoView({
-      behavior: "smooth",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
       block: "start",
     });
   };
 
   return (
     <section className="ad-lp-hero">
-      <motion.div
-        className="ad-lp-hero__media"
-        initial={{ scale: 1.03, opacity: 0.82 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-      >
-        <ImageWithFallback
-          src={fachadaUrl}
-          fallback={HERO_PLACEHOLDER}
+      <div className="ad-lp-hero__media">
+        <ResponsiveStorefrontImage
           alt="Fachada da Plante Uma Flor em Goiânia"
           className="ad-lp-hero__image"
-          loading="eager"
+          priority
+          testId="ad-lp-hero-image"
         />
-      </motion.div>
+      </div>
 
-      <motion.div
-        className="ad-lp-hero__overlay"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, delay: 0.12, ease: "easeOut" }}
-      >
+      <div className="ad-lp-hero__overlay">
         <div className="ad-lp-hero__content">
           {config.priceAnchor ? <p className="ad-lp-hero__anchor">{config.priceAnchor}</p> : null}
           <h1 className="ad-lp-hero__title">{config.headline}</h1>
@@ -326,7 +391,7 @@ function HeroSection({ config }: { config: LPConfig }) {
             <li><Sparkles size={16} aria-hidden="true" />Embalagem caprichada e cartão grátis</li>
           </ul>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -335,7 +400,10 @@ function BrandBar() {
   return (
     <header className="ad-lp-brand-bar">
       <a href="#hero" className="ad-lp-logo" aria-label="Plante Uma Flor">
-        <img src={logoUrl} alt="Plante Uma Flor" />
+        <picture>
+          <source type="image/webp" srcSet={logoWebpUrl} />
+          <img src={logoUrl} alt="Plante Uma Flor" width="240" height="160" />
+        </picture>
       </a>
       <nav className="ad-lp-nav" aria-label="Seções da página">
         <a href="#como-funciona">Diferenciais</a>
@@ -346,6 +414,7 @@ function BrandBar() {
       </nav>
       <div
         className="ad-lp-rating"
+        role="img"
         aria-label={`Avaliação ${GLOBAL_CONFIG.googleRating} estrelas com ${GLOBAL_CONFIG.googleReviewsCount} avaliações no Google`}
       >
         <span className="ad-lp-rating__g">G</span>
@@ -358,15 +427,7 @@ function BrandBar() {
 
 function BrandBonusSection() {
   return (
-    <motion.section
-      id="bonus"
-      className="ad-lp-bonus"
-      aria-label="Por que nos escolher"
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.22 }}
-      transition={{ duration: 0.5 }}
-    >
+    <section id="bonus" className="ad-lp-bonus" aria-label="Por que nos escolher">
       <header className="ad-lp-section-head">
         <h2>Por que nos escolher?</h2>
         <p>Cada detalhe é pensado para que sua experiência seja especial do início ao fim.</p>
@@ -382,7 +443,7 @@ function BrandBonusSection() {
           </li>
         ))}
       </ul>
-    </motion.section>
+    </section>
   );
 }
 
@@ -413,33 +474,20 @@ const DIFFERENTIAL_PILLARS = [
 function DifferentialsSection({ config }: { config: LPConfig }) {
   return (
     <section id="como-funciona" className="ad-lp-process" aria-label="Por que somos diferentes">
-      <motion.header
-        className="ad-lp-section-head"
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-      >
+      <header className="ad-lp-section-head">
         <h2>Por que somos diferentes</h2>
         <p>O cuidado de uma floricultura tradicional, com o frescor e a transparência que você merece.</p>
-      </motion.header>
+      </header>
       <ol className="ad-lp-process__grid">
-        {DIFFERENTIAL_PILLARS.map((pillar, index) => (
-          <motion.li
-            className="ad-lp-process__item"
-            key={pillar.num}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
+        {DIFFERENTIAL_PILLARS.map((pillar) => (
+          <li className="ad-lp-process__item" key={pillar.num}>
             <span className="ad-lp-process__num" aria-hidden="true">{pillar.num}</span>
             <span className="ad-lp-process__icon" aria-hidden="true">
               <pillar.Icon size={26} strokeWidth={1.6} />
             </span>
             <h3>{pillar.title}</h3>
             <p>{pillar.body}</p>
-          </motion.li>
+          </li>
         ))}
       </ol>
       <div className="ad-lp-process__cta">
@@ -512,7 +560,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
       <figcaption className="ad-lp-proof__person">
         <span className="ad-lp-proof__avatar" aria-hidden="true">
           {review.authorPhotoUrl ? (
-            <img src={review.authorPhotoUrl} alt="" loading="lazy" />
+            <img src={review.authorPhotoUrl} alt="" loading="lazy" width="44" height="44" />
           ) : (
             getInitials(review.authorName)
           )}
@@ -522,7 +570,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
           <small>{review.reviewCountLabel || "Cliente real no Google"}</small>
         </span>
       </figcaption>
-      <div className="ad-lp-proof__stars" aria-label={`${review.rating} estrelas`}>
+      <div className="ad-lp-proof__stars" role="img" aria-label={`${review.rating} estrelas`}>
         {Array.from({ length: 5 }).map((_, starIndex) => (
           <Star
             key={starIndex}
@@ -541,14 +589,8 @@ function ReviewCard({ review }: { review: GoogleReview }) {
 
 function HeroReviewCard({ review }: { review: GoogleReview }) {
   return (
-    <motion.figure
-      className="ad-lp-proof__hero"
-      initial={{ opacity: 0, y: 18 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.45 }}
-    >
-      <div className="ad-lp-proof__hero-stars" aria-label={`${review.rating} estrelas`}>
+    <figure className="ad-lp-proof__hero">
+      <div className="ad-lp-proof__hero-stars" role="img" aria-label={`${review.rating} estrelas`}>
         {Array.from({ length: 5 }).map((_, i) => (
           <Star key={i} size={20} fill="currentColor" aria-hidden="true" />
         ))}
@@ -557,7 +599,7 @@ function HeroReviewCard({ review }: { review: GoogleReview }) {
       <figcaption className="ad-lp-proof__hero-author">
         <span className="ad-lp-proof__avatar" aria-hidden="true">
           {review.authorPhotoUrl ? (
-            <img src={review.authorPhotoUrl} alt="" loading="lazy" />
+            <img src={review.authorPhotoUrl} alt="" loading="lazy" width="44" height="44" />
           ) : (
             getInitials(review.authorName)
           )}
@@ -567,7 +609,7 @@ function HeroReviewCard({ review }: { review: GoogleReview }) {
           <span> · Cliente real no Google</span>
         </span>
       </figcaption>
-    </motion.figure>
+    </figure>
   );
 }
 
@@ -579,7 +621,7 @@ function SocialProofSection() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || prefersReducedMotion()) return;
     const interval = window.setInterval(() => {
       const el = viewportRef.current;
       if (!el) return;
@@ -599,23 +641,17 @@ function SocialProofSection() {
     setPaused(true);
     el.scrollBy({
       left: direction === "next" ? 340 : -340,
-      behavior: "smooth",
+      behavior: prefersReducedMotion() ? "auto" : "smooth",
     });
     window.setTimeout(() => setPaused(false), 8000);
   };
 
   return (
     <section id="depoimentos" className="ad-lp-proof" aria-label="Avaliações de clientes">
-      <motion.header
-        className="ad-lp-section-head"
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.45 }}
-      >
+      <header className="ad-lp-section-head">
         <p>{GLOBAL_CONFIG.googleReviewsCount} avaliações · Google {GLOBAL_CONFIG.googleRating}★</p>
         <h2>Quem comprou, indica.</h2>
-      </motion.header>
+      </header>
       {heroReview ? <HeroReviewCard review={heroReview} /> : null}
       <div className="ad-lp-proof__carousel">
         <button
@@ -662,10 +698,7 @@ function ProductBadgePill({ badge }: { badge: ProductBadge }) {
       ? "Custo-benefício"
       : "Premium";
   return (
-    <span
-      className={`ad-lp-card__badge ad-lp-card__badge--${badge}`}
-      aria-label={label}
-    >
+    <span className={`ad-lp-card__badge ad-lp-card__badge--${badge}`}>
       {label}
     </span>
   );
@@ -735,25 +768,21 @@ function VitrineSection({
         <p>{config.vitrineSubtitle}</p>
       </header>
       <div className="ad-lp-vitrine__grid">
-        {visibleProducts.map((product, index) => {
+        {visibleProducts.map((product) => {
           const badge = inferProductBadge(product, products, config.vitrineHighlightId);
           const showScarcity =
             !!config.scarcityMessage &&
             (badge === "mais-vendido" || badge === "custo-beneficio");
           return (
-            <motion.article
+            <article
               className={`ad-lp-card ${
                 product.id === config.vitrineHighlightId ? "ad-lp-card--featured" : ""
               }`}
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.16 }}
-              transition={{ duration: 0.42, delay: Math.min(index * 0.04, 0.18) }}
             >
               {badge ? <ProductBadgePill badge={badge} /> : null}
               {showScarcity ? (
-                <span className="ad-lp-card__scarcity" aria-label={config.scarcityMessage}>
+                <span className="ad-lp-card__scarcity">
                   {config.scarcityMessage}
                 </span>
               ) : null}
@@ -771,6 +800,8 @@ function VitrineSection({
                     src={product.image}
                     fallback={PRODUCT_PLACEHOLDER}
                     alt={product.name}
+                    srcSet={getProductImageSrcSet(product.image)}
+                    sizes="(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 260px"
                   />
                 </span>
                 <span className="ad-lp-card__body">
@@ -783,7 +814,7 @@ function VitrineSection({
                   </span>
                 </span>
               </a>
-            </motion.article>
+            </article>
           );
         })}
       </div>
@@ -803,25 +834,17 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
   return (
     <section id="nossa-historia" className="ad-lp-historia" aria-label="Nossa História">
       <div className="ad-lp-historia__grid">
-        <motion.figure
-          className="ad-lp-historia__media"
-          initial={{ opacity: 0, x: -24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.55 }}
-        >
-          <img src={fachadaUrl} alt={nossaHistoria.imageAlt} loading="lazy" />
+        <figure className="ad-lp-historia__media">
+          <ResponsiveStorefrontImage
+            alt={nossaHistoria.imageAlt}
+            loading="lazy"
+            sizes="(max-width: 780px) 100vw, 50vw"
+          />
           <figcaption className="ad-lp-historia__caption">
             Loja fisica em Goiania · 40 anos de tradicao · entrega propria
           </figcaption>
-        </motion.figure>
-        <motion.div
-          className="ad-lp-historia__body"
-          initial={{ opacity: 0, x: 24 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.55 }}
-        >
+        </figure>
+        <div className="ad-lp-historia__body">
           <h2>{nossaHistoria.title}</h2>
           {nossaHistoria.paragraphs.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
@@ -836,7 +859,7 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
               ))}
             </dl>
           ) : null}
-        </motion.div>
+        </div>
       </div>
     </section>
   );
@@ -875,7 +898,7 @@ function StickyCta({ config }: { config: LPConfig }) {
   }, []);
 
   return (
-    <div className="ad-lp-sticky" data-visible={visible} aria-hidden={!visible}>
+    <div className="ad-lp-sticky" data-visible={visible} hidden={!visible}>
       <CtaButton config={config} origin="sticky" className="ad-lp-sticky__cta" />
     </div>
   );
@@ -884,13 +907,7 @@ function StickyCta({ config }: { config: LPConfig }) {
 function GuaranteeSection({ config }: { config: LPConfig }) {
   return (
     <section className="ad-lp-guarantee" aria-label="Garantia">
-      <motion.div
-        className="ad-lp-guarantee__inner"
-        initial={{ opacity: 0, y: 18 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="ad-lp-guarantee__inner">
         <span className="ad-lp-guarantee__icon" aria-hidden="true">
           <ShieldCheck size={36} strokeWidth={1.6} />
         </span>
@@ -906,7 +923,7 @@ function GuaranteeSection({ config }: { config: LPConfig }) {
             {config.ctaCopy.guarantee ?? GUARANTEE.ctaLabel}
           </button>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
@@ -916,19 +933,13 @@ function FinalCtaSection({ config }: { config: LPConfig }) {
     <section className="ad-lp-final" aria-label="Comprar pelo WhatsApp">
       <div className="ad-lp-final__shape ad-lp-final__shape--top" aria-hidden="true" />
       <div className="ad-lp-final__shape ad-lp-final__shape--bottom" aria-hidden="true" />
-      <motion.div
-        className="ad-lp-final__inner"
-        initial={{ opacity: 0, y: 24 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.55 }}
-      >
+      <div className="ad-lp-final__inner">
         <h2>Escolha agora seu buquê e fala com a gente.</h2>
         <p>A gente responde rápido no WhatsApp em horário comercial. Em segundos a gente confirma a data e o endereço da entrega.</p>
         <div className="ad-lp-final__cta">
           <CtaButton config={config} origin="final">Comprar no WhatsApp</CtaButton>
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 }
