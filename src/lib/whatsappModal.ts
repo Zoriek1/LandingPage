@@ -1,4 +1,5 @@
 import { getCampaign } from "@/lib/attribution";
+import { buildPriceRangeWhatsAppMessage } from "@/lib/price-ranges";
 import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
 /** LP de anúncios de buquê; mensagem pré-formatada para qualificar faixa de valor. */
@@ -130,6 +131,50 @@ export function appendTokenToWhatsAppUrl(
 
 export function openWhatsAppDestination(url: string) {
   window.location.assign(url);
+}
+
+export function appendPriceRangeToWhatsAppUrl(
+  url: string,
+  token: string,
+  messageContext: string,
+  rangeLabel: string,
+) {
+  const text = buildPriceRangeWhatsAppMessage(messageContext, rangeLabel, token);
+
+  try {
+    const parsed = new URL(url);
+    parsed.searchParams.set("text", text);
+    return parsed.toString();
+  } catch {
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}text=${encodeURIComponent(text)}`;
+  }
+}
+
+export function openPriceRangeWhatsApp(
+  url: string,
+  context: TrackingParams,
+  messageContext: string,
+  rangeLabel: string,
+) {
+  const token = getOrCreateToken();
+  const destinationUrl = appendPriceRangeToWhatsAppUrl(
+    url,
+    token,
+    messageContext,
+    rangeLabel,
+  );
+
+  trackWhatsAppClick({
+    cta_location: context.cta_location ?? "whatsapp_range_selection",
+    cta_label: context.cta_label ?? "selecionar_faixa",
+    ...context,
+    destination_url: destinationUrl,
+    token_rastreio: token,
+    status: "pendente_whatsapp",
+  });
+
+  openWhatsAppDestination(destinationUrl);
 }
 
 export function openWhatsAppModal(

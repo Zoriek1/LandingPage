@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Truck, Camera, MessageCircle } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 const MOTHERS_DAY = new Date("2026-05-10T00:00:00-03:00").getTime();
@@ -126,7 +126,7 @@ const HeroSection = () => {
           >
             <button
               onClick={() =>
-                openWhatsAppModal(WHATSAPP_URL, {
+                openPriceRangeSelector({
                   cta_location: "hero",
                   cta_label: "pedir_pelo_whatsapp",
                   destination_url: WHATSAPP_URL,

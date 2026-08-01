@@ -1,4 +1,5 @@
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
+import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
 import Footer from "@/features/mothers-day/components/layout/Footer";
 import Navbar from "@/features/mothers-day/components/layout/Navbar";
 import BackToTop from "@/features/mothers-day/components/floating/BackToTop";
@@ -29,6 +30,7 @@ const MothersDayPage = () => (
     <Footer />
     <WhatsAppFAB />
     <BackToTop />
+    <PriceRangeSelector route="/dia-das-maes" />
   </div>
 );
 

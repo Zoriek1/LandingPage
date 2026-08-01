@@ -84,6 +84,45 @@ describe("whatsappModal", () => {
     expect(destination.searchParams.get("text")).toContain("(código de atendimento: ");
   });
 
+  it("tracks one attributed range selection with the exact one-line message", async () => {
+    const { openPriceRangeWhatsApp } = await import("@/lib/whatsappModal");
+
+    try {
+      openPriceRangeWhatsApp(
+        "https://wa.me/5562996503403",
+        {
+          lp_slug: "urgencia",
+          cta_location: "hero",
+          cta_label: "hero_whatsapp",
+          price_range_key: "mid",
+          price_range_label: "R$ 230 a R$ 300",
+        },
+        "flores para entrega urgente —",
+        "R$ 230 a R$ 300",
+      );
+    } catch {
+      // JSDOM may throw on navigation; payload assertion still validates flow.
+    }
+
+    expect(trackWhatsAppClick).toHaveBeenCalledTimes(1);
+    const payload = trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>;
+    expect(payload).toEqual(
+      expect.objectContaining({
+        lp_slug: "urgencia",
+        cta_location: "hero",
+        price_range_key: "mid",
+        price_range_label: "R$ 230 a R$ 300",
+        status: "pendente_whatsapp",
+      }),
+    );
+
+    const message = new URL(payload.destination_url).searchParams.get("text") ?? "";
+    expect(message).toMatch(
+      /^Oi! Quero ver opções de flores para entrega urgente — R\$ 230 a R\$ 300\. \[[A-Z0-9]{10}\]$/,
+    );
+    expect(message).not.toMatch(/[\r\n]/);
+  });
+
   it("reuses the same token when the campaign has not changed", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 

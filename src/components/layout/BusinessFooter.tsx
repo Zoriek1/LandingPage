@@ -3,7 +3,7 @@ import logo from "@/assets/logo.png";
 import { BUSINESS_INFO } from "@/lib/business-info";
 import { SITE_URL, WHATSAPP_URL } from "@/lib/config";
 import { trackSiteClick } from "@/lib/tracking";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 
 type BusinessFooterProps = {
   tagline: string;
@@ -47,7 +47,7 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
   const handleWhatsAppClick =
     onWhatsAppClick ??
     (() =>
-      openWhatsAppModal(WHATSAPP_URL, {
+      openPriceRangeSelector({
         cta_location: "footer",
         cta_label: "icone_whatsapp",
         destination_url: WHATSAPP_URL,

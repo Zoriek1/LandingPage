@@ -23,6 +23,8 @@ import heroFallbackUrl from "@/assets/hero-flowers.jpg";
 import fachadaUrl from "@/assets/fachada.jpg";
 import logoUrl from "@/assets/logo.png";
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
+import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
+import type { PriceRangeRoute } from "@/lib/price-ranges";
 import {
   BRAND_BONUS,
   BRAND_DOMAIN,
@@ -197,29 +199,24 @@ function resolveCtaLabel(config: LPConfig, origin: CtaOrigin): string {
 function CtaButton({
   config,
   origin,
-  product,
   children,
   className = "",
 }: {
   config: LPConfig;
   origin: CtaOrigin;
-  product?: Product;
   children?: ReactNode;
   className?: string;
 }) {
   return (
-    <a
-      href={buildAdLpWhatsAppUrl(config, product)}
+    <button
+      type="button"
       className={`ad-lp-cta ${className}`}
       data-testid={`ad-lp-cta-${origin}`}
-      onClick={(event) => {
-        event.preventDefault();
-        openAdLpWhatsApp({ config, origin, product });
-      }}
+      onClick={() => openAdLpWhatsApp({ config, origin })}
     >
       <span>{children || resolveCtaLabel(config, origin)}</span>
       <WhatsAppIcon />
-    </a>
+    </button>
   );
 }
 
@@ -983,6 +980,7 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       </main>
       <Footer />
       <StickyCta config={config} />
+      <PriceRangeSelector route={`/${config.slug}` as PriceRangeRoute} />
     </div>
   );
 }

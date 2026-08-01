@@ -1,4 +1,4 @@
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 const NAMORADOS_SLUG = "dia-dos-namorados";
@@ -10,23 +10,12 @@ type NamoradosCtaOrigin =
   | "whatsapp_fab"
   | "final_cta";
 
-/**
- * Abre o WhatsApp da LP de Dia dos Namorados sempre carimbando a origem.
- *
- * - `lp_slug` vai no tracking (Meta/GA/lead API).
- * - `extraRef` vira "· pagina=dia-dos-namorados" no fim da mensagem que o
- *   cliente envia, pra o atendimento saber de onde o lead veio.
- */
+/** Abre o seletor de faixa preservando a origem da CTA de Dia dos Namorados. */
 export function openNamoradosWhatsApp(origin: NamoradosCtaOrigin, ctaLabel: string) {
-  openWhatsAppModal(
-    WHATSAPP_URL,
-    {
-      lp_slug: NAMORADOS_SLUG,
-      cta_location: origin,
-      cta_label: ctaLabel,
-      destination_url: WHATSAPP_URL,
-    },
-    undefined,
-    `pagina=${NAMORADOS_SLUG}`,
-  );
+  openPriceRangeSelector({
+    lp_slug: NAMORADOS_SLUG,
+    cta_location: origin,
+    cta_label: ctaLabel,
+    destination_url: WHATSAPP_URL,
+  });
 }

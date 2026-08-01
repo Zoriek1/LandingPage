@@ -42,47 +42,12 @@ describe("ad landing pages", () => {
     expect(screen.getByText("Página não encontrada")).toBeInTheDocument();
   });
 
-  it("passes lp slug and CTA origin using the default price-band WhatsApp checklist", () => {
+  it("opens the price selector from each generic ad CTA without direct conversion", () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
     fireEvent.click(screen.getByTestId("ad-lp-cta-hero"));
-    fireEvent.click(screen.getByTestId("ad-lp-cta-faq"));
-    fireEvent.click(screen.getByTestId("ad-lp-cta-sticky"));
-
-    expect(openWhatsAppModal).toHaveBeenCalledTimes(3);
-    expect(openWhatsAppModal).toHaveBeenNthCalledWith(
-      1,
-      "https://wa.me/+5562996503403",
-      expect.objectContaining({
-        lp_slug: "urgencia",
-        cta_location: "hero",
-        cta_label: "hero_whatsapp",
-      }),
-      undefined,
-      "pagina=urgencia",
-    );
-    expect(openWhatsAppModal).toHaveBeenNthCalledWith(
-      2,
-      "https://wa.me/+5562996503403",
-      expect.objectContaining({
-        lp_slug: "urgencia",
-        cta_location: "faq",
-        cta_label: "faq_whatsapp",
-      }),
-      undefined,
-      "pagina=urgencia",
-    );
-    expect(openWhatsAppModal).toHaveBeenNthCalledWith(
-      3,
-      "https://wa.me/+5562996503403",
-      expect.objectContaining({
-        lp_slug: "urgencia",
-        cta_location: "sticky",
-        cta_label: "sticky_whatsapp",
-      }),
-      undefined,
-      "pagina=urgencia",
-    );
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(openWhatsAppModal).not.toHaveBeenCalled();
   });
 
   it("scrolls from the hero shortcut to the products without opening WhatsApp", () => {

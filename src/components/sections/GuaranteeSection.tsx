@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 const GuaranteeSection = () => (
@@ -27,7 +27,7 @@ const GuaranteeSection = () => (
         </p>
         <button
           onClick={() =>
-            openWhatsAppModal(WHATSAPP_URL, {
+            openPriceRangeSelector({
               cta_location: "guarantee",
               cta_label: "ver_detalhes_garantia",
               destination_url: WHATSAPP_URL,

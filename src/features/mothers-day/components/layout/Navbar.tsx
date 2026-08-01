@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.png";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
@@ -107,7 +107,7 @@ const Navbar = () => {
               </button>
               <button
                 onClick={() => {
-                  openWhatsAppModal(WHATSAPP_URL, {
+                  openPriceRangeSelector({
                     cta_location: "navbar_mobile",
                     cta_label: "falar_no_whatsapp",
                     destination_url: WHATSAPP_URL,

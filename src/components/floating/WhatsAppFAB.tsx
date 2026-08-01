@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 export default function WhatsAppFAB() {
@@ -37,7 +37,7 @@ export default function WhatsAppFAB() {
         <button
           aria-label="Falar no WhatsApp"
           onClick={() => {
-            openWhatsAppModal(WHATSAPP_URL, {
+            openPriceRangeSelector({
               cta_location: "whatsapp_fab",
               cta_label: "floating_button",
               destination_url: WHATSAPP_URL,

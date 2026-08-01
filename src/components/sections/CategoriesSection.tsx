@@ -5,7 +5,6 @@ import catPresentes from "@/assets/cat-presentes.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
 import catDatas from "@/assets/cat-datas.jpg";
-import { WHATSAPP_URL } from "@/lib/config";
 import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 
 const categories = [
@@ -38,11 +37,10 @@ const CategoriesSection = () => (
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
         {categories.map((cat, i) => (
-          <motion.a
+          <motion.button
             key={cat.title}
-            href={WHATSAPP_URL}
-            onClick={(event) => {
-              event.preventDefault();
+            type="button"
+            onClick={() => {
               openGuidedWhatsApp({
                 pageSlug: "home",
                 pageLabel: "buques",
@@ -55,7 +53,7 @@ const CategoriesSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
-            className={`group relative aspect-[4/5] overflow-hidden rounded-2xl ${cat.span ?? ""}`}
+            className={`group relative aspect-[4/5] w-full overflow-hidden rounded-2xl border-0 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 ${cat.span ?? ""}`}
           >
             
             <img
@@ -76,7 +74,7 @@ const CategoriesSection = () => (
                 <ArrowUpRight size={14} />
               </span>
             </div>
-          </motion.a>
+          </motion.button>
         ))}
       </div>
     </div>

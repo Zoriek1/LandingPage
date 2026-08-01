@@ -1,4 +1,5 @@
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
+import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
 import Footer from "@/features/namorados/components/layout/Footer";
 import Navbar from "@/features/namorados/components/layout/Navbar";
 import BackToTop from "@/features/namorados/components/floating/BackToTop";
@@ -29,6 +30,7 @@ const NamoradosPage = () => (
     <Footer />
     <WhatsAppFAB />
     <BackToTop />
+    <PriceRangeSelector route="/dia-dos-namorados" />
   </div>
 );
 

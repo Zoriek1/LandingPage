@@ -1,6 +1,6 @@
 import { openProductWhatsApp } from "@/lib/landing-whatsapp";
 import { WHATSAPP_URL } from "@/lib/config";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_BASE_URL, type LPConfig, type Product } from "@/features/ad-lps/data/configs";
 
 type CtaOrigin =
@@ -99,15 +99,10 @@ export function openAdLpWhatsApp({ config, origin, product }: OpenAdLpWhatsAppAr
     return;
   }
 
-  openWhatsAppModal(
-    WHATSAPP_URL,
-    {
-      lp_slug: config.slug,
-      cta_location: origin,
-      cta_label: `${origin}_whatsapp`,
-      destination_url: WHATSAPP_URL,
-    },
-    undefined,
-    `pagina=${config.slug}`,
-  );
+  openPriceRangeSelector({
+    lp_slug: config.slug,
+    cta_location: origin,
+    cta_label: `${origin}_whatsapp`,
+    destination_url: WHATSAPP_URL,
+  });
 }

@@ -1,5 +1,5 @@
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 /**
@@ -20,7 +20,7 @@ export default function StickyCTA() {
       <div className="border-t border-primary-foreground/10 bg-primary/95 px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.2)] backdrop-blur-md">
         <button
           onClick={() =>
-            openWhatsAppModal(WHATSAPP_URL, {
+            openPriceRangeSelector({
               cta_location: "sticky",
               cta_label: "encomendar_no_whatsapp",
               destination_url: WHATSAPP_URL,

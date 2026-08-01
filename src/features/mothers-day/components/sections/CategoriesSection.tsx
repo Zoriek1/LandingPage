@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import catBuques from "@/assets/cat-buques.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
-import { WHATSAPP_URL } from "@/lib/config";
 import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 
 const categories = [
@@ -43,11 +42,10 @@ const CategoriesSection = () => (
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
         {categories.map((cat, i) => (
-          <motion.a
+          <motion.button
             key={cat.title}
-            href={WHATSAPP_URL}
-            onClick={(event) => {
-              event.preventDefault();
+            type="button"
+            onClick={() => {
               openGuidedWhatsApp({
                 pageSlug: "dia-das-maes",
                 pageLabel: "Dia das Maes",
@@ -60,7 +58,7 @@ const CategoriesSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
-            className="group relative aspect-[4/5] overflow-hidden rounded"
+            className="group relative aspect-[4/5] w-full overflow-hidden rounded border-0 p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             
             <img
@@ -81,7 +79,7 @@ const CategoriesSection = () => (
                 
               </span>
             </div>
-          </motion.a>
+          </motion.button>
         ))}
       </div>
     </div>
