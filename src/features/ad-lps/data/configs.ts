@@ -1186,4 +1186,4 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
   },
 };
 
-export const AD_LP_SLUGS = Object.keys(LP_CONFIGS);
+export { AD_LP_SLUGS } from "@/routes/routeManifest";

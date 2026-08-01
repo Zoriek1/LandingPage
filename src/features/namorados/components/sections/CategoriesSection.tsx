@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import catBuques from "@/assets/cat-buques.jpg";
 import catCestas from "@/assets/cat-cestas.jpg";
 import catPlantas from "@/assets/cat-plantas.jpg";
-import { WHATSAPP_URL } from "@/lib/config";
 import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 
 const categories = [
@@ -43,11 +42,10 @@ const CategoriesSection = () => (
 
       <div className="grid md:grid-cols-3 gap-6 md:gap-8">
         {categories.map((cat, i) => (
-          <motion.a
+          <motion.button
             key={cat.title}
-            href={WHATSAPP_URL}
-            onClick={(event) => {
-              event.preventDefault();
+            type="button"
+            onClick={() => {
               openGuidedWhatsApp({
                 pageSlug: "dia-dos-namorados",
                 pageLabel: "Dia dos Namorados",
@@ -60,7 +58,7 @@ const CategoriesSection = () => (
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: i * 0.08 }}
-            className="group relative overflow-hidden rounded bg-background shadow-md transition-shadow hover:shadow-xl"
+            className="group relative w-full overflow-hidden rounded border-0 bg-background p-0 text-left shadow-md transition-shadow hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
           >
             <div className="aspect-[4/5] overflow-hidden">
             <img
@@ -78,7 +76,7 @@ const CategoriesSection = () => (
               <p className="font-body text-sm text-muted-foreground leading-relaxed">{cat.desc}</p>
               
             </div>
-          </motion.a>
+          </motion.button>
         ))}
       </div>
     </div>

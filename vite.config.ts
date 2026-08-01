@@ -20,6 +20,7 @@ export default defineConfig({
   build: {
     target: "es2020",
     cssCodeSplit: true,
+    manifest: true,
     reportCompressedSize: false,
     rollupOptions: {
       input: {
@@ -29,13 +30,20 @@ export default defineConfig({
       },
       output: {
         manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "react-vendor": [
+            "react",
+            "react-dom",
+            "react/jsx-runtime",
+            "react-router-dom",
+          ],
           "motion": ["framer-motion"],
-          "radix": [
-            "@radix-ui/react-accordion",
+          "radix-dialog": [
             "@radix-ui/react-dialog",
-            "@radix-ui/react-tooltip",
             "@radix-ui/react-slot",
+          ],
+          "radix-home": [
+            "@radix-ui/react-accordion",
+            "@radix-ui/react-tooltip",
           ],
           "query": ["@tanstack/react-query"],
         },

@@ -1,0 +1,12 @@
+/* Home keeps its complete editorial range, but it no longer ships on ad routes. */
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 300; src: url('@fontsource/montserrat/files/montserrat-latin-300-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 400; src: url('@fontsource/montserrat/files/montserrat-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 500; src: url('@fontsource/montserrat/files/montserrat-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 600; src: url('@fontsource/montserrat/files/montserrat-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Montserrat'; font-style: normal; font-display: swap; font-weight: 700; src: url('@fontsource/montserrat/files/montserrat-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: normal; font-display: swap; font-weight: 400; src: url('@fontsource/playfair-display/files/playfair-display-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: normal; font-display: swap; font-weight: 500; src: url('@fontsource/playfair-display/files/playfair-display-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: normal; font-display: swap; font-weight: 600; src: url('@fontsource/playfair-display/files/playfair-display-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: normal; font-display: swap; font-weight: 700; src: url('../assets/fonts/playfair-display-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: italic; font-display: swap; font-weight: 400; src: url('@fontsource/playfair-display/files/playfair-display-latin-400-italic.woff2') format('woff2'); }
+@font-face { font-family: 'Playfair Display'; font-style: italic; font-display: swap; font-weight: 500; src: url('@fontsource/playfair-display/files/playfair-display-latin-500-italic.woff2') format('woff2'); }

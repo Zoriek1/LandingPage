@@ -8,7 +8,7 @@
     "google:reviews": "node ./scripts/google-business-reviews.mjs",
     "sync:mothers-day-products": "node ./scripts/mothers-day-products/sync.mjs",
     "sync:home-products": "node ./scripts/home-products/sync.mjs",
-    "build": "npm run sync:home-products && npm run sync:mothers-day-products && npm run sync:namorados-products && vite build",
+    "build": "npm run sync:home-products && npm run sync:mothers-day-products && npm run sync:namorados-products && vite build && npm run inspect:ad-bundle",
     "build:dev": "npm run sync:home-products && npm run sync:mothers-day-products && npm run sync:namorados-products && vite build --mode development",
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.node.json --noEmit",
@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "check:build": "npm run check && vite build",
+    "check:build": "npm run check && vite build && npm run inspect:ad-bundle",
+    "inspect:ad-bundle": "node ./scripts/inspect-ad-bundle.mjs dist --cleanup-manifest",
     "sync:namorados-products": "node ./scripts/namorados-products/sync.mjs"
   },
   "dependencies": {

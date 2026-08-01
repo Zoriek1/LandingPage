@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 const FinalCTASection = () => (
@@ -25,7 +25,7 @@ const FinalCTASection = () => (
         </p>
         <button
           onClick={() =>
-            openWhatsAppModal(WHATSAPP_URL, {
+            openPriceRangeSelector({
               cta_location: "final_cta",
               cta_label: "pedir_pelo_whatsapp",
               destination_url: WHATSAPP_URL,

@@ -123,6 +123,40 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  animation: ad-lp-hero-media-enter 650ms ease-out both;
+}
+
+.ad-lp-theme [id] {
+  scroll-margin-top: 5.25rem;
+}
+
+.ad-lp-skip-link {
+  position: fixed;
+  top: 0.65rem;
+  left: var(--ad-gutter);
+  z-index: 100;
+  padding: 0.7rem 1rem;
+  color: #fffaf2;
+  background: var(--ad-brand-deep);
+  border: 2px solid var(--ad-accent);
+  border-radius: 4px;
+  font-weight: 700;
+  opacity: 0;
+  transform: translateY(-160%);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+
+.ad-lp-skip-link:focus-visible {
+  opacity: 1;
+  outline: 3px solid #fffaf2;
+  outline-offset: 2px;
+  transform: translateY(0);
+}
+
+.ad-lp-hero__media picture {
+  position: absolute;
+  inset: 0;
+  display: block;
 }
 
 .ad-lp-hero__image {
@@ -148,6 +182,21 @@
   width: 100%;
   padding: clamp(3.2rem, 9vw, 6rem) var(--ad-gutter);
   color: #fff;
+  animation: ad-lp-hero-copy-enter 520ms 100ms ease-out both;
+}
+
+@keyframes ad-lp-hero-media-enter {
+  from {
+    opacity: 0.82;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes ad-lp-hero-copy-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
 }
 
 .ad-lp-hero__content {
@@ -160,6 +209,7 @@
   margin: 0 0 0.75rem;
   padding: 0.32rem 0.68rem;
   background: var(--ad-accent);
+  color: var(--ad-brand-deep);
   border-radius: 4px;
   font-size: 0.78rem;
   font-weight: 700;
@@ -233,17 +283,14 @@
   gap: 0.55rem;
   min-height: 56px;
   padding: 1.05rem 1.52rem;
-  color: #fff;
+  color: var(--ad-brand-deep);
   background: var(--ad-whatsapp);
   border-radius: 999px;
   box-shadow: 0 14px 30px rgba(37, 211, 102, 0.26);
   font-size: 1.02rem;
   font-weight: 800;
   text-decoration: none;
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .ad-lp-cta:hover {
@@ -279,10 +326,7 @@
   font-size: 0.98rem;
   font-weight: 800;
   text-decoration: none;
-  transition:
-    transform 180ms ease,
-    border-color 180ms ease,
-    background 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .ad-lp-secondary-cta:hover {
@@ -437,10 +481,7 @@
   box-shadow: 0 10px 28px rgba(6, 24, 16, 0.32);
   cursor: pointer;
   transform: translateY(-50%);
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease,
-    background 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .ad-lp-proof__nav:hover {
@@ -564,9 +605,7 @@
 }
 
 .ad-lp-card {
-  transition:
-    transform 180ms ease,
-    box-shadow 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .ad-lp-card:hover {
@@ -649,7 +688,6 @@
   font-size: 0.84rem;
   font-weight: 800;
   letter-spacing: 0.01em;
-  transition: gap 180ms ease, color 180ms ease;
 }
 
 .ad-lp-card:hover .ad-lp-card__cta {
@@ -756,7 +794,6 @@
   text-decoration: none;
   font-weight: 500;
   letter-spacing: 0.01em;
-  transition: color 160ms ease;
 }
 
 .ad-lp-nav a:hover {
@@ -1062,12 +1099,12 @@
 }
 
 .ad-lp-card__badge--mais-vendido {
-  color: #fffaf2;
+  color: #17251d;
   background: linear-gradient(135deg, #c7a25a 0%, #a98539 100%);
 }
 
 .ad-lp-card__badge--custo-beneficio {
-  color: #fffaf2;
+  color: #17251d;
   background: linear-gradient(135deg, #e98a3c 0%, #cf5f23 100%);
 }
 
@@ -1133,7 +1170,7 @@
   font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background 180ms ease, color 180ms ease, transform 180ms ease;
+  transition: transform 180ms ease;
 }
 
 .ad-lp-vitrine__more button:hover {
@@ -1307,6 +1344,23 @@
   color: inherit;
   padding: 0.05em 0.18em;
   border-radius: 3px;
+}
+
+.ad-lp-historia__media picture,
+.ad-lp-historia__media img {
+  width: 100%;
+  height: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ad-lp-theme *,
+  .ad-lp-theme *::before,
+  .ad-lp-theme *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @media (max-width: 719px) {

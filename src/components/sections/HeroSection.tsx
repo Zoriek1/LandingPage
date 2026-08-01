@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Camera, Truck, MessageCircle } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
-import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
 
 const badges = [
@@ -73,7 +73,7 @@ const HeroSection = () => (
         >
           <button
             onClick={() =>
-              openWhatsAppModal(WHATSAPP_URL, {
+              openPriceRangeSelector({
                 cta_location: "hero",
                 cta_label: "encomendar_no_whatsapp",
                 destination_url: WHATSAPP_URL,

@@ -1,5 +1,6 @@
 import { WHATSAPP_URL } from "@/lib/config";
 import { openWhatsAppModal } from "@/lib/whatsappModal";
+import { openPriceRangeSelector } from "@/lib/price-ranges";
 import type { TrackingParams } from "@/lib/tracking";
 
 type ProductWhatsAppArgs = {
@@ -75,22 +76,15 @@ export function openProductWhatsApp({
 
 export function openGuidedWhatsApp({
   pageSlug,
-  pageLabel,
   ctaLocation,
   ctaLabel,
-  request,
   extraTracking = {},
 }: GuidedWhatsAppArgs) {
-  openWhatsAppModal(
-    WHATSAPP_URL,
-    {
-      lp_slug: pageSlug,
-      cta_location: ctaLocation,
-      cta_label: ctaLabel,
-      destination_url: WHATSAPP_URL,
-      ...extraTracking,
-    },
-    buildGuidedWhatsAppMessage({ pageLabel, request }),
-    `pagina=${pageSlug}`,
-  );
+  openPriceRangeSelector({
+    lp_slug: pageSlug,
+    cta_location: ctaLocation,
+    cta_label: ctaLabel,
+    destination_url: WHATSAPP_URL,
+    ...extraTracking,
+  });
 }

@@ -3,6 +3,7 @@ import { DocumentMeta } from "@/components/seo/DocumentMeta";
 import Navbar from "@/components/layout/Navbar";
 import HeroSection from "@/components/sections/HeroSection";
 import BenefitsSection from "@/components/sections/BenefitsSection";
+import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
 import { HOME_META } from "@/pages/index-meta";
 
 const FeaturedProductsSection = lazy(() => import("@/components/sections/FeaturedProductsSection"));
@@ -44,6 +45,7 @@ const Index = () => (
       <BackToTop />
       <StickyCTA />
     </Suspense>
+    <PriceRangeSelector route="/" />
   </>
 );
 
