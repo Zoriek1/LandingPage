@@ -9,7 +9,7 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 function RouteFallback() {
   return (
     <main className="grid min-h-screen place-items-center bg-background text-foreground">
-      <p role="status">Carregando...</p>
+      <p role="status">Carregando…</p>
     </main>
   );
 }

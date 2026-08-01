@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
@@ -34,6 +34,17 @@ describe("ad landing delivery", () => {
     expect(adLandingSource).not.toContain("<motion.");
   });
 
+  it("limits ad landing transitions to transform and opacity", () => {
+    const themeCss = readProjectFile("src/features/ad-lps/theme.css");
+    const selectorSource = readProjectFile("src/components/conversion/PriceRangeSelector.tsx");
+
+    expect(themeCss).not.toMatch(
+      /transition(?:-property)?:[^;]*(?:background|border-color|box-shadow|color|gap)/,
+    );
+    expect(selectorSource).not.toMatch(/(?:^|\s)transition(?:-colors)?(?=\s|")/);
+    expect(selectorSource).toContain("transition-transform");
+  });
+
   it("prioritizes a responsive modern-format hero and defers product imagery", async () => {
     window.history.pushState({}, "", "/lirios-apt");
     render(<App />);
@@ -58,6 +69,31 @@ describe("ad landing delivery", () => {
     expect(product).toHaveAttribute("height", "1024");
     expect(product.getAttribute("srcset")).toMatch(/480w.*640w.*1024w/);
     expect(product).toHaveAttribute("sizes");
+
+    const originalSrc = product.getAttribute("src");
+    fireEvent.error(product);
+    expect(product).not.toHaveAttribute("srcset");
+    expect(product).toHaveAttribute("src", originalSrc);
+    expect(product).not.toHaveAttribute("src", "/lpb/placeholders/product.svg");
+
+    fireEvent.error(product);
+    expect(product).toHaveAttribute("src", "/lpb/placeholders/product.svg");
+  });
+
+  it("offers keyboard users a skip link to the stable main target", async () => {
+    window.history.pushState({}, "", "/lirios-apt");
+    const { container } = render(<App />);
+
+    const skipLink = await screen.findByRole("link", { name: "Pular para o conteúdo principal" });
+    const main = screen.getByRole("main");
+    const nav = screen.getByRole("navigation", { name: "Seções da página" });
+
+    expect(skipLink).toHaveAttribute("href", "#ad-lp-main");
+    expect(main).toHaveAttribute("id", "ad-lp-main");
+    expect(
+      skipLink.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
+    expect(container.querySelector("#hero")).toHaveClass("ad-lp-hero");
   });
 
   it("ships non-blocking critical fonts and Apache cache policy", () => {

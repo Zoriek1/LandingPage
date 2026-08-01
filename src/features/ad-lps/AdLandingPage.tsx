@@ -180,6 +180,13 @@ function ImageWithFallback({
       onError={(event) => {
         const image = event.currentTarget;
         if (image.src.endsWith(fallback)) return;
+        if (srcSet && image.dataset.originalRetry !== "true") {
+          image.dataset.originalRetry = "true";
+          image.removeAttribute("srcset");
+          image.removeAttribute("sizes");
+          image.src = src;
+          return;
+        }
         image.removeAttribute("srcset");
         image.removeAttribute("sizes");
         image.src = fallback;
@@ -358,7 +365,7 @@ function HeroSection({ config }: { config: LPConfig }) {
   };
 
   return (
-    <section className="ad-lp-hero">
+    <section id="hero" className="ad-lp-hero">
       <div className="ad-lp-hero__media">
         <ResponsiveStorefrontImage
           alt="Fachada da Plante Uma Flor em Goiânia"
@@ -976,9 +983,11 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
         ogUrl={canonicalUrl}
         ogImage={`https://${BRAND_DOMAIN}${config.heroImage}`}
       />
+      <a className="ad-lp-skip-link" href="#ad-lp-main">
+        Pular para o conteúdo principal
+      </a>
       <BrandBar />
-      <main>
-        <div id="hero" />
+      <main id="ad-lp-main" tabIndex={-1}>
         <HeroSection config={config} />
         <DifferentialsSection config={config} />
         <SocialProofSection />

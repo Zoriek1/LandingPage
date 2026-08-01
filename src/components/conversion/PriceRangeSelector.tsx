@@ -72,7 +72,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
           }}
         >
           <Dialog.Close
-            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#1b3328]/15 text-[#1b3328]/70 transition-colors hover:bg-[#1b3328]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6a15b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fcfaf4]"
+            className="absolute right-4 top-4 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#1b3328]/15 text-[#1b3328]/70 hover:bg-[#1b3328]/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6a15b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fcfaf4]"
             aria-label="Fechar seletor de faixa de preço"
           >
             <X className="h-5 w-5" aria-hidden="true" />
@@ -98,7 +98,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
                 ref={index === 0 ? firstChoiceRef : undefined}
                 type="button"
                 onClick={() => handleSelection(range)}
-                className="group grid min-h-[5.25rem] grid-cols-[1fr_auto] items-center gap-4 rounded-2xl border border-[#1b3328]/14 bg-white px-5 py-4 text-left shadow-[0_8px_24px_rgba(27,51,40,0.06)] transition hover:-translate-y-0.5 hover:border-[#c6a15b] hover:shadow-[0_12px_30px_rgba(27,51,40,0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6a15b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fcfaf4] active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none"
+                className="group grid min-h-[5.25rem] grid-cols-[1fr_auto] items-center gap-4 rounded-2xl border border-[#1b3328]/14 bg-white px-5 py-4 text-left shadow-[0_8px_24px_rgba(27,51,40,0.06)] transition-transform hover:-translate-y-0.5 hover:border-[#c6a15b] hover:shadow-[0_12px_30px_rgba(27,51,40,0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6a15b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fcfaf4] active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none"
                 aria-label={`${range.label}. ${range.outcome}`}
               >
                 <span>
@@ -109,7 +109,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
                     {range.outcome}
                   </span>
                 </span>
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1b3328] text-[#fcfaf4] transition group-hover:bg-[#c6a15b] group-hover:text-[#1b3328]" aria-hidden="true">
+                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1b3328] text-[#fcfaf4] group-hover:bg-[#c6a15b] group-hover:text-[#1b3328]" aria-hidden="true">
                   <ArrowRight className="h-4 w-4" />
                 </span>
               </button>
