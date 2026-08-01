@@ -1269,10 +1269,16 @@
 
 .ad-lp-guarantee__badge {
   display: inline-flex;
-  align-self: center;
+  /* justify-self, não align-self: dentro de um grid o align-self age no eixo
+     vertical, então o badge esticava pela coluna 1fr inteira e o texto ficava
+     encostado à esquerda, destoando do resto da seção, que é centralizado. */
+  justify-self: center;
   padding: 0.35rem 0.85rem;
-  color: var(--ad-accent-deep);
-  background: rgba(199, 162, 90, 0.18);
+  /* O dourado sobre o dourado translúcido dava contraste 3,2:1 num texto de
+     12,5px — abaixo do mínimo legível. O verde da marca resolve sem perder a
+     pílula dourada. */
+  color: var(--ad-brand);
+  background: rgba(199, 162, 90, 0.28);
   border-radius: 999px;
   font-size: 0.78rem;
   font-weight: 800;

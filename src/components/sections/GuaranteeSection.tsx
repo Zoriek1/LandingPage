@@ -13,7 +13,7 @@ const GuaranteeSection = () => (
         transition={{ duration: 0.55 }}
         className="mx-auto flex max-w-3xl flex-col items-center rounded-[28px] border border-accent/20 bg-background px-6 py-12 text-center shadow-[0_24px_60px_rgba(15,27,22,0.08)] md:px-12 md:py-14"
       >
-        <span className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent/12 text-accent">
+        <span className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10 text-accent">
           <ShieldCheck size={34} strokeWidth={1.6} />
         </span>
         <span className="mb-4 inline-flex items-center rounded-full border border-accent/25 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">

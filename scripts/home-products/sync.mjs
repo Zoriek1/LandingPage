@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import {
+  dropIncoherentPixPrice,
+  hasCoherentPixPrice,
   isValidFeaturedProduct,
   parseFeaturedProductPage,
   slugFromUrl,
@@ -33,16 +35,18 @@ const sanitizeFeaturedProduct = (product) => ({
   ...(product.waText ? { waText: String(product.waText).trim() } : {}),
 });
 
-const mergeWithFallback = (product, fallbackProduct) =>
+/**
+ * Herda do snapshot apenas o que a página da loja não tem como informar.
+ *
+ * O merge campo a campo que existia aqui emparelhava um priceLabel recém-lido
+ * com um pixPriceLabel velho do snapshot sempre que o parser não achava o Pix
+ * — e foi exatamente isso que colocou "R$ 144,90, Pix R$ 275,41" no ar. Preço,
+ * Pix, título e imagem descrevem o mesmo produto num mesmo instante: ou vêm
+ * todos da leitura nova, ou vêm todos do snapshot.
+ */
+const withCuratedFields = (product, fallbackProduct) =>
   sanitizeFeaturedProduct({
-    ...fallbackProduct,
     ...product,
-    slug: product.slug || fallbackProduct?.slug,
-    title: product.title || fallbackProduct?.title,
-    url: product.url || fallbackProduct?.url,
-    imageUrl: product.imageUrl || fallbackProduct?.imageUrl,
-    priceLabel: product.priceLabel || fallbackProduct?.priceLabel,
-    pixPriceLabel: product.pixPriceLabel || fallbackProduct?.pixPriceLabel,
     waText: product.waText || fallbackProduct?.waText,
   });
 
@@ -196,10 +200,16 @@ export const buildFeaturedProductsData = async ({
         throw new Error(`Parsed page did not match requested product for ${url}`);
       }
 
-      const parsedProduct = mergeWithFallback(rawParsedProduct, fallbackProduct);
+      const parsedProduct = withCuratedFields(rawParsedProduct, fallbackProduct);
 
       if (!isValidFeaturedProduct(parsedProduct)) {
         throw new Error(`Invalid product payload for ${url}`);
+      }
+
+      if (!hasCoherentPixPrice(parsedProduct)) {
+        throw new Error(
+          `Pix price ${parsedProduct.pixPriceLabel} is not coherent with ${parsedProduct.priceLabel} for ${url}`,
+        );
       }
 
       results.push(parsedProduct);
@@ -208,7 +218,8 @@ export const buildFeaturedProductsData = async ({
         logger.warn(
           `[home] fallback used for ${url}: ${error instanceof Error ? error.message : String(error)}`,
         );
-        results.push(fallbackProduct);
+        // O snapshot pode já ter herdado um Pix incoerente das rodadas antigas.
+        results.push(dropIncoherentPixPrice(fallbackProduct));
         continue;
       }
 

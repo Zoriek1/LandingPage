@@ -145,6 +145,39 @@ const pickImageUrl = (document, structuredProduct, baseUrl) => {
   return resolveAbsoluteUrl(firstImage?.trim() ?? "", baseUrl);
 };
 
+const normalizeTitleForCompare = (value = "") =>
+  normalizeWhitespace(value)
+    .replace(/\s+\|\s+.*$/, "")
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+/**
+ * O JSON-LD da loja nem sempre descreve o produto da própria página: em
+ * /produtos/buque-classico-rosas/ o h1 e o og:title dizem "Buquê Clássico de
+ * Rosas Vermelhas" (R$ 199,90), mas o dado estruturado diz "Buquê Especial 30
+ * Rosas Vermelhas" (R$ 680,00). Como o parser preferia o estruturado, a home
+ * anunciava o título e o preço do produto errado.
+ *
+ * Quando o estruturado contradiz o que a página mostra, ele é descartado por
+ * inteiro e a leitura cai no DOM — que é justamente o que o cliente vê.
+ */
+const describesSamePageProduct = (document, structuredProduct) => {
+  const structuredName = normalizeTitleForCompare(structuredProduct?.name ?? "");
+  if (!structuredName) return true;
+
+  const pageTitle = normalizeTitleForCompare(
+    document.querySelector('meta[property="og:title"]')?.getAttribute("content") ||
+      document.querySelector("h1")?.textContent ||
+      "",
+  );
+  if (!pageTitle) return true;
+
+  return structuredName === pageTitle;
+};
+
 const pickTitle = (document, structuredProduct) => {
   const titleCandidates = [
     structuredProduct?.name,
@@ -163,6 +196,46 @@ const pickTitle = (document, structuredProduct) => {
   return "";
 };
 
+/**
+ * document.body.textContent inclui o conteúdo dos <script>, e o JSON-LD da loja
+ * repete o título do produto. Sem remover os scripts, procurar o título no
+ * corpo caía dentro do JSON em vez do cabeçalho visível.
+ */
+const getVisibleBodyText = (document) => {
+  const body = document.body?.cloneNode(true);
+  if (!body) return "";
+
+  for (const node of body.querySelectorAll("script, style, noscript, template")) {
+    node.remove();
+  }
+
+  return normalizeWhitespace(body.textContent ?? "");
+};
+
+/**
+ * Uma página de produto também lista relacionados e variações, cada um com o
+ * seu preço. O bloco que descreve ESTE produto é o que vem logo depois do
+ * título — restringir a leitura a essa janela é o que impede pegar o valor do
+ * vizinho.
+ */
+const HEADER_SLICE_LENGTH = 600;
+
+const getHeaderSlice = (bodyText, title) => {
+  if (!title) return bodyText.slice(0, HEADER_SLICE_LENGTH);
+
+  // O título aparece em menus e breadcrumbs antes do bloco de compra, então a
+  // primeira ocorrência nem sempre é a certa. Vale a primeira que traz um preço
+  // junto — essa é a do produto.
+  for (let index = bodyText.indexOf(title); index >= 0; index = bodyText.indexOf(title, index + 1)) {
+    const slice = bodyText.slice(index, index + HEADER_SLICE_LENGTH);
+    if (getCurrencyMatches(slice).some((label) => priceLabelToNumber(label) > 0)) {
+      return slice;
+    }
+  }
+
+  return bodyText.slice(0, HEADER_SLICE_LENGTH);
+};
+
 const pickPriceLabel = (document, structuredProduct, title) => {
   const structuredOffers = structuredProduct?.offers;
   const offerCandidates = Array.isArray(structuredOffers) ? structuredOffers : [structuredOffers];
@@ -174,34 +247,45 @@ const pickPriceLabel = (document, structuredProduct, title) => {
     }
   }
 
-  const bodyText = normalizeWhitespace(document.body?.textContent ?? "");
-  const titleIndex = title ? bodyText.indexOf(title) : -1;
-  const headerSlice = titleIndex >= 0 ? bodyText.slice(titleIndex, titleIndex + 600) : bodyText.slice(0, 600);
-  return getCurrencyMatches(headerSlice)[0] ?? getCurrencyMatches(bodyText)[0] ?? "";
+  const bodyText = getVisibleBodyText(document);
+  // "Frete R$ 0,00" e afins aparecem no cabeçalho; preço de produto é positivo.
+  const isPositive = (label) => priceLabelToNumber(label) > 0;
+
+  return (
+    getCurrencyMatches(getHeaderSlice(bodyText, title)).find(isPositive) ??
+    getCurrencyMatches(bodyText).find(isPositive) ??
+    ""
+  );
 };
 
-const pickPixPriceLabel = (document, priceLabel) => {
-  const bodyText = normalizeWhitespace(document.body?.textContent ?? "");
-  const pixSection = bodyText.match(PIX_SECTION_PATTERN)?.[1] ?? "";
-  const pixCandidates = getCurrencyMatches(pixSection);
+/** A loja escreve "R$ 189,91 com Pix" — o valor vem antes da palavra. */
+const PIX_VALUE_BEFORE_PATTERN =
+  /(R\$\s?[\d.]*\d,\d{2})\s*(?:[àa]\s*vista\s*)?(?:com|no|via)\s+pix/gi;
 
-  if (pixCandidates.length === 0) {
+const pickPixPriceLabel = (document, priceLabel, title) => {
+  const currentPrice = priceLabelToNumber(priceLabel);
+  if (!Number.isFinite(currentPrice) || currentPrice <= 0) {
     return undefined;
   }
 
-  const currentPrice = priceLabelToNumber(priceLabel);
-  const validCandidates = pixCandidates.filter((candidate) => {
-    const candidatePrice = priceLabelToNumber(candidate);
-    return Number.isFinite(candidatePrice) && (!Number.isFinite(currentPrice) || candidatePrice <= currentPrice);
+  const bodyText = getVisibleBodyText(document);
+  const headerSlice = getHeaderSlice(bodyText, title);
+
+  // Só o cabeçalho: uma página de lírios chega a ter seis "com Pix", e os
+  // outros cinco são de produtos relacionados.
+  const candidates = [
+    // toPriceLabel para o Pix sair no mesmo formato do preço cheio.
+    ...[...headerSlice.matchAll(PIX_VALUE_BEFORE_PATTERN)].map((match) => toPriceLabel(match[1])),
+    ...getCurrencyMatches(headerSlice.match(PIX_SECTION_PATTERN)?.[1] ?? ""),
+  ];
+
+  const coherent = candidates.filter((candidate) => {
+    const value = priceLabelToNumber(candidate);
+    return Number.isFinite(value) && value < currentPrice && value / currentPrice >= MIN_PIX_RATIO;
   });
 
-  if (validCandidates.length === 0) {
-    return undefined;
-  }
-
-  const sorted = validCandidates.sort((left, right) => priceLabelToNumber(left) - priceLabelToNumber(right));
-  const pixPrice = sorted[0];
-  return pixPrice !== priceLabel ? pixPrice : undefined;
+  // O primeiro em ordem de leitura é o que fica colado no preço do produto.
+  return coherent[0];
 };
 
 export const parseFeaturedProductPage = ({ html, url }) => {
@@ -211,7 +295,10 @@ export const parseFeaturedProductPage = ({ html, url }) => {
     virtualConsole,
   });
   const document = dom.window.document;
-  const structuredProduct = readStructuredProduct(document);
+  const rawStructuredProduct = readStructuredProduct(document);
+  const structuredProduct = describesSamePageProduct(document, rawStructuredProduct)
+    ? rawStructuredProduct
+    : undefined;
   const title = pickTitle(document, structuredProduct);
   const priceLabel = pickPriceLabel(document, structuredProduct, title);
 
@@ -222,7 +309,7 @@ export const parseFeaturedProductPage = ({ html, url }) => {
     canonicalUrl: pickCanonicalUrl(document, url),
     imageUrl: pickImageUrl(document, structuredProduct, url),
     priceLabel,
-    pixPriceLabel: pickPixPriceLabel(document, priceLabel),
+    pixPriceLabel: pickPixPriceLabel(document, priceLabel, title),
   };
 };
 
@@ -233,7 +320,34 @@ export const isValidFeaturedProduct = (product) =>
       product.title &&
       product.url &&
       typeof product.imageUrl === "string" &&
-      product.priceLabel,
+      // "R$ 0,00" é string não-vazia e passava como preço válido.
+      priceLabelToNumber(product.priceLabel ?? "") > 0,
   );
 
-export { slugFromUrl, toPriceLabel };
+/**
+ * O preço à vista e o preço no Pix são um par: só fazem sentido juntos.
+ * Um Pix maior que o preço cheio, ou um desconto absurdo, quer dizer que os
+ * dois vieram de fontes diferentes — foi assim que a home passou a anunciar
+ * "R$ 144,90, Pix R$ 275,41" e "R$ 680,00, Pix R$ 189,91" em produção.
+ */
+const MIN_PIX_RATIO = 0.8;
+
+export const hasCoherentPixPrice = (product) => {
+  if (!product?.pixPriceLabel) return true;
+
+  const price = priceLabelToNumber(product.priceLabel ?? "");
+  const pix = priceLabelToNumber(product.pixPriceLabel);
+  if (!Number.isFinite(price) || !Number.isFinite(pix) || price <= 0) return false;
+
+  const ratio = pix / price;
+  return ratio >= MIN_PIX_RATIO && ratio < 1;
+};
+
+/** Melhor um card sem preço no Pix do que com um preço que não é praticado. */
+export const dropIncoherentPixPrice = (product) => {
+  if (hasCoherentPixPrice(product)) return product;
+  const { pixPriceLabel, ...rest } = product;
+  return rest;
+};
+
+export { priceLabelToNumber, slugFromUrl, toPriceLabel };

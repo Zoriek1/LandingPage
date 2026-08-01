@@ -24,7 +24,21 @@ const HeroSection = () => (
         fetchPriority="high"
         decoding="async"
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary/92 via-primary/65 to-primary/20" />
+      {/*
+        Opacidades precisam ser múltiplos de 5: a escala do Tailwind 3.4 vai de
+        5 em 5, e um valor fora dela (como o /92 que estava aqui) não gera CSS
+        nenhum — o --tw-gradient-from fica indefinido, invalida o
+        --tw-gradient-stops e o background-image inteiro computa como "none".
+        No mobile o texto ocupa a largura toda, por isso o degradê é vertical
+        ali e só vira horizontal a partir do md:.
+      */}
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/45 to-primary/70 md:bg-gradient-to-r md:from-primary/85 md:via-primary/45 md:to-primary/10" />
+      {/*
+        Halo elíptico atrás do texto: escurece só onde o texto está, deixando o
+        resto da foto respirar. Usa valor arbitrário de propósito — o Tailwind
+        sempre gera esses, ao contrário dos modificadores /NN fora da escala.
+      */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_87%_28%_at_50%_43%,hsl(148_30%_8%_/_0.9)_0%,hsl(148_30%_8%_/_0.55)_50%,transparent_100%)] md:bg-[radial-gradient(ellipse_45%_35%_at_28%_50%,hsl(148_30%_8%_/_0.9)_0%,hsl(148_30%_8%_/_0.5)_50%,transparent_100%)]" />
     </div>
 
     <div className="container relative z-10 py-28 md:py-40">

@@ -17,7 +17,7 @@
  * correspondente continua caindo na fachada (ver HERO_IMAGES em
  * src/features/ad-lps/AdLandingPage.tsx).
  */
-import { existsSync, mkdirSync, readdirSync, statSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { basename, dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import sharp from "sharp";
@@ -82,6 +82,14 @@ async function emitOgImage(sourcePath, slug) {
   return target;
 }
 
+/** Lista canônica das LPs, lida do manifesto de rotas. */
+function readAdLpSlugs() {
+  const manifest = readFileSync(join(root, "src/routes/routeManifest.ts"), "utf8");
+  const block = manifest.match(/AD_LP_SLUGS\s*=\s*\[([\s\S]*?)\]/);
+  if (!block) throw new Error("AD_LP_SLUGS não encontrado em src/routes/routeManifest.ts");
+  return [...block[1].matchAll(/"([a-z0-9-]+)"/g)].map((match) => match[1]);
+}
+
 function findHeroSources() {
   if (!existsSync(HERO_SOURCE_DIR)) return [];
 
@@ -118,10 +126,28 @@ async function main() {
     process.stdout.write(`  ${path.slice(root.length + 1).replace(/\\/g, "/")}  ${kib(path)}\n`);
   }
 
-  if (!heroes.length) {
+  // Sem esta lista fica-se às cegas: uma LP sem foto não quebra nada, ela
+  // apenas continua mostrando a fachada da loja — em silêncio.
+  const slugs = readAdLpSlugs();
+  const withPhoto = new Set(heroes.map((hero) => hero.slug));
+  const missing = slugs.filter((slug) => !withPhoto.has(slug));
+  const unknown = [...withPhoto].filter((slug) => !slugs.includes(slug));
+
+  process.stdout.write(
+    `\n${slugs.length - missing.length}/${slugs.length} LPs com foto própria.\n`,
+  );
+
+  if (missing.length) {
     process.stdout.write(
-      `\nNenhuma foto de hero encontrada em assets-src/heros/.\n` +
-        `Adicione <slug>.jpg (ex.: lirios-apt.jpg) e rode de novo.\n`,
+      `\nAinda na fachada (adicione assets-src/heros/<slug>.jpg e rode de novo):\n` +
+        missing.map((slug) => `  ${slug}\n`).join(""),
+    );
+  }
+
+  if (unknown.length) {
+    process.stdout.write(
+      `\nIgnorados — não batem com nenhuma rota de AD_LP_SLUGS:\n` +
+        unknown.map((slug) => `  ${slug}\n`).join(""),
     );
   }
 }

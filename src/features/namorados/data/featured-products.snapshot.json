@@ -1,50 +1,50 @@
 [
   {
-    "slug": "BUQRV12",
-    "title": "Buquê de 12 Rosas Vermelhas",
+    "slug": "buque-classico-rosas",
+    "title": "Buquê Clássico de Rosas Vermelhas",
     "url": "https://www.planteumaflor.com/produtos/buque-classico-rosas/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buque-classico-rosas-d2fa59866d0ab5edcd17739777570911-1024-1024.webp",
-    "priceLabel": "R$ 249,90",
-    "pixPriceLabel": "R$ 237,41"
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/buque-classico-rosas-d2fa59866d0ab5edcd17739777570911-640-0.webp",
+    "priceLabel": "R$ 199,90",
+    "pixPriceLabel": "R$ 189,91"
   },
   {
-    "slug": "ARRMRV",
-    "title": "Arranjo de Mão de Rosas Vermelhas",
+    "slug": "arranjo-de-mao-rosas",
+    "title": "Arranjo de Mão Rosas Vermelhas",
     "url": "https://www.planteumaflor.com/produtos/arranjo-de-mao-rosas/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/1-694867c048a11087f817739768553829-640-0.webp",
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/4-9c54ee7764b808caff17739768549369-640-0.webp",
     "priceLabel": "R$ 99,90",
     "pixPriceLabel": "R$ 94,91"
   },
   {
-    "slug": "BUQ50RV",
+    "slug": "buque-50-rosas",
     "title": "Buquê Especial 50 Rosas Vermelhas",
     "url": "https://www.planteumaflor.com/produtos/buque-50-rosas/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/64-2390406c52f4a74f4217739784198556-640-0.webp",
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/63-a26d231c8ec6a5b26917739784197424-640-0.webp",
     "priceLabel": "R$ 1.090,00",
     "pixPriceLabel": "R$ 1.035,50"
   },
   {
-    "slug": "BUQRAS",
+    "slug": "buque-rosas-astromelias",
     "title": "Buquê de Rosas com Astromélias",
     "url": "https://www.planteumaflor.com/produtos/buque-rosas-astromelias/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/92-b8cda4a238fee8ca5f17739802507996-1024-1024.webp",
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/92-b8cda4a238fee8ca5f17739802507996-640-0.webp",
     "priceLabel": "R$ 259,90",
     "pixPriceLabel": "R$ 246,91"
   },
   {
-    "slug": "BUQLIR",
-    "title": "Buquê de Lírios Brancos",
+    "slug": "buque-lirios",
+    "title": "Buquê de Lírios",
     "url": "https://www.planteumaflor.com/produtos/buque-lirios/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/24-2e9181c89f4f9129f117739780259526-1024-1024.webp",
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/24-2e9181c89f4f9129f117739780259526-640-0.webp",
     "priceLabel": "R$ 335,90",
     "pixPriceLabel": "R$ 319,11"
   },
   {
-    "slug": "ARRMLIR",
-    "title": "Arranjo de Mão de Lírios",
+    "slug": "arranjo-mao-lirios",
+    "title": "Arranjo de Mão Lírios",
     "url": "https://www.planteumaflor.com/produtos/arranjo-mao-lirios/",
-    "imageUrl": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
-    "priceLabel": "R$ 159,90",
-    "pixPriceLabel": "R$ 151,91"
+    "imageUrl": "http://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-640-0.webp",
+    "priceLabel": "R$ 229,90",
+    "pixPriceLabel": "R$ 218,41"
   }
 ]
