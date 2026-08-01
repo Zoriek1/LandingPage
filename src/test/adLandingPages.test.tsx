@@ -36,6 +36,20 @@ describe("ad landing pages", () => {
     }
   });
 
+  it("never points og:image at a file that was not generated", async () => {
+    const { existsSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const { resolveOgImagePath } = await import("@/features/ad-lps/lib/hero-images");
+
+    for (const config of Object.values(LP_CONFIGS)) {
+      const ogPath = resolveOgImagePath(config);
+      // Toda LP apontava para /lpb/heros/<slug>.jpg, mas a pasta não existia:
+      // o preview de qualquer link compartilhado saía sem imagem.
+      const exists = existsSync(join(process.cwd(), "public", ogPath));
+      expect({ slug: config.slug, exists }).toEqual({ slug: config.slug, exists: true });
+    }
+  });
+
   it("falls through to NotFound for unknown slugs", async () => {
     renderAt("/slug-inexistente");
     expect(await screen.findByRole("heading", { name: "404" })).toBeInTheDocument();

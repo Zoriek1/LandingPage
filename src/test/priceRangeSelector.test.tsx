@@ -7,32 +7,56 @@ import {
   openPriceRangeSelector,
 } from "@/lib/price-ranges";
 import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
+import { appendTrackingBlock } from "@/lib/whatsappModal";
+import { LP_CONFIGS, PRODUCTS } from "@/features/ad-lps/data/configs";
+import HOME_PRODUCTS from "@/data/featured-products.snapshot.json";
 
 const { openPriceRangeWhatsApp, openWhatsAppModal } = vi.hoisted(() => ({
   openPriceRangeWhatsApp: vi.fn(),
   openWhatsAppModal: vi.fn(),
 }));
 
-vi.mock("@/lib/whatsappModal", () => ({
+// Só as aberturas de WhatsApp são espionadas; a montagem da mensagem é o que
+// este arquivo valida, então appendTrackingBlock precisa ser o real.
+vi.mock("@/lib/whatsappModal", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/whatsappModal")>()),
   openPriceRangeWhatsApp,
   openWhatsAppModal,
 }));
 
 const EXPECTED_RANGES = {
-  "/": ["Até R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/dia-das-maes": ["Até R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
-  "/dia-dos-namorados": ["Até R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/urgencia": ["Até R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
-  "/aniversario": ["Até R$ 250", "R$ 250 a R$ 300", "Acima de R$ 300"],
-  "/rosas-apt": ["Até R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/lirios-apt": ["Até R$ 230", "R$ 230 a R$ 400", "Acima de R$ 400"],
-  "/carro-low": ["Até R$ 100", "R$ 100 a R$ 150", "Acima de R$ 150"],
-  "/carro-high": ["Até R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
-  "/presente-hoje": ["Até R$ 160", "R$ 160 a R$ 300", "Acima de R$ 300"],
-  "/tradicao-comprovacao": ["Até R$ 250", "R$ 250 a R$ 450", "Acima de R$ 450"],
-  "/sem-erro": ["Até R$ 230", "R$ 230 a R$ 350", "Acima de R$ 350"],
-  "/qual-b": ["Até R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
+  "/": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/dia-das-maes": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
+  "/dia-dos-namorados": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/urgencia": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
+  "/aniversario": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
+  "/rosas-apt": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/lirios-apt": ["R$ 159,90 a R$ 230", "R$ 230 a R$ 400", "Acima de R$ 400"],
+  "/carro-low": ["R$ 65,00 a R$ 100", "R$ 100 a R$ 150", "Acima de R$ 150"],
+  "/carro-high": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
+  "/presente-hoje": ["R$ 99,90 a R$ 160", "R$ 160 a R$ 300", "Acima de R$ 300"],
+  "/tradicao-comprovacao": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
+  "/sem-erro": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 350", "Acima de R$ 350"],
+  "/qual-b": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
 } as const;
+
+function parseBrl(label: string) {
+  return Number(label.replace(/[^\d,]/g, "").replace(",", "."));
+}
+
+/** Menor preço realmente exposto na vitrine daquela rota. */
+function vitrineFloor(route: keyof typeof EXPECTED_RANGES) {
+  if (route === "/") {
+    return Math.min(...HOME_PRODUCTS.map((product) => parseBrl(product.priceLabel)));
+  }
+
+  const config = LP_CONFIGS[route.slice(1)];
+  const prices = config.vitrineProductIds
+    .map((id) => PRODUCTS[id]?.priceBrl)
+    .filter((price): price is string => Boolean(price))
+    .map(parseBrl);
+  return Math.min(...prices);
+}
 
 function SelectorHarness() {
   return (
@@ -73,20 +97,40 @@ describe("price-range conversion selector", () => {
     }
   });
 
-  it("builds the exact one-line selected-range message ending in the ten-character token", () => {
-    const message = buildPriceRangeWhatsAppMessage(
-      "flores para entrega urgente —",
-      "Até R$ 230",
-      "AB12CD34EF",
-    );
+  it("anchors every low range on the real vitrine floor advertised by the page", () => {
+    for (const route of Object.keys(EXPECTED_RANGES) as (keyof typeof EXPECTED_RANGES)[]) {
+      const config = PRICE_RANGE_CONFIGS[route];
+      const floor = vitrineFloor(route);
 
-    expect(message).toBe(
-      "Oi! Quero ver opções de flores para entrega urgente — Até R$ 230. [AB12CD34EF]",
+      // O piso declarado é o menor preço que a vitrine realmente mostra...
+      expect({ route, floor: parseBrl(config.lowFloorBrl) }).toEqual({ route, floor });
+      // ...e é ele que abre o rótulo da faixa baixa, para não parecer que o
+      // produto mais barato do anúncio não existe no seletor.
+      expect(config.ranges[0].label.startsWith(config.lowFloorBrl)).toBe(true);
+      // Uma faixa baixa estreita demais não é uma escolha.
+      expect(parseBrl(config.ranges[0].label.split(" a ")[1])).toBeGreaterThanOrEqual(
+        floor * 1.25,
+      );
+    }
+  });
+
+  it("builds the selected-range message with the tracking code in its own labelled block", () => {
+    const baseText = buildPriceRangeWhatsAppMessage(
+      "flores para entrega urgente —",
+      "R$ 99,90 a R$ 230",
     );
-    expect(message).not.toMatch(/[\r\n]/);
-    expect(message).toMatch(/\[[A-Z0-9]{10}\]$/);
+    const message = appendTrackingBlock(baseText, "AB12CD34EF", "pagina=urgencia");
+
+    expect(baseText).toBe(
+      "Oi! Quero ver opções de flores para entrega urgente — R$ 99,90 a R$ 230.",
+    );
+    expect(message).toBe(
+      "Oi! Quero ver opções de flores para entrega urgente — R$ 99,90 a R$ 230.\n\nCódigo de atendimento: AB12CD34EF · pagina=urgencia",
+    );
+    // O código precisa vir rotulado e num bloco próprio: solto no fim da frase
+    // o cliente apaga junto com o resto antes de enviar.
+    expect(message).toMatch(/\n\nCódigo de atendimento: [A-Z0-9]{10} · pagina=urgencia$/);
     expect(message).not.toContain("marcar com");
-    expect(message).not.toContain("código de atendimento");
   });
 
   it("opens and closes without conversion, restores focus, and keeps keyboard focus contained", async () => {

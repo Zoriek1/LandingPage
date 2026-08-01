@@ -18,12 +18,7 @@ import {
   Star,
   Truck,
 } from "lucide-react";
-import fachadaUrl from "@/assets/fachada.jpg";
 import logoUrl from "@/assets/logo.png";
-import fachadaAvif480Url from "@/assets/generated/fachada-480.avif";
-import fachadaAvif900Url from "@/assets/generated/fachada-900.avif";
-import fachadaWebp480Url from "@/assets/generated/fachada-480.webp";
-import fachadaWebp900Url from "@/assets/generated/fachada-900.webp";
 import logoWebpUrl from "@/assets/generated/logo-240.webp";
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
 import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
@@ -47,10 +42,17 @@ import {
   buildAdLpWhatsAppUrl,
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
+import {
+  FACHADA_SOURCES,
+  getHeroSources,
+  resolveOgImagePath,
+  type PictureSources,
+} from "@/features/ad-lps/lib/hero-images";
 import { BUSINESS_INFO } from "@/lib/business-info";
 import "./fonts.css";
 import "./theme.css";
 const PRODUCT_PLACEHOLDER = "/lpb/placeholders/product.svg";
+const STICKY_SENTINEL_ID = "ad-lp-sticky-sentinel";
 
 type AdLandingPageProps = {
   slug: string;
@@ -249,7 +251,8 @@ function CtaButton({
   );
 }
 
-function ResponsiveStorefrontImage({
+function ResponsivePicture({
+  sources,
   alt,
   className,
   loading,
@@ -257,6 +260,7 @@ function ResponsiveStorefrontImage({
   sizes = "100vw",
   testId,
 }: {
+  sources: PictureSources;
   alt: string;
   className?: string;
   loading?: "lazy";
@@ -268,16 +272,16 @@ function ResponsiveStorefrontImage({
     <picture>
       <source
         type="image/avif"
-        srcSet={`${fachadaAvif480Url} 480w, ${fachadaAvif900Url} 900w`}
+        srcSet={`${sources.avif480} 480w, ${sources.avif900} 900w`}
         sizes={sizes}
       />
       <source
         type="image/webp"
-        srcSet={`${fachadaWebp480Url} 480w, ${fachadaWebp900Url} 900w`}
+        srcSet={`${sources.webp480} 480w, ${sources.webp900} 900w`}
         sizes={sizes}
       />
       <img
-        src={fachadaUrl}
+        src={sources.fallbackSrc}
         alt={alt}
         className={className}
         loading={loading}
@@ -291,16 +295,26 @@ function ResponsiveStorefrontImage({
   );
 }
 
+function ResponsiveStorefrontImage(
+  props: Omit<Parameters<typeof ResponsivePicture>[0], "sources">,
+) {
+  return <ResponsivePicture {...props} sources={FACHADA_SOURCES} />;
+}
+
 function getProductImageSrcSet(src: string) {
   if (!src.includes("acdn-us.mitiendanube.com") || !/-1024-1024\.webp(?:\?.*)?$/.test(src)) {
     return undefined;
   }
 
-  return [
-    `${src.replace(/-1024-1024\.webp(\?.*)?$/, "-480-0.webp$1")} 480w`,
-    `${src.replace(/-1024-1024\.webp(\?.*)?$/, "-640-0.webp$1")} 640w`,
-    `${src} 1024w`,
-  ].join(", ");
+  // O card renderiza ~314px; sem a variante de 320 o navegador cai na de 480 e
+  // descarta metade dos bytes. A CDN da loja gera cada largura sob demanda.
+  return [320, 480, 640]
+    .map(
+      (width) =>
+        `${src.replace(/-1024-1024\.webp(\?.*)?$/, `-${width}-0.webp$1`)} ${width}w`,
+    )
+    .concat(`${src} 1024w`)
+    .join(", ");
 }
 
 function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
@@ -364,11 +378,21 @@ function HeroSection({ config }: { config: LPConfig }) {
     });
   };
 
+  const heroSources = getHeroSources(config.slug);
+
   return (
     <section id="hero" className="ad-lp-hero">
+      {/* Marca o ponto a partir do qual o CTA fixo aparece (ver StickyCta). */}
+      <div id={STICKY_SENTINEL_ID} className="ad-lp-hero__sentinel" aria-hidden="true" />
       <div className="ad-lp-hero__media">
-        <ResponsiveStorefrontImage
-          alt="Fachada da Plante Uma Flor em Goiânia"
+        <ResponsivePicture
+          sources={heroSources}
+          // Sem foto própria a LP mostra a fachada, e o alt precisa dizer isso.
+          alt={
+            heroSources === FACHADA_SOURCES
+              ? "Fachada da Plante Uma Flor em Goiânia"
+              : config.heroImageAlt
+          }
           className="ad-lp-hero__image"
           priority
           testId="ad-lp-hero-image"
@@ -898,10 +922,19 @@ function StickyCta({ config }: { config: LPConfig }) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > window.innerHeight * 0.3);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    // Um handler de scroll aqui lia window.innerHeight a cada evento e chamava
+    // setVisible; o re-render invalidava o layout que o evento seguinte lia de
+    // novo, e o PageSpeed contabilizava 68 ms de reflow forçado. O observer
+    // resolve o mesmo gatilho sem ler geometria.
+    const sentinel = document.getElementById(STICKY_SENTINEL_ID);
+    if (!sentinel || typeof IntersectionObserver !== "function") return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setVisible(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -981,7 +1014,7 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
         ogTitle={config.pageTitle}
         ogDescription={config.pageDescription}
         ogUrl={canonicalUrl}
-        ogImage={`https://${BRAND_DOMAIN}${config.heroImage}`}
+        ogImage={`https://${BRAND_DOMAIN}${resolveOgImagePath(config)}`}
       />
       <a className="ad-lp-skip-link" href="#ad-lp-main">
         Pular para o conteúdo principal

@@ -119,6 +119,16 @@
   align-items: center;
 }
 
+/* Marca 30svh de rolagem para o CTA fixo, sem que ninguém precise medir nada. */
+.ad-lp-hero__sentinel {
+  position: absolute;
+  top: 30svh;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
 .ad-lp-hero__media {
   position: absolute;
   inset: 0;

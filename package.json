@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "google:reviews": "node ./scripts/google-business-reviews.mjs",
+    "images": "node ./scripts/optimize-images.mjs",
     "sync:mothers-day-products": "node ./scripts/mothers-day-products/sync.mjs",
     "sync:home-products": "node ./scripts/home-products/sync.mjs",
     "build": "npm run sync:home-products && npm run sync:mothers-day-products && npm run sync:namorados-products && vite build && npm run inspect:ad-bundle",
@@ -92,6 +93,7 @@
     "jsdom": "^20.0.3",
     "lovable-tagger": "^1.1.13",
     "postcss": "^8.5.6",
+    "sharp": "^0.35.3",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
