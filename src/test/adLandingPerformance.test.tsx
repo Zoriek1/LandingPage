@@ -6,7 +6,8 @@ import App from "@/App";
 import { PRICE_RANGE_CONFIGS } from "@/lib/price-ranges";
 import { AD_LP_SLUGS } from "@/routes/routeManifest";
 
-const root = fileURLToPath(new URL("../../", import.meta.url));
+const currentModuleUrl = import.meta.url;
+const root = fileURLToPath(new URL("../../", currentModuleUrl));
 const readProjectFile = (path: string) => readFileSync(`${root}${path}`, "utf8");
 
 afterEach(() => cleanup());

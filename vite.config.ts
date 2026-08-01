@@ -30,7 +30,12 @@ export default defineConfig({
       },
       output: {
         manualChunks: {
-          "react-vendor": ["react", "react-dom", "react-router-dom"],
+          "react-vendor": [
+            "react",
+            "react-dom",
+            "react/jsx-runtime",
+            "react-router-dom",
+          ],
           "motion": ["framer-motion"],
           "radix-dialog": [
             "@radix-ui/react-dialog",

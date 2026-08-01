@@ -1,4 +1,7 @@
 import "@testing-library/jest-dom";
+import { configure } from "@testing-library/dom";
+
+configure({ asyncUtilTimeout: 5000 });
 
 if (typeof window !== "undefined") {
   Object.defineProperty(window, "matchMedia", {
