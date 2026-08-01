@@ -30,7 +30,7 @@
 }
 
 .ad-lp-theme[data-accent="lily"] {
-  --ad-accent: #bcae85;
+  --ad-accent: #988159;
   --ad-accent-deep: #8c7c4e;
   --ad-accent-soft: #e6dfcf;
 }
@@ -309,6 +309,11 @@
   transform: translateY(-2px);
 }
 
+.ad-lp-cta:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 10px 22px rgba(37, 211, 102, 0.22);
+}
+
 .ad-lp-cta__icon {
   flex: 0 0 auto;
 }
@@ -343,6 +348,11 @@
   background: rgba(255, 250, 242, 0.18);
   border-color: rgba(255, 250, 242, 0.62);
   transform: translateY(-2px);
+}
+
+.ad-lp-secondary-cta:active {
+  transform: translateY(0) scale(0.98);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
 
 .ad-lp-secondary-cta:focus-visible,

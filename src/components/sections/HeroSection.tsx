@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
-import { Camera, Truck, MessageCircle } from "lucide-react";
+import { Camera, Truck, MessageCircle, ArrowRight } from "lucide-react";
 import heroImg from "@/assets/hero-flowers.jpg";
 import { openPriceRangeSelector } from "@/lib/price-ranges";
 import { WHATSAPP_URL } from "@/lib/config";
+import { Button } from "@/components/ui/button";
+import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 
 const badges = [
   { icon: Camera, label: "Foto do arranjo antes de sair pra entrega" },
@@ -12,19 +14,17 @@ const badges = [
 
 const HeroSection = () => (
   <section className="relative flex min-h-screen items-center overflow-hidden">
-    {/* Background image + camadas de overlay */}
+    {/* Background image + overlay (apenas 2 camadas: imagem + gradient directional) */}
     <div className="absolute inset-0">
       <img
         src={heroImg}
         alt="Arranjo floral elegante da Plante Uma Flor"
-        className="h-full w-full object-cover brightness-[0.78]"
+        className="h-full w-full object-cover brightness-[0.82]"
         loading="eager"
         fetchPriority="high"
         decoding="async"
       />
-      <div className="absolute inset-0" style={{ background: "var(--hero-overlay)" }} />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/88 via-primary/68 to-primary/92 md:bg-gradient-to-r md:from-primary/94 md:via-primary/70 md:via-[54%] md:to-primary/25" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_42%,hsl(148_30%_8%_/_0.7)_0%,hsl(148_30%_8%_/_0.45)_28%,transparent_70%)]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary/92 via-primary/65 to-primary/20" />
     </div>
 
     <div className="container relative z-10 py-28 md:py-40">
@@ -33,16 +33,16 @@ const HeroSection = () => (
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="mb-5 inline-flex items-center rounded-full bg-accent px-5 py-2 font-body text-[10px] font-bold uppercase tracking-[0.1em] text-accent-foreground shadow-lg shadow-black/20 md:text-xs"
+          className="mb-5 inline-flex items-center rounded-full bg-accent px-5 py-2 font-body text-xs font-bold uppercase tracking-[0.1em] text-accent-foreground shadow-lg shadow-black/20"
         >
-          Goiânia e região · Entrega agendada · Foto antes da entrega
+          Goiânia e região · Entrega agendada
         </motion.span>
 
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-6 max-w-[16ch] font-display text-[2.6rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-foreground [text-shadow:0_12px_36px_rgba(0,0,0,0.42)] sm:text-[3.1rem] md:max-w-none md:text-5xl md:leading-[1.07]"
+          className="mb-5 max-w-[16ch] font-display text-[2.6rem] font-bold leading-[1.05] tracking-[-0.02em] text-primary-foreground [text-shadow:0_12px_36px_rgba(0,0,0,0.42)] sm:text-[3.1rem] md:max-w-none md:text-5xl md:leading-[1.07]"
         >
           Buquês e arranjos sob encomenda, entregues com cuidado em Goiânia
         </motion.h1>
@@ -51,9 +51,9 @@ const HeroSection = () => (
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mb-5 font-body text-sm font-semibold tracking-wide text-accent [text-shadow:0_6px_18px_rgba(0,0,0,0.45)] md:text-base"
+          className="mb-4 font-body text-sm font-semibold tracking-wide text-accent [text-shadow:0_6px_18px_rgba(0,0,0,0.45)] md:text-base"
         >
-          Foto do arranjo pronto antes da entrega. Pix com desconto. Cartão à mão por nossa conta.
+          Pix com desconto · Cartão à mão por nossa conta · Foto do arranjo pronto antes da entrega
         </motion.p>
 
         <motion.p
@@ -69,9 +69,12 @@ const HeroSection = () => (
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="mb-8 md:mb-14"
+          className="mb-10 flex flex-col gap-3 sm:flex-row sm:items-center md:mb-14"
         >
-          <button
+          <Button
+            type="button"
+            size="xl"
+            variant="whatsapp"
             onClick={() =>
               openPriceRangeSelector({
                 cta_location: "hero",
@@ -79,13 +82,23 @@ const HeroSection = () => (
                 destination_url: WHATSAPP_URL,
               })
             }
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#25D366] px-7 py-4 font-body text-sm font-semibold uppercase tracking-wide text-white shadow-xl shadow-[#25D366]/30 transition-all hover:brightness-110 sm:w-auto"
+            className="w-full sm:w-auto"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-            </svg>
+            <WhatsAppIcon size={20} />
             Encomendar pelo WhatsApp
-          </button>
+          </Button>
+          <Button
+            type="button"
+            size="xl"
+            variant="outline-light"
+            asChild
+            className="w-full sm:w-auto"
+          >
+            <a href="#categorias">
+              Ver categorias
+              <ArrowRight size={18} />
+            </a>
+          </Button>
         </motion.div>
 
         <motion.div

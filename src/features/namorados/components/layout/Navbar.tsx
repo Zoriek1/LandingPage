@@ -5,6 +5,7 @@ import logo from "@/assets/logo.png";
 import { openNamoradosWhatsApp } from "@/features/namorados/lib/whatsapp";
 import { openGuidedWhatsApp } from "@/lib/landing-whatsapp";
 import { useScrollThreshold } from "@/hooks/use-scroll-threshold";
+import { Button } from "@/components/ui/button";
 
 const NAV_LINKS = [
   {
@@ -57,18 +58,19 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
-          <button
+          <Button
             type="button"
+            variant="accent"
             onClick={() => openGuidedChoice("navbar_desktop")}
-            className="bg-accent text-accent-foreground px-6 py-2.5 rounded font-body text-sm font-semibold tracking-wide uppercase hover:brightness-110 transition-all shadow-lg shadow-black/20"
+            className="uppercase tracking-wide"
           >
             Me ajude a escolher
-          </button>
+          </Button>
         </div>
 
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-primary-foreground p-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]"
+          className="md:hidden text-primary-foreground p-2 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [text-shadow:0_2px_12px_rgba(0,0,0,0.35)]"
           aria-label="Menu"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
@@ -94,25 +96,28 @@ const Navbar = () => {
                   {link.label}
                 </a>
               ))}
-              <button
+              <Button
                 type="button"
+                variant="accent"
                 onClick={() => {
                   openGuidedChoice("navbar_mobile");
                   setMobileOpen(false);
                 }}
-                className="bg-accent text-accent-foreground px-6 py-3 rounded font-body text-sm font-semibold tracking-wide uppercase text-center hover:brightness-110 transition-all"
+                className="uppercase tracking-wide"
               >
                 Me ajude a escolher
-              </button>
-              <button
+              </Button>
+              <Button
+                type="button"
+                variant="outline-light"
                 onClick={() => {
                   openNamoradosWhatsApp("navbar_mobile", "falar_no_whatsapp");
                   setMobileOpen(false);
                 }}
-                className="border border-primary-foreground/30 text-primary-foreground px-6 py-3 rounded font-body text-sm font-medium tracking-wide uppercase text-center"
+                className="uppercase tracking-wide"
               >
                 Falar no WhatsApp
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}
