@@ -55,7 +55,7 @@ const BenefitsSection = () => (
             transition={{ duration: 0.5, delay: i * 0.1 }}
             className="group rounded-2xl border border-border bg-secondary/40 p-5 text-center transition-all duration-300 hover:-translate-y-1 hover:border-accent/30 hover:shadow-[0_18px_40px_rgba(15,27,22,0.08)] md:p-8"
           >
-            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent/12 transition-colors group-hover:bg-accent/20">
+            <div className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-full bg-accent/10 transition-colors group-hover:bg-accent/20">
               <b.icon size={24} className="text-accent" />
             </div>
             <h3 className="mb-2 font-display text-lg font-semibold text-primary">{b.title}</h3>

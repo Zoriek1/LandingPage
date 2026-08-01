@@ -99,10 +99,10 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
                     <Icon size={15} />
                   </span>
                   <span>
-                    <span className="block font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground/38">
+                    <span className="block font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-primary-foreground/40">
                       {item.label}
                     </span>
-                    <span className="mt-1 block font-body text-sm leading-6 text-primary-foreground/72">
+                    <span className="mt-1 block font-body text-sm leading-6 text-primary-foreground/70">
                       {item.value}
                     </span>
                   </span>

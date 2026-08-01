@@ -50,7 +50,8 @@ const HeroSection = () => {
           fetchPriority="high"
           decoding="async"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/92 via-primary/65 to-primary/20" />
+        {/* Opacidades múltiplas de 5; ver a nota em components/sections/HeroSection.tsx. */}
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/90 via-primary/70 to-primary/90 md:bg-gradient-to-r md:from-primary/95 md:via-primary/70 md:to-primary/25" />
       </div>
 
       <div className="container relative z-10 py-28 md:py-40">
