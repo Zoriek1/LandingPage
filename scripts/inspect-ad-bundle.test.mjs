@@ -6,7 +6,7 @@ import test from "node:test";
 
 const inspectorPath = new URL("./inspect-ad-bundle.mjs", import.meta.url);
 assert.ok(existsSync(inspectorPath), "bundle inspector module should exist");
-const { inspectAdBundle } = await import(inspectorPath.href);
+const { inspectAdBundle, inspectAdPreload } = await import(inspectorPath.href);
 
 function makeDist(manifest) {
   const distDir = mkdtempSync(join(tmpdir(), "ad-bundle-inspector-"));
@@ -47,6 +47,33 @@ test("accepts an isolated ad chunk graph", () => {
       "assets/radix-dialog-good.js",
       "assets/react-vendor-good.js",
     ]);
+  } finally {
+    rmSync(distDir, { recursive: true, force: true });
+  }
+});
+
+test("accepts an index.html that preloads the ad chunk", () => {
+  const distDir = makeDist(validManifest);
+  try {
+    writeFileSync(
+      join(distDir, "index.html"),
+      '<link rel="modulepreload" crossorigin href="/assets/AdLandingPage-good.js">',
+    );
+    const result = inspectAdPreload({ distDir, adChunkFile: "assets/AdLandingPage-good.js" });
+    assert.equal(result.adChunkFile, "assets/AdLandingPage-good.js");
+  } finally {
+    rmSync(distDir, { recursive: true, force: true });
+  }
+});
+
+test("rejects an index.html that leaves the ad chunk to a second round trip", () => {
+  const distDir = makeDist(validManifest);
+  try {
+    writeFileSync(join(distDir, "index.html"), "<head></head>");
+    assert.throws(
+      () => inspectAdPreload({ distDir, adChunkFile: "assets/AdLandingPage-good.js" }),
+      /não pré-carrega o chunk/,
+    );
   } finally {
     rmSync(distDir, { recursive: true, force: true });
   }

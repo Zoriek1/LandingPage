@@ -89,7 +89,32 @@ export function inspectAdBundle({ distDir = "dist" } = {}) {
     pending.push(...(chunk.imports ?? []), ...(chunk.dynamicImports ?? []));
   }
 
-  return { entryKey, files: [...new Set(files)] };
+  return { entryKey, entryFile: manifest[entryKey].file, files: [...new Set(files)] };
+}
+
+/**
+ * Toda rota é React.lazy, então sem um modulepreload no index.html o chunk da
+ * LP só começa a baixar depois que o bundle principal executa — uma segunda ida
+ * à rede que o usuário vê como tela de carregamento. O plugin
+ * adLandingModulePreload (vite.config.ts) injeta o link; aqui garantimos que
+ * ele continua sendo injetado.
+ */
+export function inspectAdPreload({ distDir = "dist", adChunkFile }) {
+  const htmlPath = join(resolve(distDir), "index.html");
+  if (!existsSync(htmlPath)) {
+    throw new Error(`index.html não encontrado em dist: ${htmlPath}`);
+  }
+
+  const html = readFileSync(htmlPath, "utf8");
+  const expected = `rel="modulepreload" crossorigin href="/${adChunkFile}"`;
+  if (!html.includes(expected)) {
+    throw new Error(
+      `index.html não pré-carrega o chunk da LP de anúncio (${adChunkFile}); ` +
+        `o "Carregando…" volta a aparecer no primeiro paint`,
+    );
+  }
+
+  return { htmlPath, adChunkFile };
 }
 
 const currentFile = fileURLToPath(import.meta.url);
@@ -103,6 +128,9 @@ if (currentFile === invokedFile) {
   process.stdout.write(
     `PASS ad bundle isolation: ${result.files.length} emitted chunks inspected\n`,
   );
+
+  const preload = inspectAdPreload({ distDir, adChunkFile: result.entryFile });
+  process.stdout.write(`PASS ad chunk preloaded in index.html: ${preload.adChunkFile}\n`);
   if (cleanupManifest) {
     const manifestDir = join(resolve(distDir), ".vite");
     rmSync(join(manifestDir, "manifest.json"));

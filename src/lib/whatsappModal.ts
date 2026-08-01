@@ -2,23 +2,6 @@ import { getCampaign } from "@/lib/attribution";
 import { buildPriceRangeWhatsAppMessage } from "@/lib/price-ranges";
 import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
-/** LP de anúncios de buquê; mensagem pré-formatada para qualificar faixa de valor. */
-const WHATSAPP_BOUQUET_CHECKLIST = `Me conta por onde você quer começar, marca com X numa das opções:
-
-[ ] Até R$ 149,90: um mimo bonito que cabe no bolso
-[ ] Até R$ 299,90: aquele buquê médio, bem à altura da ocasião
-[ ] Acima de R$ 299,90: pra caprichar de verdade e impressionar
-
-_É só marcar com *X* na que mais combina com você._
-
-Se puder, manda também a data da entrega e o bairro aqui em Goiânia.`;
-
-const WHATSAPP_INTROS = [
-  "Olá! Vi o anúncio de vocês e quero encomendar um buquê.",
-  "Olá! Vi o anúncio de vocês e quero pedir um buquê.",
-  "Olá! Vi o anúncio de vocês e quero fechar um buquê.",
-];
-
 const STORED_TOKEN_KEY = "wa_tracking_token";
 const STORED_TOKEN_CAMPAIGN_KEY = "wa_tracking_token_campaign";
 
@@ -108,17 +91,17 @@ export function generateTrackingToken() {
   return `${baseToken}${calculateTrackingTokenChecksum(baseToken)}`;
 }
 
-export function appendTokenToWhatsAppUrl(
-  url: string,
-  token: string,
-  messageText?: string,
-  extraRef?: string,
-) {
-  const phrase = WHATSAPP_INTROS[Math.floor(Math.random() * WHATSAPP_INTROS.length)];
-  const baseText = messageText?.trim() || `${phrase}\n\n${WHATSAPP_BOUQUET_CHECKLIST}`;
+/**
+ * O código de rastreio vai num bloco próprio, separado por linha em branco e
+ * rotulado. Solto no fim da frase o cliente apaga junto com o resto antes de
+ * enviar, e a atribuição do lead se perde.
+ */
+export function appendTrackingBlock(baseText: string, token: string, extraRef?: string) {
   const refSuffix = extraRef ? ` · ${extraRef}` : "";
-  const text = `${baseText}\n\n(código de atendimento: ${token}${refSuffix})`;
+  return `${baseText.trim()}\n\nCódigo de atendimento: ${token}${refSuffix}`;
+}
 
+function withWhatsAppText(url: string, text: string) {
   try {
     const parsed = new URL(url);
     parsed.searchParams.set("text", text);
@@ -127,6 +110,15 @@ export function appendTokenToWhatsAppUrl(
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}text=${encodeURIComponent(text)}`;
   }
+}
+
+export function appendTokenToWhatsAppUrl(
+  url: string,
+  token: string,
+  messageText: string,
+  extraRef?: string,
+) {
+  return withWhatsAppText(url, appendTrackingBlock(messageText, token, extraRef));
 }
 
 export function openWhatsAppDestination(url: string) {
@@ -138,17 +130,10 @@ export function appendPriceRangeToWhatsAppUrl(
   token: string,
   messageContext: string,
   rangeLabel: string,
+  extraRef?: string,
 ) {
-  const text = buildPriceRangeWhatsAppMessage(messageContext, rangeLabel, token);
-
-  try {
-    const parsed = new URL(url);
-    parsed.searchParams.set("text", text);
-    return parsed.toString();
-  } catch {
-    const separator = url.includes("?") ? "&" : "?";
-    return `${url}${separator}text=${encodeURIComponent(text)}`;
-  }
+  const baseText = buildPriceRangeWhatsAppMessage(messageContext, rangeLabel);
+  return withWhatsAppText(url, appendTrackingBlock(baseText, token, extraRef));
 }
 
 export function openPriceRangeWhatsApp(
@@ -163,6 +148,7 @@ export function openPriceRangeWhatsApp(
     token,
     messageContext,
     rangeLabel,
+    context.lp_slug ? `pagina=${context.lp_slug}` : undefined,
   );
 
   trackWhatsAppClick({
@@ -179,8 +165,8 @@ export function openPriceRangeWhatsApp(
 
 export function openWhatsAppModal(
   url: string,
-  context: TrackingParams = {},
-  messageText?: string,
+  context: TrackingParams,
+  messageText: string,
   extraRef?: string,
 ) {
   const token = getOrCreateToken();

@@ -27,47 +27,50 @@ describe("whatsappModal", () => {
     expect(isTrackingTokenValid("ABCD1234ZZ")).toBe(false);
   });
 
-  it("appends token at the end of existing WhatsApp text", async () => {
+  it("replaces any pre-existing WhatsApp text with the message plus tracking block", async () => {
     const { appendTokenToWhatsAppUrl } = await import("@/lib/whatsappModal");
 
     const url = appendTokenToWhatsAppUrl(
       "https://wa.me/5562996503403?text=Ola%2C%20vim%20pela%20LP",
       "A3F9",
+      "Oi! Quero o Buquê 6 Rosas.",
     );
 
     const parsed = new URL(url);
     const text = parsed.searchParams.get("text") ?? "";
-    expect(text).toContain("(código de atendimento: A3F9)");
-    expect(text).toMatch(/^Olá!/);
-    expect(text).toContain("R$ 149,90");
-    expect(text).toContain("[ ] Até R$ 149,90");
+    expect(text).toBe("Oi! Quero o Buquê 6 Rosas.\n\nCódigo de atendimento: A3F9");
+    expect(text).not.toContain("vim pela LP");
+    // O checklist de faixas foi removido: ele carregava uma terceira escada de
+    // preços (149,90/299,90) que contradizia a tabela do seletor.
+    expect(text).not.toContain("[ ] Até R$ 149,90");
   });
 
-  it("uses a custom WhatsApp message when provided", async () => {
+  it("carries the page reference alongside the code in the same block", async () => {
     const { appendTokenToWhatsAppUrl } = await import("@/lib/whatsappModal");
 
     const url = appendTokenToWhatsAppUrl(
       "https://wa.me/5562996503403",
       "A3F9",
-      "Oi! Quero o Buquê 6 Rosas.\n\n[ref: urgencia]",
+      "Oi! Quero o Buquê 6 Rosas.",
+      "pagina=urgencia",
     );
 
     const parsed = new URL(url);
     const text = parsed.searchParams.get("text") ?? "";
-    expect(text).toContain("Oi! Quero o Buquê 6 Rosas.");
-    expect(text).toContain("[ref: urgencia]");
-    expect(text).toContain("(código de atendimento: A3F9)");
-    expect(text).not.toContain("[ ] Até R$ 149,90");
+    expect(text).toBe(
+      "Oi! Quero o Buquê 6 Rosas.\n\nCódigo de atendimento: A3F9 · pagina=urgencia",
+    );
   });
 
   it("tracks pending lead and redirects in same tab", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 
     try {
-      openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {
-        cta_location: "hero",
-        cta_label: "falar_no_whatsapp",
-      });
+      openWhatsAppModal(
+        "https://wa.me/5562996503403?text=Ola",
+        { cta_location: "hero", cta_label: "falar_no_whatsapp" },
+        "Oi! Quero o Buquê 6 Rosas.",
+      );
     } catch {
       // JSDOM may throw on navigation; payload assertion still validates flow.
     }
@@ -81,10 +84,10 @@ describe("whatsappModal", () => {
     expect(payload.token_rastreio).toMatch(/^[A-Z0-9]{10}$/);
 
     const destination = new URL(payload.destination_url);
-    expect(destination.searchParams.get("text")).toContain("(código de atendimento: ");
+    expect(destination.searchParams.get("text")).toContain("\n\nCódigo de atendimento: ");
   });
 
-  it("tracks one attributed range selection with the exact one-line message", async () => {
+  it("tracks one attributed range selection with the code in its own block", async () => {
     const { openPriceRangeWhatsApp } = await import("@/lib/whatsappModal");
 
     try {
@@ -118,9 +121,8 @@ describe("whatsappModal", () => {
 
     const message = new URL(payload.destination_url).searchParams.get("text") ?? "";
     expect(message).toMatch(
-      /^Oi! Quero ver opções de flores para entrega urgente — R\$ 230 a R\$ 300\. \[[A-Z0-9]{10}\]$/,
+      /^Oi! Quero ver opções de flores para entrega urgente — R\$ 230 a R\$ 300\.\n\nCódigo de atendimento: [A-Z0-9]{10} · pagina=urgencia$/,
     );
-    expect(message).not.toMatch(/[\r\n]/);
   });
 
   it("reuses the same token when the campaign has not changed", async () => {
@@ -128,12 +130,12 @@ describe("whatsappModal", () => {
 
     sessionStorage.setItem("utm_campaign", "natal_2025");
 
-    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
+    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}, "Oi! Quero um buquê."); } catch { /* noop */ }
     const firstToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     vi.clearAllMocks();
 
-    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
+    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}, "Oi! Quero um buquê."); } catch { /* noop */ }
     const secondToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     expect(firstToken).toBe(secondToken);
@@ -143,13 +145,13 @@ describe("whatsappModal", () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 
     sessionStorage.setItem("utm_campaign", "natal_2025");
-    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
+    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}, "Oi! Quero um buquê."); } catch { /* noop */ }
     const firstToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     vi.clearAllMocks();
 
     sessionStorage.setItem("utm_campaign", "pascoa_2026");
-    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}); } catch { /* noop */ }
+    try { openWhatsAppModal("https://wa.me/5562996503403?text=Ola", {}, "Oi! Quero um buquê."); } catch { /* noop */ }
     const secondToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     expect(firstToken).not.toBe(secondToken);
