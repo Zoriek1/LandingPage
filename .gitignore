@@ -17,6 +17,9 @@ dist-ssr
 output
 *.local
 
+# Lighthouse before/after runs (LCP measurement pass, see AGENTS.md/PR notes)
+perf-artifacts/
+
 # Claude Code local settings
 .claude/settings.local.json
 .claude/memory/
