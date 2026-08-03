@@ -240,7 +240,7 @@ function promoteAdLandingStylesheets(html: string) {
   return result;
 }
 
-export default defineConfig({
+export default defineConfig(({ isSsrBuild }) => ({
   server: {
     host: "::",
     port: 8080,
@@ -260,37 +260,39 @@ export default defineConfig({
     cssCodeSplit: true,
     manifest: true,
     reportCompressedSize: false,
-    rollupOptions: {
-      input: {
-        main: path.resolve(__dirname, "index.html"),
-        mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
-        namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
-      },
-      output: {
-        manualChunks: {
-          "react-vendor": [
-            "react",
-            "react-dom",
-            "react/jsx-runtime",
-            "react-router-dom",
-          ],
-          "motion": ["framer-motion"],
-          "radix-dialog": [
-            "@radix-ui/react-dialog",
-            "@radix-ui/react-slot",
-          ],
-          "radix-home": [
-            "@radix-ui/react-accordion",
-            "@radix-ui/react-tooltip",
-          ],
-          "query": ["@tanstack/react-query"],
+    rollupOptions: isSsrBuild
+      ? undefined
+      : {
+          input: {
+            main: path.resolve(__dirname, "index.html"),
+            mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
+            namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
+          },
+          output: {
+            manualChunks: {
+              "react-vendor": [
+                "react",
+                "react-dom",
+                "react/jsx-runtime",
+                "react-router-dom",
+              ],
+              "motion": ["framer-motion"],
+              "radix-dialog": [
+                "@radix-ui/react-dialog",
+                "@radix-ui/react-slot",
+              ],
+              "radix-home": [
+                "@radix-ui/react-accordion",
+                "@radix-ui/react-tooltip",
+              ],
+              "query": ["@tanstack/react-query"],
+            },
+          },
         },
-      },
-    },
   },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
   },
-});
+}));
