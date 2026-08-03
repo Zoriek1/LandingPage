@@ -267,6 +267,10 @@ export default defineConfig(({ isSsrBuild }) => ({
             main: path.resolve(__dirname, "index.html"),
             mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
             namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
+            entryClient: path.resolve(
+              __dirname,
+              "src/features/ad-lps/entry-client.tsx",
+            ),
           },
           output: {
             manualChunks: {
