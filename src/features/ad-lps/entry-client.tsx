@@ -19,7 +19,10 @@ if (import.meta.env.PROD) {
   console.warn = () => {};
 }
 
-const slug = location.pathname.replace(/^\/|\/$/g, "");
+// .replace(/\.html$/, "") cobre o acesso direto ao arquivo (vite preview, um
+// servidor estático sem o rewrite do .htaccess) — em produção via Apache a URL
+// já chega limpa (/lirios-apt), sem a extensão.
+const slug = location.pathname.replace(/^\/|\/$/g, "").replace(/\.html$/, "");
 
 hydrateRoot(document.getElementById("root")!, <AdLandingPage slug={slug} />);
 trackPageView();

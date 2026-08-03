@@ -5,6 +5,7 @@ import path from "path";
 import { AD_LP_SLUGS } from "./src/routes/routeManifest";
 
 const AD_LANDING_ENTRY = "src/features/ad-lps/AdLandingPage.tsx";
+const ENTRY_CLIENT_SOURCE = "src/features/ad-lps/entry-client.tsx";
 
 /** Onde o <picture> do hero é montado: ver ResponsivePicture em AdLandingPage. */
 const HERO_SIZES = "100vw";
@@ -135,6 +136,13 @@ function assetSourceNames(output: {
  * renderização e é 95% inútil aqui (a LP tem folha própria; só o modal de
  * faixa de preço usa utilitários), enquanto a folha da LP só virava stylesheet
  * depois que o JS executava. Nos HTMLs por slug os dois trocam de papel.
+ *
+ * Também troca o <script type=module> do index.html (que monta App.tsx via
+ * BrowserRouter/React.lazy) pelo chunk do entry-client, que hidrata
+ * AdLandingPage direto — ver entry-client.tsx sobre por que isso evita o
+ * flash de hidratação de um Suspense boundary lazy sobre conteúdo pré-renderizado.
+ * O conteúdo em si (SSR de cada slug) é injetado depois por
+ * scripts/prerender-ad-lps.mjs, que roda após este build.
  */
 function adLandingStaticHtml(): Plugin {
   return {
@@ -154,6 +162,15 @@ function adLandingStaticHtml(): Plugin {
           .filter((output) => output.fileName.endsWith("index.html"))
           .map((output) => output.fileName.replace(/\/?index\.html$/, "")),
       );
+
+      const entryClientChunk = Object.values(bundle).find(
+        (chunk) =>
+          chunk.type === "chunk" &&
+          chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(ENTRY_CLIENT_SOURCE),
+      );
+      if (!entryClientChunk || entryClientChunk.type !== "chunk") {
+        throw new Error(`Chunk do entry-client não encontrado no bundle: ${ENTRY_CLIENT_SOURCE}`);
+      }
 
       const assetsByName = new Map<string, string>();
       for (const output of Object.values(bundle)) {
@@ -202,6 +219,7 @@ function adLandingStaticHtml(): Plugin {
 
         html = deferGlobalStylesheets(html);
         html = promoteAdLandingStylesheets(html);
+        html = swapEntryClientScript(html, entryClientChunk.fileName);
 
         fs.writeFileSync(path.join(outDir, `${slug}.html`), html);
         written.push(`${slug}.html`);
@@ -225,6 +243,23 @@ function deferGlobalStylesheets(html: string) {
       `<link rel="stylesheet"${before}href="${href}"${after} media="print" ` +
       `onload="this.media='all'" />` +
       `<noscript><link rel="stylesheet" href="${href}" /></noscript>`,
+  );
+}
+
+/**
+ * Troca o <script type=module> do index.html (que monta App.tsx via
+ * BrowserRouter/React.lazy) pelo chunk do entry-client (hidrata AdLandingPage
+ * direto). O root ainda pode estar vazio neste ponto — prerender-ad-lps.mjs
+ * injeta o SSR depois — mas o script certo já precisa apontar pra cá.
+ */
+function swapEntryClientScript(html: string, entryClientFile: string) {
+  const scriptTagPattern = /<script type="module"[^>]*src="[^"]+"[^>]*><\/script>/;
+  if (!scriptTagPattern.test(html)) {
+    throw new Error("Tag <script type=\"module\"> não encontrada no HTML da LP");
+  }
+  return html.replace(
+    scriptTagPattern,
+    `<script type="module" crossorigin src="/${entryClientFile}"></script>`,
   );
 }
 
