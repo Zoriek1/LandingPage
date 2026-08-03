@@ -112,4 +112,42 @@ describe("ad landing delivery", () => {
     expect(htaccess).toMatch(/image\/avif/);
     expect(htaccess).toMatch(/image\/webp/);
   });
+
+  it("keeps the ad landing stylesheet able to paint without the global one", () => {
+    const themeCss = readProjectFile("src/features/ad-lps/theme.css");
+
+    // O index.css sai do caminho crítico nas LPs, então esta folha precisa
+    // trazer o próprio reset e a tipografia. Sem isso a primeira pintura usa a
+    // margem e a fonte padrão do navegador e o corpo inteiro desloca quando o
+    // Tailwind chega — 0,021 de CLS quando isso regrediu.
+    expect(themeCss).toMatch(/@tailwind base;/);
+    expect(themeCss).toMatch(/--font-body:\s*"Montserrat"/);
+    expect(themeCss).toMatch(/--font-display:\s*"Playfair Display"/);
+  });
+
+  it("serves ad landing routes from their own static HTML", () => {
+    const htaccess = readProjectFile("public/.htaccess");
+    const viteConfig = readProjectFile("vite.config.ts");
+
+    // /lirios-apt e /lirios-apt/ -> lirios-apt.html, antes do fallback do SPA e
+    // sem sequestrar as páginas que têm diretório próprio. A condição usa
+    // DOCUMENT_ROOT porque com barra final o REQUEST_FILENAME nunca casaria.
+    expect(htaccess).toMatch(/RewriteCond %\{DOCUMENT_ROOT\}\/\$1\.html -f/);
+    expect(htaccess).toMatch(/RewriteRule \^\(\[\^\/\]\+\)\/\?\$ \/\$1\.html \[L\]/);
+    expect(htaccess).toMatch(/RewriteCond %\{REQUEST_FILENAME\} !-d/);
+    expect(htaccess.indexOf("$1.html")).toBeLessThan(htaccess.indexOf("RewriteRule . /index.html"));
+    expect(viteConfig).toContain('rel="preload" as="image"');
+    expect(viteConfig).toContain('type="image/avif"');
+  });
+
+  it("asks the browser for card images no wider than the card", async () => {
+    window.history.pushState({}, "", "/lirios-apt");
+    render(<App />);
+
+    const product = await screen.findByAltText("Arranjo de Mão Lírios P");
+    // A vitrine mobile é uma grade de 2 colunas com gutter de 4vw e gap de 1rem.
+    // Com `50vw` o navegador pedia a variante de 480 para um slot de ~180 CSS px.
+    expect(product.getAttribute("sizes")).toMatch(/\(max-width: 719px\) calc\(46vw - 8px\)/);
+    expect(product.getAttribute("sizes")).not.toMatch(/50vw/);
+  });
 });
