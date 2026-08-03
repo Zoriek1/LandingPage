@@ -103,12 +103,136 @@ describe("ad landing pages", () => {
         product_id: "buque-6-rosas",
         product_name: "Buquê Clássico de Rosas Vermelhas",
         product_price: "R$ 249,90",
-        delivery_intent: "entrega hoje em Goiania",
+        delivery_intent: "entrega hoje em Goiânia",
       }),
       expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 249,90"),
       "pagina=urgencia",
     );
     expect(openWhatsAppModal.mock.calls[0]?.[2]).not.toContain("Até R$ 149,90");
+  });
+
+  const CONVERSION_SLUGS = ["presente-hoje", "urgencia", "lirios-apt"] as const;
+
+  it.each(CONVERSION_SLUGS)(
+    "%s uses the unified purchase CTA on every conversion origin",
+    async (slug) => {
+      renderAt(`/${slug}`);
+
+      for (const origin of ["hero", "sticky", "como_funciona"]) {
+        expect(await screen.findByTestId(`ad-lp-cta-${origin}`)).toHaveTextContent(
+          "Comprar no WhatsApp",
+        );
+      }
+      expect(screen.getByTestId("ad-lp-cta-navbar")).toHaveTextContent("Comprar no WhatsApp");
+    },
+  );
+
+  it.each(CONVERSION_SLUGS)("%s ships a minimal nav with no section anchors", async (slug) => {
+    const { container } = renderAt(`/${slug}`);
+
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(container.querySelector(".ad-lp-nav")).toBeNull();
+    expect(container.querySelector('a[href="#como-funciona"]')).toBeNull();
+    expect(container.querySelector('a[href="#vitrine"]')).toBeNull();
+  });
+
+  it.each(CONVERSION_SLUGS)("%s drops testimonial avatars but keeps the seal", async (slug) => {
+    const { container } = renderAt(`/${slug}`);
+
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(container.querySelectorAll(".ad-lp-proof__avatar")).toHaveLength(0);
+    expect(container.querySelectorAll(".ad-lp-proof__date").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Avaliação pública no Google/).length).toBeGreaterThan(0);
+  });
+
+  it.each(CONVERSION_SLUGS)(
+    "%s puts the guarantee right after the hero and before the vitrine",
+    async (slug) => {
+      const { container } = renderAt(`/${slug}`);
+
+      await screen.findByTestId("ad-lp-cta-hero");
+      const sections = Array.from(container.querySelectorAll("#ad-lp-main > section"));
+      const classOf = (index: number) => sections[index]?.className ?? "";
+
+      expect(classOf(0)).toContain("ad-lp-hero");
+      expect(classOf(1)).toContain("ad-lp-guarantee");
+      expect(classOf(2)).toContain("ad-lp-vitrine");
+      // A seção "Por que nos escolher?" foi fundida nos diferenciais.
+      expect(container.querySelector("#bonus")).toBeNull();
+      expect(container.querySelector("#diferenciais")).toBeInTheDocument();
+      expect(container.querySelector("#como-funciona")).toBeInTheDocument();
+      expect(screen.getByTestId("ad-lp-trustbar")).toBeInTheDocument();
+      expect(screen.getByTestId("ad-lp-hero-microcopy")).toHaveTextContent(
+        "Resposta em até 10 minutos",
+      );
+    },
+  );
+
+  it("orders reviews per LP and keeps the untouched LPs unchanged", async () => {
+    const { container, unmount } = renderAt("/lirios-apt");
+    await screen.findByTestId("ad-lp-cta-hero");
+    // sffart-gamer é a única avaliação que fala de perfume, não de rosas.
+    expect(container.querySelector(".ad-lp-proof__hero")).toHaveTextContent(
+      "Flores lindas e cheirosas",
+    );
+    unmount();
+
+    const rosas = renderAt("/rosas-apt");
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(rosas.container.querySelectorAll(".ad-lp-proof__avatar").length).toBeGreaterThan(0);
+    expect(rosas.container.querySelector(".ad-lp-nav")).toBeInTheDocument();
+    expect(rosas.container.querySelector("#bonus")).toBeInTheDocument();
+  });
+
+  it("moves the lily FAQs next to the vitrine and the off-theme products to the end", async () => {
+    const { container } = renderAt("/lirios-apt");
+
+    const vitrineFaq = await screen.findByTestId("ad-lp-vitrine-faq");
+    expect(vitrineFaq).toHaveTextContent("Dúvidas sobre lírios");
+    expect(vitrineFaq).toHaveTextContent("O perfume é forte mesmo?");
+    // A pergunta não pode aparecer duas vezes: ela saiu do FAQ do rodapé.
+    expect(screen.getAllByText("O perfume é forte mesmo?")).toHaveLength(1);
+
+    // Os dois fora de tema ficam depois do corte de 6 cards: só aparecem no fim,
+    // atrás do expansor, e rotulados.
+    fireEvent.click(screen.getByText(/Quero ver mais opções/));
+    const ids = Array.from(container.querySelectorAll("[data-testid^='product-card-']")).map(
+      (card) => card.getAttribute("data-testid"),
+    );
+    expect(ids.slice(-2)).toEqual([
+      "product-card-buque-12-rosas-vermelhas",
+      "product-card-buque-flor-campo-m",
+    ]);
+    expect(screen.getAllByText("Se quiser variar")).toHaveLength(2);
+  });
+
+  it("shows the sai-hoje badge on every urgencia product", async () => {
+    const { container } = renderAt("/urgencia");
+
+    await screen.findByTestId("ad-lp-cta-hero");
+    const cards = container.querySelectorAll(".ad-lp-card");
+    const scarcity = container.querySelectorAll(".ad-lp-card__scarcity");
+    expect(cards.length).toBe(6);
+    expect(scarcity.length).toBe(6);
+    expect(scarcity[0]).toHaveTextContent("Pedido até 18h sai hoje");
+  });
+
+  it("ends the urgencia FAQ with the disqualifying question", async () => {
+    renderAt("/urgencia");
+
+    await screen.findByTestId("ad-lp-cta-hero");
+    const questions = Array.from(document.querySelectorAll(".ad-lp-faq__item summary")).map(
+      (summary) => summary.textContent,
+    );
+    expect(questions.indexOf("E se eu não estiver em Goiânia?")).toBe(
+      LP_CONFIGS.urgencia.faq.length - 1,
+    );
+  });
+
+  it("never promises a 16h cutoff on the conversion LPs", () => {
+    for (const slug of CONVERSION_SLUGS) {
+      expect(JSON.stringify(LP_CONFIGS[slug])).not.toContain("16h");
+    }
   });
 
   it("updates document title and canonical for the active LP", async () => {

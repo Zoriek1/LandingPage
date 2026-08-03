@@ -10,7 +10,8 @@ type CtaOrigin =
   | "sticky"
   | "como_funciona"
   | "final"
-  | "guarantee";
+  | "guarantee"
+  | "navbar";
 
 type OpenAdLpWhatsAppArgs = {
   config: LPConfig;
@@ -21,8 +22,8 @@ type OpenAdLpWhatsAppArgs = {
 const AD_LP_CONTEXT: Record<string, { pageLabel: string; deliveryIntent: string; request: string }> = {
   urgencia: {
     pageLabel: "flores com entrega hoje",
-    deliveryIntent: "entrega hoje em Goiania",
-    request: "Quero confirmar disponibilidade para entregar ainda hoje em Goiania.",
+    deliveryIntent: "entrega hoje em Goiânia",
+    request: "Quero confirmar disponibilidade para entregar ainda hoje em Goiânia.",
   },
   aniversario: {
     pageLabel: "flores para aniversario",
@@ -51,12 +52,12 @@ const AD_LP_CONTEXT: Record<string, { pageLabel: string; deliveryIntent: string;
   },
   "presente-hoje": {
     pageLabel: "presente com flores para hoje",
-    deliveryIntent: "entrega hoje em Goiania",
-    request: "Quero escolher um presente com flores para entregar hoje em Goiania.",
+    deliveryIntent: "entrega hoje em Goiânia",
+    request: "Quero escolher um presente com flores para entregar hoje em Goiânia.",
   },
   "tradicao-comprovacao": {
     pageLabel: "floricultura tradicional com prova antes da entrega",
-    deliveryIntent: "entrega em Goiania com foto antes do envio",
+    deliveryIntent: "entrega em Goiânia com foto antes do envio",
     request: "Quero comprar com seguranca e ver as opcoes disponiveis da floricultura.",
   },
   "sem-erro": {
@@ -74,7 +75,7 @@ const AD_LP_CONTEXT: Record<string, { pageLabel: string; deliveryIntent: string;
 const getContext = (config: LPConfig) =>
   AD_LP_CONTEXT[config.slug] ?? {
     pageLabel: config.vitrineTitle.toLowerCase(),
-    deliveryIntent: "entrega em Goiania com data combinada",
+    deliveryIntent: "entrega em Goiânia com data combinada",
     request: "Quero ajuda para escolher por faixa de preco e ocasiao.",
   };
 

@@ -87,12 +87,14 @@ describe("ad landing delivery", () => {
 
     const skipLink = await screen.findByRole("link", { name: "Pular para o conteúdo principal" });
     const main = screen.getByRole("main");
-    const nav = screen.getByRole("navigation", { name: "Seções da página" });
+    // A /lirios-apt usa nav minimal (só logo + CTA), então o marco estável do
+    // cabeçalho é o logo, não a lista de âncoras.
+    const brandLink = screen.getByRole("link", { name: "Plante Uma Flor" });
 
     expect(skipLink).toHaveAttribute("href", "#ad-lp-main");
     expect(main).toHaveAttribute("id", "ad-lp-main");
     expect(
-      skipLink.compareDocumentPosition(nav) & Node.DOCUMENT_POSITION_FOLLOWING,
+      skipLink.compareDocumentPosition(brandLink) & Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     expect(container.querySelector("#hero")).toHaveClass("ad-lp-hero");
   });
