@@ -1,3 +1,32 @@
+/* Nas LPs o index.css sai do caminho crítico (ver o plugin
+   ad-landing-static-html): esta folha passa a ser a única que pinta a primeira
+   tela. Sem uma cópia do reset e da tipografia base, a primeira pintura saía
+   com margin de 8px no body e a fonte serifada padrão do navegador, e o corpo
+   inteiro deslocava quando o Tailwind chegava — 0,021 de CLS medido. Os valores
+   são os mesmos do index.css; o Tailwind reemitir preflight aqui custa ~2 kB e
+   nenhuma regra conflitante. */
+@tailwind base;
+
+:root {
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body: "Montserrat", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+}
+
 .ad-lp-theme {
   --ad-bg: #f8f5ef;
   --ad-bg-warm: #f1ece3;
@@ -8,11 +37,19 @@
   --ad-brand: #123725;
   --ad-brand-deep: #0c2a1c;
   --ad-gold: #c7a25a;
-  --ad-gold-deep: #a98539;
+  /* --ad-accent-deep é texto sobre branco (o CTA do card, os números de Nossa
+     História). Todo o leque dourado ficava entre 3,4:1 e 4,4:1, abaixo do
+     mínimo AA de 4,5:1 — cada tom foi escurecido na própria matiz até ~4,7:1,
+     que é a menor mudança capaz de passar. */
+  --ad-gold-deep: #8d6f30;
   --ad-whatsapp: #25d366;
   --ad-whatsapp-deep: #1fb456;
   --ad-accent: var(--ad-gold);
   --ad-accent-deep: var(--ad-gold-deep);
+  /* Fundo dos chips que carregam texto --ad-brand-deep (o "A partir de R$ …"
+     do hero). Igual ao accent quando o accent já tem contraste de sobra; o
+     tema lily precisa de uma versão um pouco mais clara. */
+  --ad-accent-chip: var(--ad-accent);
   --ad-accent-soft: #e8dcc5;
   --ad-shadow: 0 16px 42px rgba(18, 55, 37, 0.12);
   --ad-gutter: clamp(1rem, 4vw, 2.4rem);
@@ -25,31 +62,34 @@
 
 .ad-lp-theme[data-accent="rose"] {
   --ad-accent: #c7a25a;
-  --ad-accent-deep: #9b7734;
+  --ad-accent-deep: #906e30;
   --ad-accent-soft: #eadfc9;
 }
 
 .ad-lp-theme[data-accent="lily"] {
+  /* O lírio é o único accent escuro o bastante para reprovar como fundo de
+     chip (4,12:1 com #0c2a1c); clareado só até passar, sem mudar a matiz. */
   --ad-accent: #988159;
-  --ad-accent-deep: #8c7c4e;
+  --ad-accent-chip: #a48b60;
+  --ad-accent-deep: #817348;
   --ad-accent-soft: #e6dfcf;
 }
 
 .ad-lp-theme[data-accent="sun"] {
   --ad-accent: #d2a33c;
-  --ad-accent-deep: #9b7224;
+  --ad-accent-deep: #946d22;
   --ad-accent-soft: #eddfb7;
 }
 
 .ad-lp-theme[data-accent="urgent"] {
   --ad-accent: #c7a25a;
-  --ad-accent-deep: #9b7734;
+  --ad-accent-deep: #906e30;
   --ad-accent-soft: #eadfc9;
 }
 
 .ad-lp-theme[data-accent="classic"] {
   --ad-accent: #c7a25a;
-  --ad-accent-deep: #9b7734;
+  --ad-accent-deep: #906e30;
   --ad-accent-soft: #dbe4d7;
 }
 
@@ -218,7 +258,7 @@
   display: inline-flex;
   margin: 0 0 0.75rem;
   padding: 0.32rem 0.68rem;
-  background: var(--ad-accent);
+  background: var(--ad-accent-chip);
   color: var(--ad-brand-deep);
   border-radius: 4px;
   font-size: 0.78rem;
