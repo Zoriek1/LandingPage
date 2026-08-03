@@ -17,32 +17,37 @@ type TrackingOptions = {
 
 const TRACKING_TIMEOUT_MS = 1200;
 
-// Persiste params de tracking assim que o modulo carrega
-const _params = new URLSearchParams(window.location.search);
+// Persiste params de tracking assim que o modulo carrega. Guardado por
+// typeof window: este módulo é importado (via PriceRangeSelector ->
+// whatsappModal) pela árvore que o build SSR renderiza em Node, onde não há
+// window/sessionStorage — sem o guard, o import quebrava o prerender inteiro.
+if (typeof window !== "undefined") {
+  const _params = new URLSearchParams(window.location.search);
 
-// fbclid
-const _fbclid = _params.get("fbclid");
-if (_fbclid) {
-  sessionStorage.setItem("fbclid", _fbclid);
-  sessionStorage.setItem("fbclid_ts", Date.now().toString());
-}
+  // fbclid
+  const _fbclid = _params.get("fbclid");
+  if (_fbclid) {
+    sessionStorage.setItem("fbclid", _fbclid);
+    sessionStorage.setItem("fbclid_ts", Date.now().toString());
+  }
 
-// gclid
-const _gclid = _params.get("gclid");
-if (_gclid) {
-  sessionStorage.setItem("gclid", _gclid);
-}
+  // gclid
+  const _gclid = _params.get("gclid");
+  if (_gclid) {
+    sessionStorage.setItem("gclid", _gclid);
+  }
 
-// UTMs — captura da URL para sessionStorage (fallback do clique na mesma aba).
-// URL vence na hora de montar o payload; ver src/lib/attribution.ts.
-captureUtmsFromUrl(window.location.search);
+  // UTMs — captura da URL para sessionStorage (fallback do clique na mesma aba).
+  // URL vence na hora de montar o payload; ver src/lib/attribution.ts.
+  captureUtmsFromUrl(window.location.search);
 
-// Camada de sessao — sessionStorage para refletir A SESSAO atual (por aba),
-// nao a primeira visita de sempre. Salva apenas no primeiro hit da sessao.
-if (!sessionStorage.getItem("session_first_landing_url")) {
-  sessionStorage.setItem("session_first_landing_url", window.location.href);
-  sessionStorage.setItem("session_referrer", document.referrer || "");
-  sessionStorage.setItem("session_start_ts", Date.now().toString());
+  // Camada de sessao — sessionStorage para refletir A SESSAO atual (por aba),
+  // nao a primeira visita de sempre. Salva apenas no primeiro hit da sessao.
+  if (!sessionStorage.getItem("session_first_landing_url")) {
+    sessionStorage.setItem("session_first_landing_url", window.location.href);
+    sessionStorage.setItem("session_referrer", document.referrer || "");
+    sessionStorage.setItem("session_start_ts", Date.now().toString());
+  }
 }
 
 function getFbclid(): string | undefined {
