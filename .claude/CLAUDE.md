@@ -28,7 +28,7 @@
 
 | Arquivo | O que faz |
 |---------|-----------|
-| `index.html` | HTML raiz. Contém scripts de Meta Pixel, UTMify e Google Ads. **Se mudar rastreamento, mexa aqui primeiro.** |
+| `index.html` | HTML raiz. Contém os snippets de Meta Pixel e Google Tag Manager. **Se mudar rastreamento, mexa aqui primeiro.** |
 | `src/main.tsx` | Monta o React. Desativa `console.*` em produção. |
 | `src/App.tsx` | Root com QueryClientProvider, Toasters, BrowserRouter e rotas. |
 | `src/pages/Index.tsx` | Orquestra todas as seções da landing page. **Se adicionar/remover seção, edite aqui.** |
@@ -39,7 +39,7 @@
 
 | Arquivo | Responsabilidade |
 |---------|-----------------|
-| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, Google Ads e POST à API de leads. Captura fbclid, _fbp, _fbc, UTMs. |
+| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, push no `dataLayer` (GTM) e POST à API de leads. Captura fbclid, gclid, _fbp, _fbc, UTMs. Não chama `gtag` diretamente. |
 | `src/lib/whatsappModal.ts` | Registra e abre o modal de captura de telefone. Qualquer botão WhatsApp chama `openWhatsAppModal()` daqui. |
 | `index.html` | Meta Pixel init + listener de cliques WhatsApp + verificação de domínio Facebook. |
 
@@ -50,7 +50,7 @@ Clique WhatsApp
   → WhatsAppLeadModal captura tel
   → trackWhatsAppClick(phone)    [tracking.ts]
       → Meta Pixel "Contact"
-      → Google Ads conversion
+      → dataLayer.push("whatsapp_click")  → GTM decide GA4/Google Ads
       → POST /api/leads/          [payload: phone, UTMs, fbclid, _fbp, _fbc]
   → Abre wa.me em nova aba
 ```
@@ -151,10 +151,14 @@ Ordem de renderização em `Index.tsx`:
 | Site URL | `https://www.planteumaflor.com` | múltiplos componentes |
 | API Leads | `https://gestaopedidos.planteumaflor.online/api/leads/` | `tracking.ts` |
 | Meta Pixel ID | `370300471997593` | `index.html` |
-| Google Ads ID | `AW-11455088769` | `index.html` + `tracking.ts` |
-| Google Analytics | `GT-PJ5LRCW6` | `index.html` |
-| UTMify Pixel | `69bafab797b6705e90a63977` | `index.html` |
+| GTM Container | `GTM-KCRTLDV4` | `index.html`, `dia-das-maes/index.html`, `dia-dos-namorados/index.html` |
 | FB Domain Token | `neezjodfejjwka6crvfsxpfcwhq7gj` | `index.html` |
+
+> **Google Ads e GA4 não estão no código-fonte.** O `index.html` carrega
+> apenas Meta Pixel e GTM; qualquer tag de GA4 (`GT-…`/`G-…`) ou de conversão
+> do Google Ads (`AW-…`) vive dentro do contêiner `GTM-KCRTLDV4` e é editada no
+> painel do GTM, não aqui. O mesmo vale para o CookieHub. Procurar esses IDs no
+> repositório não retorna nada — não é sinal de que sumiram.
 
 ---
 
