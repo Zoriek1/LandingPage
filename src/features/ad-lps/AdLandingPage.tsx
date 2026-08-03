@@ -235,6 +235,20 @@ function getProductImageSrcSet(src: string) {
     .join(", ");
 }
 
+/**
+ * `sizes` precisa descrever a largura real do card, senão o navegador escolhe
+ * uma variante maior e joga metade dos bytes fora. Até 719px a vitrine é uma
+ * grade de 2 colunas com gutter de 4vw e gap de 1rem — daí `46vw - 8px` —, de
+ * 720px a 1023px são 3 colunas (~30vw) e acima disso o container trava em
+ * 1220px, o que dá 400px por card. O destaque ocupa duas colunas a partir de
+ * 1024px (ver .ad-lp-card--featured em theme.css) e precisa da sua própria
+ * conta; abaixo disso ele é um card comum.
+ */
+const CARD_SIZES =
+  "(max-width: 719px) calc(46vw - 8px), (max-width: 1259px) 30vw, 400px";
+const FEATURED_CARD_SIZES =
+  "(max-width: 719px) calc(46vw - 8px), (max-width: 1023px) 30vw, (max-width: 1259px) 62vw, 810px";
+
 function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   const props = { size: 22, strokeWidth: 1.7 };
   if (icon === "card") return <CreditCard {...props} />;
@@ -596,6 +610,7 @@ function VitrineSection({
       </header>
       <div className="ad-lp-vitrine__grid">
         {visibleProducts.map((product) => {
+          const featured = product.id === config.vitrineHighlightId;
           const badge = inferProductBadge(product, products, config.vitrineHighlightId);
           const showScarcity =
             !!config.scarcityMessage &&
@@ -605,9 +620,7 @@ function VitrineSection({
           const note = config.vitrineProductNotes?.[product.id];
           return (
             <article
-              className={`ad-lp-card ${
-                product.id === config.vitrineHighlightId ? "ad-lp-card--featured" : ""
-              }`}
+              className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""}`}
               key={product.id}
             >
               {/* Só o selo de categoria fica sobre a foto. O de prazo desceu pro
@@ -629,7 +642,7 @@ function VitrineSection({
                     fallback={PRODUCT_PLACEHOLDER}
                     alt={product.name}
                     srcSet={getProductImageSrcSet(product.image)}
-                    sizes="(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 260px"
+                    sizes={featured ? FEATURED_CARD_SIZES : CARD_SIZES}
                   />
                 </span>
                 <span className="ad-lp-card__body">
