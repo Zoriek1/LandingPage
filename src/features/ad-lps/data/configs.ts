@@ -696,19 +696,40 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "overlay",
     headline: "Esqueceu a data? Ainda dá tempo.",
     subheadline:
-      "Você fecha o pedido até 16h e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
+      "Você fecha o pedido até 18h e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
     priceAnchor: "Entrega hoje",
-    scarcityMessage: "Pedido até 16h sai hoje",
+    scarcityMessage: "Pedido até 18h sai hoje",
+    scarcityAppliesToAll: true,
     vitrineVisibleCount: 6,
+    navMode: "minimal",
+    heroMicrocopy: "Resposta em até 10 minutos",
+    showTrustBar: true,
+    trustBarNote: "Entregamos domingo e feriado",
+    showReviewAvatars: false,
+    reviewSealText: "Avaliação pública no Google",
+    vitrineCardCta: "Escolher este e comprar no WhatsApp",
+    sectionOrder: [
+      "hero",
+      "guarantee",
+      "vitrine",
+      "social",
+      "diferenciais-fundidos",
+      "comofunciona",
+      "historia",
+      "faq",
+      "final",
+    ],
     ctaCopy: {
-      hero: "Garantir entrega hoje",
-      como_funciona: "Quero entregar ainda hoje",
-      faq: "Quero confirmar disponibilidade",
-      sticky: "Pedir agora",
+      hero: "Comprar no WhatsApp",
+      como_funciona: "Comprar no WhatsApp",
+      faq: "Comprar no WhatsApp",
+      sticky: "Comprar no WhatsApp",
       final: "Quero presentear hoje",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["sheila", "taina", "rafaella"],
+    // melissa/marcos falam de resposta rápida e entrega na hora combinada:
+    // é o reforço de prazo que essa página promete no hero.
+    testimonialOrder: ["melissa-pimentel", "marcos-vinicius", "rafaella-martins"],
     vitrineTitle: "Sai para entrega hoje mesmo",
     vitrineSubtitle: "Tudo aqui é montado na hora. Pronto pra sair em até 4 horas.",
     vitrineProductIds: [
@@ -724,23 +745,25 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       {
         question: "Dá tempo mesmo de chegar hoje?",
         answer:
-          "Se você fechar o pedido até 16h, dá sim. Em Goiânia e região, em 10 minutinhos a gente já te confirma a janela de entrega pelo WhatsApp.",
-      },
-      {
-        question: "E se eu não estiver em Goiânia?",
-        answer:
-          "A gente também entrega em Aparecida de Goiânia e Senador Canedo. Manda seu CEP no WhatsApp que a gente confirma na hora.",
+          "Se você fechar o pedido até 18h, dá sim. Em Goiânia e região, em 10 minutinhos a gente já te confirma a janela de entrega pelo WhatsApp.",
       },
       {
         question: "Dá pra escrever um recado no cartão?",
         answer:
           "Claro, sem custo. Você manda a mensagem no WhatsApp e a gente escreve no cartão à mão pra entregar junto.",
       },
+      // Fica por último de propósito: é a única pergunta que pode desqualificar
+      // o visitante, e ela não precisa aparecer antes da decisão.
+      {
+        question: "E se eu não estiver em Goiânia?",
+        answer:
+          "A gente também entrega em Aparecida de Goiânia e Senador Canedo. Manda seu CEP no WhatsApp que a gente confirma na hora.",
+      },
     ],
     nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Flores com entrega hoje em Goiânia | Plante Uma Flor",
     pageDescription:
-      "Esqueceu a data? Ainda dá tempo. Pedido até 16h e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
+      "Esqueceu a data? Ainda dá tempo. Pedido até 18h e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
   },
   aniversario: {
     slug: "aniversario",
@@ -865,32 +888,59 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "standalone",
     headline: "Lírios a partir de R$ 159,90.",
     subheadline:
-      "Você encomenda lírios em Goiânia com data combinada, papel artesanal e cartão escrito à mão no capricho.",
+      "Você encomenda lírios em Goiânia e a gente entrega hoje — ou agenda a data que preferir. Papel artesanal e cartão escrito à mão no capricho.",
     priceAnchor: "A partir de R$ 159,90",
     vitrineVisibleCount: 6,
+    navMode: "minimal",
+    heroMicrocopy: "Resposta em até 10 minutos",
+    showTrustBar: true,
+    trustBarNote: "Entregamos domingo e feriado",
+    showReviewAvatars: false,
+    reviewSealText: "Avaliação pública no Google",
+    vitrineCardCta: "Escolher este e comprar no WhatsApp",
+    sectionOrder: [
+      "hero",
+      "guarantee",
+      "vitrine",
+      "social",
+      "diferenciais-fundidos",
+      "comofunciona",
+      "historia",
+      "faq",
+      "final",
+    ],
     ctaCopy: {
-      hero: "Encantar com lírios",
-      como_funciona: "Combinar entrega",
-      faq: "Quero confirmar disponibilidade",
-      sticky: "Pedir agora",
+      hero: "Comprar no WhatsApp",
+      como_funciona: "Comprar no WhatsApp",
+      faq: "Quero encomendar meus lírios",
+      sticky: "Comprar no WhatsApp",
       final: "Quero encomendar",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["taina", "sheila", "rafaella"],
+    // sffart-gamer é a única avaliação que fala de perfume ("cheirosas") e não
+    // cita rosas — é o destaque coerente numa página de lírios.
+    testimonialOrder: ["sffart-gamer", "taina-santos", "hellen-araujo"],
     vitrineTitle: "Buquês de lírios",
     vitrineSubtitle: "Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.",
+    // Rosa vermelha e flor-do-campo cortavam a leitura de preço dos lírios no
+    // meio da grade; ficam no fim, rotuladas como alternativa.
     vitrineProductIds: [
       "arranjo-lirios-p",
       "arranjo-mao-lirios",
       "arranjo-lirios-m",
-      "buque-12-rosas-vermelhas",
       "buque-lirios",
       "buque-lirios-m",
-      "buque-flor-campo-m",
       "buque-lirios-g",
+      "buque-12-rosas-vermelhas",
+      "buque-flor-campo-m",
     ],
     vitrineHighlightId: "arranjo-mao-lirios",
-    faq: [
+    vitrineProductNotes: {
+      "buque-12-rosas-vermelhas": "Se quiser variar",
+      "buque-flor-campo-m": "Se quiser variar",
+    },
+    vitrineFaqTitle: "Dúvidas sobre lírios",
+    vitrineFaq: [
       {
         question: "Lírios duram menos que rosas?",
         answer:
@@ -907,6 +957,8 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
       },
     ],
+    // As três perguntas de lírio subiram para `vitrineFaq`, coladas na grade.
+    faq: [],
     nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Lírios a partir de R$ 159,90 | Plante Uma Flor",
     pageDescription:
@@ -1031,19 +1083,37 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "overlay",
     headline: "Presente bonito para entregar hoje.",
     subheadline:
-      "Você escolhe uma opção pronta, manda o recado do cartão e a gente entrega em Goiânia ainda hoje para pedidos fechados até 16h.",
+      "Você escolhe uma opção pronta, manda o recado do cartão e a gente entrega em Goiânia ainda hoje para pedidos fechados até 18h.",
     priceAnchor: "Entrega hoje em Goiânia",
-    scarcityMessage: "Pedido até 16h sai hoje",
+    scarcityMessage: "Pedido até 18h sai hoje",
     vitrineVisibleCount: 6,
+    navMode: "minimal",
+    heroMicrocopy: "Resposta em até 10 minutos",
+    showTrustBar: true,
+    trustBarNote: "Entregamos domingo e feriado",
+    showReviewAvatars: false,
+    reviewSealText: "Avaliação pública no Google",
+    vitrineCardCta: "Escolher este e comprar no WhatsApp",
+    sectionOrder: [
+      "hero",
+      "guarantee",
+      "vitrine",
+      "social",
+      "diferenciais-fundidos",
+      "comofunciona",
+      "historia",
+      "faq",
+      "final",
+    ],
     ctaCopy: {
-      hero: "Escolher presente de hoje",
-      como_funciona: "Ver opções disponíveis",
-      faq: "Confirmar entrega hoje",
-      sticky: "Pedir para hoje",
+      hero: "Comprar no WhatsApp",
+      como_funciona: "Comprar no WhatsApp",
+      faq: "Comprar no WhatsApp",
+      sticky: "Comprar no WhatsApp",
       final: "Quero entregar hoje",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["taina", "rafaella", "sheila"],
+    testimonialOrder: ["rafaella-martins", "taina-santos", "hellen-araujo"],
     vitrineTitle: "Presentes para hoje",
     vitrineSubtitle: "Opções com boa presença, embalagem caprichada e entrega rápida.",
     vitrineProductIds: [

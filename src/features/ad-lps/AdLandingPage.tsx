@@ -621,10 +621,16 @@ function VitrineSection({
               }`}
               key={product.id}
             >
-              {badge ? <ProductBadgePill badge={badge} /> : null}
-              {showScarcity ? (
-                <span className="ad-lp-card__scarcity">
-                  {config.scarcityMessage}
+              {/* Os dois selos empilham numa coluna só: posicionados em cantos
+                  opostos eles se cruzavam no card estreito de 360px. */}
+              {badge || showScarcity ? (
+                <span className="ad-lp-card__flags">
+                  {badge ? <ProductBadgePill badge={badge} /> : null}
+                  {showScarcity ? (
+                    <span className="ad-lp-card__scarcity">
+                      {config.scarcityMessage}
+                    </span>
+                  ) : null}
                 </span>
               ) : null}
               <a

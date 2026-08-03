@@ -260,6 +260,45 @@
   margin-bottom: 0.78rem;
 }
 
+.ad-lp-hero__microcopy {
+  margin: 0 0 0.78rem;
+  color: rgba(255, 250, 242, 0.88);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.32);
+}
+
+.ad-lp-trustbar {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 640px;
+  gap: 0.42rem 0.9rem;
+  margin: 0.9rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ad-lp-trustbar__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.36rem;
+  padding: 0.3rem 0.62rem;
+  color: #fffaf2;
+  background: rgba(12, 42, 28, 0.42);
+  border: 1px solid rgba(255, 250, 242, 0.18);
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.25;
+  backdrop-filter: blur(6px);
+}
+
+.ad-lp-trustbar__icon {
+  display: inline-flex;
+  color: var(--ad-gold);
+}
+
 .ad-lp-hero__badges {
   display: flex;
   flex-wrap: wrap;
@@ -697,6 +736,19 @@
   line-height: 1.35;
 }
 
+.ad-lp-card__note {
+  align-self: flex-start;
+  margin-bottom: 0.3rem;
+  padding: 0.16rem 0.5rem;
+  color: var(--ad-muted);
+  background: var(--ad-bg-warm);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 .ad-lp-card__cta {
   display: inline-flex;
   align-items: center;
@@ -717,6 +769,11 @@
 
 .ad-lp-faq {
   background: var(--ad-bg);
+}
+
+/* Bloco curto colado na vitrine — separa-se do FAQ do rodapé pelo fundo. */
+.ad-lp-faq--vitrine {
+  background: var(--ad-bg-warm);
 }
 
 .ad-lp-faq__list {
@@ -820,6 +877,18 @@
   color: #fffaf2;
 }
 
+/*
+ * Nav de página de venda: sem âncoras, só logo + compra. Abaixo de 720px o CTA
+ * fixo do rodapé já cobre essa função, então o da barra fica escondido para não
+ * roubar altura da dobra.
+ */
+.ad-lp-brand-bar__cta {
+  display: none;
+  min-height: 40px;
+  padding: 0.44rem 1rem;
+  font-size: 0.86rem;
+}
+
 .ad-lp-process {
   position: relative;
   padding: var(--ad-section) var(--ad-gutter);
@@ -900,6 +969,68 @@
 
 .ad-lp-process__cta {
   margin-top: 3rem;
+  text-align: center;
+}
+
+/* Como funciona — 4 passos, mais enxuto que os pilares de diferenciais. */
+.ad-lp-steps {
+  padding: var(--ad-section) var(--ad-gutter);
+  background: var(--ad-bg-warm);
+}
+
+.ad-lp-steps__grid {
+  display: grid;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0;
+  grid-template-columns: 1fr;
+  gap: 1.6rem;
+  list-style: none;
+  counter-reset: steps;
+}
+
+.ad-lp-steps__item {
+  display: grid;
+  justify-items: center;
+  padding: 1.5rem 1.2rem;
+  text-align: center;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-line);
+  border-radius: 18px;
+}
+
+.ad-lp-steps__num {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  margin-bottom: 0.85rem;
+  place-items: center;
+  color: #fffaf2;
+  background: var(--ad-brand);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 1.16rem;
+  font-weight: 700;
+}
+
+.ad-lp-steps__item h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--ad-brand);
+}
+
+.ad-lp-steps__item p {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--ad-muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.ad-lp-steps__cta {
+  margin-top: 2.4rem;
   text-align: center;
 }
 
@@ -1037,6 +1168,15 @@
     gap: 1.6rem;
   }
 
+  .ad-lp-process__grid--four,
+  .ad-lp-steps__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ad-lp-brand-bar--minimal .ad-lp-brand-bar__cta {
+    display: inline-flex;
+  }
+
   .ad-lp-historia__stats {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1070,6 +1210,11 @@
   .ad-lp-bonus__list {
     grid-template-columns: repeat(5, minmax(0, 1fr));
   }
+
+  .ad-lp-process__grid--four,
+  .ad-lp-steps__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
 }
 
 @media (min-width: 1024px) {
@@ -1096,10 +1241,21 @@
   }
 }
 
+.ad-lp-card__flags {
+  position: absolute;
+  top: 0.6rem;
+  left: 0.6rem;
+  right: 0.6rem;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.34rem;
+  pointer-events: none;
+}
+
 .ad-lp-card__badge,
 .ad-lp-card__scarcity {
-  position: absolute;
-  z-index: 2;
   display: inline-flex;
   align-items: center;
   gap: 0.32rem;
@@ -1111,11 +1267,6 @@
   text-transform: uppercase;
   pointer-events: none;
   box-shadow: 0 6px 18px rgba(18, 55, 37, 0.18);
-}
-
-.ad-lp-card__badge {
-  top: 0.6rem;
-  left: 0.6rem;
 }
 
 .ad-lp-card__badge--mais-vendido {
@@ -1134,8 +1285,7 @@
 }
 
 .ad-lp-card__scarcity {
-  top: 0.6rem;
-  right: 0.6rem;
+  max-width: 100%;
   font-size: 0.68rem;
   color: #fffaf2;
   background: rgba(18, 55, 37, 0.88);
