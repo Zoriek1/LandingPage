@@ -126,12 +126,10 @@ export type LPConfig = {
   nossaHistoria: NossaHistoriaContent;
   pageTitle: string;
   pageDescription: string;
-  /** "minimal" troca as âncoras da navbar por um CTA de compra. Default: "full". */
+  /** "minimal" remove as âncoras da navbar, deixando logo + nota. Default: "full". */
   navMode?: "full" | "minimal";
   /** Texto do CTA dentro do card de produto. Default: "Quero encomendar pelo WhatsApp". */
   vitrineCardCta?: string;
-  /** Linha curta logo abaixo do CTA do hero (ex.: tempo de resposta). */
-  heroMicrocopy?: string;
   /** Default: true. Em false, os depoimentos saem sem avatar de iniciais. */
   showReviewAvatars?: boolean;
   /** Ordem das seções da página. Default: `DEFAULT_SECTION_ORDER`. */
@@ -142,10 +140,6 @@ export type LPConfig = {
   vitrineFaqTitle?: string;
   /** Rótulo extra por produto no card da vitrine (ex.: "Se quiser variar"). */
   vitrineProductNotes?: Record<string, string>;
-  /** Liga a faixa de confiança do hero. Default: false. */
-  showTrustBar?: boolean;
-  /** Item extra da TrustBar do hero (ex.: "Entregamos domingo e feriado"). */
-  trustBarNote?: string;
   /** Selo do rodapé dos depoimentos. Default: "Cliente real no Google". */
   reviewSealText?: string;
   /** Em true, o selo de escassez aparece em todos os produtos, não só nos com badge. */
@@ -696,15 +690,12 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "overlay",
     headline: "Esqueceu a data? Ainda dá tempo.",
     subheadline:
-      "Você fecha o pedido até 18h e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
+      "Você fecha o pedido até 18h de segunda a sexta (13h no sábado) e a gente entrega hoje em Goiânia. Tudo embalado com capricho e cartão escrito à mão, sem cobrar nada a mais.",
     priceAnchor: "Entrega hoje",
     scarcityMessage: "Pedido até 18h sai hoje",
     scarcityAppliesToAll: true,
     vitrineVisibleCount: 6,
     navMode: "minimal",
-    heroMicrocopy: "Resposta em até 10 minutos",
-    showTrustBar: true,
-    trustBarNote: "Entregamos domingo e feriado",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
     vitrineCardCta: "Escolher este e comprar no WhatsApp",
@@ -731,7 +722,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     // é o reforço de prazo que essa página promete no hero.
     testimonialOrder: ["melissa-pimentel", "marcos-vinicius", "rafaella-martins"],
     vitrineTitle: "Sai para entrega hoje mesmo",
-    vitrineSubtitle: "Tudo aqui é montado na hora. Pronto pra sair em até 4 horas.",
+    vitrineSubtitle: "Tudo aqui é montado na hora, com flor recebida direto do produtor.",
     vitrineProductIds: [
       "buque-6-rosas",
       "arranjo-mao-lirios",
@@ -745,7 +736,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       {
         question: "Dá tempo mesmo de chegar hoje?",
         answer:
-          "Se você fechar o pedido até 18h, dá sim. Em Goiânia e região, em 10 minutinhos a gente já te confirma a janela de entrega pelo WhatsApp.",
+          "Se você fechar o pedido até 18h de segunda a sexta, dá sim. No sábado o corte é 13h. Domingo e feriado a gente não abre — nesses dias dá pra deixar agendado para o próximo dia útil. Em Goiânia e região, em 10 minutinhos a gente confirma a janela de entrega pelo WhatsApp.",
       },
       {
         question: "Dá pra escrever um recado no cartão?",
@@ -763,7 +754,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Flores com entrega hoje em Goiânia | Plante Uma Flor",
     pageDescription:
-      "Esqueceu a data? Ainda dá tempo. Pedido até 18h e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
+      "Esqueceu a data? Ainda dá tempo. Pedido até 18h de segunda a sexta e a gente entrega hoje em Goiânia. Embalagem caprichada e cartão escrito à mão, por nossa conta.",
   },
   aniversario: {
     slug: "aniversario",
@@ -892,9 +883,6 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     priceAnchor: "A partir de R$ 159,90",
     vitrineVisibleCount: 6,
     navMode: "minimal",
-    heroMicrocopy: "Resposta em até 10 minutos",
-    showTrustBar: true,
-    trustBarNote: "Entregamos domingo e feriado",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
     vitrineCardCta: "Escolher este e comprar no WhatsApp",
@@ -1083,14 +1071,11 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "overlay",
     headline: "Presente bonito para entregar hoje.",
     subheadline:
-      "Você escolhe uma opção pronta, manda o recado do cartão e a gente entrega em Goiânia ainda hoje para pedidos fechados até 18h.",
+      "Você escolhe uma opção pronta, manda o recado do cartão e a gente entrega em Goiânia ainda hoje para pedidos fechados até 18h, de segunda a sexta.",
     priceAnchor: "Entrega hoje em Goiânia",
     scarcityMessage: "Pedido até 18h sai hoje",
     vitrineVisibleCount: 6,
     navMode: "minimal",
-    heroMicrocopy: "Resposta em até 10 minutos",
-    showTrustBar: true,
-    trustBarNote: "Entregamos domingo e feriado",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
     vitrineCardCta: "Escolher este e comprar no WhatsApp",

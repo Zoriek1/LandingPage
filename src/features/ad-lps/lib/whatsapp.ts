@@ -10,8 +10,7 @@ type CtaOrigin =
   | "sticky"
   | "como_funciona"
   | "final"
-  | "guarantee"
-  | "navbar";
+  | "guarantee";
 
 type OpenAdLpWhatsAppArgs = {
   config: LPConfig;
