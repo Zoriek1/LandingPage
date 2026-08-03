@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowDown,
-  CalendarCheck2,
   Camera,
   ChevronLeft,
   ChevronRight,
@@ -27,6 +26,7 @@ import {
   BRAND_BONUS,
   BRAND_DOMAIN,
   COMMON_FAQ,
+  DEFAULT_SECTION_ORDER,
   GLOBAL_CONFIG,
   GUARANTEE,
   LP_CONFIGS,
@@ -37,7 +37,21 @@ import {
   type LPConfig,
   type Product,
   type ProductBadge,
+  type SectionKey,
 } from "@/features/ad-lps/data/configs";
+import {
+  FALLBACK_REVIEWS,
+  FEATURED_REVIEW_ORDER,
+  orderReviews,
+  type GoogleReview,
+} from "@/features/ad-lps/lib/reviews";
+import { HeroReviewCard, ReviewCard } from "@/features/ad-lps/components/ReviewCard";
+import { DifferentialCard } from "@/features/ad-lps/components/DifferentialCard";
+import { DiferenciaisFusedSection } from "@/features/ad-lps/components/DiferenciaisFusedSection";
+import { HowItWorksSection } from "@/features/ad-lps/components/HowItWorksSection";
+import { HeroBadges } from "@/features/ad-lps/components/HeroBadges";
+import { StoreFooter } from "@/features/ad-lps/components/StoreFooter";
+import { TrustBar } from "@/features/ad-lps/components/TrustBar";
 import {
   buildAdLpWhatsAppUrl,
   openAdLpWhatsApp,
@@ -59,94 +73,9 @@ type AdLandingPageProps = {
   slug: string;
 };
 
-type GoogleReview = {
-  reviewId: string;
-  authorName: string;
-  authorPhotoUrl?: string | null;
-  rating: number;
-  comment: string;
-  relativeTime?: string;
-  reviewCountLabel?: string;
-};
-
 const prefersReducedMotion = () =>
   typeof window !== "undefined" &&
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-
-const FALLBACK_REVIEWS: GoogleReview[] = [
-  {
-    reviewId: "rafaella-martins",
-    authorName: "Rafaella Martins",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "Há 13 semanas",
-    reviewCountLabel: "4 avaliações",
-    comment:
-      "Atendimento maravilhoso, a qualidade das rosas e a perfeição do buquê não tem explicação. Fui atendida pelo Caio, super recomendo.",
-  },
-  {
-    reviewId: "hellen-araujo",
-    authorName: "Hellen Araújo",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "Há 17 semanas",
-    reviewCountLabel: "3 avaliações",
-    comment:
-      "Atendimento excepcional!! O moço que me atendeu foi muito atencioso e cuidadoso em cada detalhe! Trabalho impecável!!",
-  },
-  {
-    reviewId: "taina-santos",
-    authorName: "Tainá Santos",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "Há 24 semanas",
-    reviewCountLabel: "4 avaliações",
-    comment:
-      "O atendimento foi ótimo e muito cordial. Os arranjos são lindos e com valores justos, além do diferencial de fazerem entrega.",
-  },
-  {
-    reviewId: "marcos-vinicius",
-    authorName: "Marcos Vinícius",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "Há 12 semanas",
-    reviewCountLabel: "2 avaliações",
-    comment:
-      "Produto chegou no dia e na hora combinado, muito lindo, surpreendeu e superou minhas expectativas.",
-  },
-  {
-    reviewId: "fabiana-moraes",
-    authorName: "Fabiana Moraes",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "Há 15 semanas",
-    reviewCountLabel: "4 avaliações",
-    comment:
-      "Extremamente satisfeita, ótimo atendimento. As flores, mais que perfeitas! Obrigada pelo trabalho excelente!!",
-  },
-  {
-    reviewId: "melissa-pimentel",
-    authorName: "Melissa Pimentel",
-    authorPhotoUrl: null,
-    rating: 5,
-    relativeTime: "16 de abr. de 2025",
-    reviewCountLabel: "3 avaliações",
-    comment:
-      "Conversei com a empresa por WhatsApp e me responderam muito rápido. Funcionário Caio me atendeu, hiper simpático e paciente.",
-  },
-];
-
-const FEATURED_REVIEW_ORDER = [
-  "rafaella-martins",
-  "hellen-araujo",
-  "taina-santos",
-  "marcos-vinicius",
-  "fabiana-moraes",
-  "melissa-pimentel",
-  "gisele-galdiano",
-  "patricia-gusmao",
-  "alan-braz",
-];
 
 function ImageWithFallback({
   src,
@@ -209,10 +138,13 @@ type CtaOrigin =
   | "sticky"
   | "como_funciona"
   | "final"
-  | "guarantee";
+  | "guarantee"
+  | "navbar";
 
 function resolveCtaLabel(config: LPConfig, origin: CtaOrigin): string {
   if (origin === "vitrine") return "Comprar no WhatsApp";
+  // O CTA da navbar não vem de `ctaCopy`: é sempre a mesma promessa curta.
+  if (origin === "navbar") return "Comprar no WhatsApp";
   const key = origin as CtaOriginKey;
   return config.ctaCopy?.[key] ?? config.ctaCopy?.hero ?? "Falar no WhatsApp";
 }
@@ -318,16 +250,6 @@ function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   return <Sparkles {...props} />;
 }
 
-function getInitials(name: string) {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0])
-    .join("")
-    .toUpperCase();
-}
-
 function useGoogleReviews() {
   const [reviews, setReviews] = useState<GoogleReview[]>(FALLBACK_REVIEWS);
 
@@ -346,7 +268,7 @@ function useGoogleReviews() {
             const bIndex = FEATURED_REVIEW_ORDER.indexOf(b.reviewId);
             return (aIndex === -1 ? 99 : aIndex) - (bIndex === -1 ? 99 : bIndex);
           })
-          .slice(0, 9);
+          .slice(0, FEATURED_REVIEW_ORDER.length);
 
         if (alive && featured.length) setReviews(featured);
       })
@@ -406,33 +328,41 @@ function HeroSection({ config }: { config: LPConfig }) {
               <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
             </button>
           </div>
-          <ul className="ad-lp-hero__badges" aria-label="Diferenciais">
-            <li><Truck size={16} aria-hidden="true" />{config.slug === "urgencia" ? "Entrega hoje em Goiania" : "Entrega ou agendamento em Goiania"}</li>
-            <li><CalendarCheck2 size={16} aria-hidden="true" />Encomenda com data combinada</li>
-            <li><Sparkles size={16} aria-hidden="true" />Embalagem caprichada e cartão grátis</li>
-          </ul>
+          {config.heroMicrocopy ? (
+            <p className="ad-lp-hero__microcopy" data-testid="ad-lp-hero-microcopy">
+              {config.heroMicrocopy}
+            </p>
+          ) : null}
+          <HeroBadges config={config} />
+          {config.showTrustBar ? <TrustBar config={config} /> : null}
         </div>
       </div>
     </section>
   );
 }
 
-function BrandBar() {
+function BrandBar({ config }: { config: LPConfig }) {
+  const minimal = config.navMode === "minimal";
   return (
-    <header className="ad-lp-brand-bar">
+    <header className={`ad-lp-brand-bar ${minimal ? "ad-lp-brand-bar--minimal" : ""}`}>
       <a href="#hero" className="ad-lp-logo" aria-label="Plante Uma Flor">
         <picture>
           <source type="image/webp" srcSet={logoWebpUrl} />
           <img src={logoUrl} alt="Plante Uma Flor" width="240" height="160" />
         </picture>
       </a>
-      <nav className="ad-lp-nav" aria-label="Seções da página">
-        <a href="#como-funciona">Diferenciais</a>
-        <a href="#vitrine">Produtos</a>
-        <a href="#depoimentos">Depoimentos</a>
-        <a href="#bonus">Por que nós</a>
-        <a href="#faq">FAQ</a>
-      </nav>
+      {minimal ? (
+        // Numa página de venda cada âncora é uma saída. Sobra o único caminho útil.
+        <CtaButton config={config} origin="navbar" className="ad-lp-brand-bar__cta" />
+      ) : (
+        <nav className="ad-lp-nav" aria-label="Seções da página">
+          <a href="#como-funciona">Diferenciais</a>
+          <a href="#vitrine">Produtos</a>
+          <a href="#depoimentos">Depoimentos</a>
+          <a href="#bonus">Por que nós</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+      )}
       <div
         className="ad-lp-rating"
         role="img"
@@ -501,14 +431,7 @@ function DifferentialsSection({ config }: { config: LPConfig }) {
       </header>
       <ol className="ad-lp-process__grid">
         {DIFFERENTIAL_PILLARS.map((pillar) => (
-          <li className="ad-lp-process__item" key={pillar.num}>
-            <span className="ad-lp-process__num" aria-hidden="true">{pillar.num}</span>
-            <span className="ad-lp-process__icon" aria-hidden="true">
-              <pillar.Icon size={26} strokeWidth={1.6} />
-            </span>
-            <h3>{pillar.title}</h3>
-            <p>{pillar.body}</p>
-          </li>
+          <DifferentialCard pillar={pillar} key={pillar.num} />
         ))}
       </ol>
       <div className="ad-lp-process__cta">
@@ -518,124 +441,14 @@ function DifferentialsSection({ config }: { config: LPConfig }) {
   );
 }
 
-const HIGHLIGHT_PHRASES = [
-  "mais bonito que na foto",
-  "entrega super rápida",
-  "atendimento impecável",
-  "super recomendo",
-  "qualidade das rosas",
-  "trabalho impecável",
-  "extremamente satisfeita",
-  "mais que perfeitas",
-  "superou minhas expectativas",
-];
-
-function renderHighlightedComment(comment: string): ReactNode {
-  const lower = comment.toLowerCase();
-  const ranges: { start: number; end: number }[] = [];
-  HIGHLIGHT_PHRASES.forEach((phrase) => {
-    let cursor = 0;
-    while (true) {
-      const index = lower.indexOf(phrase, cursor);
-      if (index === -1) break;
-      ranges.push({ start: index, end: index + phrase.length });
-      cursor = index + phrase.length;
-    }
-  });
-
-  if (!ranges.length) return comment;
-
-  ranges.sort((a, b) => a.start - b.start);
-  const merged: { start: number; end: number }[] = [];
-  for (const range of ranges) {
-    const last = merged[merged.length - 1];
-    if (last && range.start <= last.end) {
-      last.end = Math.max(last.end, range.end);
-    } else {
-      merged.push({ ...range });
-    }
-  }
-
-  const parts: ReactNode[] = [];
-  let cursor = 0;
-  merged.forEach((range, idx) => {
-    if (range.start > cursor) {
-      parts.push(comment.slice(cursor, range.start));
-    }
-    parts.push(
-      <mark className="ad-lp-proof__highlight" key={`hl-${idx}`}>
-        {comment.slice(range.start, range.end)}
-      </mark>,
-    );
-    cursor = range.end;
-  });
-  if (cursor < comment.length) {
-    parts.push(comment.slice(cursor));
-  }
-  return parts;
-}
-
-function ReviewCard({ review }: { review: GoogleReview }) {
-  return (
-    <figure className="ad-lp-proof__card">
-      <figcaption className="ad-lp-proof__person">
-        <span className="ad-lp-proof__avatar" aria-hidden="true">
-          {review.authorPhotoUrl ? (
-            <img src={review.authorPhotoUrl} alt="" loading="lazy" width="44" height="44" />
-          ) : (
-            getInitials(review.authorName)
-          )}
-        </span>
-        <span>
-          <strong>{review.authorName}</strong>
-          <small>{review.reviewCountLabel || "Cliente real no Google"}</small>
-        </span>
-      </figcaption>
-      <div className="ad-lp-proof__stars" role="img" aria-label={`${review.rating} estrelas`}>
-        {Array.from({ length: 5 }).map((_, starIndex) => (
-          <Star
-            key={starIndex}
-            size={15}
-            fill="currentColor"
-            aria-hidden="true"
-            className={starIndex < review.rating ? "" : "ad-lp-proof__star-muted"}
-          />
-        ))}
-      </div>
-      <blockquote>{renderHighlightedComment(review.comment)}</blockquote>
-      <p className="ad-lp-proof__date">Avaliacao publica no Google</p>
-    </figure>
+function SocialProofSection({ config }: { config: LPConfig }) {
+  const fetchedReviews = useGoogleReviews();
+  const showAvatar = config.showReviewAvatars !== false;
+  const sealText = config.reviewSealText ?? "Cliente real no Google";
+  const reviews = useMemo(
+    () => orderReviews(fetchedReviews, config.testimonialOrder),
+    [fetchedReviews, config.testimonialOrder],
   );
-}
-
-function HeroReviewCard({ review }: { review: GoogleReview }) {
-  return (
-    <figure className="ad-lp-proof__hero">
-      <div className="ad-lp-proof__hero-stars" role="img" aria-label={`${review.rating} estrelas`}>
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Star key={i} size={20} fill="currentColor" aria-hidden="true" />
-        ))}
-      </div>
-      <blockquote>{renderHighlightedComment(review.comment)}</blockquote>
-      <figcaption className="ad-lp-proof__hero-author">
-        <span className="ad-lp-proof__avatar" aria-hidden="true">
-          {review.authorPhotoUrl ? (
-            <img src={review.authorPhotoUrl} alt="" loading="lazy" width="44" height="44" />
-          ) : (
-            getInitials(review.authorName)
-          )}
-        </span>
-        <span>
-          <strong>{review.authorName}</strong>
-          <span> · Cliente real no Google</span>
-        </span>
-      </figcaption>
-    </figure>
-  );
-}
-
-function SocialProofSection() {
-  const reviews = useGoogleReviews();
   const [heroReview, ...restReviews] = reviews;
   const carouselReviews = restReviews.length ? restReviews : reviews;
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -673,7 +486,9 @@ function SocialProofSection() {
         <p>{GLOBAL_CONFIG.googleReviewsCount} avaliações · Google {GLOBAL_CONFIG.googleRating}★</p>
         <h2>Quem comprou, indica.</h2>
       </header>
-      {heroReview ? <HeroReviewCard review={heroReview} /> : null}
+      {heroReview ? (
+        <HeroReviewCard review={heroReview} showAvatar={showAvatar} sealText={sealText} />
+      ) : null}
       <div className="ad-lp-proof__carousel">
         <button
           type="button"
@@ -694,6 +509,8 @@ function SocialProofSection() {
               <ReviewCard
                 key={`${review.reviewId || review.authorName}-${index}`}
                 review={review}
+                showAvatar={showAvatar}
+                sealText={sealText}
               />
             ))}
           </div>
@@ -793,7 +610,10 @@ function VitrineSection({
           const badge = inferProductBadge(product, products, config.vitrineHighlightId);
           const showScarcity =
             !!config.scarcityMessage &&
-            (badge === "mais-vendido" || badge === "custo-beneficio");
+            (badge === "mais-vendido" ||
+              badge === "custo-beneficio" ||
+              !!config.scarcityAppliesToAll);
+          const note = config.vitrineProductNotes?.[product.id];
           return (
             <article
               className={`ad-lp-card ${
@@ -826,12 +646,13 @@ function VitrineSection({
                   />
                 </span>
                 <span className="ad-lp-card__body">
+                  {note ? <span className="ad-lp-card__note">{note}</span> : null}
                   <span className="ad-lp-card__name">{product.name}</span>
                   <ProductDetailsList product={product} />
                   <span className="ad-lp-card__price">{product.priceBrl}</span>
                   <span className="ad-lp-card__installments">{product.installments}</span>
                   <span className="ad-lp-card__cta">
-                    Quero encomendar pelo WhatsApp
+                    {config.vitrineCardCta ?? "Quero encomendar pelo WhatsApp"}
                   </span>
                 </span>
               </a>
@@ -842,7 +663,7 @@ function VitrineSection({
       {hasMore && !expanded ? (
         <div className="ad-lp-vitrine__more">
           <button type="button" onClick={() => setExpanded(true)}>
-Quero ver mais opcoes ({products.length - initialCount})
+            Quero ver mais opções ({products.length - initialCount})
           </button>
         </div>
       ) : null}
@@ -861,9 +682,7 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
             loading="lazy"
             sizes="(max-width: 780px) 100vw, 50vw"
           />
-          <figcaption className="ad-lp-historia__caption">
-            Loja fisica em Goiania · 40 anos de tradicao · entrega propria
-          </figcaption>
+          <StoreFooter />
         </figure>
         <div className="ad-lp-historia__body">
           <h2>{nossaHistoria.title}</h2>
@@ -881,6 +700,34 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
             </dl>
           ) : null}
         </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * As perguntas que decidem a compra (duração, cor, perfume) não podem esperar o
+ * rodapé: elas vêm coladas na grade, onde a dúvida aparece.
+ */
+function VitrineFaqSection({ config }: { config: LPConfig }) {
+  if (!config.vitrineFaq?.length) return null;
+  return (
+    <section
+      id="duvidas-vitrine"
+      className="ad-lp-faq ad-lp-faq--vitrine"
+      aria-label={config.vitrineFaqTitle ?? "Dúvidas rápidas"}
+      data-testid="ad-lp-vitrine-faq"
+    >
+      <header className="ad-lp-section-head">
+        <h2>{config.vitrineFaqTitle ?? "Dúvidas rápidas"}</h2>
+      </header>
+      <div className="ad-lp-faq__list">
+        {config.vitrineFaq.map((item) => (
+          <details className="ad-lp-faq__item" key={item.question}>
+            <summary>{item.question}</summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
       </div>
     </section>
   );
@@ -986,6 +833,50 @@ function Footer() {
   );
 }
 
+function PageSection({
+  section,
+  config,
+  products,
+}: {
+  section: SectionKey;
+  config: LPConfig;
+  products: Product[];
+}) {
+  switch (section) {
+    case "hero":
+      return <HeroSection config={config} />;
+    case "diferenciais":
+      return <DifferentialsSection config={config} />;
+    case "diferenciais-fundidos":
+      return <DiferenciaisFusedSection />;
+    case "comofunciona":
+      return (
+        <HowItWorksSection cta={<CtaButton config={config} origin="como_funciona" />} />
+      );
+    case "social":
+      return <SocialProofSection config={config} />;
+    case "vitrine":
+      return (
+        <>
+          <VitrineSection config={config} products={products} />
+          <VitrineFaqSection config={config} />
+        </>
+      );
+    case "historia":
+      return <NossaHistoriaSection config={config} />;
+    case "bonus":
+      return <BrandBonusSection />;
+    case "faq":
+      return <FaqSection config={config} />;
+    case "guarantee":
+      return <GuaranteeSection config={config} />;
+    case "final":
+      return <FinalCtaSection config={config} />;
+    default:
+      return null;
+  }
+}
+
 export default function AdLandingPage({ slug }: AdLandingPageProps) {
   const config = LP_CONFIGS[slug];
   const canonicalUrl = config.canonicalUrl ?? `https://${BRAND_DOMAIN}/${config.slug}`;
@@ -1009,17 +900,11 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       <a className="ad-lp-skip-link" href="#ad-lp-main">
         Pular para o conteúdo principal
       </a>
-      <BrandBar />
+      <BrandBar config={config} />
       <main id="ad-lp-main" tabIndex={-1}>
-        <HeroSection config={config} />
-        <DifferentialsSection config={config} />
-        <SocialProofSection />
-        <VitrineSection config={config} products={products} />
-        <NossaHistoriaSection config={config} />
-        <BrandBonusSection />
-        <FaqSection config={config} />
-        <GuaranteeSection config={config} />
-        <FinalCtaSection config={config} />
+        {(config.sectionOrder ?? DEFAULT_SECTION_ORDER).map((section) => (
+          <PageSection key={section} section={section} config={config} products={products} />
+        ))}
       </main>
       <Footer />
       <StickyCta config={config} />

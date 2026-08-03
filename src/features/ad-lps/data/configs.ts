@@ -70,6 +70,40 @@ export type GuaranteeContent = {
   ctaLabel: string;
 };
 
+/**
+ * Chaves de seção usadas por `LPConfig.sectionOrder`. `diferenciais` é a dupla
+ * original ("Por que somos diferentes"); `diferenciais-fundidos` é o bloco único
+ * de 4 itens que substitui `diferenciais` + `bonus` nas LPs de conversão.
+ */
+export type SectionKey =
+  | "hero"
+  | "guarantee"
+  | "vitrine"
+  | "social"
+  | "diferenciais"
+  | "diferenciais-fundidos"
+  | "comofunciona"
+  | "historia"
+  | "bonus"
+  | "faq"
+  | "final";
+
+/**
+ * Espelha a ordem hardcoded original do `AdLandingPage`. Toda LP sem
+ * `sectionOrder` renderiza exatamente como antes.
+ */
+export const DEFAULT_SECTION_ORDER: SectionKey[] = [
+  "hero",
+  "diferenciais",
+  "social",
+  "vitrine",
+  "historia",
+  "bonus",
+  "faq",
+  "guarantee",
+  "final",
+];
+
 export type LPConfig = {
   slug: string;
   canonicalUrl?: string;
@@ -92,6 +126,30 @@ export type LPConfig = {
   nossaHistoria: NossaHistoriaContent;
   pageTitle: string;
   pageDescription: string;
+  /** "minimal" troca as âncoras da navbar por um CTA de compra. Default: "full". */
+  navMode?: "full" | "minimal";
+  /** Texto do CTA dentro do card de produto. Default: "Quero encomendar pelo WhatsApp". */
+  vitrineCardCta?: string;
+  /** Linha curta logo abaixo do CTA do hero (ex.: tempo de resposta). */
+  heroMicrocopy?: string;
+  /** Default: true. Em false, os depoimentos saem sem avatar de iniciais. */
+  showReviewAvatars?: boolean;
+  /** Ordem das seções da página. Default: `DEFAULT_SECTION_ORDER`. */
+  sectionOrder?: SectionKey[];
+  /** FAQ curto renderizado logo abaixo da vitrine (além do FAQ do rodapé). */
+  vitrineFaq?: FAQItem[];
+  /** Título do bloco `vitrineFaq`. Default: "Dúvidas rápidas". */
+  vitrineFaqTitle?: string;
+  /** Rótulo extra por produto no card da vitrine (ex.: "Se quiser variar"). */
+  vitrineProductNotes?: Record<string, string>;
+  /** Liga a faixa de confiança do hero. Default: false. */
+  showTrustBar?: boolean;
+  /** Item extra da TrustBar do hero (ex.: "Entregamos domingo e feriado"). */
+  trustBarNote?: string;
+  /** Selo do rodapé dos depoimentos. Default: "Cliente real no Google". */
+  reviewSealText?: string;
+  /** Em true, o selo de escassez aparece em todos os produtos, não só nos com badge. */
+  scarcityAppliesToAll?: boolean;
 };
 
 export const BRAND_DOMAIN = "lpb.planteumaflor.com";
