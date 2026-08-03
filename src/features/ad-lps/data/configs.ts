@@ -377,7 +377,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: "Arranjo de Mão Lírios P",
     priceBrl: "R$ 159,90",
     installments: "3x s/ juros de R$ 53,30",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/38-1223af3425b904cf2917739779596922-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios P (R$ 159,90).",
     details: {
       size: "P",
@@ -405,7 +405,7 @@ export const PRODUCTS: Record<string, Product> = {
     name: "Arranjo de Mão Lírios G",
     priceBrl: "R$ 289,90",
     installments: "3x s/ juros de R$ 96,63",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios G (R$ 289,90).",
     details: {
       size: "G",
