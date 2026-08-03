@@ -1,8 +1,9 @@
-import { existsSync, readFileSync, rmSync, rmdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, rmdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const AD_ENTRY_SOURCE = "src/features/ad-lps/AdLandingPage.tsx";
+const ENTRY_CLIENT_SOURCE = "src/features/ad-lps/entry-client.tsx";
 
 const FORBIDDEN_GRAPH_MATCHES = [
   {
@@ -32,7 +33,7 @@ function describeChunk(key, chunk) {
   return [key, chunk.src, chunk.name, chunk.file].filter(Boolean).join("\n");
 }
 
-export function inspectAdBundle({ distDir = "dist" } = {}) {
+export function inspectAdBundle({ distDir = "dist", entrySource = AD_ENTRY_SOURCE } = {}) {
   const resolvedDist = resolve(distDir);
   const manifestPath = join(resolvedDist, ".vite", "manifest.json");
   if (!existsSync(manifestPath)) {
@@ -41,10 +42,10 @@ export function inspectAdBundle({ distDir = "dist" } = {}) {
 
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
   const entryKey = Object.keys(manifest).find(
-    (key) => key === AD_ENTRY_SOURCE || manifest[key]?.src === AD_ENTRY_SOURCE,
+    (key) => key === entrySource || manifest[key]?.src === entrySource,
   );
   if (!entryKey) {
-    throw new Error(`Ad entry missing from Vite manifest: ${AD_ENTRY_SOURCE}`);
+    throw new Error(`Ad entry missing from Vite manifest: ${entrySource}`);
   }
 
   const pending = [entryKey];
@@ -117,6 +118,40 @@ export function inspectAdPreload({ distDir = "dist", adChunkFile }) {
   return { htmlPath, adChunkFile };
 }
 
+/**
+ * Segunda rede de segurança, independente das asserções já embutidas em
+ * scripts/prerender-ad-lps.mjs: relê os HTMLs finais do dist/ (depois de tudo
+ * já ter rodado) e confirma que a primeira dobra de cada LP realmente foi
+ * pré-renderizada — não só o preload do hero, mas o próprio conteúdo (H1 +
+ * div#root não-vazio). Se o script de prerender for pulado/quebrar
+ * silenciosamente, esta checagem falha o build de qualquer forma.
+ */
+export function inspectPrerenderedContent({ distDir = "dist" } = {}) {
+  const resolvedDist = resolve(distDir);
+  const slugFiles = readdirSync(resolvedDist).filter(
+    (file) => file.endsWith(".html") && file !== "index.html",
+  );
+  if (!slugFiles.length) {
+    throw new Error(`Nenhum HTML de LP encontrado em ${resolvedDist}`);
+  }
+
+  for (const file of slugFiles) {
+    const html = readFileSync(join(resolvedDist, file), "utf8");
+
+    if (/<div id="root"><\/div>/.test(html)) {
+      throw new Error(`${file}: div#root está vazia — a LP não foi pré-renderizada`);
+    }
+    if (!/<h1[^>]*>[^<]+<\/h1>/.test(html)) {
+      throw new Error(`${file}: nenhum <h1> encontrado no HTML pré-renderizado`);
+    }
+    if (!html.includes('data-testid="ad-lp-hero-image"')) {
+      throw new Error(`${file}: hero image ausente no HTML pré-renderizado`);
+    }
+  }
+
+  return { files: slugFiles };
+}
+
 const currentFile = fileURLToPath(import.meta.url);
 const invokedFile = process.argv[1] ? resolve(process.argv[1]) : "";
 if (currentFile === invokedFile) {
@@ -131,6 +166,17 @@ if (currentFile === invokedFile) {
 
   const preload = inspectAdPreload({ distDir, adChunkFile: result.entryFile });
   process.stdout.write(`PASS ad chunk preloaded in index.html: ${preload.adChunkFile}\n`);
+
+  const entryClientResult = inspectAdBundle({ distDir, entrySource: ENTRY_CLIENT_SOURCE });
+  process.stdout.write(
+    `PASS entry-client bundle isolation: ${entryClientResult.files.length} emitted chunks inspected\n`,
+  );
+
+  const prerendered = inspectPrerenderedContent({ distDir });
+  process.stdout.write(
+    `PASS prerendered content present: ${prerendered.files.length} slug HTML(s) checked\n`,
+  );
+
   if (cleanupManifest) {
     const manifestDir = join(resolve(distDir), ".vite");
     rmSync(join(manifestDir, "manifest.json"));
