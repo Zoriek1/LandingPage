@@ -7,6 +7,18 @@ RewriteCond %{HTTP_HOST} ^www\.lpb\.planteumaflor\.com$ [NC]
 RewriteRule ^(.*)$ https://lpb.planteumaflor.com/$1 [R=301,L,QSA]
 
 RewriteRule ^index\.html$ - [L]
+
+# HTML estático por LP: /lirios-apt -> /lirios-apt.html. Esses arquivos trazem o
+# preload do hero daquela LP e o CSS certo já no documento inicial (ver o plugin
+# ad-landing-static-html). Vem antes do fallback do SPA e só age quando o
+# arquivo existe; !-d preserva as páginas com diretório próprio (dia-das-maes/).
+# O `/?` cobre /lirios-apt/ — a barra final precisa do DOCUMENT_ROOT porque
+# REQUEST_FILENAME já viria com ela e nunca casaria com o .html.
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^([^/]+)/?$ /$1.html [L]
+
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule . /index.html [L]
