@@ -260,45 +260,6 @@
   margin-bottom: 0.78rem;
 }
 
-.ad-lp-hero__microcopy {
-  margin: 0 0 0.78rem;
-  color: rgba(255, 250, 242, 0.88);
-  font-size: 0.84rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.32);
-}
-
-.ad-lp-trustbar {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 640px;
-  gap: 0.42rem 0.9rem;
-  margin: 0.9rem 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ad-lp-trustbar__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.36rem;
-  padding: 0.3rem 0.62rem;
-  color: #fffaf2;
-  background: rgba(12, 42, 28, 0.42);
-  border: 1px solid rgba(255, 250, 242, 0.18);
-  border-radius: 999px;
-  font-size: 0.76rem;
-  font-weight: 600;
-  line-height: 1.25;
-  backdrop-filter: blur(6px);
-}
-
-.ad-lp-trustbar__icon {
-  display: inline-flex;
-  color: var(--ad-gold);
-}
-
 .ad-lp-hero__badges {
   display: flex;
   flex-wrap: wrap;
@@ -877,18 +838,6 @@
   color: #fffaf2;
 }
 
-/*
- * Nav de página de venda: sem âncoras, só logo + compra. Abaixo de 720px o CTA
- * fixo do rodapé já cobre essa função, então o da barra fica escondido para não
- * roubar altura da dobra.
- */
-.ad-lp-brand-bar__cta {
-  display: none;
-  min-height: 40px;
-  padding: 0.44rem 1rem;
-  font-size: 0.86rem;
-}
-
 .ad-lp-process {
   position: relative;
   padding: var(--ad-section) var(--ad-gutter);
@@ -1168,13 +1117,14 @@
     gap: 1.6rem;
   }
 
+  .ad-lp-card__badge {
+    padding: 0.32rem 0.6rem;
+    font-size: 0.72rem;
+  }
+
   .ad-lp-process__grid--four,
   .ad-lp-steps__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .ad-lp-brand-bar--minimal .ad-lp-brand-bar__cta {
-    display: inline-flex;
   }
 
   .ad-lp-historia__stats {
@@ -1241,27 +1191,19 @@
   }
 }
 
-.ad-lp-card__flags {
+/* No card de 154px do mobile o selo cheio comia 3/4 da largura da foto, então
+   ele encolhe aqui e volta ao tamanho normal a partir de 720px. */
+.ad-lp-card__badge {
   position: absolute;
-  top: 0.6rem;
-  left: 0.6rem;
-  right: 0.6rem;
+  top: 0.45rem;
+  left: 0.45rem;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 0.34rem;
-  pointer-events: none;
-}
-
-.ad-lp-card__badge,
-.ad-lp-card__scarcity {
   display: inline-flex;
   align-items: center;
   gap: 0.32rem;
-  padding: 0.32rem 0.6rem;
+  padding: 0.22rem 0.44rem;
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: 0.6rem;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -1284,14 +1226,20 @@
   background: linear-gradient(135deg, #123725 0%, #0c2a1c 100%);
 }
 
+/* Vive no corpo do card, não sobre a foto: em 156px de largura o selo tapava
+   a flor, que é o que vende. */
 .ad-lp-card__scarcity {
-  max-width: 100%;
-  font-size: 0.68rem;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  margin: 0.1rem 0 0.35rem;
+  padding: 0.2rem 0.52rem;
   color: #fffaf2;
-  background: rgba(18, 55, 37, 0.88);
-  text-transform: none;
-  letter-spacing: 0;
-  backdrop-filter: blur(6px);
+  background: rgba(18, 55, 37, 0.92);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1.3;
 }
 
 .ad-lp-card {

@@ -123,7 +123,8 @@ describe("ad landing pages", () => {
           "Comprar no WhatsApp",
         );
       }
-      expect(screen.getByTestId("ad-lp-cta-navbar")).toHaveTextContent("Comprar no WhatsApp");
+      // O header minimal fica só com logo + nota do Google.
+      expect(screen.queryByTestId("ad-lp-cta-navbar")).toBeNull();
     },
   );
 
@@ -161,10 +162,6 @@ describe("ad landing pages", () => {
       expect(container.querySelector("#bonus")).toBeNull();
       expect(container.querySelector("#diferenciais")).toBeInTheDocument();
       expect(container.querySelector("#como-funciona")).toBeInTheDocument();
-      expect(screen.getByTestId("ad-lp-trustbar")).toBeInTheDocument();
-      expect(screen.getByTestId("ad-lp-hero-microcopy")).toHaveTextContent(
-        "Resposta em até 10 minutos",
-      );
     },
   );
 
@@ -215,6 +212,8 @@ describe("ad landing pages", () => {
     expect(cards.length).toBe(6);
     expect(scarcity.length).toBe(6);
     expect(scarcity[0]).toHaveTextContent("Pedido até 18h sai hoje");
+    // Fora da foto: o selo mora no corpo do card, não sobre a imagem.
+    expect(scarcity[0].closest(".ad-lp-card__body")).not.toBeNull();
   });
 
   it("ends the urgencia FAQ with the disqualifying question", async () => {

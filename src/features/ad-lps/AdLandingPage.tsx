@@ -51,7 +51,6 @@ import { DiferenciaisFusedSection } from "@/features/ad-lps/components/Diferenci
 import { HowItWorksSection } from "@/features/ad-lps/components/HowItWorksSection";
 import { HeroBadges } from "@/features/ad-lps/components/HeroBadges";
 import { StoreFooter } from "@/features/ad-lps/components/StoreFooter";
-import { TrustBar } from "@/features/ad-lps/components/TrustBar";
 import {
   buildAdLpWhatsAppUrl,
   openAdLpWhatsApp,
@@ -138,13 +137,10 @@ type CtaOrigin =
   | "sticky"
   | "como_funciona"
   | "final"
-  | "guarantee"
-  | "navbar";
+  | "guarantee";
 
 function resolveCtaLabel(config: LPConfig, origin: CtaOrigin): string {
   if (origin === "vitrine") return "Comprar no WhatsApp";
-  // O CTA da navbar não vem de `ctaCopy`: é sempre a mesma promessa curta.
-  if (origin === "navbar") return "Comprar no WhatsApp";
   const key = origin as CtaOriginKey;
   return config.ctaCopy?.[key] ?? config.ctaCopy?.hero ?? "Falar no WhatsApp";
 }
@@ -328,13 +324,7 @@ function HeroSection({ config }: { config: LPConfig }) {
               <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
             </button>
           </div>
-          {config.heroMicrocopy ? (
-            <p className="ad-lp-hero__microcopy" data-testid="ad-lp-hero-microcopy">
-              {config.heroMicrocopy}
-            </p>
-          ) : null}
           <HeroBadges config={config} />
-          {config.showTrustBar ? <TrustBar config={config} /> : null}
         </div>
       </div>
     </section>
@@ -351,10 +341,9 @@ function BrandBar({ config }: { config: LPConfig }) {
           <img src={logoUrl} alt="Plante Uma Flor" width="240" height="160" />
         </picture>
       </a>
-      {minimal ? (
-        // Numa página de venda cada âncora é uma saída. Sobra o único caminho útil.
-        <CtaButton config={config} origin="navbar" className="ad-lp-brand-bar__cta" />
-      ) : (
+      {/* Numa página de venda cada âncora é uma saída: a nav minimal fica só com
+          logo + nota do Google. O CTA do hero e o fixo já cobrem a compra. */}
+      {minimal ? null : (
         <nav className="ad-lp-nav" aria-label="Seções da página">
           <a href="#como-funciona">Diferenciais</a>
           <a href="#vitrine">Produtos</a>
@@ -621,18 +610,10 @@ function VitrineSection({
               }`}
               key={product.id}
             >
-              {/* Os dois selos empilham numa coluna só: posicionados em cantos
-                  opostos eles se cruzavam no card estreito de 360px. */}
-              {badge || showScarcity ? (
-                <span className="ad-lp-card__flags">
-                  {badge ? <ProductBadgePill badge={badge} /> : null}
-                  {showScarcity ? (
-                    <span className="ad-lp-card__scarcity">
-                      {config.scarcityMessage}
-                    </span>
-                  ) : null}
-                </span>
-              ) : null}
+              {/* Só o selo de categoria fica sobre a foto. O de prazo desceu pro
+                  corpo do card: empilhados, os dois tampavam metade da flor no
+                  card de 156px do mobile. */}
+              {badge ? <ProductBadgePill badge={badge} /> : null}
               <a
                 href={buildAdLpWhatsAppUrl(config, product)}
                 className="ad-lp-card__link"
@@ -655,6 +636,9 @@ function VitrineSection({
                   {note ? <span className="ad-lp-card__note">{note}</span> : null}
                   <span className="ad-lp-card__name">{product.name}</span>
                   <ProductDetailsList product={product} />
+                  {showScarcity ? (
+                    <span className="ad-lp-card__scarcity">{config.scarcityMessage}</span>
+                  ) : null}
                   <span className="ad-lp-card__price">{product.priceBrl}</span>
                   <span className="ad-lp-card__installments">{product.installments}</span>
                   <span className="ad-lp-card__cta">
