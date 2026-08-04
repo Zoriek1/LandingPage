@@ -20,6 +20,15 @@ output
 # Lighthouse before/after runs (LCP measurement pass, see AGENTS.md/PR notes)
 perf-artifacts/
 
+# Playwright e2e screenshot evidence (local only, never committed)
+tests/e2e/__screenshots__/
+
+# Playwright test output (local only)
+test-results/
+
+# Agent workspace (local only, never committed)
+.omo/
+
 # Claude Code local settings
 .claude/settings.local.json
 .claude/memory/
