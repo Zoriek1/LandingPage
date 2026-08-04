@@ -143,20 +143,37 @@ function pushDataLayerEvent(event: string, payload: TrackingParams = {}, options
 }
 
 const LEADS_ENDPOINT = "https://gestaopedidos.planteumaflor.online/api/leads/";
+const LEAD_CONFIRMATION_TIMEOUT_MS = 1500;
 
-function postLead(payload: Record<string, string | undefined>) {
+async function postLead(payload: Record<string, string | undefined>): Promise<boolean> {
   const body = JSON.stringify(payload);
   const blob = new Blob([body], { type: "text/plain;charset=UTF-8" });
 
-  if (navigator.sendBeacon(LEADS_ENDPOINT, blob)) return;
-
-  fetch(LEADS_ENDPOINT, {
+  const request = fetch(LEADS_ENDPOINT, {
     method: "POST",
     keepalive: true,
     mode: "cors",
     headers: { "Content-Type": "text/plain;charset=UTF-8" },
     body,
-  }).catch(() => {});
+  })
+    .then((response) => response.ok)
+    .catch(() => false);
+
+  let timeoutId: number | undefined;
+  const timedOut = new Promise<boolean>((resolve) => {
+    timeoutId = window.setTimeout(() => resolve(false), LEAD_CONFIRMATION_TIMEOUT_MS);
+  });
+  const confirmed = await Promise.race([request, timedOut]);
+
+  if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+  if (confirmed) return true;
+
+  try {
+    navigator.sendBeacon(LEADS_ENDPOINT, blob);
+  } catch {
+    return false;
+  }
+  return false;
 }
 
 function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
@@ -178,7 +195,7 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
   };
 
   Object.keys(payload).forEach((k) => payload[k] === undefined && delete payload[k]);
-  postLead(payload);
+  return postLead(payload);
 }
 
 const DEDUP_TS_KEY = "contact_dedup_ts";
@@ -199,7 +216,10 @@ function markContactSent(): void {
   localStorage.setItem(DEDUP_CAMPAIGN_KEY, currentCampaign);
 }
 
-export function trackWhatsAppClick(payload: TrackingParams = {}, options: TrackingOptions = {}) {
+export async function trackWhatsAppClick(
+  payload: TrackingParams = {},
+  options: TrackingOptions = {},
+): Promise<void> {
   const eventId = generateEventId();
   const capiDedupPayload: TrackingParams = {
     meta_event_id_contact: eventId,
@@ -217,14 +237,14 @@ export function trackWhatsAppClick(payload: TrackingParams = {}, options: Tracki
 
   if (!isContactDuplicated()) {
     window.fbq?.("track", "Contact", {}, { eventID: eventId });
-    sendLead("whatsapp_click", eventId, {
+    const confirmed = await sendLead("whatsapp_click", eventId, {
       meta_event_name: "Contact",
       meta_event_id_contact: eventId,
       lead_stage: "whatsapp_click",
       ...payload,
       ...capiDedupPayload,
     });
-    markContactSent();
+    if (confirmed) markContactSent();
   }
 }
 

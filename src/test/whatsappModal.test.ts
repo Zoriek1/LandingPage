@@ -87,6 +87,35 @@ describe("whatsappModal", () => {
     expect(destination.searchParams.get("text")).toContain("\n\nCódigo de atendimento: ");
   });
 
+  it("waits for the pending lead request before finishing the WhatsApp redirect", async () => {
+    let confirmLead: (() => void) | undefined;
+    trackWhatsAppClick.mockReturnValueOnce(
+      new Promise<void>((resolve) => {
+        confirmLead = resolve;
+      }),
+    );
+
+    const { openWhatsAppModal } = await import("@/lib/whatsappModal");
+    const redirect = openWhatsAppModal(
+      "https://wa.me/5562996503403",
+      { cta_location: "hero", cta_label: "falar_no_whatsapp" },
+      "Oi! Quero um buquê.",
+    );
+
+    expect(redirect).toBeInstanceOf(Promise);
+
+    let finished = false;
+    Promise.resolve(redirect).then(() => {
+      finished = true;
+    });
+    await Promise.resolve();
+    expect(finished).toBe(false);
+
+    confirmLead?.();
+    await redirect;
+    expect(finished).toBe(true);
+  });
+
   it("tracks one attributed range selection with the code in its own block", async () => {
     const { openPriceRangeWhatsApp } = await import("@/lib/whatsappModal");
 

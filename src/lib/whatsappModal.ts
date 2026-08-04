@@ -136,7 +136,7 @@ export function appendPriceRangeToWhatsAppUrl(
   return withWhatsAppText(url, appendTrackingBlock(baseText, token, extraRef));
 }
 
-export function openPriceRangeWhatsApp(
+export async function openPriceRangeWhatsApp(
   url: string,
   context: TrackingParams,
   messageContext: string,
@@ -151,7 +151,7 @@ export function openPriceRangeWhatsApp(
     context.lp_slug ? `pagina=${context.lp_slug}` : undefined,
   );
 
-  trackWhatsAppClick({
+  await trackWhatsAppClick({
     cta_location: context.cta_location ?? "whatsapp_range_selection",
     cta_label: context.cta_label ?? "selecionar_faixa",
     ...context,
@@ -163,7 +163,7 @@ export function openPriceRangeWhatsApp(
   openWhatsAppDestination(destinationUrl);
 }
 
-export function openWhatsAppModal(
+export async function openWhatsAppModal(
   url: string,
   context: TrackingParams,
   messageText: string,
@@ -172,7 +172,7 @@ export function openWhatsAppModal(
   const token = getOrCreateToken();
   const destinationUrl = appendTokenToWhatsAppUrl(url, token, messageText, extraRef);
 
-  trackWhatsAppClick({
+  await trackWhatsAppClick({
     cta_location: context.cta_location ?? "whatsapp_direct_open",
     cta_label: context.cta_label ?? "abrir_whatsapp",
     ...context,

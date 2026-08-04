@@ -25,7 +25,7 @@ describe("trackWhatsAppClick", () => {
   it("sends Meta Contact without value or currency", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
 
-    trackWhatsAppClick({ cta_label: "continuar_no_whatsapp" });
+    await trackWhatsAppClick({ cta_label: "continuar_no_whatsapp" });
 
     expect(window.dataLayer).toContainEqual(
       expect.objectContaining({
@@ -45,10 +45,45 @@ describe("trackWhatsAppClick", () => {
     );
   });
 
+  it("confirms the initial lead with fetch before considering beacon fallback", async () => {
+    const sendBeacon = vi.fn(() => true);
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: sendBeacon,
+    });
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+
+    await trackWhatsAppClick({
+      token_rastreio: "A3F9",
+      status: "pendente_whatsapp",
+    });
+
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(sendBeacon).not.toHaveBeenCalled();
+    expect(localStorage.getItem("contact_dedup_ts")).not.toBeNull();
+  });
+
+  it("does not suppress a retry when only beacon accepted an unconfirmed fallback", async () => {
+    vi.mocked(fetch).mockRejectedValue(new TypeError("network unavailable"));
+    const sendBeacon = vi.fn(() => true);
+    Object.defineProperty(navigator, "sendBeacon", {
+      configurable: true,
+      value: sendBeacon,
+    });
+    const { trackWhatsAppClick } = await import("@/lib/tracking");
+
+    await trackWhatsAppClick({ cta_label: "cta_1" });
+    await trackWhatsAppClick({ cta_label: "cta_2" });
+
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(sendBeacon).toHaveBeenCalledTimes(2);
+    expect(localStorage.getItem("contact_dedup_ts")).toBeNull();
+  });
+
   it("includes token/status and destination URL in lead payload", async () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
 
-    trackWhatsAppClick({
+    await trackWhatsAppClick({
       cta_label: "falar_no_whatsapp",
       destination_url: "https://wa.me/5562996503403?text=Ola%20[Cod%3A%20A3F9]",
       token_rastreio: "A3F9",
@@ -81,7 +116,7 @@ describe("trackWhatsAppClick", () => {
     window.history.replaceState({}, "", "?utm_campaign=campanha_url&utm_source=ig");
 
     const { trackWhatsAppClick } = await import("@/lib/tracking");
-    trackWhatsAppClick({ cta_label: "falar_no_whatsapp" });
+    await trackWhatsAppClick({ cta_label: "falar_no_whatsapp" });
 
     const fetchMock = vi.mocked(fetch);
     const requestOptions = fetchMock.mock.calls[0]?.[1] as RequestInit;
@@ -95,12 +130,12 @@ describe("trackWhatsAppClick", () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
     sessionStorage.setItem("utm_campaign", "natal_2025");
 
-    trackWhatsAppClick({ cta_label: "cta_1" });
+    await trackWhatsAppClick({ cta_label: "cta_1" });
     expect(window.fbq).toHaveBeenCalledTimes(1); // Contact
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
 
     // Segundo clique — mesma campanha, dentro da janela
-    trackWhatsAppClick({ cta_label: "cta_2" });
+    await trackWhatsAppClick({ cta_label: "cta_2" });
     expect(window.fbq).toHaveBeenCalledTimes(1); // sem novos disparos
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1); // sem novo POST
     // DataLayer ainda registra o segundo clique (para GTM/remarketing)
@@ -114,7 +149,7 @@ describe("trackWhatsAppClick", () => {
     localStorage.setItem("contact_dedup_ts", (Date.now() - 5 * 60 * 60 * 1000).toString());
     localStorage.setItem("contact_dedup_campaign", "natal_2025");
 
-    trackWhatsAppClick({ cta_label: "cta_after_window" });
+    await trackWhatsAppClick({ cta_label: "cta_after_window" });
 
     expect(window.fbq).toHaveBeenCalledTimes(1); // dispara normalmente
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
@@ -124,12 +159,12 @@ describe("trackWhatsAppClick", () => {
     const { trackWhatsAppClick } = await import("@/lib/tracking");
 
     sessionStorage.setItem("utm_campaign", "natal_2025");
-    trackWhatsAppClick({ cta_label: "cta_campanha_a" });
+    await trackWhatsAppClick({ cta_label: "cta_campanha_a" });
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(1);
 
     // Campanha diferente → novo evento
     sessionStorage.setItem("utm_campaign", "pascoa_2026");
-    trackWhatsAppClick({ cta_label: "cta_campanha_b" });
+    await trackWhatsAppClick({ cta_label: "cta_campanha_b" });
     expect(vi.mocked(fetch)).toHaveBeenCalledTimes(2);
     expect(window.fbq).toHaveBeenCalledTimes(2); // +1 Contact
   });
