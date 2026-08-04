@@ -104,9 +104,12 @@ describe("ad landing delivery", () => {
     const html = readProjectFile("index.html");
     const htaccess = readProjectFile("public/.htaccess");
 
+    // D3/T6: a fonte Playfair não tem mais preload no <head> raiz — ele competia
+    // com a imagem LCP no throttling. As fontes continuam disponíveis via
+    // critical.css (T5) inline com `font-display: swap`, sem competir com o
+    // LCP. O único preload do index.html raiz é o que o Vite injeta por LP.
     expect(fontCss).toMatch(/font-display:\s*swap/g);
-    expect(html.match(/rel="preload"/g)).toHaveLength(1);
-    expect(html).toMatch(/as="font"[^>]+type="font\/woff2"[^>]+crossorigin/);
+    expect(html).not.toMatch(/rel="preload"[^>]+as="font"/);
     expect(htaccess).toMatch(/Cache-Control "public, max-age=31536000, immutable"/);
     expect(htaccess).toMatch(/Cache-Control "no-cache"/);
     expect(htaccess).toMatch(/image\/avif/);

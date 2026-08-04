@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
   ArrowDown,
@@ -20,7 +20,9 @@ import {
 import logoUrl from "@/assets/logo.png";
 import logoWebpUrl from "@/assets/generated/logo-240.webp";
 import { DocumentMeta } from "@/components/seo/DocumentMeta";
-import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
+const PriceRangeSelector = lazy(() =>
+  import("@/components/conversion/PriceRangeSelector").then((m) => ({ default: m.PriceRangeSelector })),
+);
 import type { PriceRangeRoute } from "@/lib/price-ranges";
 import {
   BRAND_BONUS,
@@ -31,6 +33,7 @@ import {
   GUARANTEE,
   LP_CONFIGS,
   PRODUCTS,
+  WHATSAPP_BASE_URL,
   inferProductBadge,
   type BrandBonus,
   type CtaOriginKey,
@@ -145,6 +148,13 @@ function resolveCtaLabel(config: LPConfig, origin: CtaOrigin): string {
   return config.ctaCopy?.[key] ?? config.ctaCopy?.hero ?? "Falar no WhatsApp";
 }
 
+/** Returns false on SSR + first client render, true after the first useEffect. */
+function useHydrated() {
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
+  return hydrated;
+}
+
 function CtaButton({
   config,
   origin,
@@ -156,6 +166,23 @@ function CtaButton({
   children?: ReactNode;
   className?: string;
 }) {
+  const hydrated = useHydrated();
+
+  if (!hydrated) {
+    return (
+      <a
+        href={WHATSAPP_BASE_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`ad-lp-cta ${className}`}
+        data-testid={`ad-lp-cta-${origin}`}
+      >
+        <span>{children || resolveCtaLabel(config, origin)}</span>
+        <WhatsAppCtaIcon />
+      </a>
+    );
+  }
+
   return (
     <button
       type="button"
@@ -911,7 +938,9 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       </main>
       <Footer />
       <StickyCta config={config} />
-      <PriceRangeSelector route={`/${config.slug}` as PriceRangeRoute} />
+      <Suspense fallback={<div className="ad-lp-price-selector-placeholder" aria-hidden="true" />}>
+        <PriceRangeSelector route={`/${config.slug}` as PriceRangeRoute} />
+      </Suspense>
     </div>
   );
 }
