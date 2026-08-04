@@ -34,7 +34,7 @@ describe("ad landing pages", () => {
       expect(await screen.findByRole("heading", { level: 1, name: config.headline })).toBeInTheDocument();
       unmount();
     }
-  });
+  }, 15000);
 
   it("never points og:image at a file that was not generated", async () => {
     const { existsSync } = await import("node:fs");

@@ -36,4 +36,20 @@ if (typeof window !== "undefined") {
     writable: true,
     value: MockIntersectionObserver,
   });
+
+  // jsdom não implementa scrollTo/scrollBy em elementos — o carrossel da LP
+  // usa setInterval com scrollTo, e sem esse mock o intervalo quebra após
+  // o teardown do teste com "el.scrollTo is not a function".
+  if (!Element.prototype.scrollTo) {
+    Object.defineProperty(Element.prototype, "scrollTo", {
+      writable: true,
+      value: () => {},
+    });
+  }
+  if (!Element.prototype.scrollBy) {
+    Object.defineProperty(Element.prototype, "scrollBy", {
+      writable: true,
+      value: () => {},
+    });
+  }
 }
