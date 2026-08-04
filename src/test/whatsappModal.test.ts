@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const trackWhatsAppClick = vi.fn();
 
@@ -13,6 +13,8 @@ describe("whatsappModal", () => {
     sessionStorage.clear();
     window.history.replaceState({}, "", "/");
   });
+
+  afterEach(() => vi.useRealTimers());
 
   it("generates a token with checksum", async () => {
     const { generateTrackingToken, isTrackingTokenValid } = await import("@/lib/whatsappModal");
@@ -168,6 +170,27 @@ describe("whatsappModal", () => {
     const secondToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>).token_rastreio;
 
     expect(firstToken).toBe(secondToken);
+  });
+
+  it("generates a new token when four hours have elapsed", async () => {
+    // Given: o mesmo navegador e a mesma campanha dentro de uma tentativa conhecida.
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-04T12:00:00-03:00"));
+    sessionStorage.setItem("utm_campaign", "remarketing_2026");
+    const { openWhatsAppModal } = await import("@/lib/whatsappModal");
+    void openWhatsAppModal("https://wa.me/5562996503403", {}, "Oi! Quero um buquê.");
+    const firstToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>)
+      .token_rastreio;
+
+    // When: um novo clique acontece exatamente quatro horas depois.
+    vi.clearAllMocks();
+    vi.advanceTimersByTime(4 * 60 * 60 * 1000);
+    void openWhatsAppModal("https://wa.me/5562996503403", {}, "Oi! Quero um buquê.");
+    const secondToken = (trackWhatsAppClick.mock.calls[0]?.[0] as Record<string, string>)
+      .token_rastreio;
+
+    // Then: a nova tentativa recebe outro token e não reutiliza o lead anterior.
+    expect(secondToken).not.toBe(firstToken);
   });
 
   it("generates a new token when the campaign changes", async () => {

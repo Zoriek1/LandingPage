@@ -4,6 +4,8 @@ import { trackWhatsAppClick, type TrackingParams } from "@/lib/tracking";
 
 const STORED_TOKEN_KEY = "wa_tracking_token";
 const STORED_TOKEN_CAMPAIGN_KEY = "wa_tracking_token_campaign";
+const STORED_TOKEN_CREATED_AT_KEY = "wa_tracking_token_created_at";
+const TOKEN_REUSE_WINDOW_MS = 4 * 60 * 60 * 1000;
 
 function getCurrentCampaign(): string {
   // URL do clique vence; sessionStorage como fallback (ver attribution.ts).
@@ -13,15 +15,25 @@ function getCurrentCampaign(): string {
 function getOrCreateToken(): string {
   const stored = localStorage.getItem(STORED_TOKEN_KEY);
   const storedCampaign = localStorage.getItem(STORED_TOKEN_CAMPAIGN_KEY);
+  const storedCreatedAt = localStorage.getItem(STORED_TOKEN_CREATED_AT_KEY);
   const currentCampaign = getCurrentCampaign();
+  const now = Date.now();
+  const tokenAgeMs = storedCreatedAt ? now - Number(storedCreatedAt) : Number.NaN;
 
-  if (stored && isTrackingTokenValid(stored) && storedCampaign === currentCampaign) {
+  if (
+    stored &&
+    isTrackingTokenValid(stored) &&
+    storedCampaign === currentCampaign &&
+    tokenAgeMs >= 0 &&
+    tokenAgeMs < TOKEN_REUSE_WINDOW_MS
+  ) {
     return stored;
   }
 
   const token = generateTrackingToken();
   localStorage.setItem(STORED_TOKEN_KEY, token);
   localStorage.setItem(STORED_TOKEN_CAMPAIGN_KEY, currentCampaign);
+  localStorage.setItem(STORED_TOKEN_CREATED_AT_KEY, now.toString());
   return token;
 }
 
