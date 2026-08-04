@@ -189,6 +189,40 @@ function adLandingStaticHtml(): Plugin {
       };
 
       const indexHtml = fs.readFileSync(indexPath, "utf8");
+
+      // --- Critical CSS: read raw file, resolve @font-face URLs from emitted CSS ---
+      const criticalCssPath = path.join(__dirname, "src/features/ad-lps/critical.css");
+      let criticalCss = fs.readFileSync(criticalCssPath, "utf8");
+
+      const adCssAsset = Object.values(bundle).find(
+        (asset) =>
+          asset.type === "asset" &&
+          asset.name?.startsWith("AdLandingPage") &&
+          asset.fileName.endsWith(".css"),
+      );
+      if (adCssAsset?.type === "asset") {
+        const adCss =
+          typeof adCssAsset.source === "string"
+            ? adCssAsset.source
+            : Buffer.from(adCssAsset.source).toString("utf8");
+        for (const name of [
+          "montserrat-latin-400-normal",
+          "montserrat-latin-700-normal",
+          "playfair-display-latin-700-normal",
+        ]) {
+          const resolved = adCss.match(
+            new RegExp(`src:url\\((/assets/${name}-[^)]+)\\)`),
+          );
+          if (resolved) {
+            criticalCss = criticalCss.replace(
+              new RegExp(`src:url\\('[^']*${name}[^']*'\\)`),
+              `src:url('${resolved[1]}')`,
+            );
+          }
+        }
+      }
+
+      const criticalStyle = `<style>${criticalCss}</style>`;
       const written: string[] = [];
 
       for (const slug of AD_LP_SLUGS) {
@@ -211,7 +245,7 @@ function adLandingStaticHtml(): Plugin {
 
         let html = indexHtml.replace(
           /(<meta name="viewport"[^>]*>)/,
-          `$1\n    ${heroPreload}`,
+          `$1\n    ${criticalStyle}\n    ${heroPreload}`,
         );
         if (!html.includes(heroPreload)) {
           throw new Error("Âncora <meta name=\"viewport\"> não encontrada no index.html");
@@ -269,7 +303,8 @@ function promoteAdLandingStylesheets(html: string) {
   for (const css of adLandingCssFiles) {
     result = result.replace(
       `<link rel="preload" as="style" href="/${css}">`,
-      `<link rel="stylesheet" href="/${css}">`,
+      `<link rel="stylesheet" href="/${css}" media="print" onload="this.media='all'" />` +
+        `\n    <noscript><link rel="stylesheet" href="/${css}" /></noscript>`,
     );
   }
   return result;
