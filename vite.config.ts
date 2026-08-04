@@ -26,10 +26,10 @@ function adLandingModulePreload(): Plugin {
     transformIndexHtml: {
       order: "post",
       handler(_html, ctx) {
-        adLandingCssFiles.length = 0;
-
         // Em dev não há bundle para inspecionar.
         if (ctx.path !== "/index.html" || !ctx.bundle) return;
+
+        adLandingCssFiles.length = 0;
 
         const adChunk = Object.values(ctx.bundle).find(
           (chunk) =>

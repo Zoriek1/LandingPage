@@ -36,13 +36,20 @@ describe("critical CSS inline in dist HTML", () => {
   it("loads the full LP stylesheet non-blocking via media=print onload", () => {
     const html = readDistHtml("lirios-apt");
 
-    // A folha completa da LP deve usar o padrão não-bloqueante:
-    // <link rel="stylesheet" href="..." media="print" onload="this.media='all'">
-    expect(html).toMatch(/media="print"/);
-    expect(html).toMatch(/onload="this\.media='all'"/);
+    // Given: o HTML estático inclui CSS global e CSS específico da landing.
+    // When: localizamos a tag que aponta para AdLandingPage-*.css.
+    const stylesheet = html.match(
+      /<link rel="stylesheet"[^>]+href="[^"]*\/AdLandingPage-[^"]+\.css"[^>]*>/,
+    );
+
+    // Then: a folha completa da LP é aplicada após o download não-bloqueante.
+    expect(stylesheet?.[0]).toMatch(/media="print"/);
+    expect(stylesheet?.[0]).toMatch(/onload="this\.media='all'"/);
 
     // Deve existir um <noscript> fallback para navegadores sem JS.
-    expect(html).toMatch(/<noscript>/);
+    expect(html).toMatch(
+      /<noscript><link rel="stylesheet" href="[^"]*\/AdLandingPage-[^"]+\.css" \/><\/noscript>/,
+    );
   });
 
   it("has NO font preload link competing with the LCP image", () => {
