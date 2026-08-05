@@ -142,7 +142,7 @@ function pushDataLayerEvent(event: string, payload: TrackingParams = {}, options
   window.setTimeout(safeCallback, timeout);
 }
 
-const LEADS_ENDPOINT = "https://gestaopedidos.planteumaflor.online/api/leads/";
+const LEADS_ENDPOINT = "https://planteumaflor.gestaoonline.app.br/api/leads/";
 const LEAD_CONFIRMATION_TIMEOUT_MS = 1500;
 
 async function postLead(payload: Record<string, string | undefined>): Promise<boolean> {

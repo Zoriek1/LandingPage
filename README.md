@@ -290,4 +290,4 @@ Data Layer Version: Version 2
 - [ ] `whatsapp_click` aparece ao confirmar no modal (com `phone` preenchido)
 - [ ] `site_click` aparece ao clicar em catálogo
 - [ ] Meta Pixel Helper mostra `PageView`, `Lead`, `Contact`, `ViewContent`
-- [ ] Network tab mostra POST para `gestaopedidos.planteumaflor.online/api/leads/` com payload correto
+- [ ] Network tab mostra POST para `planteumaflor.gestaoonline.app.br/api/leads/` com payload correto

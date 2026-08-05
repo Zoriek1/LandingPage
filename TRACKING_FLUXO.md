@@ -6,13 +6,13 @@ Ultima atualizacao: 2026-03-21
 
 - Google: eventos enviados via `dataLayer` para o container GTM `GTM-KCRTLDV4`.
 - Meta: eventos enviados via `fbq` no codigo (Pixel ID `370300471997593`).
-- Backend de leads: eventos enviados para `https://gestaopedidos.planteumaflor.online/api/leads/`.
+- Backend de leads: eventos enviados para `https://planteumaflor.gestaoonline.app.br/api/leads/`.
 - Nao existe mais `gtag.js` hardcoded para Google Ads/GA4 no HTML.
 
 Resumo pratico:
 - Google = GTM.
 - Meta = fbq no frontend.
-- Leads internos = endpoint `gestaopedidos`.
+- Leads internos = endpoint `planteumaflor.gestaoonline.app.br`.
 
 ## 2) Scripts carregados na pagina
 

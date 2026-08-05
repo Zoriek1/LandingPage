@@ -13,7 +13,7 @@ verificável aqui**.
 | Meta Pixel `370300471997593` | `index.html` (snippet inline) | 1 `init` + 1 `PageView` |
 | Google Tag Manager `GTM-KCRTLDV4` | `index.html` (snippet inline + `noscript`) | 1 |
 | GA4 / Google Ads | **não existem no código-fonte** — só podem estar como tags dentro do GTM | — |
-| API de leads | `src/lib/tracking.ts` → `POST https://gestaopedidos.planteumaflor.online/api/leads/` | 1 por evento |
+| API de leads | `src/lib/tracking.ts` → `POST https://planteumaflor.gestaoonline.app.br/api/leads/` | 1 por evento |
 
 Não há instalação duplicada de Pixel nem de GTM no repositório: cada um aparece
 uma única vez por documento HTML (`index.html`, `dia-das-maes/index.html`,

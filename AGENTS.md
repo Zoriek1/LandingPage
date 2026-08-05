@@ -4,7 +4,7 @@
 
 - Site principal: https://www.planteumaflor.com
 - WhatsApp: +5562996503403 (Goiás, Brasil)
-- API de leads: https://gestaopedidos.planteumaflor.online/api/leads/
+- API de leads: https://planteumaflor.gestaoonline.app.br/api/leads/
 
 ---
 
@@ -149,7 +149,7 @@ Ordem de renderização em `Index.tsx`:
 |-----------|-------|------------|
 | WhatsApp URL | `wa.me/+5562996503403?text=...` | múltiplos componentes |
 | Site URL | `https://www.planteumaflor.com` | múltiplos componentes |
-| API Leads | `https://gestaopedidos.planteumaflor.online/api/leads/` | `tracking.ts` |
+| API Leads | `https://planteumaflor.gestaoonline.app.br/api/leads/` | `tracking.ts` |
 | Meta Pixel ID | `370300471997593` | `index.html` |
 | Google Ads ID | `AW-11455088769` | `index.html` + `tracking.ts` |
 | Google Analytics | `GT-PJ5LRCW6` | `index.html` |
