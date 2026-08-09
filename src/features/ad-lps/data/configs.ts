@@ -260,8 +260,8 @@ export const TESTIMONIALS: Record<string, Testimonial> = {
 };
 
 export const PRODUCTS: Record<string, Product> = {
-  "arranjo-3-rosas": {
-    id: "arranjo-3-rosas",
+  "arranjo-mao-rosas": {
+    id: "arranjo-mao-rosas",
     storeSlug: "arranjo-de-mao-rosas",
     name: "Arranjo de Mão Rosas Vermelhas",
     priceBrl: "R$ 99,90",
@@ -290,8 +290,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["4 Ferrero Rocher", "Balão", "Cartão à mão"],
     },
   },
-  "buque-6-rosas": {
-    id: "buque-6-rosas",
+  "buque-classico-rosas": {
+    id: "buque-classico-rosas",
     storeSlug: "buque-classico-rosas",
     name: "Buquê Clássico de Rosas Vermelhas",
     priceBrl: "R$ 249,90",
@@ -320,8 +320,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "buque-12-rosas-vermelhas": {
-    id: "buque-12-rosas-vermelhas",
+  "buque-rosas-astromelias": {
+    id: "buque-rosas-astromelias",
     storeSlug: "buque-rosas-astromelias",
     name: "Buquê de Rosas com Astromélias",
     priceBrl: "R$ 199,90",
@@ -350,8 +350,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Caixa em formato de coração", "Cartão à mão"],
     },
   },
-  "buque-24-rosas": {
-    id: "buque-24-rosas",
+  "buque-30-rosas": {
+    id: "buque-30-rosas",
     storeSlug: "buque-30-rosas",
     name: "Buquê Especial 30 Rosas Vermelhas",
     priceBrl: "R$ 680,00",
@@ -365,8 +365,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "arranjo-lirios-p": {
-    id: "arranjo-lirios-p",
+  "arranjo-mao-lirios-p": {
+    id: "arranjo-mao-lirios-p",
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios P",
     priceBrl: "R$ 159,90",
@@ -379,8 +379,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel jornal artesanal", "Cartão à mão"],
     },
   },
-  "arranjo-mao-lirios": {
-    id: "arranjo-mao-lirios",
+  "arranjo-mao-lirios-m": {
+    id: "arranjo-mao-lirios-m",
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios M",
     priceBrl: "R$ 229,90",
@@ -393,8 +393,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel jornal artesanal", "Cartão à mão"],
     },
   },
-  "arranjo-lirios-m": {
-    id: "arranjo-lirios-m",
+  "arranjo-mao-lirios-g": {
+    id: "arranjo-mao-lirios-g",
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios G",
     priceBrl: "R$ 289,90",
@@ -421,8 +421,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "buque-lirios": {
-    id: "buque-lirios",
+  "buque-lirios-p": {
+    id: "buque-lirios-p",
     storeSlug: "buque-lirios",
     name: "Buquê de Lírios P",
     priceBrl: "R$ 299,90",
@@ -449,8 +449,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "girassol-cone": {
-    id: "girassol-cone",
+  "girassol-avulso": {
+    id: "girassol-avulso",
     storeSlug: "girassol-avulso",
     name: "Girassol Avulso",
     priceBrl: "R$ 65,00",
@@ -464,8 +464,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Cone de papel artesanal", "Cartão à mão"],
     },
   },
-  "girassol-unitario": {
-    id: "girassol-unitario",
+  "arranjo-2-girassois-balao": {
+    id: "arranjo-2-girassois-balao",
     storeSlug: "arranjo-de-mao-2-girassois-com-balao-vermelho",
     name: "Arranjo 2 Girassóis com Balão",
     priceBrl: "R$ 109,90",
@@ -479,14 +479,14 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Balão", "Cartão à mão"],
     },
   },
-  "buque-girassois-m": {
-    id: "buque-girassois-m",
+  "buque-girassois-g": {
+    id: "buque-girassois-g",
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis G",
     priceBrl: "R$ 349,90",
     installments: "3x s/ juros de R$ 115,30",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
-    waText: "Oi! Quero o Buquê de Girassóis P (R$ 349,90).",
+    waText: "Oi! Quero o Buquê de Girassóis G (R$ 349,90).",
     details: {
       flowerCount: 12,
       size: "G",
@@ -494,8 +494,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Cartão à mão"],
     },
   },
-  "buque-girassois": {
-    id: "buque-girassois",
+  "buque-girassois-m": {
+    id: "buque-girassois-m",
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis M",
     priceBrl: "R$ 289,90",
@@ -509,8 +509,8 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "buque-6-girassois": {
-    id: "buque-6-girassois",
+  "buque-girassois-p": {
+    id: "buque-girassois-p",
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis P",
     priceBrl: "R$ 199,90",
@@ -594,12 +594,12 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineSubtitle:
       "Escolhas delicadas, montadas à mão e prontas para emocionar.",
     vitrineProductIds: [
-      "arranjo-3-rosas",
-      "arranjo-mao-lirios",
+      "arranjo-mao-rosas",
+      "arranjo-mao-lirios-m",
       "buque-flor-campo-m",
       "buque-12-rosas-rosa",
       "buque-lirios-m",
-      "buque-6-girassois",
+      "buque-girassois-p",
       "box-rosas",
     ],
     vitrineHighlightId: "buque-flor-campo-m",
@@ -651,15 +651,15 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineSubtitle:
       "Dos gestos delicados aos buquês que impressionam de verdade.",
     vitrineProductIds: [
-      "arranjo-3-rosas",
+      "arranjo-mao-rosas",
       "arranjo-4-rosas-ferrero",
-      "buque-6-rosas",
+      "buque-classico-rosas",
       "buque-12-rosas-rosa",
-      "buque-12-rosas-vermelhas",
+      "buque-rosas-astromelias",
       "box-rosas",
-      "buque-24-rosas",
+      "buque-30-rosas",
     ],
-    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    vitrineHighlightId: "buque-rosas-astromelias",
     faq: [
       {
         question: "Consigo agendar para o dia 12 de junho?",
@@ -724,14 +724,14 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Sai para entrega hoje mesmo",
     vitrineSubtitle: "Tudo aqui é montado na hora, com flor recebida direto do produtor.",
     vitrineProductIds: [
-      "buque-6-rosas",
-      "arranjo-mao-lirios",
-      "arranjo-3-rosas",
-      "buque-12-rosas-vermelhas",
+      "buque-classico-rosas",
+      "arranjo-mao-lirios-m",
+      "arranjo-mao-rosas",
+      "buque-rosas-astromelias",
       "buque-lirios-m",
-      "buque-girassois-m",
+      "buque-girassois-g",
     ],
-    vitrineHighlightId: "buque-6-rosas",
+    vitrineHighlightId: "buque-classico-rosas",
     faq: [
       {
         question: "Dá tempo mesmo de chegar hoje?",
@@ -780,16 +780,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Buquês para aniversário",
     vitrineSubtitle: "Do clássico ao surpreendente. Escolhe o que combina com ela.",
     vitrineProductIds: [
-      "buque-12-rosas-vermelhas",
+      "buque-rosas-astromelias",
       "buque-12-rosas-rosa",
       "buque-flor-campo-m",
-      "buque-6-girassois",
+      "buque-girassois-p",
       "buque-lirios-m",
-      "buque-6-rosas",
+      "buque-classico-rosas",
       "box-rosas",
-      "buque-24-rosas",
+      "buque-30-rosas",
     ],
-    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    vitrineHighlightId: "buque-rosas-astromelias",
     faq: [
       {
         question: "Como faço pra agendar o dia exato?",
@@ -840,13 +840,13 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Buquês de rosas",
     vitrineSubtitle: "Do menor ao maior. Todas frescas, vindas direto do produtor.",
     vitrineProductIds: [
-      "arranjo-3-rosas",
+      "arranjo-mao-rosas",
       "arranjo-4-rosas-ferrero",
-      "buque-6-rosas",
+      "buque-classico-rosas",
       "buque-12-rosas-rosa",
-      "buque-12-rosas-vermelhas",
+      "buque-rosas-astromelias",
       "box-rosas",
-      "buque-24-rosas",
+      "buque-30-rosas",
     ],
     vitrineHighlightId: "buque-12-rosas-rosa",
     faq: [
@@ -913,18 +913,18 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     // Rosa vermelha e flor-do-campo cortavam a leitura de preço dos lírios no
     // meio da grade; ficam no fim, rotuladas como alternativa.
     vitrineProductIds: [
-      "arranjo-lirios-p",
-      "arranjo-mao-lirios",
-      "arranjo-lirios-m",
-      "buque-lirios",
+      "arranjo-mao-lirios-p",
+      "arranjo-mao-lirios-m",
+      "arranjo-mao-lirios-g",
+      "buque-lirios-p",
       "buque-lirios-m",
       "buque-lirios-g",
-      "buque-12-rosas-vermelhas",
+      "buque-rosas-astromelias",
       "buque-flor-campo-m",
     ],
-    vitrineHighlightId: "arranjo-mao-lirios",
+    vitrineHighlightId: "arranjo-mao-lirios-m",
     vitrineProductNotes: {
-      "buque-12-rosas-vermelhas": "Se quiser variar",
+      "buque-rosas-astromelias": "Se quiser variar",
       "buque-flor-campo-m": "Se quiser variar",
     },
     vitrineFaqTitle: "Dúvidas sobre lírios",
@@ -975,14 +975,14 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Presentes do dia",
     vitrineSubtitle: "Os mais em conta primeiro. Tamanho ideal pra mesa, cabeceira ou escritório.",
     vitrineProductIds: [
-      "girassol-cone",
-      "girassol-unitario",
-      "arranjo-3-rosas",
-      "arranjo-lirios-p",
-      "buque-12-rosas-vermelhas",
+      "girassol-avulso",
+      "arranjo-2-girassois-balao",
+      "arranjo-mao-rosas",
+      "arranjo-mao-lirios-p",
+      "buque-rosas-astromelias",
       "arranjo-4-rosas-ferrero",
     ],
-    vitrineHighlightId: "arranjo-3-rosas",
+    vitrineHighlightId: "arranjo-mao-rosas",
     faq: [
       {
         question: "Vai parecer um presente pequeno demais?",
@@ -1011,10 +1011,10 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroImage: "/lpb/heros/carro-high.jpg",
     heroImageAlt: "Buquê 12 rosas vermelhas premium",
     heroMode: "overlay",
-    headline: "Buquês memoráveis a partir de R$ 229,90.",
+    headline: "Buquês memoráveis a partir de R$ 199,90.",
     subheadline:
       "Pra quem quer impressionar de verdade. Você combina a entrega em Goiânia, com embalagem artesanal e cartão escrito à mão.",
-    priceAnchor: "A partir de R$ 229,90",
+    priceAnchor: "A partir de R$ 199,90",
     vitrineVisibleCount: 6,
     ctaCopy: {
       hero: "Encomendar agora",
@@ -1028,19 +1028,19 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Buquês premium",
     vitrineSubtitle: "Porte, frescor e embalagem que fazem a flor falar antes de você abrir a boca.",
     vitrineProductIds: [
-      "buque-6-rosas",
+      "buque-classico-rosas",
       "buque-12-rosas-rosa",
       "buque-flor-campo-m",
-      "buque-girassois",
-      "buque-12-rosas-vermelhas",
-      "buque-6-girassois",
+      "buque-girassois-m",
+      "buque-rosas-astromelias",
+      "buque-girassois-p",
       "buque-lirios-m",
-      "buque-lirios",
+      "buque-lirios-p",
       "buque-lirios-g",
       "box-rosas",
-      "buque-24-rosas",
+      "buque-30-rosas",
     ],
-    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    vitrineHighlightId: "buque-rosas-astromelias",
     faq: [
       {
         question: "O que muda de um buquê mais em conta pra um premium?",
@@ -1059,9 +1059,9 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       },
     ],
     nossaHistoria: DEFAULT_NOSSA_HISTORIA,
-    pageTitle: "Buquês premium a partir de R$ 229,90 | Plante Uma Flor",
+    pageTitle: "Buquês premium a partir de R$ 199,90 | Plante Uma Flor",
     pageDescription:
-      "Buquês memoráveis entregues hoje em Goiânia. A partir de R$ 229,90, com embalagem artesanal e cartão escrito à mão por conta da casa.",
+      "Buquês memoráveis entregues hoje em Goiânia. A partir de R$ 199,90, com embalagem artesanal e cartão escrito à mão por conta da casa.",
   },
   "presente-hoje": {
     slug: "presente-hoje",
@@ -1102,16 +1102,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Presentes para hoje",
     vitrineSubtitle: "Opções com boa presença, embalagem caprichada e entrega rápida.",
     vitrineProductIds: [
-      "arranjo-3-rosas",
-      "girassol-unitario",
-      "arranjo-lirios-p",
-      "buque-6-rosas",
+      "arranjo-mao-rosas",
+      "arranjo-2-girassois-balao",
+      "arranjo-mao-lirios-p",
+      "buque-classico-rosas",
       "buque-flor-campo-m",
-      "buque-12-rosas-vermelhas",
+      "buque-rosas-astromelias",
       "buque-lirios-m",
       "box-rosas",
     ],
-    vitrineHighlightId: "buque-6-rosas",
+    vitrineHighlightId: "buque-classico-rosas",
     faq: [
       {
         question: "Consigo resolver tudo ainda hoje?",
@@ -1157,16 +1157,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Mais pedidos da floricultura",
     vitrineSubtitle: "Escolhas frequentes de quem quer acertar sem depender só de foto bonita.",
     vitrineProductIds: [
-      "buque-6-rosas",
-      "buque-12-rosas-vermelhas",
-      "arranjo-mao-lirios",
+      "buque-classico-rosas",
+      "buque-rosas-astromelias",
+      "arranjo-mao-lirios-m",
       "buque-flor-campo-m",
       "buque-12-rosas-rosa",
       "buque-lirios-m",
       "box-rosas",
-      "buque-24-rosas",
+      "buque-30-rosas",
     ],
-    vitrineHighlightId: "buque-12-rosas-vermelhas",
+    vitrineHighlightId: "buque-rosas-astromelias",
     faq: [
       {
         question: "Como eu sei que o buquê vai ficar bonito?",
@@ -1212,16 +1212,16 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Presentes que costumam acertar",
     vitrineSubtitle: "Clássicos com boa presença, preço claro e acabamento de presente.",
     vitrineProductIds: [
-      "arranjo-3-rosas",
-      "buque-6-rosas",
+      "arranjo-mao-rosas",
+      "buque-classico-rosas",
       "buque-12-rosas-rosa",
-      "buque-12-rosas-vermelhas",
-      "arranjo-mao-lirios",
+      "buque-rosas-astromelias",
+      "arranjo-mao-lirios-m",
       "buque-flor-campo-m",
-      "buque-lirios",
+      "buque-lirios-p",
       "box-rosas",
     ],
-    vitrineHighlightId: "buque-6-rosas",
+    vitrineHighlightId: "buque-classico-rosas",
     faq: [
       {
         question: "Qual opção é mais segura para presentear?",
@@ -1267,12 +1267,12 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     vitrineTitle: "Campo & girassol",
     vitrineSubtitle: "Charme rústico, alegria visível. Flor de campo é pra quem gosta de fugir do óbvio.",
     vitrineProductIds: [
-      "girassol-cone",
-      "girassol-unitario",
-      "buque-girassois-m",
+      "girassol-avulso",
+      "arranjo-2-girassois-balao",
+      "buque-girassois-g",
       "buque-flor-campo-m",
-      "buque-girassois",
-      "buque-6-girassois",
+      "buque-girassois-m",
+      "buque-girassois-p",
     ],
     vitrineHighlightId: "buque-flor-campo-m",
     faq: [
@@ -1328,14 +1328,14 @@ Object.assign(LP_CONFIGS, {
   girassol: {
     ...LP_CONFIGS["qual-b"], slug: "girassol", heroImage: "/lpb/heros/girassol.jpg",
     headline: "Girassóis para iluminar o dia de alguém.", priceAnchor: "A partir de R$ 65,00",
-    vitrineTitle: "Girassóis para presentear", vitrineProductIds: ["girassol-cone", "girassol-unitario", "buque-girassois-m", "buque-girassois", "buque-6-girassois"],
+    vitrineTitle: "Girassóis para presentear", vitrineProductIds: ["girassol-avulso", "arranjo-2-girassois-balao", "buque-girassois-p", "buque-girassois-m", "buque-girassois-g"],
     pageTitle: "Girassóis em Goiânia | Plante Uma Flor", pageDescription: "Girassóis a partir de R$ 65,00, com cartão e entrega em Goiânia.",
   },
   "catalogo-precos": {
     ...LP_CONFIGS["sem-erro"], slug: "catalogo-precos", heroImage: "/lpb/heros/catalogo-precos.jpg",
     headline: "Flores a partir de R$ 99,90.", priceAnchor: "A partir de R$ 99,90",
     vitrineTitle: "Catálogo de preços", vitrineSubtitle: "Escolha seu presente por faixa de preço, com valores claros desde o começo.",
-    vitrineProductIds: ["arranjo-3-rosas", "girassol-unitario", "arranjo-lirios-p", "buque-6-rosas", "buque-12-rosas-vermelhas", "buque-lirios"],
+    vitrineProductIds: ["arranjo-mao-rosas", "arranjo-2-girassois-balao", "arranjo-mao-lirios-p", "buque-classico-rosas", "buque-rosas-astromelias", "buque-lirios-p"],
     pageTitle: "Catálogo de Flores e Preços | Plante Uma Flor", pageDescription: "Flores a partir de R$ 99,90 em Goiânia.",
   },
 });

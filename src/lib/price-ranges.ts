@@ -91,11 +91,11 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
   "/aniversario": {
     lpSlug: "aniversario",
     messageContext: "presentes de aniversário —",
-    lowFloorBrl: "R$ 229,90",
-    // Corte em 300 (e não 250): com piso de R$ 229,90 uma faixa de 20 reais
+    lowFloorBrl: "R$ 199,90",
+    // Corte em 300 (e não 250): com piso de R$ 199,90 uma faixa de 20 reais
     // não é uma escolha. Em 300 a faixa baixa cobre 5 dos 8 produtos.
     ranges: [
-      { key: "low", label: "R$ 229,90 a R$ 300", outcome: LOW_OUTCOME },
+      { key: "low", label: "R$ 199,90 a R$ 300", outcome: LOW_OUTCOME },
       { key: "mid", label: "R$ 300 a R$ 450", outcome: MID_OUTCOME },
       { key: "high", label: "Acima de R$ 450", outcome: HIGH_OUTCOME },
     ],
@@ -133,9 +133,9 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
   "/carro-high": {
     lpSlug: "carro-high",
     messageContext: "buquês premium —",
-    lowFloorBrl: "R$ 229,90",
+    lowFloorBrl: "R$ 199,90",
     ranges: [
-      { key: "low", label: "R$ 229,90 a R$ 300", outcome: LOW_OUTCOME },
+      { key: "low", label: "R$ 199,90 a R$ 300", outcome: LOW_OUTCOME },
       { key: "mid", label: "R$ 300 a R$ 500", outcome: MID_OUTCOME },
       { key: "high", label: "Acima de R$ 500", outcome: HIGH_OUTCOME },
     ],
@@ -153,9 +153,9 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
   "/tradicao-comprovacao": {
     lpSlug: "tradicao-comprovacao",
     messageContext: "arranjos com foto antes da entrega —",
-    lowFloorBrl: "R$ 229,90",
+    lowFloorBrl: "R$ 199,90",
     ranges: [
-      { key: "low", label: "R$ 229,90 a R$ 300", outcome: LOW_OUTCOME },
+      { key: "low", label: "R$ 199,90 a R$ 300", outcome: LOW_OUTCOME },
       { key: "mid", label: "R$ 300 a R$ 450", outcome: MID_OUTCOME },
       { key: "high", label: "Acima de R$ 450", outcome: HIGH_OUTCOME },
     ],

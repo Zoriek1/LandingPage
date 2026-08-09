@@ -87,7 +87,7 @@ describe("ad landing pages", () => {
   it("opens WhatsApp from vitrine product cards with product context", async () => {
     renderAt("/urgencia?utm_content=ad-criativo-01");
 
-    const card = await screen.findByTestId("product-card-buque-6-rosas") as HTMLAnchorElement;
+    const card = await screen.findByTestId("product-card-buque-classico-rosas") as HTMLAnchorElement;
     expect(card).toHaveAttribute("href", "https://wa.me/5562996503403");
     expect(card).toHaveTextContent("Buquê Clássico de Rosas Vermelhas");
     expect(card).toHaveTextContent("R$ 249,90");
@@ -100,7 +100,7 @@ describe("ad landing pages", () => {
         lp_slug: "urgencia",
         cta_location: "vitrine",
         cta_label: "produto_whatsapp",
-        product_id: "buque-6-rosas",
+        product_id: "buque-classico-rosas",
         product_name: "Buquê Clássico de Rosas Vermelhas",
         product_price: "R$ 249,90",
         delivery_intent: "entrega hoje em Goiânia",
@@ -197,7 +197,7 @@ describe("ad landing pages", () => {
       (card) => card.getAttribute("data-testid"),
     );
     expect(ids.slice(-2)).toEqual([
-      "product-card-buque-12-rosas-vermelhas",
+      "product-card-buque-rosas-astromelias",
       "product-card-buque-flor-campo-m",
     ]);
     expect(screen.getAllByText("Se quiser variar")).toHaveLength(2);

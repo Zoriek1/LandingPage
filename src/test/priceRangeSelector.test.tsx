@@ -29,13 +29,13 @@ const EXPECTED_RANGES = {
   "/dia-das-maes": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
   "/dia-dos-namorados": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
   "/urgencia": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
-  "/aniversario": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
+  "/aniversario": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
   "/rosas-apt": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
   "/lirios-apt": ["R$ 159,90 a R$ 230", "R$ 230 a R$ 400", "Acima de R$ 400"],
   "/carro-low": ["R$ 65,00 a R$ 100", "R$ 100 a R$ 150", "Acima de R$ 150"],
-  "/carro-high": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
+  "/carro-high": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
   "/presente-hoje": ["R$ 99,90 a R$ 160", "R$ 160 a R$ 300", "Acima de R$ 300"],
-  "/tradicao-comprovacao": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
+  "/tradicao-comprovacao": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
   "/sem-erro": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 350", "Acima de R$ 350"],
   "/qual-b": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
   "/so-porque-sim": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
@@ -194,7 +194,7 @@ describe("price-range conversion selector", () => {
     window.history.pushState({}, "", "/urgencia?utm_content=ad-criativo-01");
     render(<App />);
 
-    fireEvent.click(await screen.findByTestId("product-card-buque-6-rosas"));
+    fireEvent.click(await screen.findByTestId("product-card-buque-classico-rosas"));
 
     expect(openWhatsAppModal).toHaveBeenCalledTimes(1);
     expect(openWhatsAppModal).toHaveBeenCalledWith(
@@ -202,7 +202,7 @@ describe("price-range conversion selector", () => {
       expect.objectContaining({
         lp_slug: "urgencia",
         cta_location: "vitrine",
-        product_id: "buque-6-rosas",
+        product_id: "buque-classico-rosas",
       }),
       expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 249,90"),
       "pagina=urgencia",
