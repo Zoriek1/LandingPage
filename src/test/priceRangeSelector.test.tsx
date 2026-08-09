@@ -38,6 +38,11 @@ const EXPECTED_RANGES = {
   "/tradicao-comprovacao": ["R$ 229,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
   "/sem-erro": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 350", "Acima de R$ 350"],
   "/qual-b": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
+  "/so-porque-sim": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/buque-real": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/reconciliacao": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/girassol": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
+  "/catalogo-precos": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
 } as const;
 
 function parseBrl(label: string) {
@@ -86,7 +91,7 @@ describe("price-range conversion selector", () => {
 
   afterEach(() => cleanup());
 
-  it("keeps exactly the three approved ranges for all 13 published routes", () => {
+  it("keeps exactly the three approved ranges for all published routes", () => {
     expect(Object.keys(PRICE_RANGE_CONFIGS)).toEqual(Object.keys(EXPECTED_RANGES));
 
     for (const [route, expectedLabels] of Object.entries(EXPECTED_RANGES)) {
