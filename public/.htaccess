@@ -8,6 +8,8 @@ RewriteRule ^(.*)$ https://lpb.planteumaflor.com/$1 [R=301,L,QSA]
 
 RewriteRule ^index\.html$ - [L]
 
+RewriteRule ^sem-erro/?$ /so-porque-sim [R=301,L]
+
 # HTML estático por LP: /lirios-apt -> /lirios-apt.html. Esses arquivos trazem o
 # preload do hero daquela LP e o CSS certo já no documento inicial (ver o plugin
 # ad-landing-static-html). Vem antes do fallback do SPA e só age quando o
