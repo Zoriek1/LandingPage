@@ -21,7 +21,12 @@ export type PriceRangeRoute =
   | "/presente-hoje"
   | "/tradicao-comprovacao"
   | "/sem-erro"
-  | "/qual-b";
+  | "/qual-b"
+  | "/so-porque-sim"
+  | "/buque-real"
+  | "/reconciliacao"
+  | "/girassol"
+  | "/catalogo-precos";
 
 export type PriceRangeConfig = {
   lpSlug: string;
@@ -176,6 +181,14 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
     ],
   },
 };
+
+Object.assign(PRICE_RANGE_CONFIGS, {
+  "/so-porque-sim": { lpSlug: "so-porque-sim", messageContext: "flores para surpreender sem data —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+  "/buque-real": { lpSlug: "buque-real", messageContext: "buquês com foto real antes da entrega —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+  "/reconciliacao": { lpSlug: "reconciliacao", messageContext: "flores para reconciliação —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+  "/girassol": { lpSlug: "girassol", messageContext: "girassóis —", lowFloorBrl: "R$ 65,00", ranges: [{ key: "low", label: "R$ 65,00 a R$ 110", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 110 a R$ 250", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME }] },
+  "/catalogo-precos": { lpSlug: "catalogo-precos", messageContext: "flores por faixa de preço —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+});
 
 export const PRICE_RANGE_SELECTOR_EVENT = "price-range-selector:open";
 

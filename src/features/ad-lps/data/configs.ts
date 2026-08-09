@@ -1299,4 +1299,45 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
   },
 };
 
+Object.assign(LP_CONFIGS, {
+  "so-porque-sim": {
+    ...LP_CONFIGS["sem-erro"], slug: "so-porque-sim", accent: "sun",
+    headline: "Não precisa de data para mostrar que pensou nela.",
+    subheadline: "Um buquê inesperado muda o dia de quem você gosta. A gente prepara, escreve seu recado e entrega hoje em Goiânia.",
+    priceAnchor: "Um gesto que chega hoje", vitrineTitle: "Flores só porque sim",
+    vitrineSubtitle: "Escolhas leves e bonitas para surpreender sem esperar uma ocasião.",
+    pageTitle: "Flores Só Porque Sim em Goiânia | Plante Uma Flor",
+    pageDescription: "Surpreenda sem data especial: flores com cartão e entrega em Goiânia.",
+  },
+  "buque-real": {
+    ...LP_CONFIGS.urgencia, slug: "buque-real", accent: "classic",
+    headline: "Você aprova a foto real do buquê antes da entrega.",
+    subheadline: "Nada de surpresa desagradável: montamos seu arranjo, enviamos a foto para aprovação e entregamos hoje em Goiânia.",
+    priceAnchor: "Foto real antes de sair", vitrineTitle: "Buquês que você vê antes de receber",
+    pageTitle: "Buquê Real com Foto Antes da Entrega | Plante Uma Flor",
+    pageDescription: "Aprove a foto real do seu buquê antes da entrega hoje em Goiânia.",
+  },
+  reconciliacao: {
+    ...LP_CONFIGS["presente-hoje"], slug: "reconciliacao", accent: "rose",
+    headline: "O erro pesa mais quando fica sem resposta.",
+    subheadline: "Um buquê não apaga o que aconteceu, mas pode ser o primeiro gesto para mostrar que você se importa e reabrir a conversa.",
+    priceAnchor: "Um gesto para hoje", vitrineTitle: "Flores para pedir desculpas",
+    pageTitle: "Flores para Reconciliação em Goiânia | Plante Uma Flor",
+    pageDescription: "Envie um gesto de reconciliação com entrega hoje em Goiânia.",
+  },
+  girassol: {
+    ...LP_CONFIGS["qual-b"], slug: "girassol", heroImage: "/lpb/heros/girassol.jpg",
+    headline: "Girassóis para iluminar o dia de alguém.", priceAnchor: "A partir de R$ 65,00",
+    vitrineTitle: "Girassóis para presentear", vitrineProductIds: ["girassol-cone", "girassol-unitario", "buque-girassois-m", "buque-girassois", "buque-6-girassois"],
+    pageTitle: "Girassóis em Goiânia | Plante Uma Flor", pageDescription: "Girassóis a partir de R$ 65,00, com cartão e entrega em Goiânia.",
+  },
+  "catalogo-precos": {
+    ...LP_CONFIGS["sem-erro"], slug: "catalogo-precos", heroImage: "/lpb/heros/catalogo-precos.jpg",
+    headline: "Flores a partir de R$ 99,90.", priceAnchor: "A partir de R$ 99,90",
+    vitrineTitle: "Catálogo de preços", vitrineSubtitle: "Escolha seu presente por faixa de preço, com valores claros desde o começo.",
+    vitrineProductIds: ["arranjo-3-rosas", "girassol-unitario", "arranjo-lirios-p", "buque-6-rosas", "buque-12-rosas-vermelhas", "buque-lirios"],
+    pageTitle: "Catálogo de Flores e Preços | Plante Uma Flor", pageDescription: "Flores a partir de R$ 99,90 em Goiânia.",
+  },
+});
+
 export { AD_LP_SLUGS } from "@/routes/routeManifest";

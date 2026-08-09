@@ -11,4 +11,9 @@ export const AD_LP_SLUGS = [
   "tradicao-comprovacao",
   "sem-erro",
   "qual-b",
+  "so-porque-sim",
+  "buque-real",
+  "reconciliacao",
+  "girassol",
+  "catalogo-precos",
 ] as const;
