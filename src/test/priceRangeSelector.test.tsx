@@ -194,7 +194,7 @@ describe("price-range conversion selector", () => {
     window.history.pushState({}, "", "/urgencia?utm_content=ad-criativo-01");
     render(<App />);
 
-    fireEvent.click(await screen.findByTestId("product-card-buque-6-rosas"));
+    fireEvent.click(await screen.findByTestId("product-card-buque-classico-rosas"));
 
     expect(openWhatsAppModal).toHaveBeenCalledTimes(1);
     expect(openWhatsAppModal).toHaveBeenCalledWith(
@@ -202,7 +202,7 @@ describe("price-range conversion selector", () => {
       expect.objectContaining({
         lp_slug: "urgencia",
         cta_location: "vitrine",
-        product_id: "buque-6-rosas",
+        product_id: "buque-classico-rosas",
       }),
       expect.stringContaining("Buquê Clássico de Rosas Vermelhas - R$ 249,90"),
       "pagina=urgencia",

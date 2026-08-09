@@ -44,7 +44,7 @@ describe("coerência entre preço e Pix", () => {
 
   it("descarta só o Pix, preservando o resto do produto", () => {
     const repaired = dropIncoherentPixPrice({
-      slug: "buque-girassois",
+      slug: "buque-girassois-m",
       title: "Buquê de Girassóis",
       priceLabel: "R$ 144,90",
       pixPriceLabel: "R$ 275,41",

@@ -92,8 +92,7 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
     lpSlug: "aniversario",
     messageContext: "presentes de aniversário —",
     lowFloorBrl: "R$ 229,90",
-    // Corte em 300 (e não 250): com piso de R$ 229,90 uma faixa de 20 reais
-    // não é uma escolha. Em 300 a faixa baixa cobre 5 dos 8 produtos.
+    // O piso acompanha o menor produto da vitrine de aniversário.
     ranges: [
       { key: "low", label: "R$ 229,90 a R$ 300", outcome: LOW_OUTCOME },
       { key: "mid", label: "R$ 300 a R$ 450", outcome: MID_OUTCOME },
