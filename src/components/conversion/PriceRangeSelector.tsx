@@ -5,11 +5,13 @@ import { WHATSAPP_URL } from "@/lib/config";
 import {
   PRICE_RANGE_CONFIGS,
   PRICE_RANGE_SELECTOR_EVENT,
+  type IntentOption,
   type PriceRange,
   type PriceRangeRoute,
   type PriceRangeSelectorRequest,
 } from "@/lib/price-ranges";
 import { openPriceRangeWhatsApp } from "@/lib/whatsappModal";
+import { openProductWhatsApp } from "@/lib/landing-whatsapp";
 
 export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
   const [request, setRequest] = useState<PriceRangeSelectorRequest | null>(null);
@@ -29,22 +31,41 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
     return () => window.removeEventListener(PRICE_RANGE_SELECTOR_EVENT, handleOpen);
   }, []);
 
-  const handleSelection = (range: PriceRange) => {
+  const choices: readonly (PriceRange | IntentOption)[] = config.intents ?? config.ranges;
+
+  const handleSelection = (choice: PriceRange | IntentOption) => {
     if (!request || selectingRef.current) return;
     selectingRef.current = true;
     const tracking = request;
     setRequest(null);
+
+    const productId = "productId" in choice ? choice.productId : undefined;
+    if (productId) {
+      const intent = choice as IntentOption;
+      openProductWhatsApp({
+        pageSlug: config.lpSlug,
+        pageLabel: config.messageContext.replace(/\s*—\s*$/, ""),
+        ctaLocation: String(tracking.cta_location ?? "price_range_selector"),
+        ctaLabel: "intent_whatsapp",
+        productId: intent.productId,
+        productName: intent.productName ?? intent.label,
+        productPrice: intent.productPrice ?? "",
+        deliveryIntent: "entrega hoje em Goiânia e região",
+        extraTracking: { ...tracking, lp_slug: config.lpSlug, intent_key: intent.key },
+      });
+      return;
+    }
 
     openPriceRangeWhatsApp(
       WHATSAPP_URL,
       {
         ...tracking,
         lp_slug: config.lpSlug,
-        price_range_key: range.key,
-        price_range_label: range.label,
+        price_range_key: choice.key,
+        price_range_label: choice.label,
       },
       config.messageContext,
-      range.label,
+      choice.label,
     );
   };
 
@@ -83,30 +104,32 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
               Vamos por partes
             </p>
             <Dialog.Title className="font-display text-[1.75rem] font-semibold leading-tight text-[#1b3328] sm:text-3xl">
-              Qual faixa combina com o seu presente?
+              {config.intents ? "Como podemos ajudar?" : "Qual faixa combina com o seu presente?"}
             </Dialog.Title>
             <Dialog.Description className="mt-2 font-body text-sm leading-6 text-[#43584e]">
-              Escolha um orçamento para ver opções que façam sentido para a ocasião.
+              {config.intents
+                ? "Escolha uma opção e continue o pedido pelo WhatsApp."
+                : "Escolha um orçamento para ver opções que façam sentido para a ocasião."}
             </Dialog.Description>
           </div>
 
           <fieldset className="mt-6 grid min-w-0 gap-3 border-0 p-0">
-            <legend className="sr-only">Faixas de preço</legend>
-            {config.ranges.map((range, index) => (
+            <legend className="sr-only">{config.intents ? "Opções" : "Faixas de preço"}</legend>
+            {choices.map((choice, index) => (
               <button
-                key={range.key}
+                key={choice.key}
                 ref={index === 0 ? firstChoiceRef : undefined}
                 type="button"
-                onClick={() => handleSelection(range)}
+                onClick={() => handleSelection(choice)}
                 className="group grid min-h-[5.25rem] grid-cols-[1fr_auto] items-center gap-4 rounded-2xl border border-[#1b3328]/14 bg-white px-5 py-4 text-left shadow-[0_8px_24px_rgba(27,51,40,0.06)] transition-transform hover:-translate-y-0.5 hover:border-[#c6a15b] hover:shadow-[0_12px_30px_rgba(27,51,40,0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c6a15b] focus-visible:ring-offset-2 focus-visible:ring-offset-[#fcfaf4] active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none"
-                aria-label={`${range.label}. ${range.outcome}`}
+                aria-label={`${choice.label}. ${choice.outcome}`}
               >
                 <span>
                   <strong className="block font-display text-xl font-semibold text-[#1b3328]">
-                    {range.label}
+                    {choice.label}
                   </strong>
                   <span className="mt-1 block font-body text-xs leading-5 text-[#5d6e65] sm:text-sm">
-                    {range.outcome}
+                    {choice.outcome}
                   </span>
                 </span>
                 <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#1b3328] text-[#fcfaf4] group-hover:bg-[#c6a15b] group-hover:text-[#1b3328]" aria-hidden="true">

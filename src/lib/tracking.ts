@@ -261,6 +261,17 @@ export function trackSiteClick(payload: TrackingParams = {}) {
   sendLead("site_click", eventId, payload);
 }
 
+// offer_variant_seen = sinal de estado da página (qual variante ?oferta=/
+// ?criativo= está ativa), não de conversão. Só dataLayer/GTM decide se algo
+// disso vira Lead — nunca chama fbq/sendLead aqui.
+export function trackVariantSeen(page: string, paramName: string, paramValue: string) {
+  pushDataLayerEvent("offer_variant_seen", {
+    page,
+    [paramName]: paramValue,
+    offer_variant: paramValue,
+  });
+}
+
 export function trackPageView() {
   const eventId = window.__trackingIds?.pageview;
 

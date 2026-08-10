@@ -245,4 +245,170 @@ describe("ad landing pages", () => {
       "https://lpb.planteumaflor.com/qual-b",
     );
   });
+
+  it("fixed the final CTA grammar typo everywhere", async () => {
+    renderAt("/girassol");
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(document.body.textContent).not.toContain("fala com a gente");
+    expect(document.body.textContent).toContain("fale com a gente");
+  });
+
+  it.each(["girassol", "catalogo-precos"] as const)(
+    "%s puts the vitrine immediately after the hero",
+    async (slug) => {
+      const { container } = renderAt(`/${slug}`);
+      await screen.findByTestId("ad-lp-cta-hero");
+      const sections = Array.from(container.querySelectorAll("#ad-lp-main > section"));
+      expect(sections[0]?.className).toContain("ad-lp-hero");
+      expect(sections[1]?.id).toBe("vitrine");
+      // "Por que somos diferentes" e "Por que nos escolher?" foram fundidas.
+      expect(container.querySelector("#bonus")).toBeNull();
+    },
+  );
+
+  it("girassol shows exactly five products with one featured card, none orphaned", async () => {
+    const { container } = renderAt("/girassol");
+    await screen.findByTestId("ad-lp-cta-hero");
+    const cards = container.querySelectorAll(".ad-lp-card");
+    const featured = container.querySelectorAll(".ad-lp-card--featured");
+    expect(cards).toHaveLength(5);
+    expect(featured).toHaveLength(1);
+  });
+
+  it("girassol features the on-time-delivery review instead of the rosas one", async () => {
+    const { container } = renderAt("/girassol");
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(container.querySelector(".ad-lp-proof__hero")).toHaveTextContent(
+      "Produto chegou no dia e na hora combinado",
+    );
+  });
+
+  it("falls back to the default state for an unknown ?oferta= value without crashing", async () => {
+    renderAt("/girassol?oferta=nao-existe");
+    expect(
+      await screen.findByRole("heading", { level: 1, name: LP_CONFIGS.girassol.headline }),
+    ).toBeInTheDocument();
+  });
+
+  it("?oferta=199 on girassol swaps the hero copy and sends the hero CTA straight to that product", async () => {
+    renderAt("/girassol?oferta=199");
+
+    await screen.findByRole("heading", { level: 1, name: "Buquê de girassóis por R$ 199,90" });
+
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
+
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
+      expect.objectContaining({
+        product_id: "buque-girassois-p",
+        product_price: "R$ 199,90",
+      }),
+      expect.stringContaining("Buquê de Girassóis P - R$ 199,90"),
+      "pagina=girassol",
+    );
+    // Nenhum seletor genérico deveria abrir quando a variante já resolveu o produto.
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("?oferta=199 on girassol reorders the vitrine and marks the ad-matched product", async () => {
+    const { container } = renderAt("/girassol?oferta=199");
+    await waitFor(() =>
+      expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+        "Buquê de girassóis por R$ 199,90",
+      ),
+    );
+
+    const firstCard = container.querySelector(".ad-lp-vitrine__grid .ad-lp-card");
+    expect(firstCard).toHaveTextContent("Buquê de Girassóis P");
+    expect(firstCard).toHaveTextContent("Visto no anúncio");
+  });
+
+  it("reconciliacao's default state has no product-specific CTA (still opens the intent picker)", async () => {
+    renderAt("/reconciliacao");
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
+
+    expect(await screen.findByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText("Quero lírios")).toBeInTheDocument();
+    expect(screen.getByText("Quero rosas")).toBeInTheDocument();
+    expect(openWhatsAppModal).not.toHaveBeenCalled();
+  });
+
+  it("?criativo=lirio on reconciliacao sends the hero CTA straight to the lírios product", async () => {
+    renderAt("/reconciliacao?criativo=lirio");
+
+    await screen.findByRole("heading", {
+      level: 1,
+      name: "Lírios para mostrar que você foi além da mensagem.",
+    });
+
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
+
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
+      expect.objectContaining({
+        product_id: "arranjo-mao-lirios-p",
+        product_price: "R$ 159,90",
+      }),
+      expect.stringContaining("Arranjo de Mão Lírios P - R$ 159,90"),
+      "pagina=reconciliacao",
+    );
+  });
+
+  it("reconciliacao compacts the guarantee strip that sits right after the hero", async () => {
+    const { container } = renderAt("/reconciliacao");
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(container.querySelector(".ad-lp-guarantee--compact")).toBeInTheDocument();
+  });
+
+  it("?oferta=rosas-199 on catalogo-precos reorders the vitrine to the advertised product", async () => {
+    const { container } = renderAt("/catalogo-precos?oferta=rosas-199");
+    await waitFor(() => {
+      const firstCard = container.querySelector(".ad-lp-vitrine__grid .ad-lp-card");
+      expect(firstCard).toHaveTextContent("Buquê de Rosas com Astromélias");
+    });
+    expect(container.querySelector(".ad-lp-vitrine__grid .ad-lp-card")).toHaveTextContent(
+      "Visto no anúncio",
+    );
+  });
+
+  it("catalogo-precos derives its headline from the real minimum vitrine price", async () => {
+    renderAt("/catalogo-precos");
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "Flores a partir de R$ 99,90." }),
+    ).toBeInTheDocument();
+  });
+
+  it("catalogo-precos shows category/price filters that hide zero-result options", async () => {
+    renderAt("/catalogo-precos");
+    await screen.findByTestId("ad-lp-cta-hero");
+
+    expect(screen.getByRole("button", { name: /^Rosas/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Lírios/ })).toBeInTheDocument();
+    // Não existe orquídea nem astromélia como categoria própria no catálogo atual.
+    expect(screen.queryByRole("button", { name: /^Orquídeas/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Astromélias/ })).toBeNull();
+  });
+
+  it("catalogo-precos filters the vitrine when a category is selected", async () => {
+    renderAt("/catalogo-precos");
+    await screen.findByTestId("ad-lp-cta-hero");
+
+    fireEvent.click(screen.getByRole("button", { name: /^Lírios/ }));
+
+    const cards = screen.getAllByTestId(/^product-card-/);
+    expect(cards.length).toBeGreaterThan(0);
+    for (const card of cards) {
+      expect(card.getAttribute("data-testid")).toMatch(/lirios/);
+    }
+  });
+
+  it("does not use whatsapp:// anywhere in the ad-lp implementation", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { join } = await import("node:path");
+    const source = readFileSync(
+      join(process.cwd(), "src/features/ad-lps/AdLandingPage.tsx"),
+      "utf8",
+    );
+    expect(source).not.toContain("whatsapp://");
+  });
 });

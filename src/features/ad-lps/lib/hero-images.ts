@@ -50,7 +50,12 @@ export function getHeroSources(slug: string): PictureSources {
   const webp480 = heroVariant(slug, 480, "webp");
   const webp900 = heroVariant(slug, 900, "webp");
 
-  if (!avif480 || !avif900 || !webp480 || !webp900) return FACHADA_SOURCES;
+  if (!avif480 || !avif900 || !webp480 || !webp900) {
+    if (import.meta.env.DEV) {
+      console.warn(`[hero-images] Sem hero-${slug}-* gerado, caindo na fachada.`);
+    }
+    return FACHADA_SOURCES;
+  }
   return { avif480, avif900, webp480, webp900, fallbackSrc: webp900 };
 }
 

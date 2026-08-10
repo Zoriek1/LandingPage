@@ -1,3 +1,5 @@
+import { formatBrl, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
+
 export type Accent = "rose" | "lily" | "sun" | "urgent" | "classic";
 export type HeroMode = "overlay" | "standalone";
 
@@ -15,21 +17,17 @@ export type ProductDetails = {
 
 export type ProductBadge = "mais-vendido" | "custo-beneficio" | "premium";
 
+export type ProductCategory = "rosas" | "lirios" | "girassois" | "campo";
+
 export type Product = {
   id: string;
   storeSlug: string;
   name: string;
   priceBrl: string;
-  installments: string;
+  category?: ProductCategory;
   image: string;
   waText: string;
   details?: ProductDetails;
-};
-
-export type Testimonial = {
-  image: string;
-  alt: string;
-  author: string;
 };
 
 export type BrandBonus = {
@@ -144,6 +142,27 @@ export type LPConfig = {
   reviewSealText?: string;
   /** Em true, o selo de escassez aparece em todos os produtos, não só nos com badge. */
   scarcityAppliesToAll?: boolean;
+  /** Em true, a vitrine mostra filtros de categoria/preço acima da grade. Default: false. */
+  vitrineFilters?: boolean;
+  /** Mostra a linha dinâmica "Peça até as 18h.../Consulte o próximo horário..." no hero (ver useIsPastCutoff). Default: false. */
+  showCutoffCopy?: boolean;
+  /** Nome do query param que seleciona a variante (ex.: "oferta", "criativo"). Default: "oferta". */
+  variantParam?: string;
+  /**
+   * Variantes por valor de query param. Cada uma sobrescreve só os campos
+   * listados; valores desconhecidos ou parâmetro ausente mantêm a config
+   * padrão (ver useResolvedConfig, lib/useQueryVariant.ts).
+   */
+  variants?: Record<string, LPConfigVariant>;
+  /** Só populado depois de useResolvedConfig aplicar uma variante — nunca setado direto numa LPConfig base. */
+  variantProductId?: string;
+};
+
+export type LPConfigVariant = Partial<
+  Pick<LPConfig, "headline" | "subheadline" | "priceAnchor" | "vitrineHighlightId" | "testimonialOrder">
+> & {
+  /** Produto do criativo: reordena a vitrine, ativa o selo "Visto no anúncio" e o CTA direto pro WhatsApp. */
+  variantProductId?: string;
 };
 
 export const BRAND_DOMAIN = "lpb.planteumaflor.com";
@@ -241,31 +260,13 @@ export const GUARANTEE: GuaranteeContent = {
   ctaLabel: "Ver detalhes da garantia",
 };
 
-export const TESTIMONIALS: Record<string, Testimonial> = {
-  sheila: {
-    image: "/lpb/reviews/review-sheila.jpg",
-    alt: "Avaliação 5 estrelas de Sheila Santos",
-    author: "Sheila Santos",
-  },
-  taina: {
-    image: "/lpb/reviews/review-taina.jpg",
-    alt: "Avaliação 5 estrelas de Tainá Santos",
-    author: "Tainá Santos",
-  },
-  rafaella: {
-    image: "/lpb/reviews/review-rafaella.jpg",
-    alt: "Avaliação 5 estrelas de Rafaella Martins",
-    author: "Rafaella Martins",
-  },
-};
-
 export const PRODUCTS: Record<string, Product> = {
   "arranjo-mao-rosas": {
     id: "arranjo-mao-rosas",
     storeSlug: "arranjo-de-mao-rosas",
     name: "Arranjo de Mão Rosas Vermelhas",
     priceBrl: "R$ 99,90",
-    installments: "3x s/ juros de R$ 33,30",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/4-9c54ee7764b808caff17739768549369-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Rosas Vermelhas (R$ 99,90).",
     details: {
@@ -280,7 +281,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "arranjo-de-mao-4-rosas-vermelhas-balao-vermelho-4uni-ferrero",
     name: "Arranjo 4 Rosas com Balão e Ferrero",
     priceBrl: "R$ 199,90",
-    installments: "3x s/ juros de R$ 66,63",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/101-a8d58e663b48716da117589320248185-1024-1024.webp",
     waText: "Oi! Quero o Arranjo 4 Rosas com Balão e Ferrero (R$ 199,90).",
     details: {
@@ -295,7 +296,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-classico-rosas",
     name: "Buquê Clássico de Rosas Vermelhas",
     priceBrl: "R$ 249,90",
-    installments: "3x s/ juros de R$ 83,30",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buque-classico-rosas-d2fa59866d0ab5edcd17739777570911-1024-1024.webp",
     waText: "Oi! Quero o Buquê Clássico de Rosas Vermelhas (R$ 249,90).",
     details: {
@@ -310,7 +311,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-12-rosas-rosa",
     name: "Buquê de 12 Rosas Cor de Rosa",
     priceBrl: "R$ 289,90",
-    installments: "3x s/ juros de R$ 96,63",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/22-5d679a53a5b0b1108917739795779563-1024-1024.webp",
     waText: "Oi! Quero o Buquê de 12 Rosas Cor de Rosa (R$ 289,90).",
     details: {
@@ -325,7 +326,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-rosas-astromelias",
     name: "Buquê de Rosas com Astromélias",
     priceBrl: "R$ 199,90",
-    installments: "3x s/ juros de R$ 86,63",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/92-b8cda4a238fee8ca5f17739802507996-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Rosas com Astromélias (R$ 199,90).",
     details: {
@@ -340,7 +341,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "box-coracao-rosas",
     name: "Box Coração de Rosas Vermelhas",
     priceBrl: "R$ 680,00",
-    installments: "3x s/ juros de R$ 226,67",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/71-3785d54256d5ef690217739784959341-1024-1024.webp",
     waText: "Oi! Quero o Box Coração de Rosas Vermelhas (R$ 680,00).",
     details: {
@@ -355,7 +356,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-30-rosas",
     name: "Buquê Especial 30 Rosas Vermelhas",
     priceBrl: "R$ 680,00",
-    installments: "3x s/ juros de R$ 226,67",
+    category: "rosas",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-jutninhos-4-80740d0bed120f8d2c17739790243094-1024-1024.webp",
     waText: "Oi! Quero o Buquê Especial 30 Rosas Vermelhas (R$ 680,00).",
     details: {
@@ -370,7 +371,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios P",
     priceBrl: "R$ 159,90",
-    installments: "3x s/ juros de R$ 53,30",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/38-1223af3425b904cf2917739779596922-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios P (R$ 159,90).",
     details: {
@@ -384,7 +385,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios M",
     priceBrl: "R$ 229,90",
-    installments: "3x s/ juros de R$ 76,63",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios M (R$ 229,90).",
     details: {
@@ -398,7 +399,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "arranjo-mao-lirios",
     name: "Arranjo de Mão Lírios G",
     priceBrl: "R$ 289,90",
-    installments: "3x s/ juros de R$ 96,63",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp",
     waText: "Oi! Quero o Arranjo de Mão Lírios G (R$ 289,90).",
     details: {
@@ -412,7 +413,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-lirios",
     name: "Buquê de Lírios M",
     priceBrl: "R$ 399,90",
-    installments: "3x s/ juros de R$ 141,97",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-640-0.webp",
     waText: "Oi! Quero o Buquê de Lírios M (R$ 399,90).",
     details: {
@@ -426,7 +427,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-lirios",
     name: "Buquê de Lírios P",
     priceBrl: "R$ 299,90",
-    installments: "3x s/ juros de R$ 96,97",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/8-d0ddc261ebbf23879a17739780251538-640-0.webp",
     waText: "Oi! Quero o Buquê de Lírios P (R$ 299,90).",
     details: {
@@ -440,7 +441,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-lirios",
     name: "Buquê de Lírios G",
     priceBrl: "R$ 459,90",
-    installments: "3x s/ juros de R$ 183,63",
+    category: "lirios",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Lírios G (R$ 459,90).",
     details: {
@@ -454,7 +455,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "girassol-avulso",
     name: "Girassol Avulso",
     priceBrl: "R$ 65,00",
-    installments: "3x s/ juros de R$ 21,67",
+    category: "girassois",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/1c7815aceda84b7a9d73eee1083c5282-2bd7098f1afe7dac8c17580374273171-640-0-160efa30343dc676a817739814757412-1024-1024.webp",
     waText: "Oi! Quero o Girassol Avulso (R$ 65,00).",
     details: {
@@ -469,7 +470,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "arranjo-de-mao-2-girassois-com-balao-vermelho",
     name: "Arranjo 2 Girassóis com Balão",
     priceBrl: "R$ 109,90",
-    installments: "3x s/ juros de R$ 36,63",
+    category: "girassois",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/167-3ad6b0b2fafcecba1b17589313460597-1024-1024.webp",
     waText: "Oi! Quero o Arranjo 2 Girassóis com Balão (R$ 109,90).",
     details: {
@@ -484,7 +485,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis G",
     priceBrl: "R$ 349,90",
-    installments: "3x s/ juros de R$ 115,30",
+    category: "girassois",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-11a187c671891055bd17739793692651-1024-1024.webp",
     waText: "Oi! Quero o Buquê de Girassóis G (R$ 349,90).",
     details: {
@@ -499,7 +500,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis M",
     priceBrl: "R$ 289,90",
-    installments: "3x s/ juros de R$ 96,63",
+    category: "girassois",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-6-7c3a8b93a303d808f317739793693990-640-0.webp",
     waText: "Oi! Quero o Buquê de Girassóis M (R$ 289,90).",
     details: {
@@ -514,7 +515,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-girassois",
     name: "Buquê de Girassóis P",
     priceBrl: "R$ 199,90",
-    installments: "3x s/ juros de R$ 66,63",
+    category: "girassois",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/buques-girassois-5-e6bcb94fdf9fd460fe17739793690718-640-0.webp",
     waText: "Oi! Quero o Buquê de Girassóis P (R$ 199,90).",
     details: {
@@ -529,7 +530,7 @@ export const PRODUCTS: Record<string, Product> = {
     storeSlug: "buque-flores-campo",
     name: "Buquê Flores do Campo M",
     priceBrl: "R$ 259,90",
-    installments: "3x s/ juros de R$ 86,63",
+    category: "campo",
     image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/29-2c5abf4e632797dc4f17739781849711-640-0.webp",
     waText: "Oi! Quero o Buquê Flores do Campo M (R$ 259,90).",
     details: {
@@ -540,12 +541,6 @@ export const PRODUCTS: Record<string, Product> = {
   },
 };
 
-function parsePrice(brl: string): number {
-  const cleaned = brl.replace(/[^\d,.-]/g, "").replace(",", ".");
-  const value = Number(cleaned);
-  return Number.isFinite(value) ? value : 0;
-}
-
 export function inferProductBadge(
   product: Product,
   allInLp: Product[],
@@ -554,7 +549,7 @@ export function inferProductBadge(
   if (highlightId && product.id === highlightId) return "mais-vendido";
   if (allInLp.length < 2) return undefined;
   const sorted = [...allInLp].sort(
-    (a, b) => parsePrice(a.priceBrl) - parsePrice(b.priceBrl),
+    (a, b) => parsePriceBrl(a.priceBrl) - parsePriceBrl(b.priceBrl),
   );
   const cheapest = sorted[0];
   const priciest = sorted[sorted.length - 1];
@@ -589,7 +584,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Encomendar pelo WhatsApp",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["sheila", "taina", "rafaella"],
+    testimonialOrder: ["hellen-araujo", "taina-santos", "rafaella-martins"],
     vitrineTitle: "Presentes para o Dia das Mães",
     vitrineSubtitle:
       "Escolhas delicadas, montadas à mão e prontas para emocionar.",
@@ -646,7 +641,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Encomendar pelo WhatsApp",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["rafaella", "sheila", "taina"],
+    testimonialOrder: ["rafaella-martins", "hellen-araujo", "taina-santos"],
     vitrineTitle: "Favoritos para o Dia dos Namorados",
     vitrineSubtitle:
       "Dos gestos delicados aos buquês que impressionam de verdade.",
@@ -776,7 +771,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Quero agendar",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["sheila", "rafaella", "taina"],
+    testimonialOrder: ["hellen-araujo", "rafaella-martins", "taina-santos"],
     vitrineTitle: "Buquês para aniversário",
     vitrineSubtitle: "Do clássico ao surpreendente. Escolhe o que combina com ela.",
     vitrineProductIds: [
@@ -836,7 +831,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Encomendar agora",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["rafaella", "sheila", "taina"],
+    testimonialOrder: ["rafaella-martins", "hellen-araujo", "taina-santos"],
     vitrineTitle: "Buquês de rosas",
     vitrineSubtitle: "Do menor ao maior. Todas frescas, vindas direto do produtor.",
     vitrineProductIds: [
@@ -971,7 +966,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Encomendar agora",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["taina", "sheila", "rafaella"],
+    testimonialOrder: ["taina-santos", "hellen-araujo", "rafaella-martins"],
     vitrineTitle: "Presentes do dia",
     vitrineSubtitle: "Os mais em conta primeiro. Tamanho ideal pra mesa, cabeceira ou escritório.",
     vitrineProductIds: [
@@ -1024,7 +1019,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Quero encomendar",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["rafaella", "sheila", "taina"],
+    testimonialOrder: ["rafaella-martins", "hellen-araujo", "taina-santos"],
     vitrineTitle: "Buquês premium",
     vitrineSubtitle: "Porte, frescor e embalagem que fazem a flor falar antes de você abrir a boca.",
     vitrineProductIds: [
@@ -1153,7 +1148,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Quero comprar com segurança",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["sheila", "rafaella", "taina"],
+    testimonialOrder: ["hellen-araujo", "rafaella-martins", "taina-santos"],
     vitrineTitle: "Mais pedidos da floricultura",
     vitrineSubtitle: "Escolhas frequentes de quem quer acertar sem depender só de foto bonita.",
     vitrineProductIds: [
@@ -1208,7 +1203,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Quero uma opção sem erro",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["rafaella", "taina", "sheila"],
+    testimonialOrder: ["rafaella-martins", "taina-santos", "hellen-araujo"],
     vitrineTitle: "Presentes que costumam acertar",
     vitrineSubtitle: "Clássicos com boa presença, preço claro e acabamento de presente.",
     vitrineProductIds: [
@@ -1263,7 +1258,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       final: "Falar agora",
       guarantee: "Ver detalhes da garantia",
     },
-    testimonialOrder: ["sheila", "taina", "rafaella"],
+    testimonialOrder: ["hellen-araujo", "taina-santos", "rafaella-martins"],
     vitrineTitle: "Campo & girassol",
     vitrineSubtitle: "Charme rústico, alegria visível. Flor de campo é pra quem gosta de fugir do óbvio.",
     vitrineProductIds: [
@@ -1299,6 +1294,21 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
   },
 };
 
+// Preço mínimo real da vitrine do catálogo — computado a partir de PRODUCTS
+// em vez de string fixa, pra nunca contradizer a própria vitrine se o
+// catálogo mudar.
+const CATALOGO_PRECOS_PRODUCT_IDS = [
+  "arranjo-mao-rosas",
+  "arranjo-2-girassois-balao",
+  "arranjo-mao-lirios-p",
+  "buque-classico-rosas",
+  "buque-rosas-astromelias",
+  "buque-lirios-p",
+];
+const catalogoPrecosMinPrice = formatBrl(
+  Math.min(...CATALOGO_PRECOS_PRODUCT_IDS.map((id) => parsePriceBrl(PRODUCTS[id].priceBrl))),
+);
+
 Object.assign(LP_CONFIGS, {
   "so-porque-sim": {
     ...LP_CONFIGS["sem-erro"], slug: "so-porque-sim", accent: "sun",
@@ -1322,20 +1332,119 @@ Object.assign(LP_CONFIGS, {
     headline: "O erro pesa mais quando fica sem resposta.",
     subheadline: "Um buquê não apaga o que aconteceu, mas pode ser o primeiro gesto para mostrar que você se importa e reabrir a conversa.",
     priceAnchor: "Um gesto para hoje", vitrineTitle: "Flores para pedir desculpas",
+    showCutoffCopy: true,
     pageTitle: "Flores para Reconciliação em Goiânia | Plante Uma Flor",
     pageDescription: "Envie um gesto de reconciliação com entrega hoje em Goiânia.",
+    // Os dois criativos mostram um produto específico no banco do carro — sem
+    // variante, a página fica no estado genérico (seletor de intenção).
+    variantParam: "criativo",
+    variants: {
+      lirio: {
+        headline: "Lírios para mostrar que você foi além da mensagem.",
+        subheadline:
+          "Arranjo de lírios preparado para presente, com cartão escrito à mão e entrega hoje para pedidos até as 18h.",
+        vitrineHighlightId: "arranjo-mao-lirios-p",
+        variantProductId: "arranjo-mao-lirios-p",
+      },
+      rosas: {
+        headline: "Rosas para transformar o pedido de desculpas em atitude.",
+        subheadline:
+          "Buquê de rosas com astromélias, cartão escrito à mão e entrega hoje para pedidos até as 18h.",
+        vitrineHighlightId: "buque-rosas-astromelias",
+        variantProductId: "buque-rosas-astromelias",
+      },
+    },
   },
   girassol: {
     ...LP_CONFIGS["qual-b"], slug: "girassol", heroImage: "/lpb/heros/girassol.jpg",
-    headline: "Girassóis para iluminar o dia de alguém.", priceAnchor: "A partir de R$ 65,00",
-    vitrineTitle: "Girassóis para presentear", vitrineProductIds: ["girassol-avulso", "arranjo-2-girassois-balao", "buque-girassois-p", "buque-girassois-m", "buque-girassois-g"],
+    heroImageAlt: "Buquê de girassóis para presente, entregue em Goiânia",
+    headline: "Girassóis para presentear a partir de R$ 65",
+    subheadline:
+      "Do girassol avulso aos buquês mais marcantes. Peça até as 18h, aprove a foto pelo WhatsApp e receba ainda hoje.",
+    priceAnchor: "A partir de R$ 65,00",
+    showCutoffCopy: true,
+    ctaCopy: {
+      hero: "Pedir agora",
+      como_funciona: "Falar no WhatsApp",
+      faq: "Quero confirmar disponibilidade",
+      sticky: "Pedir agora",
+      final: "Falar agora",
+      guarantee: "Ver detalhes da garantia",
+    },
+    vitrineTitle: "Girassóis para presentear",
+    vitrineProductIds: ["girassol-avulso", "arranjo-2-girassois-balao", "buque-girassois-p", "buque-girassois-m", "buque-girassois-g"],
+    // "buque-flor-campo-m" (herdado de qual-b) não existe na lista acima: o
+    // destaque nunca aparecia. buque-girassois-g é o topo de linha real da LP.
+    vitrineHighlightId: "buque-girassois-g",
+    // marcos-vinicius fala de entrega no dia/hora combinado — reforça o prazo
+    // sem citar rosas, ao contrário do destaque herdado de qual-b.
+    testimonialOrder: ["marcos-vinicius", "taina-santos", "hellen-araujo"],
+    sectionOrder: [
+      "hero",
+      "vitrine",
+      "diferenciais-fundidos",
+      "social",
+      "historia",
+      "faq",
+      "guarantee",
+      "final",
+    ],
+    variantParam: "oferta",
+    variants: {
+      "65": {
+        headline: "Girassol por R$ 65",
+        subheadline: "Peça até as 18h e receba hoje em Goiânia e região.",
+        vitrineHighlightId: "girassol-avulso",
+        variantProductId: "girassol-avulso",
+      },
+      "199": {
+        headline: "Buquê de girassóis por R$ 199,90",
+        subheadline: "Peça até as 18h e receba hoje em Goiânia e região.",
+        vitrineHighlightId: "buque-girassois-p",
+        variantProductId: "buque-girassois-p",
+      },
+      // "159": produto real ainda não confirmado — sem entrada aqui, o
+      // parâmetro cai no estado padrão (ver useResolvedConfig).
+    },
     pageTitle: "Girassóis em Goiânia | Plante Uma Flor", pageDescription: "Girassóis a partir de R$ 65,00, com cartão e entrega em Goiânia.",
   },
   "catalogo-precos": {
     ...LP_CONFIGS["sem-erro"], slug: "catalogo-precos", heroImage: "/lpb/heros/catalogo-precos.jpg",
-    headline: "Flores a partir de R$ 99,90.", priceAnchor: "A partir de R$ 99,90",
+    headline: `Flores a partir de ${catalogoPrecosMinPrice}.`,
+    priceAnchor: `A partir de ${catalogoPrecosMinPrice}`,
+    showCutoffCopy: true,
+    ctaCopy: {
+      hero: "Pedir agora",
+      como_funciona: "Ver opções certeiras",
+      faq: "Pedir indicação",
+      sticky: "Pedir agora",
+      final: "Quero uma opção sem erro",
+      guarantee: "Ver detalhes da garantia",
+    },
+    vitrineCardCta: "Pedir este agora",
+    vitrineFilters: true,
     vitrineTitle: "Catálogo de preços", vitrineSubtitle: "Escolha seu presente por faixa de preço, com valores claros desde o começo.",
-    vitrineProductIds: ["arranjo-mao-rosas", "arranjo-2-girassois-balao", "arranjo-mao-lirios-p", "buque-classico-rosas", "buque-rosas-astromelias", "buque-lirios-p"],
+    vitrineProductIds: CATALOGO_PRECOS_PRODUCT_IDS,
+    sectionOrder: [
+      "hero",
+      "vitrine",
+      "diferenciais-fundidos",
+      "social",
+      "historia",
+      "faq",
+      "guarantee",
+      "final",
+    ],
+    variantParam: "oferta",
+    variants: {
+      "rosas-199": {
+        vitrineHighlightId: "buque-rosas-astromelias",
+        variantProductId: "buque-rosas-astromelias",
+      },
+      // "orquidea-135", "rosa-65", "astromelia-124": nenhum produto real
+      // corresponde no catálogo atual — sem entrada aqui, caem no estado
+      // padrão em vez de inventar produto (ver useResolvedConfig).
+    },
     pageTitle: "Catálogo de Flores e Preços | Plante Uma Flor", pageDescription: "Flores a partir de R$ 99,90 em Goiânia.",
   },
 });

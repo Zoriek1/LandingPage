@@ -28,6 +28,22 @@ export type PriceRangeRoute =
   | "/girassol"
   | "/catalogo-precos";
 
+/**
+ * Opção do seletor de intenção (reconciliacao): mesma forma visual de
+ * PriceRange, mas quando `productId` está presente o clique vai direto pro
+ * WhatsApp com aquele produto, sem passar pela mensagem genérica de faixa.
+ * Preço/nome ficam literais aqui pelo mesmo motivo do `lowFloorBrl` acima —
+ * não importar o catálogo inteiro no bundle da home.
+ */
+export type IntentOption = {
+  key: string;
+  label: string;
+  outcome: string;
+  productId?: string;
+  productName?: string;
+  productPrice?: string;
+};
+
 export type PriceRangeConfig = {
   lpSlug: string;
   messageContext: string;
@@ -41,13 +57,19 @@ export type PriceRangeConfig = {
    */
   lowFloorBrl: string;
   ranges: readonly [PriceRange, PriceRange, PriceRange];
+  /** Quando presente, o seletor mostra essas opções no lugar das faixas de preço. */
+  intents?: readonly IntentOption[];
 };
 
 const LOW_OUTCOME = "Uma opção bonita e bem resolvida";
 const MID_OUTCOME = "Mais presença para marcar a ocasião";
 const HIGH_OUTCOME = "Um presente marcante, com mais volume";
 
-export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
+// Tipado como Partial aqui porque as 5 rotas mais recentes só entram via
+// Object.assign logo abaixo; o cast final (após o Object.assign) é que
+// garante — e o teste em priceRangeSelector.test.tsx confirma — que todas as
+// PriceRangeRoute realmente têm entrada.
+const BASE_PRICE_RANGE_CONFIGS: Partial<Record<PriceRangeRoute, PriceRangeConfig>> = {
   "/": {
     lpSlug: "home",
     messageContext: "presentes florais —",
@@ -175,19 +197,57 @@ export const PRICE_RANGE_CONFIGS: Record<PriceRangeRoute, PriceRangeConfig> = {
     messageContext: "flores do campo e girassóis —",
     lowFloorBrl: "R$ 65,00",
     ranges: [
-      { key: "low", label: "R$ 65,00 a R$ 110", outcome: LOW_OUTCOME },
-      { key: "mid", label: "R$ 110 a R$ 250", outcome: MID_OUTCOME },
+      { key: "low", label: "R$ 65,00 a R$ 109,90", outcome: LOW_OUTCOME },
+      { key: "mid", label: "R$ 110 a R$ 249,90", outcome: MID_OUTCOME },
       { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME },
     ],
   },
 };
 
+export const PRICE_RANGE_CONFIGS = BASE_PRICE_RANGE_CONFIGS as Record<PriceRangeRoute, PriceRangeConfig>;
+
 Object.assign(PRICE_RANGE_CONFIGS, {
   "/so-porque-sim": { lpSlug: "so-porque-sim", messageContext: "flores para surpreender sem data —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
   "/buque-real": { lpSlug: "buque-real", messageContext: "buquês com foto real antes da entrega —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
-  "/reconciliacao": { lpSlug: "reconciliacao", messageContext: "flores para reconciliação —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
-  "/girassol": { lpSlug: "girassol", messageContext: "girassóis —", lowFloorBrl: "R$ 65,00", ranges: [{ key: "low", label: "R$ 65,00 a R$ 110", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 110 a R$ 250", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME }] },
-  "/catalogo-precos": { lpSlug: "catalogo-precos", messageContext: "flores por faixa de preço —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 200", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+  // As faixas continuam existindo (compatibilidade/fallback), mas o estado
+  // sem `?criativo=` mostra `intents` abaixo: escolha por intenção, não por
+  // faixa de preço sobreposta.
+  "/reconciliacao": {
+    lpSlug: "reconciliacao",
+    messageContext: "flores para reconciliação —",
+    lowFloorBrl: "R$ 99,90",
+    ranges: [{ key: "low", label: "R$ 99,90 a R$ 199,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }],
+    intents: [
+      {
+        key: "lirio",
+        label: "Quero lírios",
+        outcome: "Arranjo de Mão Lírios P — R$ 159,90",
+        productId: "arranjo-mao-lirios-p",
+        productName: "Arranjo de Mão Lírios P",
+        productPrice: "R$ 159,90",
+      },
+      {
+        key: "rosas",
+        label: "Quero rosas",
+        outcome: "Buquê de Rosas com Astromélias — R$ 199,90",
+        productId: "buque-rosas-astromelias",
+        productName: "Buquê de Rosas com Astromélias",
+        productPrice: "R$ 199,90",
+      },
+      {
+        key: "ate-200",
+        label: "Quero ver opções até R$ 200",
+        outcome: "Escolhas variadas dentro do orçamento",
+      },
+      {
+        key: "ajuda",
+        label: "Ainda não sei — preciso de ajuda",
+        outcome: "A gente te ajuda a escolher pelo WhatsApp",
+      },
+    ],
+  },
+  "/girassol": { lpSlug: "girassol", messageContext: "girassóis —", lowFloorBrl: "R$ 65,00", ranges: [{ key: "low", label: "R$ 65,00 a R$ 109,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 110 a R$ 249,90", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME }] },
+  "/catalogo-precos": { lpSlug: "catalogo-precos", messageContext: "flores por faixa de preço —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 199,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
 });
 
 export const PRICE_RANGE_SELECTOR_EVENT = "price-range-selector:open";

@@ -48,6 +48,9 @@ import {
   orderReviews,
   type GoogleReview,
 } from "@/features/ad-lps/lib/reviews";
+import { formatInstallments, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
+import { useResolvedConfig } from "@/features/ad-lps/lib/useQueryVariant";
+import { useIsPastCutoff } from "@/features/ad-lps/lib/useCutoffCopy";
 import { HeroReviewCard, ReviewCard } from "@/features/ad-lps/components/ReviewCard";
 import { DifferentialCard } from "@/features/ad-lps/components/DifferentialCard";
 import { DiferenciaisFusedSection } from "@/features/ad-lps/components/DiferenciaisFusedSection";
@@ -65,6 +68,7 @@ import {
   type PictureSources,
 } from "@/features/ad-lps/lib/hero-images";
 import { BUSINESS_INFO } from "@/lib/business-info";
+import { trackVariantSeen } from "@/lib/tracking";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import "./fonts.css";
 import "./theme.css";
@@ -183,12 +187,19 @@ function CtaButton({
     );
   }
 
+  // Só hero/sticky pulam a etapa de escolha de faixa: são os CTAs principais,
+  // os únicos que uma variante `?oferta=`/`?criativo=` deve tirar do genérico.
+  const variantProduct =
+    (origin === "hero" || origin === "sticky") && config.variantProductId
+      ? PRODUCTS[config.variantProductId]
+      : undefined;
+
   return (
     <button
       type="button"
       className={`ad-lp-cta ${className}`}
       data-testid={`ad-lp-cta-${origin}`}
-      onClick={() => openAdLpWhatsApp({ config, origin })}
+      onClick={() => openAdLpWhatsApp({ config, origin, product: variantProduct })}
     >
       <span>{children || resolveCtaLabel(config, origin)}</span>
       <WhatsAppCtaIcon />
@@ -328,6 +339,7 @@ function HeroSection({ config }: { config: LPConfig }) {
   };
 
   const heroSources = getHeroSources(config.slug);
+  const pastCutoff = useIsPastCutoff();
 
   return (
     <section id="hero" className="ad-lp-hero">
@@ -353,6 +365,13 @@ function HeroSection({ config }: { config: LPConfig }) {
           {config.priceAnchor ? <p className="ad-lp-hero__anchor">{config.priceAnchor}</p> : null}
           <h1 className="ad-lp-hero__title">{config.headline}</h1>
           <p className="ad-lp-hero__sub">{config.subheadline}</p>
+          {config.showCutoffCopy ? (
+            <p className="ad-lp-hero__cutoff">
+              {pastCutoff
+                ? "Consulte o próximo horário disponível."
+                : "Peça até as 18h e receba hoje."}
+            </p>
+          ) : null}
           <div className="ad-lp-hero__actions">
             <CtaButton config={config} origin="hero" className="ad-lp-hero__cta" />
             <button
@@ -432,7 +451,7 @@ const DIFFERENTIAL_PILLARS = [
   {
     num: "01",
     Icon: Heart,
-    title: "Por que somos diferentes",
+    title: "Flores direto do produtor",
     body:
       "Flores recebidas direto do produtor 3× por semana. Cada buquê é montado na hora, com a mesma flor que iríamos colocar na nossa casa.",
   },
@@ -617,6 +636,47 @@ function ProductDetailsList({ product }: { product: Product }) {
   );
 }
 
+const CATEGORY_FILTER_LABELS: Record<string, string> = {
+  rosas: "Rosas",
+  lirios: "Lírios",
+  girassois: "Girassóis",
+  campo: "Flores do campo",
+};
+
+const PRICE_FILTERS = [
+  { key: "price:low", label: "Até R$ 150", test: (price: number) => price <= 150 },
+  { key: "price:mid", label: "R$ 150 a R$ 250", test: (price: number) => price > 150 && price <= 250 },
+  { key: "price:high", label: "Acima de R$ 250", test: (price: number) => price > 250 },
+];
+
+function matchesVitrineFilter(product: Product, filterKey: string | null): boolean {
+  if (!filterKey) return true;
+  if (filterKey.startsWith("cat:")) return product.category === filterKey.slice(4);
+  const price = parsePriceBrl(product.priceBrl);
+  return PRICE_FILTERS.find((f) => f.key === filterKey)?.test(price) ?? true;
+}
+
+/**
+ * Filtros com contagem zero não aparecem — computados sobre os produtos
+ * realmente exibidos (após a reordenação de variante), não o catálogo todo.
+ */
+function useVitrineFilters(products: Product[], enabled: boolean) {
+  return useMemo(() => {
+    if (!enabled) return [];
+    const categories = Object.keys(CATEGORY_FILTER_LABELS).map((category) => ({
+      key: `cat:${category}`,
+      label: CATEGORY_FILTER_LABELS[category],
+      count: products.filter((p) => p.category === category).length,
+    }));
+    const prices = PRICE_FILTERS.map((filter) => ({
+      key: filter.key,
+      label: filter.label,
+      count: products.filter((p) => filter.test(parsePriceBrl(p.priceBrl))).length,
+    }));
+    return [...categories, ...prices].filter((option) => option.count > 0);
+  }, [products, enabled]);
+}
+
 function VitrineSection({
   config,
   products,
@@ -624,10 +684,15 @@ function VitrineSection({
   config: LPConfig;
   products: Product[];
 }) {
-  const initialCount = Math.min(config.vitrineVisibleCount ?? 6, products.length);
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const filterOptions = useVitrineFilters(products, !!config.vitrineFilters);
+  const filteredProducts = config.vitrineFilters
+    ? products.filter((product) => matchesVitrineFilter(product, activeFilter))
+    : products;
+  const initialCount = Math.min(config.vitrineVisibleCount ?? 6, filteredProducts.length);
   const [expanded, setExpanded] = useState(false);
-  const visibleProducts = expanded ? products : products.slice(0, initialCount);
-  const hasMore = products.length > initialCount;
+  const visibleProducts = expanded ? filteredProducts : filteredProducts.slice(0, initialCount);
+  const hasMore = filteredProducts.length > initialCount;
 
   return (
     <section id="vitrine" className="ad-lp-vitrine" aria-label={config.vitrineTitle}>
@@ -635,10 +700,41 @@ function VitrineSection({
         <h2>{config.vitrineTitle}</h2>
         <p>{config.vitrineSubtitle}</p>
       </header>
+      {filterOptions.length ? (
+        <div className="ad-lp-vitrine__filters" role="group" aria-label="Filtrar produtos">
+          <button
+            type="button"
+            className="ad-lp-vitrine__filter"
+            data-active={activeFilter === null}
+            onClick={() => {
+              setActiveFilter(null);
+              setExpanded(false);
+            }}
+          >
+            Todos
+          </button>
+          {filterOptions.map((option) => (
+            <button
+              key={option.key}
+              type="button"
+              className="ad-lp-vitrine__filter"
+              data-active={activeFilter === option.key}
+              aria-pressed={activeFilter === option.key}
+              onClick={() => {
+                setActiveFilter(activeFilter === option.key ? null : option.key);
+                setExpanded(false);
+              }}
+            >
+              {option.label} ({option.count})
+            </button>
+          ))}
+        </div>
+      ) : null}
       <div className="ad-lp-vitrine__grid">
         {visibleProducts.map((product) => {
           const featured = product.id === config.vitrineHighlightId;
           const badge = inferProductBadge(product, products, config.vitrineHighlightId);
+          const isAdMatch = !!config.variantProductId && product.id === config.variantProductId;
           const showScarcity =
             !!config.scarcityMessage &&
             (badge === "mais-vendido" ||
@@ -653,7 +749,16 @@ function VitrineSection({
               {/* Só o selo de categoria fica sobre a foto. O de prazo desceu pro
                   corpo do card: empilhados, os dois tampavam metade da flor no
                   card de 156px do mobile. */}
-              {badge ? <ProductBadgePill badge={badge} /> : null}
+              {/* "Visto no anúncio" é mais específico para quem clicou vindo do
+                  criativo — some com o selo genérico em vez de empilhar os dois
+                  no mesmo canto da foto. */}
+              {isAdMatch ? (
+                <span className="ad-lp-card__badge ad-lp-card__badge--ad-match">
+                  Visto no anúncio
+                </span>
+              ) : badge ? (
+                <ProductBadgePill badge={badge} />
+              ) : null}
               <a
                 href={buildAdLpWhatsAppUrl(config, product)}
                 className="ad-lp-card__link"
@@ -680,7 +785,9 @@ function VitrineSection({
                     <span className="ad-lp-card__scarcity">{config.scarcityMessage}</span>
                   ) : null}
                   <span className="ad-lp-card__price">{product.priceBrl}</span>
-                  <span className="ad-lp-card__installments">{product.installments}</span>
+                  <span className="ad-lp-card__installments">
+                    {formatInstallments(product.priceBrl)}
+                  </span>
                   <span className="ad-lp-card__cta">
                     {config.vitrineCardCta ?? "Quero encomendar pelo WhatsApp"}
                   </span>
@@ -693,7 +800,7 @@ function VitrineSection({
       {hasMore && !expanded ? (
         <div className="ad-lp-vitrine__more">
           <button type="button" onClick={() => setExpanded(true)}>
-            Quero ver mais opções ({products.length - initialCount})
+            Quero ver mais opções ({filteredProducts.length - initialCount})
           </button>
         </div>
       ) : null}
@@ -812,11 +919,18 @@ function StickyCta({ config }: { config: LPConfig }) {
 }
 
 function GuaranteeSection({ config }: { config: LPConfig }) {
+  // Logo depois do hero é a posição de mais atrito: uma seção inteira ali
+  // empurra a vitrine pra baixo. Compacta só nesse caso; no rodapé (posição
+  // padrão) o tamanho não atrapalha, então fica como sempre foi.
+  const compact = (config.sectionOrder ?? DEFAULT_SECTION_ORDER)[1] === "guarantee";
   return (
-    <section className="ad-lp-guarantee" aria-label="Garantia">
+    <section
+      className={`ad-lp-guarantee ${compact ? "ad-lp-guarantee--compact" : ""}`}
+      aria-label="Garantia"
+    >
       <div className="ad-lp-guarantee__inner">
         <span className="ad-lp-guarantee__icon" aria-hidden="true">
-          <ShieldCheck size={36} strokeWidth={1.6} />
+          <ShieldCheck size={compact ? 26 : 36} strokeWidth={1.6} />
         </span>
         <span className="ad-lp-guarantee__badge">{GUARANTEE.badge}</span>
         <h2 className="ad-lp-guarantee__title">{GUARANTEE.title}</h2>
@@ -841,7 +955,7 @@ function FinalCtaSection({ config }: { config: LPConfig }) {
       <div className="ad-lp-final__shape ad-lp-final__shape--top" aria-hidden="true" />
       <div className="ad-lp-final__shape ad-lp-final__shape--bottom" aria-hidden="true" />
       <div className="ad-lp-final__inner">
-        <h2>Escolha agora seu buquê e fala com a gente.</h2>
+        <h2>Escolha agora seu buquê e fale com a gente.</h2>
         <p>A gente responde rápido no WhatsApp em horário comercial. Em segundos a gente confirma a data e o endereço da entrega.</p>
         <div className="ad-lp-final__cta">
           <CtaButton config={config} origin="final">Comprar no WhatsApp</CtaButton>
@@ -910,14 +1024,29 @@ function PageSection({
 export default function AdLandingPage({ slug }: AdLandingPageProps) {
   const config = LP_CONFIGS[slug];
   const canonicalUrl = config.canonicalUrl ?? `https://${BRAND_DOMAIN}/${config.slug}`;
+  const resolvedConfig = useResolvedConfig(config);
 
-  const products = useMemo(
-    () => config.vitrineProductIds.map((id) => PRODUCTS[id]).filter(Boolean),
-    [config],
-  );
+  useEffect(() => {
+    if (resolvedConfig === config) return;
+    const paramName = config.variantParam ?? "oferta";
+    const value = new URLSearchParams(window.location.search).get(paramName);
+    if (value) trackVariantSeen(config.slug, paramName, value);
+  }, [config, resolvedConfig]);
+
+  const products = useMemo(() => {
+    const base = resolvedConfig.vitrineProductIds.map((id) => PRODUCTS[id]).filter(Boolean);
+    if (!resolvedConfig.variantProductId) return base;
+    // Produto do anúncio primeiro; sort é estável (ES2019+), a ordem original
+    // do resto da vitrine não muda.
+    return [...base].sort(
+      (a, b) =>
+        (a.id === resolvedConfig.variantProductId ? -1 : 0) -
+        (b.id === resolvedConfig.variantProductId ? -1 : 0),
+    );
+  }, [resolvedConfig]);
 
   return (
-    <div className="ad-lp-theme" data-accent={config.accent}>
+    <div className="ad-lp-theme" data-accent={config.accent} data-slug={config.slug}>
       <DocumentMeta
         title={config.pageTitle}
         description={config.pageDescription}
@@ -933,11 +1062,11 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
       <BrandBar config={config} />
       <main id="ad-lp-main" tabIndex={-1}>
         {(config.sectionOrder ?? DEFAULT_SECTION_ORDER).map((section) => (
-          <PageSection key={section} section={section} config={config} products={products} />
+          <PageSection key={section} section={section} config={resolvedConfig} products={products} />
         ))}
       </main>
       <Footer />
-      <StickyCta config={config} />
+      <StickyCta config={resolvedConfig} />
       <Suspense fallback={<div className="ad-lp-price-selector-placeholder" aria-hidden="true" />}>
         <PriceRangeSelector route={`/${config.slug}` as PriceRangeRoute} />
       </Suspense>

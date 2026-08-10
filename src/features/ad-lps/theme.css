@@ -226,6 +226,21 @@
     linear-gradient(0deg, rgba(6, 24, 16, 0.7), rgba(6, 24, 16, 0.25) 60%);
 }
 
+/* /girassol precisa do amarelo do girassol visível, não do mesmo verde escuro
+   das outras LPs — mas isso só faz sentido calibrado contra a foto real (a
+   atual é um placeholder de rosas, ver hero-images.ts); os valores abaixo são
+   um ponto de partida a reajustar quando a foto de girassol de verdade
+   entrar, sempre conferindo contraste do texto (mínimo 4.5:1). */
+.ad-lp-theme[data-slug="girassol"] .ad-lp-hero__image {
+  filter: saturate(0.95) brightness(0.9);
+}
+
+.ad-lp-theme[data-slug="girassol"] .ad-lp-hero__media::after {
+  background:
+    linear-gradient(90deg, rgba(8, 32, 22, 0.86) 0%, rgba(10, 36, 24, 0.62) 40%, rgba(12, 42, 28, 0.4) 72%, rgba(12, 42, 28, 0.3) 100%),
+    linear-gradient(0deg, rgba(6, 24, 16, 0.62), rgba(6, 24, 16, 0.18) 60%);
+}
+
 .ad-lp-hero__overlay {
   position: relative;
   z-index: 2;
@@ -290,6 +305,19 @@
   font-size: clamp(1rem, 1.6vw, 1.18rem);
   line-height: 1.6;
   text-shadow: 0 1px 8px rgba(0, 0, 0, 0.32);
+}
+
+.ad-lp-hero__cutoff {
+  display: inline-flex;
+  margin: 0 0 0.9rem;
+  padding: 0.3rem 0.68rem;
+  color: #fffaf2;
+  background: rgba(255, 250, 242, 0.14);
+  border: 1px solid rgba(255, 250, 242, 0.3);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
 }
 
 .ad-lp-hero__actions {
@@ -654,6 +682,42 @@
   color: var(--ad-muted);
   font-size: 0.78rem;
   font-weight: 700;
+}
+
+.ad-lp-vitrine__filters {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1220px;
+  margin: 0 auto 1.4rem;
+  gap: 0.55rem;
+}
+
+.ad-lp-vitrine__filter {
+  appearance: none;
+  padding: 0.5rem 0.95rem;
+  color: var(--ad-brand);
+  background: transparent;
+  border: 1px solid rgba(23, 59, 42, 0.24);
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ad-lp-vitrine__filter:hover {
+  border-color: var(--ad-accent);
+}
+
+.ad-lp-vitrine__filter[data-active="true"] {
+  color: #fffaf2;
+  background: var(--ad-brand-deep);
+  border-color: var(--ad-brand-deep);
+}
+
+.ad-lp-vitrine__filter:focus-visible {
+  outline: 2px solid var(--ad-accent);
+  outline-offset: 2px;
 }
 
 .ad-lp-vitrine__grid {
@@ -1229,6 +1293,13 @@
   .ad-lp-card--featured .ad-lp-card__price {
     font-size: 1.28rem;
   }
+
+  /* Grade de 4 colunas: quando o card N+1 (múltiplo de 4) é também o último,
+     ele sobra sozinho numa linha nova. Vale para qualquer contagem (5, 9, 13…),
+     sem precisar passar o total como prop. */
+  .ad-lp-vitrine__grid > .ad-lp-card:nth-child(4n + 1):nth-last-child(1) {
+    grid-column: 2 / span 2;
+  }
 }
 
 /* No card de 154px do mobile o selo cheio comia 3/4 da largura da foto, então
@@ -1264,6 +1335,11 @@
 .ad-lp-card__badge--premium {
   color: #fffaf2;
   background: linear-gradient(135deg, #123725 0%, #0c2a1c 100%);
+}
+
+.ad-lp-card__badge--ad-match {
+  color: #fffaf2;
+  background: linear-gradient(135deg, #1f6f4a 0%, #123725 100%);
 }
 
 /* Vive no corpo do card, não sobre a foto: em 156px de largura o selo tapava
@@ -1458,6 +1534,39 @@
   font-size: 0.86rem;
   font-weight: 800;
   cursor: pointer;
+}
+
+/* Faixa compacta de confiança quando a garantia vem logo depois do hero: uma
+   seção inteira ali empurrava a vitrine ~1450px pra baixo. */
+.ad-lp-guarantee--compact {
+  padding: 1.5rem var(--ad-gutter);
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__inner {
+  gap: 0.5rem;
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__icon {
+  width: 44px;
+  height: 44px;
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__title {
+  font-size: clamp(1.15rem, 2.6vw, 1.5rem);
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__body {
+  font-size: 0.88rem;
+  max-width: 46ch;
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__cta {
+  margin-top: 0.3rem;
+}
+
+.ad-lp-guarantee--compact .ad-lp-guarantee__link {
+  padding: 0.5rem 0.9rem;
+  font-size: 0.78rem;
 }
 
 .ad-lp-proof__hero {

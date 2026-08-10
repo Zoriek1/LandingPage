@@ -37,12 +37,12 @@ const EXPECTED_RANGES = {
   "/presente-hoje": ["R$ 99,90 a R$ 160", "R$ 160 a R$ 300", "Acima de R$ 300"],
   "/tradicao-comprovacao": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
   "/sem-erro": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 350", "Acima de R$ 350"],
-  "/qual-b": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
+  "/qual-b": ["R$ 65,00 a R$ 109,90", "R$ 110 a R$ 249,90", "Acima de R$ 250"],
   "/so-porque-sim": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
   "/buque-real": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/reconciliacao": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/girassol": ["R$ 65,00 a R$ 110", "R$ 110 a R$ 250", "Acima de R$ 250"],
-  "/catalogo-precos": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/reconciliacao": ["R$ 99,90 a R$ 199,90", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/girassol": ["R$ 65,00 a R$ 109,90", "R$ 110 a R$ 249,90", "Acima de R$ 250"],
+  "/catalogo-precos": ["R$ 99,90 a R$ 199,90", "R$ 200 a R$ 300", "Acima de R$ 300"],
 } as const;
 
 function parseBrl(label: string) {
