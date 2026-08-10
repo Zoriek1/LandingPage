@@ -42,7 +42,7 @@ const EXPECTED_RANGES = {
   "/buque-real": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
   "/reconciliacao": ["R$ 99,90 a R$ 199,90", "R$ 200 a R$ 300", "Acima de R$ 300"],
   "/girassol": ["R$ 65,00 a R$ 109,90", "R$ 110 a R$ 249,90", "Acima de R$ 250"],
-  "/catalogo-precos": ["R$ 99,90 a R$ 199,90", "R$ 200 a R$ 300", "Acima de R$ 300"],
+  "/catalogo-precos": ["R$ 65,00 a R$ 134,90", "R$ 135 a R$ 249,90", "Acima de R$ 250"],
 } as const;
 
 function parseBrl(label: string) {

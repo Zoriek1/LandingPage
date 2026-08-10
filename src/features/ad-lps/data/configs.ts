@@ -17,7 +17,7 @@ export type ProductDetails = {
 
 export type ProductBadge = "mais-vendido" | "custo-beneficio" | "premium";
 
-export type ProductCategory = "rosas" | "lirios" | "girassois" | "campo";
+export type ProductCategory = "rosas" | "lirios" | "girassois" | "campo" | "orquideas" | "astromelias";
 
 export type Product = {
   id: string;
@@ -146,6 +146,8 @@ export type LPConfig = {
   vitrineFilters?: boolean;
   /** Mostra a linha dinâmica "Peça até as 18h.../Consulte o próximo horário..." no hero (ver useIsPastCutoff). Default: false. */
   showCutoffCopy?: boolean;
+  /** Mostra o link "Ver as N avaliações no Google" (BUSINESS_INFO.googleReviewsUrl) na seção de depoimentos. Default: false. */
+  showGoogleReviewsLink?: boolean;
   /** Nome do query param que seleciona a variante (ex.: "oferta", "criativo"). Default: "oferta". */
   variantParam?: string;
   /**
@@ -537,6 +539,55 @@ export const PRODUCTS: Record<string, Product> = {
       size: "M",
       heightCm: 45,
       includes: ["Mix de flores do campo", "Papel artesanal", "Cartão à mão"],
+    },
+  },
+  "buque-flor-campo-girassol": {
+    id: "buque-flor-campo-girassol",
+    storeSlug: "buque-flores-campo-girassol",
+    name: "Buquê Flores do Campo com Girassol",
+    priceBrl: "R$ 159,90",
+    category: "girassois",
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/115-6a4f27189d7ec8b6cb17739800780178-1024-1024.webp",
+    waText: "Oi! Quero o Buquê Flores do Campo com Girassol (R$ 159,90).",
+    details: {
+      includes: ["Mix de flores do campo", "Girassol", "Papel artesanal", "Cartão à mão"],
+    },
+  },
+  "orquidea-mini-phaleanopsis": {
+    id: "orquidea-mini-phaleanopsis",
+    storeSlug: "orquidea-mini-phaleanopsis",
+    name: "Orquídea Mini Phalaenopsis",
+    priceBrl: "R$ 135,00",
+    category: "orquideas",
+    image: "/lpb/products/orquidea-mini-phaleanopsis.jpg",
+    waText: "Oi! Quero a Orquídea Mini Phalaenopsis (R$ 135,00).",
+    details: {
+      includes: ["Embalagem decorada", "Cartão à mão"],
+    },
+  },
+  "rosa-astromelia-unitaria": {
+    id: "rosa-astromelia-unitaria",
+    storeSlug: "rosa-astromelia-unitaria",
+    name: "Rosa Unitária com Astromélia",
+    priceBrl: "R$ 65,00",
+    category: "rosas",
+    image: "/lpb/products/rosa-astromelia-unitaria.jpg",
+    waText: "Oi! Quero a Rosa Unitária com Astromélia (R$ 65,00).",
+    details: {
+      flowerCount: 1,
+      includes: ["Papel artesanal", "Cartão à mão"],
+    },
+  },
+  "cone-astromelia": {
+    id: "cone-astromelia",
+    storeSlug: "cone-astromelia",
+    name: "Cone de Astromélia",
+    priceBrl: "R$ 124,90",
+    category: "astromelias",
+    image: "/lpb/products/cone-astromelia.jpg",
+    waText: "Oi! Quero o Cone de Astromélia (R$ 124,90).",
+    details: {
+      includes: ["Embalagem em cone", "Cartão à mão"],
     },
   },
 };
@@ -1304,6 +1355,9 @@ const CATALOGO_PRECOS_PRODUCT_IDS = [
   "buque-classico-rosas",
   "buque-rosas-astromelias",
   "buque-lirios-p",
+  "orquidea-mini-phaleanopsis",
+  "rosa-astromelia-unitaria",
+  "cone-astromelia",
 ];
 const catalogoPrecosMinPrice = formatBrl(
   Math.min(...CATALOGO_PRECOS_PRODUCT_IDS.map((id) => parsePriceBrl(PRODUCTS[id].priceBrl))),
@@ -1363,6 +1417,7 @@ Object.assign(LP_CONFIGS, {
       "Do girassol avulso aos buquês mais marcantes. Peça até as 18h, aprove a foto pelo WhatsApp e receba ainda hoje.",
     priceAnchor: "A partir de R$ 65,00",
     showCutoffCopy: true,
+    showGoogleReviewsLink: true,
     ctaCopy: {
       hero: "Pedir agora",
       como_funciona: "Falar no WhatsApp",
@@ -1372,7 +1427,7 @@ Object.assign(LP_CONFIGS, {
       guarantee: "Ver detalhes da garantia",
     },
     vitrineTitle: "Girassóis para presentear",
-    vitrineProductIds: ["girassol-avulso", "arranjo-2-girassois-balao", "buque-girassois-p", "buque-girassois-m", "buque-girassois-g"],
+    vitrineProductIds: ["girassol-avulso", "arranjo-2-girassois-balao", "buque-girassois-p", "buque-girassois-m", "buque-girassois-g", "buque-flor-campo-girassol"],
     // "buque-flor-campo-m" (herdado de qual-b) não existe na lista acima: o
     // destaque nunca aparecia. buque-girassois-g é o topo de linha real da LP.
     vitrineHighlightId: "buque-girassois-g",
@@ -1403,8 +1458,12 @@ Object.assign(LP_CONFIGS, {
         vitrineHighlightId: "buque-girassois-p",
         variantProductId: "buque-girassois-p",
       },
-      // "159": produto real ainda não confirmado — sem entrada aqui, o
-      // parâmetro cai no estado padrão (ver useResolvedConfig).
+      "159": {
+        headline: "Buquê Flores do Campo com Girassol por R$ 159,90",
+        subheadline: "Peça até as 18h e receba hoje em Goiânia e região.",
+        vitrineHighlightId: "buque-flor-campo-girassol",
+        variantProductId: "buque-flor-campo-girassol",
+      },
     },
     pageTitle: "Girassóis em Goiânia | Plante Uma Flor", pageDescription: "Girassóis a partir de R$ 65,00, com cartão e entrega em Goiânia.",
   },
@@ -1441,11 +1500,21 @@ Object.assign(LP_CONFIGS, {
         vitrineHighlightId: "buque-rosas-astromelias",
         variantProductId: "buque-rosas-astromelias",
       },
-      // "orquidea-135", "rosa-65", "astromelia-124": nenhum produto real
-      // corresponde no catálogo atual — sem entrada aqui, caem no estado
-      // padrão em vez de inventar produto (ver useResolvedConfig).
+      "orquidea-135": {
+        vitrineHighlightId: "orquidea-mini-phaleanopsis",
+        variantProductId: "orquidea-mini-phaleanopsis",
+      },
+      "rosa-65": {
+        vitrineHighlightId: "rosa-astromelia-unitaria",
+        variantProductId: "rosa-astromelia-unitaria",
+      },
+      "astromelia-124": {
+        vitrineHighlightId: "cone-astromelia",
+        variantProductId: "cone-astromelia",
+      },
     },
-    pageTitle: "Catálogo de Flores e Preços | Plante Uma Flor", pageDescription: "Flores a partir de R$ 99,90 em Goiânia.",
+    pageTitle: "Catálogo de Flores e Preços | Plante Uma Flor",
+    pageDescription: `Flores a partir de ${catalogoPrecosMinPrice} em Goiânia.`,
   },
 });
 

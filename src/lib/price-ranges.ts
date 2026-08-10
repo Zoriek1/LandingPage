@@ -247,7 +247,7 @@ Object.assign(PRICE_RANGE_CONFIGS, {
     ],
   },
   "/girassol": { lpSlug: "girassol", messageContext: "girassóis —", lowFloorBrl: "R$ 65,00", ranges: [{ key: "low", label: "R$ 65,00 a R$ 109,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 110 a R$ 249,90", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME }] },
-  "/catalogo-precos": { lpSlug: "catalogo-precos", messageContext: "flores por faixa de preço —", lowFloorBrl: "R$ 99,90", ranges: [{ key: "low", label: "R$ 99,90 a R$ 199,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 200 a R$ 300", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 300", outcome: HIGH_OUTCOME }] },
+  "/catalogo-precos": { lpSlug: "catalogo-precos", messageContext: "flores por faixa de preço —", lowFloorBrl: "R$ 65,00", ranges: [{ key: "low", label: "R$ 65,00 a R$ 134,90", outcome: LOW_OUTCOME }, { key: "mid", label: "R$ 135 a R$ 249,90", outcome: MID_OUTCOME }, { key: "high", label: "Acima de R$ 250", outcome: HIGH_OUTCOME }] },
 });
 
 export const PRICE_RANGE_SELECTOR_EVENT = "price-range-selector:open";

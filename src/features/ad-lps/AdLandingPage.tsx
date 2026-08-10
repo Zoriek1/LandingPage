@@ -573,6 +573,13 @@ function SocialProofSection({ config }: { config: LPConfig }) {
           <ChevronRight size={22} strokeWidth={2.2} aria-hidden="true" />
         </button>
       </div>
+      {config.showGoogleReviewsLink ? (
+        <p className="ad-lp-proof__google-link">
+          <a href={BUSINESS_INFO.googleReviewsUrl} target="_blank" rel="noopener noreferrer">
+            Ver as {GLOBAL_CONFIG.googleReviewsCount} avaliações no Google
+          </a>
+        </p>
+      ) : null}
     </section>
   );
 }
@@ -641,6 +648,8 @@ const CATEGORY_FILTER_LABELS: Record<string, string> = {
   lirios: "Lírios",
   girassois: "Girassóis",
   campo: "Flores do campo",
+  orquideas: "Orquídeas",
+  astromelias: "Astromélias",
 };
 
 const PRICE_FILTERS = [

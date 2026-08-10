@@ -15,7 +15,7 @@ describe("new campaign landing pages", () => {
     expect(LP_CONFIGS["buque-real"].headline).toMatch(/foto real/i);
     expect(LP_CONFIGS.reconciliacao.headline).toMatch(/erro/i);
     expect(PRICE_RANGE_CONFIGS["/girassol"].lowFloorBrl).toBe("R$ 65,00");
-    expect(PRICE_RANGE_CONFIGS["/catalogo-precos"].lowFloorBrl).toBe("R$ 99,90");
+    expect(PRICE_RANGE_CONFIGS["/catalogo-precos"].lowFloorBrl).toBe("R$ 65,00");
   });
 
   it("keeps product IDs aligned with the product being sold", () => {

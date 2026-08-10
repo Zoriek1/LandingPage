@@ -591,6 +591,18 @@
   right: clamp(0.5rem, 2vw, 1.4rem);
 }
 
+.ad-lp-proof__google-link {
+  margin: 1.2rem 0 0;
+  text-align: center;
+}
+
+.ad-lp-proof__google-link a {
+  color: var(--ad-brand);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .ad-lp-proof__card,
 .ad-lp-card {
   overflow: hidden;

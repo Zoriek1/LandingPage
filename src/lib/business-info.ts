@@ -17,4 +17,5 @@ export const BUSINESS_INFO = {
   fiscalEmail: "financeiro@planteumaflor.com",
   businessHours: "Segunda a sexta, 08h-18h. Sabado, 08h-13h.",
   regions: "Goiania, Aparecida de Goiania e Senador Canedo",
+  googleReviewsUrl: "https://share.google/QZylItqH7aT9MFXYA",
 } as const;

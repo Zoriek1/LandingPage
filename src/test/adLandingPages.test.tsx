@@ -266,12 +266,12 @@ describe("ad landing pages", () => {
     },
   );
 
-  it("girassol shows exactly five products with one featured card, none orphaned", async () => {
+  it("girassol shows exactly six products with one featured card, none orphaned", async () => {
     const { container } = renderAt("/girassol");
     await screen.findByTestId("ad-lp-cta-hero");
     const cards = container.querySelectorAll(".ad-lp-card");
     const featured = container.querySelectorAll(".ad-lp-card--featured");
-    expect(cards).toHaveLength(5);
+    expect(cards).toHaveLength(6);
     expect(featured).toHaveLength(1);
   });
 
@@ -323,6 +323,41 @@ describe("ad landing pages", () => {
     expect(firstCard).toHaveTextContent("Visto no anúncio");
   });
 
+  it("?oferta=159 on girassol swaps the hero copy and sends the hero CTA straight to the real product", async () => {
+    renderAt("/girassol?oferta=159");
+
+    await screen.findByRole("heading", {
+      level: 1,
+      name: "Buquê Flores do Campo com Girassol por R$ 159,90",
+    });
+
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
+
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
+      expect.objectContaining({
+        product_id: "buque-flor-campo-girassol",
+        product_price: "R$ 159,90",
+      }),
+      expect.stringContaining("Buquê Flores do Campo com Girassol - R$ 159,90"),
+      "pagina=girassol",
+    );
+    expect(screen.queryByRole("dialog")).toBeNull();
+  });
+
+  it("shows the Google reviews link on girassol but not on an unrelated LP", async () => {
+    const { unmount } = renderAt("/girassol");
+    await screen.findByTestId("ad-lp-cta-hero");
+    const link = await screen.findByRole("link", { name: /Ver as 184 avaliações no Google/ });
+    expect(link).toHaveAttribute("href", "https://share.google/QZylItqH7aT9MFXYA");
+    expect(link).toHaveAttribute("target", "_blank");
+    unmount();
+
+    renderAt("/urgencia");
+    await screen.findByTestId("ad-lp-cta-hero");
+    expect(screen.queryByRole("link", { name: /Ver as 184 avaliações no Google/ })).toBeNull();
+  });
+
   it("reconciliacao's default state has no product-specific CTA (still opens the intent picker)", async () => {
     renderAt("/reconciliacao");
     fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
@@ -360,21 +395,29 @@ describe("ad landing pages", () => {
     expect(container.querySelector(".ad-lp-guarantee--compact")).toBeInTheDocument();
   });
 
-  it("?oferta=rosas-199 on catalogo-precos reorders the vitrine to the advertised product", async () => {
-    const { container } = renderAt("/catalogo-precos?oferta=rosas-199");
-    await waitFor(() => {
+  it.each([
+    ["rosas-199", "buque-rosas-astromelias", "Buquê de Rosas com Astromélias"],
+    ["orquidea-135", "orquidea-mini-phaleanopsis", "Orquídea Mini Phalaenopsis"],
+    ["rosa-65", "rosa-astromelia-unitaria", "Rosa Unitária com Astromélia"],
+    ["astromelia-124", "cone-astromelia", "Cone de Astromélia"],
+  ])(
+    "?oferta=%s on catalogo-precos reorders the vitrine to the advertised product",
+    async (offer, productId, productName) => {
+      const { container } = renderAt(`/catalogo-precos?oferta=${offer}`);
+      await waitFor(() => {
+        const firstCard = container.querySelector(".ad-lp-vitrine__grid .ad-lp-card");
+        expect(firstCard).toHaveTextContent(productName);
+      });
       const firstCard = container.querySelector(".ad-lp-vitrine__grid .ad-lp-card");
-      expect(firstCard).toHaveTextContent("Buquê de Rosas com Astromélias");
-    });
-    expect(container.querySelector(".ad-lp-vitrine__grid .ad-lp-card")).toHaveTextContent(
-      "Visto no anúncio",
-    );
-  });
+      expect(firstCard).toHaveTextContent("Visto no anúncio");
+      expect(firstCard?.querySelector(`[data-testid="product-card-${productId}"]`)).not.toBeNull();
+    },
+  );
 
   it("catalogo-precos derives its headline from the real minimum vitrine price", async () => {
     renderAt("/catalogo-precos");
     expect(
-      await screen.findByRole("heading", { level: 1, name: "Flores a partir de R$ 99,90." }),
+      await screen.findByRole("heading", { level: 1, name: "Flores a partir de R$ 65,00." }),
     ).toBeInTheDocument();
   });
 
@@ -384,9 +427,11 @@ describe("ad landing pages", () => {
 
     expect(screen.getByRole("button", { name: /^Rosas/ })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /^Lírios/ })).toBeInTheDocument();
-    // Não existe orquídea nem astromélia como categoria própria no catálogo atual.
-    expect(screen.queryByRole("button", { name: /^Orquídeas/ })).toBeNull();
-    expect(screen.queryByRole("button", { name: /^Astromélias/ })).toBeNull();
+    // Orquídea e astromélia agora têm produto real na vitrine.
+    expect(screen.getByRole("button", { name: /^Orquídeas/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Astromélias/ })).toBeInTheDocument();
+    // Flor do campo continua sem produto nessa vitrine — filtro some.
+    expect(screen.queryByRole("button", { name: /^Flores do campo/ })).toBeNull();
   });
 
   it("catalogo-precos filters the vitrine when a category is selected", async () => {
