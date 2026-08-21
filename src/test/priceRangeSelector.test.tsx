@@ -209,6 +209,11 @@ describe("price-range conversion selector", () => {
     );
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 
+    // O CTA do hero vira <button> só depois da hidratação; antes disso é um
+    // link wa.me puro. Espera o estado hidratado para clicar no comportamento real.
+    await waitFor(() => {
+      expect(screen.getByTestId("ad-lp-cta-hero").tagName).toBe("BUTTON");
+    });
     fireEvent.click(screen.getByTestId("ad-lp-cta-hero"));
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     expect(openWhatsAppModal).toHaveBeenCalledTimes(1);
