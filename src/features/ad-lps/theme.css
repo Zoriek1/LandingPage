@@ -1838,6 +1838,35 @@
     font-size: 1.04rem;
   }
 
+  /* Precisa vir depois das regras acima: mesma especificidade, quem vence é a
+     ordem. O secundário de navegação perde a casca de botão e vira uma linha
+     sublinhada sob o CTA do WhatsApp — o padding segura os 44px de alvo de
+     toque mesmo sem a caixa. */
+  .ad-lp-secondary-cta--quiet {
+    width: auto;
+    min-height: 44px;
+    padding: 0.55rem 0.25rem;
+    color: rgba(255, 250, 242, 0.82);
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .ad-lp-secondary-cta--quiet:hover {
+    background: none;
+    color: #fffaf2;
+    transform: none;
+  }
+
+  .ad-lp-secondary-cta--quiet svg {
+    display: none;
+  }
+
   .ad-lp-hero__badges {
     display: grid;
     gap: 0.32rem;

@@ -341,28 +341,33 @@ describe("ad LP CRO — objeções pré-clique na /lirios-apt (P3)", () => {
     expect(screen.queryByTestId("ad-lp-reassurance-strip")).not.toBeInTheDocument();
   });
 
-  it("promises same-day delivery before the cutoff instead of hardcoding it", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-08-20T20:00:00Z")); // qui 17:00 em SP
-
+  it("keeps the hero free of a delivery banner competing with the WhatsApp CTA", async () => {
     renderAt("/lirios-apt");
+    await screen.findByTestId("ad-lp-cta-hero");
 
-    expect(screen.getByTestId("ad-lp-urgency-line")).toHaveTextContent(
-      "Pedidos até as 18h saem para entrega hoje em Goiânia.",
+    // A faixa de prazo saiu do hero: ficava entre os CTAs e os selos, roubando
+    // atenção do botão do WhatsApp. O prazo segue no selo e no FAQ.
+    expect(screen.queryByTestId("ad-lp-urgency-line")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Diferenciais")).toHaveTextContent(
+      "Entrega hoje ou agendada em Goiânia",
     );
+    // A promessa fixa também não voltou para o subheadline.
+    expect(screen.queryByText(/a gente entrega hoje — ou agenda a data/)).toBeNull();
   });
 
-  it("stops promising same-day delivery after the cutoff", () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-08-23T15:00:00Z")); // dom 12:00 em SP
-
+  it("demotes the scroll-to-vitrine CTA so it does not look like a second button", async () => {
     renderAt("/lirios-apt");
 
-    expect(screen.getByTestId("ad-lp-urgency-line")).toHaveTextContent(
-      "As entregas de hoje já saíram.",
-    );
-    // A promessa fixa saiu do subheadline junto (P3.1).
-    expect(screen.queryByText(/a gente entrega hoje — ou agenda a data/)).toBeNull();
+    const secondary = await screen.findByTestId("ad-lp-see-products");
+    expect(secondary).toHaveTextContent("Ver produtos");
+    expect(secondary.className).toContain("ad-lp-secondary-cta--quiet");
+
+    // O CTA de conversão da /reconciliacao é o secundário e não pode ser
+    // rebaixado junto.
+    cleanup();
+    renderAt("/reconciliacao");
+    const guided = await screen.findByTestId("ad-lp-secondary-cta");
+    expect(guided.className).not.toContain("ad-lp-secondary-cta--quiet");
   });
 
   it("answers freight and payment in the footer FAQ, before the generic ones", async () => {

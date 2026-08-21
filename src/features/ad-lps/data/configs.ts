@@ -985,13 +985,10 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Lírios frescos do produtor, montados na hora em Goiânia. Você aprova a foto real antes da entrega e o cartão escrito à mão vai por conta da casa.",
     priceAnchor: "A partir de R$ 159,90",
-    // P3.1: a promessa de prazo sai do texto fixo e passa a respeitar o corte
-    // real (18h seg-sex, 13h sáb, domingo nunca). Ver lib/urgency.ts.
-    urgencyWindow: {
-      beforeCutoff: "Pedidos até as 18h saem para entrega hoje em Goiânia.",
-      afterCutoff:
-        "As entregas de hoje já saíram. A gente agenda para amanhã ou para a data que você preferir.",
-    },
+    // Sem `urgencyWindow`: a faixa de prazo ficava entre os CTAs e os selos,
+    // num box escuro que disputava atenção com o botão do WhatsApp logo acima.
+    // O prazo continua dito no primeiro selo do hero ("Entrega hoje ou agendada")
+    // e respondido por inteiro no FAQ ("Ainda dá tempo de receber hoje?").
     // P1.1: fotos reais e carta escrita à mão entram nos diferenciais do hero.
     heroBadges: [
       { text: "Entrega hoje ou agendada em Goiânia", icon: "truck" },

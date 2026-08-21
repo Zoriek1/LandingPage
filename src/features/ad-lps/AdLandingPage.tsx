@@ -425,9 +425,12 @@ function HeroSection({ config }: { config: LPConfig }) {
                 </a>
               )
             ) : (
+              // Rolar até a vitrine é navegação, não conversão: no mobile este
+              // botão vira link de texto para não competir com o CTA do
+              // WhatsApp (ver .ad-lp-secondary-cta--quiet).
               <button
                 type="button"
-                className="ad-lp-secondary-cta"
+                className="ad-lp-secondary-cta ad-lp-secondary-cta--quiet"
                 data-testid="ad-lp-see-products"
                 onClick={scrollToProducts}
               >
