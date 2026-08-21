@@ -56,11 +56,14 @@ import { DifferentialCard } from "@/features/ad-lps/components/DifferentialCard"
 import { DiferenciaisFusedSection } from "@/features/ad-lps/components/DiferenciaisFusedSection";
 import { HowItWorksSection } from "@/features/ad-lps/components/HowItWorksSection";
 import { HeroBadges } from "@/features/ad-lps/components/HeroBadges";
+import { ComparisonStrip } from "@/features/ad-lps/components/ComparisonStrip";
 import { StoreFooter } from "@/features/ad-lps/components/StoreFooter";
 import {
   buildAdLpWhatsAppUrl,
+  openAdLpGuidedWhatsApp,
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
+import { resolveUrgencyMessage } from "@/features/ad-lps/lib/urgency";
 import {
   FACHADA_SOURCES,
   getHeroSources,
@@ -338,8 +341,15 @@ function HeroSection({ config }: { config: LPConfig }) {
     });
   };
 
+  const hydrated = useHydrated();
   const heroSources = getHeroSources(config.slug);
   const pastCutoff = useIsPastCutoff();
+  const heroCtaAction = config.heroCtaAction ?? "price-range";
+  const secondaryCta = config.heroSecondaryCta ?? {
+    label: "Ver produtos",
+    action: "scroll-vitrine" as const,
+  };
+  const urgencyMessage = hydrated ? resolveUrgencyMessage(config) : null;
 
   return (
     <section id="hero" className="ad-lp-hero">
@@ -373,17 +383,63 @@ function HeroSection({ config }: { config: LPConfig }) {
             </p>
           ) : null}
           <div className="ad-lp-hero__actions">
-            <CtaButton config={config} origin="hero" className="ad-lp-hero__cta" />
-            <button
-              type="button"
-              className="ad-lp-secondary-cta"
-              data-testid="ad-lp-see-products"
-              onClick={scrollToProducts}
-            >
-              <span>Ver produtos</span>
-              <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
-            </button>
+            {/* Com variante ativa (?criativo=...) o CTA volta a apontar direto pro
+                produto do anúncio — o scroll pra vitrine é só o estado genérico. */}
+            {heroCtaAction === "scroll-vitrine" && !config.variantProductId ? (
+              <a
+                href="#vitrine"
+                className="ad-lp-cta ad-lp-hero__cta"
+                data-testid="ad-lp-cta-hero"
+                onClick={(event) => {
+                  event.preventDefault();
+                  scrollToProducts();
+                }}
+              >
+                {resolveCtaLabel(config, "hero")}
+              </a>
+            ) : (
+              <CtaButton config={config} origin="hero" className="ad-lp-hero__cta" />
+            )}
+            {secondaryCta.action === "guided-whatsapp" ? (
+              hydrated ? (
+                <button
+                  type="button"
+                  className="ad-lp-secondary-cta"
+                  data-testid="ad-lp-secondary-cta"
+                  onClick={() => openAdLpGuidedWhatsApp(config)}
+                >
+                  <span>{secondaryCta.label}</span>
+                  <MessageCircle size={19} strokeWidth={2.2} aria-hidden="true" />
+                </button>
+              ) : (
+                <a
+                  href={WHATSAPP_BASE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ad-lp-secondary-cta"
+                  data-testid="ad-lp-secondary-cta"
+                >
+                  <span>{secondaryCta.label}</span>
+                  <MessageCircle size={19} strokeWidth={2.2} aria-hidden="true" />
+                </a>
+              )
+            ) : (
+              <button
+                type="button"
+                className="ad-lp-secondary-cta"
+                data-testid="ad-lp-see-products"
+                onClick={scrollToProducts}
+              >
+                <span>{secondaryCta.label}</span>
+                <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
+              </button>
+            )}
           </div>
+          {urgencyMessage ? (
+            <p className="ad-lp-hero__urgency" data-testid="ad-lp-urgency-line">
+              {urgencyMessage}
+            </p>
+          ) : null}
           <HeroBadges config={config} />
         </div>
       </div>
@@ -598,6 +654,18 @@ function ProductBadgePill({ badge }: { badge: ProductBadge }) {
   );
 }
 
+const SIZE_IMPACT_LABELS: Record<string, string> = {
+  P: "Delicado",
+  M: "Marcante",
+  G: "Grande impacto",
+};
+
+function sizeImpactLabel(product: Product): string | null {
+  const size = product.details?.size;
+  if (!size) return null;
+  return SIZE_IMPACT_LABELS[size] ?? null;
+}
+
 function ProductDetailsList({ product }: { product: Product }) {
   const details = product.details;
   if (!details) return null;
@@ -705,6 +773,7 @@ function VitrineSection({
 
   return (
     <section id="vitrine" className="ad-lp-vitrine" aria-label={config.vitrineTitle}>
+      {config.comparisonStrip ? <ComparisonStrip strip={config.comparisonStrip} /> : null}
       <header className="ad-lp-section-head">
         <h2>{config.vitrineTitle}</h2>
         <p>{config.vitrineSubtitle}</p>
@@ -750,6 +819,7 @@ function VitrineSection({
               badge === "custo-beneficio" ||
               !!config.scarcityAppliesToAll);
           const note = config.vitrineProductNotes?.[product.id];
+          const impact = config.vitrineShowSize ? sizeImpactLabel(product) : null;
           return (
             <article
               className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""}`}
@@ -790,6 +860,7 @@ function VitrineSection({
                   {note ? <span className="ad-lp-card__note">{note}</span> : null}
                   <span className="ad-lp-card__name">{product.name}</span>
                   <ProductDetailsList product={product} />
+                  {impact ? <span className="ad-lp-card__impact">{impact}</span> : null}
                   {showScarcity ? (
                     <span className="ad-lp-card__scarcity">{config.scarcityMessage}</span>
                   ) : null}

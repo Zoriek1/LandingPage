@@ -354,6 +354,18 @@
   height: 14px;
 }
 
+.ad-lp-hero__urgency {
+  display: inline-block;
+  margin: 0.9rem 0 0;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+
 .ad-lp-cta {
   display: inline-flex;
   align-items: center;
@@ -444,6 +456,60 @@
   padding: clamp(2rem, 4.5vw, 3rem) var(--ad-gutter) clamp(2.2rem, 5vw, 3.4rem);
   background: var(--ad-bg-warm);
   border-block: 1px solid var(--ad-line);
+}
+
+.ad-lp-comparison {
+  margin-bottom: 1.9rem;
+}
+
+.ad-lp-comparison__title {
+  margin: 0 0 0.8rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ad-brand);
+}
+
+.ad-lp-comparison__options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 0.85rem;
+}
+
+.ad-lp-comparison__option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 1.05rem 1.15rem;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-line);
+  border-radius: 1rem;
+  box-shadow: var(--ad-shadow);
+}
+
+.ad-lp-comparison__option--highlight {
+  border-color: var(--ad-accent);
+}
+
+.ad-lp-comparison__name {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: var(--ad-brand-deep);
+}
+
+.ad-lp-comparison__price {
+  margin: 0;
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--ad-accent-deep);
+}
+
+.ad-lp-comparison__description {
+  margin: 0;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--ad-muted);
 }
 
 .ad-lp-proof {
@@ -824,6 +890,14 @@
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
+}
+
+.ad-lp-card__impact {
+  align-self: flex-start;
+  margin-top: 0.35rem;
+  color: var(--ad-accent-deep);
+  font-size: 0.78rem;
+  font-weight: 700;
 }
 
 .ad-lp-card__cta {

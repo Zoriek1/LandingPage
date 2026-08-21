@@ -13,7 +13,8 @@ describe("new campaign landing pages", () => {
   it("matches the planned promises and price floors", () => {
     expect(LP_CONFIGS["so-porque-sim"].headline).toMatch(/não precisa de data/i);
     expect(LP_CONFIGS["buque-real"].headline).toMatch(/foto real/i);
-    expect(LP_CONFIGS.reconciliacao.headline).toMatch(/erro/i);
+    expect(LP_CONFIGS.reconciliacao.headline).toMatch(/reabrir a conversa/i);
+    expect(LP_CONFIGS.reconciliacao.subheadline).toMatch(/R\$ 99,90/i);
     expect(PRICE_RANGE_CONFIGS["/girassol"].lowFloorBrl).toBe("R$ 65,00");
     expect(PRICE_RANGE_CONFIGS["/catalogo-precos"].lowFloorBrl).toBe("R$ 65,00");
   });

@@ -158,6 +158,46 @@ export type LPConfig = {
   variants?: Record<string, LPConfigVariant>;
   /** Só populado depois de useResolvedConfig aplicar uma variante — nunca setado direto numa LPConfig base. */
   variantProductId?: string;
+  /**
+   * Diferenciais exibidos sob o hero. Default: os textos atuais
+   * ("Entrega ou agendamento em Goiânia" / "Encomenda com data combinada" /
+   * "Embalagem caprichada e cartão grátis"), com o caso especial do slug
+   * `urgencia` ("Entrega hoje em Goiânia") preservado.
+   */
+  heroBadges?: HeroBadge[];
+  /** Faixa comparativa (ex.: Arranjo × Buquê) exibida no topo da vitrine. */
+  comparisonStrip?: {
+    title?: string;
+    options: Array<{
+      name: string;
+      priceRange: string;
+      description: string;
+      highlight?: boolean;
+    }>;
+  };
+  /** Em true, cards com tamanho P/M/G ganham rótulo de impacto (delicado/marcante/grande impacto). */
+  vitrineShowSize?: boolean;
+  /**
+   * Ação do CTA principal do hero. Default: "price-range" (abre o seletor de
+   * faixa de preço). "scroll-vitrine" rola até a vitrine (#vitrine) — também
+   * funciona sem JavaScript via âncora.
+   */
+  heroCtaAction?: "price-range" | "scroll-vitrine";
+  /**
+   * Botão secundário do hero. Default: { label: "Ver produtos", action:
+   * "scroll-vitrine" }. "guided-whatsapp" abre o WhatsApp com mensagem guiada.
+   */
+  heroSecondaryCta?: {
+    label: string;
+    action: "scroll-vitrine" | "guided-whatsapp";
+  };
+  /**
+   * Faixa de urgência operacional exibida sob os CTAs do hero.
+   * Antes do corte → beforeCutoff; depois → afterCutoff.
+   * Corte: 18h seg–sex, 13h sáb; domingo nunca promete "entrega hoje"
+   * (horário America/Sao_Paulo).
+   */
+  urgencyWindow?: { beforeCutoff: string; afterCutoff: string };
 };
 
 export type LPConfigVariant = Partial<
@@ -165,6 +205,11 @@ export type LPConfigVariant = Partial<
 > & {
   /** Produto do criativo: reordena a vitrine, ativa o selo "Visto no anúncio" e o CTA direto pro WhatsApp. */
   variantProductId?: string;
+};
+
+export type HeroBadge = {
+  text: string;
+  icon?: "truck" | "calendar" | "sparkles" | "camera";
 };
 
 export const BRAND_DOMAIN = "lpb.planteumaflor.com";
@@ -444,7 +489,8 @@ export const PRODUCTS: Record<string, Product> = {
     name: "Buquê de Lírios G",
     priceBrl: "R$ 459,90",
     category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
+    // P1.4: foto própria do tamanho G — antes era a mesma foto do M.
+    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/img_1193-c66f40f582ce89780617745668131555-640-0.webp",
     waText: "Oi! Quero o Buquê de Lírios G (R$ 459,90).",
     details: {
       size: "G",
@@ -927,7 +973,30 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     subheadline:
       "Você encomenda lírios em Goiânia e a gente entrega hoje — ou agenda a data que preferir. Papel artesanal e cartão escrito à mão no capricho.",
     priceAnchor: "A partir de R$ 159,90",
+    // P1.1: fotos reais e carta escrita à mão entram nos diferenciais do hero.
+    heroBadges: [
+      { text: "Entrega hoje ou agendada em Goiânia", icon: "truck" },
+      { text: "Você aprova a foto real antes da entrega", icon: "camera" },
+      { text: "Embalagem caprichada e cartão escrito à mão grátis", icon: "sparkles" },
+    ],
+    // P1.2: comparação direta entre as duas famílias de lírios logo acima da grade.
+    comparisonStrip: {
+      options: [
+        {
+          name: "Arranjo de Mão",
+          priceRange: "R$ 159,90–289,90",
+          description: "Melhor custo-benefício e presente delicado",
+        },
+        {
+          name: "Buquê de Lírios",
+          priceRange: "R$ 299,90–459,90",
+          description: "Mais volume, acabamento premium e maior impacto",
+        },
+      ],
+    },
     vitrineVisibleCount: 6,
+    // P1.3: os três tamanhos ganham leitura de impacto no card, sem trocar fotos.
+    vitrineShowSize: true,
     navMode: "minimal",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
@@ -1383,10 +1452,16 @@ Object.assign(LP_CONFIGS, {
   },
   reconciliacao: {
     ...LP_CONFIGS["presente-hoje"], slug: "reconciliacao", accent: "rose",
-    headline: "O erro pesa mais quando fica sem resposta.",
-    subheadline: "Um buquê não apaga o que aconteceu, mas pode ser o primeiro gesto para mostrar que você se importa e reabrir a conversa.",
-    priceAnchor: "Um gesto para hoje", vitrineTitle: "Flores para pedir desculpas",
-    showCutoffCopy: true,
+    headline: "Um gesto para reabrir a conversa — entregue hoje em Goiânia.",
+    subheadline: "Flores para pedir desculpas a partir de R$ 99,90, com cartão escrito à mão e foto para você aprovar antes da entrega.",
+    priceAnchor: "UM GESTO PARA HOJE", vitrineTitle: "Flores para pedir desculpas",
+    ctaCopy: { ...LP_CONFIGS["presente-hoje"].ctaCopy, hero: "Ver opções a partir de R$ 99,90" },
+    heroCtaAction: "scroll-vitrine",
+    heroSecondaryCta: { label: "Pedir ajuda no WhatsApp", action: "guided-whatsapp" },
+    urgencyWindow: {
+      beforeCutoff: "Peça até as 18h e receba hoje.",
+      afterCutoff: "Agende agora para amanhã ou escolha outra data.",
+    },
     pageTitle: "Flores para Reconciliação em Goiânia | Plante Uma Flor",
     pageDescription: "Envie um gesto de reconciliação com entrega hoje em Goiânia.",
     // Os dois criativos mostram um produto específico no banco do carro — sem

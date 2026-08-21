@@ -1,6 +1,7 @@
-import { openProductWhatsApp } from "@/lib/landing-whatsapp";
+import { buildGuidedWhatsAppMessage, openProductWhatsApp } from "@/lib/landing-whatsapp";
 import { WHATSAPP_URL } from "@/lib/config";
 import { openPriceRangeSelector } from "@/lib/price-ranges";
+import { openWhatsAppModal } from "@/lib/whatsappModal";
 import { WHATSAPP_BASE_URL, type LPConfig, type Product } from "@/features/ad-lps/data/configs";
 
 type CtaOrigin =
@@ -69,6 +70,11 @@ const AD_LP_CONTEXT: Record<string, { pageLabel: string; deliveryIntent: string;
     deliveryIntent: "entrega de flores do campo com data combinada",
     request: "Quero ver opcoes de flores do campo e girassol por faixa de preco.",
   },
+  reconciliacao: {
+    pageLabel: "flores para reconciliacao",
+    deliveryIntent: "entrega hoje em Goiânia",
+    request: "Quero ajuda para escolher flores para pedir desculpas e reabrir a conversa.",
+  },
 };
 
 const getContext = (config: LPConfig) =>
@@ -105,4 +111,24 @@ export function openAdLpWhatsApp({ config, origin, product }: OpenAdLpWhatsAppAr
     cta_label: `${origin}_whatsapp`,
     destination_url: WHATSAPP_URL,
   });
+}
+
+export function openAdLpGuidedWhatsApp(config: LPConfig) {
+  const context = getContext(config);
+
+  openWhatsAppModal(
+    WHATSAPP_URL,
+    {
+      lp_slug: config.slug,
+      cta_location: "hero",
+      cta_label: "hero_guided_whatsapp",
+      destination_url: WHATSAPP_URL,
+      delivery_intent: context.deliveryIntent,
+    },
+    buildGuidedWhatsAppMessage({
+      pageLabel: context.pageLabel,
+      request: context.request,
+    }),
+    `pagina=${config.slug}`,
+  );
 }
