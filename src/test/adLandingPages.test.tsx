@@ -360,7 +360,11 @@ describe("ad landing pages", () => {
 
   it("reconciliacao's default state has no product-specific CTA (still opens the intent picker)", async () => {
     renderAt("/reconciliacao");
-    fireEvent.click(await screen.findByTestId("ad-lp-cta-hero"));
+    // O CTA do hero virou `scroll-vitrine` no P2.2 e não abre mais o seletor
+    // (ver adLpCro.test.tsx); quem o abre agora são os CTAs genéricos. Este
+    // teste continuava clicando no hero e só não acusava porque estourava antes
+    // no scrollIntoView que o jsdom não implementa.
+    fireEvent.click(await screen.findByTestId("ad-lp-cta-final"));
 
     expect(await screen.findByRole("dialog")).toBeInTheDocument();
     expect(screen.getByText("Quero lírios")).toBeInTheDocument();

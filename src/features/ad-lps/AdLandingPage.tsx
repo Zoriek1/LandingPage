@@ -57,6 +57,7 @@ import { DiferenciaisFusedSection } from "@/features/ad-lps/components/Diferenci
 import { HowItWorksSection } from "@/features/ad-lps/components/HowItWorksSection";
 import { HeroBadges } from "@/features/ad-lps/components/HeroBadges";
 import { ComparisonStrip } from "@/features/ad-lps/components/ComparisonStrip";
+import { ReassuranceStrip } from "@/features/ad-lps/components/ReassuranceStrip";
 import { StoreFooter } from "@/features/ad-lps/components/StoreFooter";
 import {
   buildAdLpWhatsAppUrl,
@@ -773,11 +774,18 @@ function VitrineSection({
 
   return (
     <section id="vitrine" className="ad-lp-vitrine" aria-label={config.vitrineTitle}>
-      {config.comparisonStrip ? <ComparisonStrip strip={config.comparisonStrip} /> : null}
+      {/* O <h2> da seção vem antes das faixas: com elas na frente, os <h3> de
+          "Frete sem surpresa" e "Arranjo de Mão" ficavam pendurados no <h2> da
+          garantia, quebrando o índice de cabeçalhos para leitor de tela. */}
       <header className="ad-lp-section-head">
         <h2>{config.vitrineTitle}</h2>
         <p>{config.vitrineSubtitle}</p>
       </header>
+      {/* Antes da comparação de preço: quem chega do anúncio precisa saber o
+          custo total, a prova do produto e a forma de pagamento antes de olhar
+          a grade — não depois. */}
+      {config.reassurances?.length ? <ReassuranceStrip items={config.reassurances} /> : null}
+      {config.comparisonStrip ? <ComparisonStrip strip={config.comparisonStrip} /> : null}
       {filterOptions.length ? (
         <div className="ad-lp-vitrine__filters" role="group" aria-label="Filtrar produtos">
           <button

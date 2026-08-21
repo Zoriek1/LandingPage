@@ -52,4 +52,13 @@ if (typeof window !== "undefined") {
       value: () => {},
     });
   }
+  // Mesma lacuna: os CTAs com `heroCtaAction: "scroll-vitrine"` chamam
+  // scrollIntoView, que jsdom também não implementa. Sem o mock, qualquer
+  // clique nesses CTAs derruba o teste com "scrollIntoView is not a function".
+  if (!Element.prototype.scrollIntoView) {
+    Object.defineProperty(Element.prototype, "scrollIntoView", {
+      writable: true,
+      value: () => {},
+    });
+  }
 }

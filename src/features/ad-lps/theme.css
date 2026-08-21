@@ -112,6 +112,14 @@
   backdrop-filter: blur(14px);
 }
 
+.ad-lp-logo {
+  /* O link do logo media 38px de altura; o min-height o traz para o alvo
+     confortável sem mexer no tamanho da imagem. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
 .ad-lp-logo img {
   width: auto;
   height: 64px;
@@ -458,6 +466,60 @@
   border-block: 1px solid var(--ad-line);
 }
 
+/* Faixa de objeções pré-clique: mesma linguagem visual dos cards da faixa
+   comparativa logo abaixo, mas compacta — cada linha aqui empurra a vitrine para
+   baixo no mobile, e a faixa existe para ser escaneada, não lida. Ícone e título
+   dividem a primeira linha; o corpo ocupa a largura inteira, que é onde ele cabe
+   em menos linhas. */
+.ad-lp-reassure {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: 0.7rem;
+  margin: 0 0 1.3rem;
+  padding: 0;
+  list-style: none;
+}
+
+.ad-lp-reassure__item {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 0.2rem 0.6rem;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  background: var(--ad-surface);
+  border: 1px solid var(--ad-line);
+  border-radius: 1rem;
+  box-shadow: var(--ad-shadow);
+}
+
+.ad-lp-reassure__icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: var(--ad-accent);
+  background: var(--ad-bg-warm);
+  border: 1px solid rgba(31, 42, 36, 0.08);
+  border-radius: 50%;
+}
+
+.ad-lp-reassure__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--ad-brand-deep);
+}
+
+.ad-lp-reassure__body {
+  grid-column: 1 / -1;
+  margin: 0;
+  font-size: 0.83rem;
+  line-height: 1.4;
+  color: var(--ad-muted);
+}
+
 .ad-lp-comparison {
   margin-bottom: 1.9rem;
 }
@@ -663,7 +725,14 @@
 }
 
 .ad-lp-proof__google-link a {
-  color: var(--ad-brand);
+  /* `--ad-brand` é exatamente a cor de fundo desta seção (#123725): o link ficava
+     invisível, contraste 1:1. `--ad-surface` dá 12.6:1 e é a cor do resto do
+     texto sobre o verde escuro. O padding existe para o alvo de toque — só o
+     texto dava 19px de altura. */
+  display: inline-block;
+  min-height: 44px;
+  padding: 0.65rem 0.5rem;
+  color: var(--ad-surface);
   font-weight: 800;
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -933,11 +1002,19 @@
 }
 
 .ad-lp-faq__item {
-  padding: 1rem 0;
   border-bottom: 1px solid var(--ad-line);
 }
 
 .ad-lp-faq__item summary {
+  /* O respiro vive aqui e não no <li>: assim ele faz parte da área clicável.
+     Só o texto dava 28px de altura — abaixo dos 44px de alvo confortável, num
+     item que a página depende que a pessoa consiga abrir. */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 0.85rem 0;
   cursor: pointer;
   font-family: var(--font-display);
   font-size: 1.15rem;
@@ -950,7 +1027,7 @@
 }
 
 .ad-lp-faq__item summary::after {
-  float: right;
+  flex: none;
   color: var(--ad-accent);
   content: "+";
   font-family: ui-monospace, Menlo, Consolas, monospace;
@@ -961,7 +1038,7 @@
 }
 
 .ad-lp-faq__item p {
-  margin: 0.72rem 0 0;
+  margin: 0 0 1.1rem;
   color: var(--ad-muted);
   line-height: 1.7;
 }
@@ -1611,6 +1688,10 @@
 
 .ad-lp-guarantee__link {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
   padding: 0.72rem 1.15rem;
   color: var(--ad-brand);
   background: transparent;

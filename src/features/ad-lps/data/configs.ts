@@ -198,6 +198,12 @@ export type LPConfig = {
    * (horário America/Sao_Paulo).
    */
   urgencyWindow?: { beforeCutoff: string; afterCutoff: string };
+  /**
+   * Respostas sempre visíveis no topo da vitrine (frete, prova, disponibilidade,
+   * pagamento). Sem `<details>`: objeção escondida atrás de um clique não é
+   * objeção quebrada. Ver components/ReassuranceStrip.tsx.
+   */
+  reassurances?: Reassurance[];
 };
 
 export type LPConfigVariant = Partial<
@@ -210,6 +216,12 @@ export type LPConfigVariant = Partial<
 export type HeroBadge = {
   text: string;
   icon?: "truck" | "calendar" | "sparkles" | "camera";
+};
+
+export type Reassurance = {
+  icon: "truck" | "camera" | "flower" | "card";
+  title: string;
+  body: string;
 };
 
 export const BRAND_DOMAIN = "lpb.planteumaflor.com";
@@ -971,13 +983,47 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroMode: "standalone",
     headline: "Lírios a partir de R$ 159,90.",
     subheadline:
-      "Você encomenda lírios em Goiânia e a gente entrega hoje — ou agenda a data que preferir. Papel artesanal e cartão escrito à mão no capricho.",
+      "Lírios frescos do produtor, montados na hora em Goiânia. Você aprova a foto real antes da entrega e o cartão escrito à mão vai por conta da casa.",
     priceAnchor: "A partir de R$ 159,90",
+    // P3.1: a promessa de prazo sai do texto fixo e passa a respeitar o corte
+    // real (18h seg-sex, 13h sáb, domingo nunca). Ver lib/urgency.ts.
+    urgencyWindow: {
+      beforeCutoff: "Pedidos até as 18h saem para entrega hoje em Goiânia.",
+      afterCutoff:
+        "As entregas de hoje já saíram. A gente agenda para amanhã ou para a data que você preferir.",
+    },
     // P1.1: fotos reais e carta escrita à mão entram nos diferenciais do hero.
     heroBadges: [
       { text: "Entrega hoje ou agendada em Goiânia", icon: "truck" },
       { text: "Você aprova a foto real antes da entrega", icon: "camera" },
       { text: "Embalagem caprichada e cartão escrito à mão grátis", icon: "sparkles" },
+    ],
+    // P3.2: as quatro objeções de quem chega do anúncio — custo total, prova do
+    // produto, cor disponível e pagamento — respondidas sem exigir um clique, no
+    // topo da vitrine. Título = a promessa que derruba a objeção; corpo = como
+    // ela se cumpre. Copy curta de propósito: a faixa é para escanear, e cada
+    // linha extra empurra a vitrine para baixo no mobile.
+    reassurances: [
+      {
+        icon: "truck",
+        title: "Frete sem surpresa",
+        body: "Calculado pelo seu CEP e informado antes de você fechar.",
+      },
+      {
+        icon: "camera",
+        title: "Foto antes de sair",
+        body: "Você vê o arranjo pronto e libera a entrega.",
+      },
+      {
+        icon: "flower",
+        title: "Cor do dia",
+        body: "Lírios chegam 3× por semana. Mandamos foto do que tem hoje.",
+      },
+      {
+        icon: "card",
+        title: "Pague como preferir",
+        body: "Pix, débito, dinheiro na entrega ou 3× sem juros.",
+      },
     ],
     // P1.2: comparação direta entre as duas famílias de lírios logo acima da grade.
     comparisonStrip: {
@@ -1000,6 +1046,9 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     navMode: "minimal",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
+    // P3.4: nota que a pessoa consegue conferir vale mais que nota em que ela
+    // precisa acreditar.
+    showGoogleReviewsLink: true,
     vitrineCardCta: "Escolher este e comprar no WhatsApp",
     sectionOrder: [
       "hero",
@@ -1060,8 +1109,26 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
           "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
       },
     ],
-    // As três perguntas de lírio subiram para `vitrineFaq`, coladas na grade.
-    faq: [],
+    // As três perguntas sobre o lírio em si subiram para `vitrineFaq`, coladas na
+    // grade. O que sobra aqui são as objeções de custo e logística (P3.3) — elas
+    // renderizam antes do COMMON_FAQ, ver FaqSection.
+    faq: [
+      {
+        question: "Quanto vou pagar de frete?",
+        answer:
+          "O frete varia conforme o bairro. Você manda o endereço ou o CEP no WhatsApp e a gente informa o valor exato antes de você confirmar o pedido — o preço que você fecha é o preço final.",
+      },
+      {
+        question: "Ainda dá tempo de receber hoje?",
+        answer:
+          "Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo. Passou do horário, a gente já agenda para a próxima data que você escolher.",
+      },
+      {
+        question: "Preciso pagar antes da entrega?",
+        answer:
+          "Não obrigatoriamente. Dá para pagar por Pix ou cartão antes, ou em dinheiro/débito na hora da entrega. A gente combina no WhatsApp.",
+      },
+    ],
     nossaHistoria: DEFAULT_NOSSA_HISTORIA,
     pageTitle: "Lírios a partir de R$ 159,90 | Plante Uma Flor",
     pageDescription:

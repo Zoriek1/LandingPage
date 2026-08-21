@@ -59,6 +59,41 @@ Registrar os valores de **7 dias anteriores ao deploy** de cada fase. Preencher 
 
 Se ≥2 limites forem furados → reverter a Fase P1 e testar os componentes separadamente.
 
+#### Fase P3 — quebra de objeções pré-clique (deploy a registrar)
+
+O P1 mexeu em **como a oferta é apresentada**. O P3 ataca o outro lado do funil: a queda
+de 53,8% → 43,5% no WhatsApp→lead indica que quem clica chega na conversa **com objeção
+ainda de pé**, e o atendimento absorve o atrito. Cada item abaixo tem uma hipótese
+verificável e um efeito esperado sobre uma métrica específica.
+
+| Item | O que mudou | Hipótese | Métrica que deve reagir |
+|------|-------------|----------|-------------------------|
+| P3.1 | `urgencyWindow` no hero + `subheadline` sem "entrega hoje" cravado | A página prometia entrega hoje às 22h de domingo. Quem chegava fora da janela ouvia "não dá" no WhatsApp | WhatsApp→lead; perdas `data_horario_indisponivel` |
+| P3.2 | Faixa de tranquilidade no topo da vitrine (frete, foto, cor do dia, pagamento), sempre visível | Frete não aparecia em ponto nenhum da página — o custo total só era descoberto na conversa | Página→WhatsApp; perdas `frete` e `preco` |
+| P3.3 | FAQ do rodapé com frete, corte de horário e pagamento antes do `COMMON_FAQ` | A LP tinha `faq: []`: só perguntas genéricas, nenhuma sobre custo ou logística | WhatsApp→lead |
+| P3.4 | `showGoogleReviewsLink` ligado | Nota 4,9 verificável pesa mais que nota que exige fé | Página→WhatsApp |
+
+**Não mudou** (decisão explícita, para não contaminar a leitura): o seletor de faixa de
+preço do CTA do hero, o texto "Comprar no WhatsApp" e a ordem das seções.
+
+Critérios de sucesso — os mesmos limites do P1, mais o alvo que este conjunto ataca
+diretamente:
+
+| Métrica | Alvo |
+|---------|------|
+| WhatsApp→lead | ≥ 50% (recuperar o patamar anterior) |
+| Página→WhatsApp | ≥ 7,0% |
+| Perdas `frete` + `data_horario_indisponivel` | queda vs. distribuição do período anterior |
+
+> A leitura de `frete` depende do registro manual de perdas descrito em
+> [fluxo-atendimento-e-perdas.md](fluxo-atendimento-e-perdas.md). Sem essa classificação,
+> o P3.2 fica sem evidência direta — só o efeito agregado em Página→WhatsApp.
+
+**Pendência que limita o P3.2:** a copy de frete comunica o *processo* ("informamos o
+valor exato antes de você fechar") porque o valor varia por bairro e não há faixa
+registrada. Quando a loja fechar a faixa real por região, trocar por número — número
+quebra objeção melhor que promessa de transparência.
+
 ### /reconciliacao (anúncio `[DESCULPA][ERREI][ESTATICO][V1]`)
 
 | Métrica | Meta | GA4 | Observações |

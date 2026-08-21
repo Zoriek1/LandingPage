@@ -272,9 +272,120 @@ describe("ad LP CRO — dynamic urgency line (P2.3)", () => {
   });
 
   it("does not render the line on pages without urgencyWindow", async () => {
-    renderAt("/lirios-apt");
+    // /lirios-apt saiu daqui no P3.1 — /presente-hoje é a LP sem urgencyWindow.
+    renderAt("/presente-hoje");
     await screen.findByRole("heading", { level: 1 });
 
     expect(screen.queryByTestId("ad-lp-urgency-line")).not.toBeInTheDocument();
+  });
+});
+
+describe("ad LP CRO — objeções pré-clique na /lirios-apt (P3)", () => {
+  beforeEach(() => {
+    openWhatsAppModal.mockClear();
+    window.dataLayer = [];
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    cleanup();
+  });
+
+  it("answers the four cold-visitor objections without any click", async () => {
+    renderAt("/lirios-apt");
+
+    const strip = await screen.findByTestId("ad-lp-reassurance-strip");
+    expect(strip).toHaveTextContent("Frete sem surpresa");
+    expect(strip).toHaveTextContent("Calculado pelo seu CEP e informado antes de você fechar.");
+    expect(strip).toHaveTextContent("Foto antes de sair");
+    expect(strip).toHaveTextContent("Cor do dia");
+    expect(strip).toHaveTextContent("Pague como preferir");
+    expect(strip).toHaveTextContent("Pix, débito, dinheiro na entrega ou 3× sem juros.");
+
+    // Sempre visível: nada de <details>, senão a objeção continua escondida.
+    expect(strip.querySelector("details")).toBeNull();
+  });
+
+  it("puts the strip inside the vitrine, above the comparison strip", async () => {
+    renderAt("/lirios-apt");
+
+    const strip = await screen.findByTestId("ad-lp-reassurance-strip");
+    const comparison = screen.getByTestId("ad-lp-comparison-strip");
+    const vitrine = document.getElementById("vitrine");
+
+    expect(vitrine?.contains(strip)).toBe(true);
+    expect(strip.compareDocumentPosition(comparison)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+
+  it("keeps the vitrine heading outline in order (h2 before its h3s)", async () => {
+    renderAt("/lirios-apt");
+
+    await screen.findByTestId("ad-lp-reassurance-strip");
+    const vitrine = document.getElementById("vitrine")!;
+    const levels = Array.from(vitrine.querySelectorAll("h2, h3")).map((h) => h.tagName);
+
+    // O <h2> da seção tem de vir primeiro: com as faixas na frente, os <h3>
+    // delas ficavam pendurados no <h2> da garantia no índice de cabeçalhos.
+    expect(levels[0]).toBe("H2");
+    expect(levels.slice(1).every((tag) => tag === "H3")).toBe(true);
+  });
+
+  it("does not render the strip on pages without reassurances", async () => {
+    renderAt("/presente-hoje");
+    await screen.findByRole("heading", { level: 1 });
+
+    expect(screen.queryByTestId("ad-lp-reassurance-strip")).not.toBeInTheDocument();
+  });
+
+  it("promises same-day delivery before the cutoff instead of hardcoding it", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-20T20:00:00Z")); // qui 17:00 em SP
+
+    renderAt("/lirios-apt");
+
+    expect(screen.getByTestId("ad-lp-urgency-line")).toHaveTextContent(
+      "Pedidos até as 18h saem para entrega hoje em Goiânia.",
+    );
+  });
+
+  it("stops promising same-day delivery after the cutoff", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-08-23T15:00:00Z")); // dom 12:00 em SP
+
+    renderAt("/lirios-apt");
+
+    expect(screen.getByTestId("ad-lp-urgency-line")).toHaveTextContent(
+      "As entregas de hoje já saíram.",
+    );
+    // A promessa fixa saiu do subheadline junto (P3.1).
+    expect(screen.queryByText(/a gente entrega hoje — ou agenda a data/)).toBeNull();
+  });
+
+  it("answers freight and payment in the footer FAQ, before the generic ones", async () => {
+    renderAt("/lirios-apt");
+
+    await screen.findByRole("heading", { level: 1 });
+    const faq = document.getElementById("faq");
+    expect(faq).not.toBeNull();
+
+    const questions = Array.from(faq!.querySelectorAll("summary")).map(
+      (item) => item.textContent,
+    );
+    expect(questions.slice(0, 3)).toEqual([
+      "Quanto vou pagar de frete?",
+      "Ainda dá tempo de receber hoje?",
+      "Preciso pagar antes da entrega?",
+    ]);
+  });
+
+  it("links out to the public Google reviews", async () => {
+    renderAt("/lirios-apt");
+
+    const link = await screen.findByRole("link", { name: /avaliações no Google/i });
+    expect(link).toHaveAttribute("href", expect.stringContaining("share.google"));
   });
 });
