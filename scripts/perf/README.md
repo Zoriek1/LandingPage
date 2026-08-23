@@ -1,12 +1,10 @@
 # scripts/perf
 
-Performance measurement tooling for the landing page.
+Tooling de medição de performance das LPs de anúncio.
 
-## Files
+- `static-server.mjs` — servidor Node que espelha `public/.htaccess` para medição local.
+- `lighthouse-run.mjs` — roda N auditorias Lighthouse mobile, salva JSON em
+  `perf-artifacts/` (gitignored).
 
-- **`static-server.mjs`** — Node HTTP server that faithfully mirrors `public/.htaccess` rewrite semantics (slug→slug.html, SPA fallback, caching, gzip). Used for local Lighthouse measurement since `vite preview` does not apply rewrites.
-- **`lighthouse-run.mjs`** — Runs N mobile Lighthouse audits against a URL, saves JSON results to `perf-artifacts/`, and prints a median summary table.
-
-## Output
-
-Lighthouse JSON results are written to `perf-artifacts/` (gitignored at the repo root). This directory is created automatically by the runner.
+Arquitetura, peças-chave e como reproduzir a medição:
+[`docs/performance/lp-performance.md`](../../docs/performance/lp-performance.md).

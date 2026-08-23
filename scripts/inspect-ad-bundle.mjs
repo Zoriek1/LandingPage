@@ -41,8 +41,17 @@ export function inspectAdBundle({ distDir = "dist", entrySource = AD_ENTRY_SOURC
   }
 
   const manifest = JSON.parse(readFileSync(manifestPath, "utf8"));
+  // Entradas estáticas (declaradas em rollupOptions.input) mantêm a chave
+  // igual ao caminho-fonte nas duas engines. Um módulo alcançado só por
+  // import() dinâmico (caso do AdLandingPage, via React.lazy) ganha chave
+  // hasheada (`_Nome-hash.js`) e sem `src` no Rolldown (bundler do Vite 8+);
+  // o `name` do chunk continua sendo o nome do arquivo-fonte sem extensão.
+  const entryBaseName = entrySource.split("/").pop().replace(/\.[^.]+$/, "");
   const entryKey = Object.keys(manifest).find(
-    (key) => key === entrySource || manifest[key]?.src === entrySource,
+    (key) =>
+      key === entrySource ||
+      manifest[key]?.src === entrySource ||
+      manifest[key]?.name === entryBaseName,
   );
   if (!entryKey) {
     throw new Error(`Ad entry missing from Vite manifest: ${entrySource}`);

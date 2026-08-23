@@ -25,11 +25,9 @@ nada — dá para migrar uma LP de cada vez.
 
 ## Slugs disponíveis
 
-`dia-das-maes`, `dia-dos-namorados`, `urgencia`, `aniversario`, `rosas-apt`,
-`lirios-apt`, `carro-low`, `carro-high`, `presente-hoje`,
-`tradicao-comprovacao`, `sem-erro`, `qual-b`
-
-A lista canônica está em [`src/routes/routeManifest.ts`](../../src/routes/routeManifest.ts).
+A lista completa e atual está em
+[`src/routes/routeManifest.ts`](../../src/routes/routeManifest.ts) — não duplicada aqui
+para não ficar desatualizada quando uma LP nova for adicionada.
 
 ## Recomendações
 

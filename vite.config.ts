@@ -31,10 +31,17 @@ function adLandingModulePreload(): Plugin {
 
         adLandingCssFiles.length = 0;
 
+        // O Rollup marca esse chunk via facadeModuleId; o Rolldown (bundler do
+        // Vite 8+) deixa facadeModuleId nulo para chunks nascidos de import()
+        // dinâmico e só expõe o módulo em moduleIds — checar os dois cobre as
+        // duas engines.
         const adChunk = Object.values(ctx.bundle).find(
           (chunk) =>
             chunk.type === "chunk" &&
-            chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(AD_LANDING_ENTRY),
+            (chunk.facadeModuleId?.replace(/\\/g, "/").endsWith(AD_LANDING_ENTRY) ||
+              chunk.moduleIds?.some((moduleId) =>
+                moduleId.replace(/\\/g, "/").endsWith(AD_LANDING_ENTRY),
+              )),
         );
         if (!adChunk || adChunk.type !== "chunk") {
           throw new Error(
@@ -330,7 +337,13 @@ export default defineConfig(({ isSsrBuild }) => ({
     cssCodeSplit: true,
     manifest: true,
     reportCompressedSize: false,
-    rollupOptions: isSsrBuild
+    // manualChunks (função ou objeto) foi descontinuado no Rolldown — a forma
+    // objeto sequer roda mais, e a forma função deixou artefatos automáticos
+    // (interop de CJS) grudarem no primeiro grupo nomeado que encontrassem
+    // (framer-motion vazava pro bundle das ad-lps mesmo sem nenhum import
+    // real). `codeSplitting.groups` é o mecanismo nativo do Rolldown e não
+    // reproduz esse vazamento.
+    rolldownOptions: isSsrBuild
       ? undefined
       : {
           input: {
@@ -343,28 +356,32 @@ export default defineConfig(({ isSsrBuild }) => ({
             ),
           },
           output: {
-            manualChunks: {
-              "react-vendor": [
-                "react",
-                "react-dom",
-                "react/jsx-runtime",
-                "react-router-dom",
+            codeSplitting: {
+              groups: [
+                {
+                  name: "react-vendor",
+                  test: /node_modules\/(react|react-dom|react-router|react-router-dom)\//,
+                },
+                { name: "motion", test: /node_modules\/framer-motion\// },
+                {
+                  name: "radix-dialog",
+                  test: /node_modules\/@radix-ui\/react-(dialog|slot)\//,
+                },
+                {
+                  name: "radix-home",
+                  test: /node_modules\/@radix-ui\/react-(accordion|tooltip)\//,
+                },
+                { name: "query", test: /node_modules\/@tanstack\/react-query\// },
               ],
-              "motion": ["framer-motion"],
-              "radix-dialog": [
-                "@radix-ui/react-dialog",
-                "@radix-ui/react-slot",
-              ],
-              "radix-home": [
-                "@radix-ui/react-accordion",
-                "@radix-ui/react-tooltip",
-              ],
-              "query": ["@tanstack/react-query"],
             },
           },
         },
   },
   resolve: {
+    // Defesa contra uma segunda cópia de react/react-dom entrar no bundle
+    // quando uma dependência resolve o pacote por um caminho diferente do
+    // resto do app (ex.: via require() em vez de import).
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },

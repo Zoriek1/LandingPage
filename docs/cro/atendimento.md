@@ -1,6 +1,10 @@
 # Fluxo de Atendimento e Classificação de Perdas — WhatsApp→Lead→Compra
 
-> Fase P3 do Plano CRO (v1.1, 2026-08-20). Operacional: serve para quem atende o WhatsApp da loja. O gargalo atual do funil está aqui — WhatsApp→lead caiu de 53,8% para 43,5% na /lirios-apt, e o atendimento é o ponto de maior alavancagem disponível.
+SOP operacional para quem atende o WhatsApp da loja. É o documento de referência estável
+para o fluxo de primeira resposta e a taxonomia de perdas — não amarrado a uma campanha
+específica. Definição dos campos de rastreamento (`cta_location`, `cta_label`, UTMs) está
+em [`../tracking.md`](../tracking.md); log de medição de campanha em
+[`medicoes.md`](medicoes.md).
 
 ## Meta
 
@@ -52,7 +56,12 @@ Toda conversa que **não vira compra** recebe exatamente um destes motivos. Sem 
 | lead→compra | compras / leads | ≥ 40% |
 | Distribuição de perdas | % por categoria | Top 2 categorias viram as próximas ações |
 
+Números de um ciclo específico (ex.: quedas ou picos de conversão observados numa
+campanha) ficam no log de [`medicoes.md`](medicoes.md), não neste SOP.
+
 ## Próximos passos ligados a este fluxo
 
-- Só depois de medir P1 + este fluxo, testar o CTA "Escolher meus lírios no WhatsApp" (controle: "Comprar no WhatsApp") — não antes.
-- Se `preco`/`frete` dominarem as perdas na /lirios-apt, revisar a faixa comparativa (P1.2) e a comunicação de preço antes de mexer em oferta.
+- Testar mudanças de copy de CTA (ex.: variantes de "Comprar no WhatsApp") só depois de
+  medir esse fluxo por pelo menos um ciclo — não antes.
+- Se `preco`/`frete` dominarem a distribuição de perdas de uma LP, revisar a comunicação
+  de preço/frete daquela página antes de mexer na oferta.
