@@ -449,6 +449,15 @@
   outline-offset: 3px;
 }
 
+.ad-lp-cta,
+.ad-lp-secondary-cta,
+.ad-lp-card__link,
+.ad-lp-guarantee__link,
+.ad-lp-vitrine__filter {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
 .ad-lp-bonus {
   background: var(--ad-bg-warm);
   border-block: 1px solid var(--ad-line);
@@ -884,6 +893,10 @@
   transform: translateY(-4px);
 }
 
+.ad-lp-card:active {
+  transform: scale(0.98);
+}
+
 .ad-lp-card__link,
 .ad-lp-card__media,
 .ad-lp-card__body {
@@ -895,6 +908,11 @@
   flex-direction: column;
   color: inherit;
   text-decoration: none;
+}
+
+.ad-lp-card__link:focus-visible {
+  outline: 3px solid var(--ad-brand-deep);
+  outline-offset: -3px;
 }
 
 .ad-lp-card__media {
@@ -1701,6 +1719,11 @@
   font-size: 0.86rem;
   font-weight: 800;
   cursor: pointer;
+}
+
+.ad-lp-guarantee__link:focus-visible {
+  outline: 3px solid var(--ad-brand-deep);
+  outline-offset: 3px;
 }
 
 /* Faixa compacta de confiança quando a garantia vem logo depois do hero: uma

@@ -1064,7 +1064,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       faq: "Quero encomendar meus lírios",
       sticky: "Comprar no WhatsApp",
       final: "Quero encomendar",
-      guarantee: "Ver detalhes da garantia",
+      guarantee: "Comprar com garantia no WhatsApp",
     },
     // sffart-gamer é a única avaliação que fala de perfume ("cheirosas") e não
     // cita rosas — é o destaque coerente numa página de lírios.
