@@ -144,13 +144,31 @@ describe("ad landing delivery", () => {
   });
 
   it("asks the browser for card images no wider than the card", async () => {
-    window.history.pushState({}, "", "/lirios-apt");
+    window.history.pushState({}, "", "/rosas-apt");
     render(<App />);
 
-    const product = await screen.findByAltText("Arranjo de Mão Lírios P");
+    const product = await screen.findByAltText("Buquê Clássico de Rosas Vermelhas");
     // A vitrine mobile é uma grade de 2 colunas com gutter de 4vw e gap de 1rem.
     // Com `50vw` o navegador pedia a variante de 480 para um slot de ~180 CSS px.
     expect(product.getAttribute("sizes")).toMatch(/\(max-width: 719px\) calc\(46vw - 8px\)/);
     expect(product.getAttribute("sizes")).not.toMatch(/50vw/);
+  });
+
+  it("describes the twelve-column grid in the sizes of the /lirios-apt cards", async () => {
+    window.history.pushState({}, "", "/lirios-apt");
+    render(<App />);
+
+    // Uma coluna até 639px, duas até 999px, depois span 3 (~24vw, 290px no
+    // container travado). O card largo — destaque e par — ocupa span 6.
+    const normal = await screen.findByAltText("Arranjo de Mão Lírios P");
+    expect(normal.getAttribute("sizes")).toBe(
+      "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 24vw, 290px",
+    );
+
+    for (const alt of ["Arranjo de Mão Lírios M", "Buquê de Lírios M"]) {
+      expect(screen.getByAltText(alt).getAttribute("sizes")).toBe(
+        "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 48vw, 600px",
+      );
+    }
   });
 });

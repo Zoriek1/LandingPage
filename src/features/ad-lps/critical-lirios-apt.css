@@ -1,0 +1,16 @@
+/* Inline no <head> de lirios-apt.html APENAS (ver SLUG_CRITICAL_CSS em vite.config.ts). Sem isto a primeira pintura sai com Playfair e com o dourado do tema lily, e troca de fonte e de cor quando a folha completa chega. Só o que a primeira dobra precisa; o resto do bloco [data-slug="lirios-apt"] vive em theme.css. Escrito minificado de propósito: este arquivo vai inteiro para dentro do HTML. */
+@font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:700;src:url('../../assets/fonts/fraunces-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-display:swap;font-weight:400;src:url('../../assets/fonts/instrument-sans-latin-400-normal.woff2') format('woff2')}
+@font-face{font-family:'Instrument Sans';font-style:normal;font-display:swap;font-weight:600;src:url('../../assets/fonts/instrument-sans-latin-600-normal.woff2') format('woff2')}
+.ad-lp-theme[data-slug="lirios-apt"]{--font-display:"Fraunces",Georgia,"Times New Roman",serif;--font-body:"Instrument Sans",system-ui,-apple-system,sans-serif;--ad-bg:#f7f2e8;--ad-bg-warm:#efe7d8;--ad-surface:#fffcf6;--ad-text:#0e2419;--ad-brand:#1c3d2c;--ad-brand-deep:#0e2419;--ad-line:rgba(14,36,25,0.12);--ad-muted:#58684e;--ad-accent:#a93e62;--ad-accent-deep:#8a2e4d;--ad-accent-luz:#e8a0b8;--ad-accent-chip:#f4dee6;--ad-accent-soft:#f4dee6;--ad-gold:#8c5e1e;--ad-gold-deep:#8c5e1e;--ad-gold-fio:#dfcda6;--ad-whatsapp:#127538;--ad-whatsapp-deep:#0e5e2d;--ad-shadow:0 16px 42px rgba(14,36,25,0.12)}
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-cta{color:#fff;border-radius:10px}
+.ad-lp-daystrip{padding:.95rem var(--ad-gutter);background:var(--ad-bg-warm);border-bottom:1px solid var(--ad-line);color:var(--ad-brand);font-size:.94rem}
+.ad-lp-daystrip__inner{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1.4rem;max-width:1220px;margin:0 auto}
+.ad-lp-daystrip__cutoff{display:grid}
+.ad-lp-daystrip__cutoff>*{grid-area:1/1}
+.ad-lp-daystrip__ghost{visibility:hidden}
+.ad-lp-daystrip strong{color:var(--ad-text);font-weight:600}
+.ad-lp-daystrip__pulse{position:relative;flex:none;width:8px;height:8px;border-radius:50%;background:var(--ad-accent)}
+@media(max-width:719px){.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-hero{min-height:56svh}.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-hero__media,.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-hero__image{min-height:0}.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-hero__overlay{padding-block:2.6rem 2.4rem}}
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-rating{height:34px;padding-block:0;line-height:1}
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-logo{display:inline-flex;align-items:center;min-height:44px}

@@ -7,7 +7,12 @@ import { AD_LP_SLUGS } from "./src/routes/routeManifest";
 const AD_LANDING_ENTRY = "src/features/ad-lps/AdLandingPage.tsx";
 const ENTRY_CLIENT_SOURCE = "src/features/ad-lps/entry-client.tsx";
 
-/** Onde o <picture> do hero é montado: ver ResponsivePicture em AdLandingPage. */
+/**
+ * Onde o <picture> do hero é montado: ver ResponsivePicture em AdLandingPage.
+ * O preload precisa repetir este mesmo `sizes`, senão o navegador escolhe outra
+ * variante e baixa a foto duas vezes — assertHeroPreloadMatchesPicture
+ * (scripts/prerender-ad-lps.mjs) falha o build se os dois divergirem.
+ */
 const HERO_SIZES = "100vw";
 
 /**
@@ -198,38 +203,67 @@ function adLandingStaticHtml(): Plugin {
       const indexHtml = fs.readFileSync(indexPath, "utf8");
 
       // --- Critical CSS: read raw file, resolve @font-face URLs from emitted CSS ---
-      const criticalCssPath = path.join(__dirname, "src/features/ad-lps/critical.css");
-      let criticalCss = fs.readFileSync(criticalCssPath, "utf8");
-
       const adCssAsset = Object.values(bundle).find(
         (asset) =>
           asset.type === "asset" &&
           asset.name?.startsWith("AdLandingPage") &&
           asset.fileName.endsWith(".css"),
       );
-      if (adCssAsset?.type === "asset") {
-        const adCss =
-          typeof adCssAsset.source === "string"
+      const adCss =
+        adCssAsset?.type === "asset"
+          ? typeof adCssAsset.source === "string"
             ? adCssAsset.source
-            : Buffer.from(adCssAsset.source).toString("utf8");
-        for (const name of [
-          "montserrat-latin-400-normal",
-          "montserrat-latin-700-normal",
-          "playfair-display-latin-700-normal",
-        ]) {
+            : Buffer.from(adCssAsset.source).toString("utf8")
+          : "";
+
+      /**
+       * O @font-face do arquivo-fonte aponta para o caminho do repositório; o
+       * navegador precisa do arquivo emitido com hash. Cada nome é procurado no
+       * CSS que o Vite já emitiu e trocado no texto do critical.
+       */
+      const resolveFontUrls = (css: string, fontNames: string[]) => {
+        if (!adCss) return css;
+        let result = css;
+        for (const name of fontNames) {
           const resolved = adCss.match(
             new RegExp(`src:url\\((/assets/${name}-[^)]+)\\)`),
           );
           if (resolved) {
-            criticalCss = criticalCss.replace(
+            result = result.replace(
               new RegExp(`src:url\\('[^']*${name}[^']*'\\)`),
               `src:url('${resolved[1]}')`,
             );
           }
         }
-      }
+        return result;
+      };
 
-      const criticalStyle = `<style>${criticalCss}</style>`;
+      const readCritical = (file: string, fontNames: string[]) =>
+        resolveFontUrls(
+          fs.readFileSync(path.join(__dirname, "src/features/ad-lps", file), "utf8"),
+          fontNames,
+        );
+
+      const criticalCss = readCritical("critical.css", [
+        "montserrat-latin-400-normal",
+        "montserrat-latin-700-normal",
+        "playfair-display-latin-700-normal",
+      ]);
+
+      /**
+       * CSS crítico específico de um slug, concatenado ao comum só no HTML
+       * daquele slug. A /lirios-apt tem tipografia e accent próprios: Fraunces
+       * e Instrument Sans não podem aparecer no <head> das outras 16 LPs nem
+       * no da home, e o rosa pintaria por cima do tema lily se vazasse.
+       */
+      const SLUG_CRITICAL_CSS: Record<string, string> = {
+        "lirios-apt": readCritical("critical-lirios-apt.css", [
+          "fraunces-latin-700-normal",
+          "instrument-sans-latin-400-normal",
+          "instrument-sans-latin-600-normal",
+        ]),
+      };
+
       const written: string[] = [];
 
       for (const slug of AD_LP_SLUGS) {
@@ -249,6 +283,8 @@ function adLandingStaticHtml(): Plugin {
           `<link rel="preload" as="image" fetchpriority="high" type="image/avif" ` +
           `href="/${avif900}" imagesrcset="/${avif480} 480w, /${avif900} 900w" ` +
           `imagesizes="${HERO_SIZES}" />`;
+
+        const criticalStyle = `<style>${criticalCss}${SLUG_CRITICAL_CSS[slug] ?? ""}</style>`;
 
         let html = indexHtml.replace(
           /(<meta name="viewport"[^>]*>)/,

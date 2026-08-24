@@ -76,15 +76,26 @@ function injectMetaTags(html, meta) {
  */
 function assertHeroPreloadMatchesPicture(html, slug) {
   const preloadMatch = html.match(
-    /<link rel="preload" as="image" fetchpriority="high" type="image\/avif"[^>]*imagesrcset="([^"]+)"/,
+    /<link rel="preload" as="image" fetchpriority="high" type="image\/avif"[^>]*imagesrcset="([^"]+)" imagesizes="([^"]+)"/,
   );
   if (!preloadMatch) {
     throw new Error(`Preload do hero não encontrado no HTML de /${slug}`);
   }
 
-  const pictureMatch = html.match(/<source type="image\/avif" srcSet="([^"]+)"/);
+  const pictureMatch = html.match(/<source type="image\/avif" srcSet="([^"]+)" sizes="([^"]+)"/);
   if (!pictureMatch) {
     throw new Error(`<source type="image/avif"> do hero não encontrado no HTML SSR de /${slug}`);
+  }
+
+  // O `sizes` também precisa bater: com valores diferentes o navegador pode
+  // escolher outra largura no <picture> e o preload vira um download a mais.
+  // HERO_SIZES_BY_SLUG (vite.config.ts) e HERO_SPLIT_SIZES (AdLandingPage.tsx)
+  // são os dois lados desta conta.
+  if (preloadMatch[2] !== pictureMatch[2]) {
+    throw new Error(
+      `Preload e <picture> do hero de /${slug} usam sizes diferentes:\n` +
+        `  preload: ${preloadMatch[2]}\n  picture: ${pictureMatch[2]}`,
+    );
   }
 
   const preloadSrcset = preloadMatch[1].replace(/^\//, "");
@@ -107,7 +118,12 @@ function assertHeroPreloadMatchesPicture(html, slug) {
 }
 
 function assertContentPresent(html, slug) {
-  if (!/<h1 class="ad-lp-hero__title">[^<]+<\/h1>/.test(html)) {
+  // O h1 pode trazer marcação inline (`headlineMark` em configs.ts destaca uma
+  // palavra com <em>), então o que se exige aqui é texto de verdade dentro da
+  // tag, não um nó de texto único.
+  const heading = html.match(/<h1 class="ad-lp-hero__title">([\s\S]*?)<\/h1>/);
+  const headingText = heading ? heading[1].replace(/<[^>]+>/g, "").trim() : "";
+  if (headingText.length < 10) {
     throw new Error(`H1 do hero não encontrado no HTML pré-renderizado de /${slug}`);
   }
   if (!html.includes('data-testid="ad-lp-cta-hero"')) {

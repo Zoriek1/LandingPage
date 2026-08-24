@@ -137,16 +137,23 @@ describe("ad landing pages", () => {
     expect(container.querySelector('a[href="#vitrine"]')).toBeNull();
   });
 
-  it.each(CONVERSION_SLUGS)("%s drops testimonial avatars but keeps the seal", async (slug) => {
-    const { container } = renderAt(`/${slug}`);
+  // A /lirios-apt saiu daqui: a prova dela não usa mais os cards do carrossel
+  // (ver "replaces the review carousel…" em adLpCro.test.tsx).
+  it.each(["presente-hoje", "urgencia"] as const)(
+    "%s drops testimonial avatars but keeps the seal",
+    async (slug) => {
+      const { container } = renderAt(`/${slug}`);
 
-    await screen.findByTestId("ad-lp-cta-hero");
-    expect(container.querySelectorAll(".ad-lp-proof__avatar")).toHaveLength(0);
-    expect(container.querySelectorAll(".ad-lp-proof__date").length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/Avaliação pública no Google/).length).toBeGreaterThan(0);
-  });
+      await screen.findByTestId("ad-lp-cta-hero");
+      expect(container.querySelectorAll(".ad-lp-proof__avatar")).toHaveLength(0);
+      expect(container.querySelectorAll(".ad-lp-proof__date").length).toBeGreaterThan(0);
+      expect(screen.getAllByText(/Avaliação pública no Google/).length).toBeGreaterThan(0);
+    },
+  );
 
-  it.each(CONVERSION_SLUGS)(
+  // A /lirios-apt saiu daqui no redesign: a garantia deixou de ser seção e
+  // virou o bloco colado abaixo dos preços da vitrine (ver o teste seguinte).
+  it.each(["presente-hoje", "urgencia"] as const)(
     "%s puts the guarantee right after the hero and before the vitrine",
     async (slug) => {
       const { container } = renderAt(`/${slug}`);
@@ -165,12 +172,39 @@ describe("ad landing pages", () => {
     },
   );
 
+  it("lirios-apt glues the guarantee under the prices instead of giving it a section", async () => {
+    const { container } = renderAt("/lirios-apt");
+
+    await screen.findByTestId("ad-lp-cta-hero");
+    const sections = Array.from(container.querySelectorAll("#ad-lp-main > section"));
+    expect(sections[0]?.className).toContain("ad-lp-hero");
+    expect(sections[1]?.className).toContain("ad-lp-vitrine");
+    expect(container.querySelector(".ad-lp-guarantee")).toBeNull();
+
+    const pledge = screen.getByTestId("ad-lp-pledge");
+    expect(document.getElementById("vitrine")?.contains(pledge)).toBe(true);
+    expect(pledge).toHaveTextContent(
+      "Não gostou? Refazemos, trocamos ou devolvemos no mesmo dia.",
+    );
+    // Os valores de frete continuam num lugar só, o FAQ.
+    expect(pledge).not.toHaveTextContent("R$");
+
+    // O bloco fica depois da grade: a dúvida da garantia nasce no preço.
+    const lastCard = container.querySelector(
+      "[data-testid='product-card-buque-lirios-g']",
+    )!;
+    expect(lastCard.compareDocumentPosition(pledge)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+
   it("orders reviews per LP and keeps the untouched LPs unchanged", async () => {
     const { container, unmount } = renderAt("/lirios-apt");
     await screen.findByTestId("ad-lp-cta-hero");
-    // sffart-gamer é a única avaliação que fala de perfume, não de rosas.
-    expect(container.querySelector(".ad-lp-proof__hero")).toHaveTextContent(
-      "Flores lindas e cheirosas",
+    // Numa LP fria o medo é a entrega, não a simpatia do atendimento: quem abre
+    // a prova é a avaliação que fala de dia e hora combinados.
+    expect(container.querySelector(".ad-lp-proof__shout")).toHaveTextContent(
+      "Produto chegou no dia e na hora combinado",
     );
     unmount();
 
@@ -181,26 +215,29 @@ describe("ad landing pages", () => {
     expect(rosas.container.querySelector("#bonus")).toBeInTheDocument();
   });
 
-  it("moves the lily FAQs next to the vitrine and the off-theme products to the end", async () => {
+  it("keeps the lírios vitrine to six lily products, with no expander", async () => {
     const { container } = renderAt("/lirios-apt");
 
-    const vitrineFaq = await screen.findByTestId("ad-lp-vitrine-faq");
-    expect(vitrineFaq).toHaveTextContent("Dúvidas sobre lírios");
-    expect(vitrineFaq).toHaveTextContent("O perfume é forte mesmo?");
-    // A pergunta não pode aparecer duas vezes: ela saiu do FAQ do rodapé.
-    expect(screen.getAllByText("O perfume é forte mesmo?")).toHaveLength(1);
-
-    // Os dois fora de tema ficam depois do corte de 6 cards: só aparecem no fim,
-    // atrás do expansor, e rotulados.
-    fireEvent.click(screen.getByText(/Quero ver mais opções/));
+    await screen.findByTestId("ad-lp-cta-hero");
     const ids = Array.from(container.querySelectorAll("[data-testid^='product-card-']")).map(
       (card) => card.getAttribute("data-testid"),
     );
-    expect(ids.slice(-2)).toEqual([
-      "product-card-buque-rosas-astromelias",
-      "product-card-buque-flor-campo-m",
+    // A rosa vermelha e a flor-do-campo saíram: numa grade de seis, dois cards
+    // fora de tema custam duas vagas e não convertem lírio.
+    expect(ids).toEqual([
+      "product-card-arranjo-mao-lirios-m",
+      "product-card-buque-lirios-m",
+      "product-card-arranjo-mao-lirios-p",
+      "product-card-arranjo-mao-lirios-g",
+      "product-card-buque-lirios-p",
+      "product-card-buque-lirios-g",
     ]);
-    expect(screen.getAllByText("Se quiser variar")).toHaveLength(2);
+    expect(screen.queryByText(/Quero ver mais opções/)).not.toBeInTheDocument();
+    expect(screen.queryByText("Se quiser variar")).not.toBeInTheDocument();
+
+    // As perguntas sobre o lírio voltaram para o FAQ único do rodapé, uma vez só.
+    expect(screen.queryByTestId("ad-lp-vitrine-faq")).not.toBeInTheDocument();
+    expect(screen.getAllByText("O perfume é forte mesmo?")).toHaveLength(1);
   });
 
   it("shows the sai-hoje badge on every urgencia product", async () => {
