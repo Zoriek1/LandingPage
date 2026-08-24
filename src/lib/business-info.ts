@@ -19,3 +19,15 @@ export const BUSINESS_INFO = {
   regions: "Goiania, Aparecida de Goiania e Senador Canedo",
   googleReviewsUrl: "https://share.google/QZylItqH7aT9MFXYA",
 } as const;
+
+/**
+ * Frete por faixa, confirmado pelo cliente em 23/08/2026. Fonte única: quem
+ * precisar do valor consome daqui, não copia a string. A tabela não cobre a
+ * faixa entre o Setor Sul e os 20 km — quem exibe fecha com a frase do CEP em
+ * vez de preencher a lacuna por conta própria.
+ */
+export const DELIVERY_FEES: { label: string; value: string }[] = [
+  { label: "Setor Sul e Marista", value: "R$ 10,00" },
+  { label: "Demais bairros, até 20 km", value: "R$ 25,00" },
+  { label: "De 20 a 30 km", value: "R$ 30,00" },
+];

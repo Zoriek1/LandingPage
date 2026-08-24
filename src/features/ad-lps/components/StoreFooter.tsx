@@ -1,7 +1,8 @@
-export function StoreFooter() {
+/** `caption` sobrescreve a legenda padrão; sem ela nada muda para as outras LPs. */
+export function StoreFooter({ caption }: { caption?: string } = {}) {
   return (
     <figcaption className="ad-lp-historia__caption">
-      Loja física em Goiânia · 40 anos de tradição · entrega própria
+      {caption ?? "Loja física em Goiânia · 40 anos de tradição · entrega própria"}
     </figcaption>
   );
 }

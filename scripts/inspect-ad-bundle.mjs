@@ -150,7 +150,10 @@ export function inspectPrerenderedContent({ distDir = "dist" } = {}) {
     if (/<div id="root"><\/div>/.test(html)) {
       throw new Error(`${file}: div#root está vazia — a LP não foi pré-renderizada`);
     }
-    if (!/<h1[^>]*>[^<]+<\/h1>/.test(html)) {
+    // O h1 pode trazer marcação inline (`headlineMark` em configs.ts destaca
+    // uma palavra com <em>): o que se exige é texto dentro da tag.
+    const heading = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/);
+    if (!heading || !heading[1].replace(/<[^>]+>/g, "").trim()) {
       throw new Error(`${file}: nenhum <h1> encontrado no HTML pré-renderizado`);
     }
     if (!html.includes('data-testid="ad-lp-hero-image"')) {

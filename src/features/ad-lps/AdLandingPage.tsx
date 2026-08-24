@@ -37,6 +37,8 @@ import {
   inferProductBadge,
   type BrandBonus,
   type CtaOriginKey,
+  type ChatExample,
+  type FAQItem,
   type LPConfig,
   type Product,
   type ProductBadge,
@@ -59,12 +61,17 @@ import { HeroBadges } from "@/features/ad-lps/components/HeroBadges";
 import { ComparisonStrip } from "@/features/ad-lps/components/ComparisonStrip";
 import { ReassuranceStrip } from "@/features/ad-lps/components/ReassuranceStrip";
 import { StoreFooter } from "@/features/ad-lps/components/StoreFooter";
+import { CountUpValue } from "@/features/ad-lps/components/CountUpValue";
 import {
   buildAdLpWhatsAppUrl,
   openAdLpGuidedWhatsApp,
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
-import { resolveUrgencyMessage } from "@/features/ad-lps/lib/urgency";
+import {
+  formatMinutesLeft,
+  minutesUntilCutoff,
+  resolveUrgencyMessage,
+} from "@/features/ad-lps/lib/urgency";
 import {
   FACHADA_SOURCES,
   getHeroSources,
@@ -291,6 +298,18 @@ const CARD_SIZES =
 const FEATURED_CARD_SIZES =
   "(max-width: 719px) calc(46vw - 8px), (max-width: 1023px) 30vw, (max-width: 1259px) 62vw, 810px";
 
+/**
+ * A grade de 12 colunas (`vitrineGrid: "twelve-col"`) tem breakpoints próprios:
+ * uma coluna até 639px, duas até 999px e, acima disso, `span 3` para o card
+ * comum e `span 6` para o destaque e o par. O container trava em 1220px, o que
+ * dá ~290px e ~600px por card. Descrever a grade antiga aqui faria o navegador
+ * baixar a variante errada da CDN.
+ */
+const TWELVE_COL_CARD_SIZES =
+  "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 24vw, 290px";
+const TWELVE_COL_WIDE_SIZES =
+  "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 48vw, 600px";
+
 function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   const props = { size: 22, strokeWidth: 1.7 };
   if (icon === "card") return <CreditCard {...props} />;
@@ -332,6 +351,49 @@ function useGoogleReviews() {
   }, []);
 
   return reviews;
+}
+
+/**
+ * Card de conversa que ilustra a promessa da foto.
+ *
+ * Duas regras que não podem cair numa refatoração: o rótulo `chat.label` é
+ * visível (sem ele o bloco passa por print real de conversa, e aí vira
+ * propaganda enganosa), e os três balões existem no HTML pré-renderizado, sem
+ * estado inicial escondido esperando efeito.
+ */
+function ChatExampleCard({ chat }: { chat: ChatExample }) {
+  return (
+    <figure className="ad-lp-chat" data-testid="ad-lp-chat-example">
+      <figcaption className="ad-lp-chat__head">
+        <span className="ad-lp-chat__dot" aria-hidden="true" />
+        {chat.contact}
+        <span className="ad-lp-chat__label">{chat.label}</span>
+      </figcaption>
+      {chat.bubbles.map((bubble) => {
+        const product = bubble.imageProductId ? PRODUCTS[bubble.imageProductId] : undefined;
+        return (
+          <p
+            key={bubble.text}
+            className={`ad-lp-chat__bubble ${bubble.mine ? "ad-lp-chat__bubble--mine" : ""}`}
+          >
+            {product ? (
+              <ImageWithFallback
+                src={product.image}
+                fallback={PRODUCT_PLACEHOLDER}
+                alt={bubble.imageAlt ?? product.name}
+                srcSet={getProductImageSrcSet(product.image)}
+                sizes="300px"
+                width={300}
+                height={300}
+              />
+            ) : null}
+            {bubble.text}
+            <time>{bubble.time}</time>
+          </p>
+        );
+      })}
+    </figure>
+  );
 }
 
 function HeroSection({ config }: { config: LPConfig }) {
@@ -451,6 +513,46 @@ function HeroSection({ config }: { config: LPConfig }) {
   );
 }
 
+/**
+ * Faixa do dia, logo abaixo do hero. O SSR entrega a frase estática do prazo;
+ * já hidratado, dentro da janela de atendimento, ela vira o tempo que falta
+ * para o corte. Fora da janela (domingo, antes das 08h, depois do corte) a
+ * frase estática fica — urgência falsa derruba a confiança que o resto da
+ * página constrói.
+ *
+ * A altura da linha é reservada no CSS para o CLS seguir em 0,000 quando o
+ * texto troca.
+ */
+function DayStripSection({ config }: { config: LPConfig }) {
+  const strip = config.dayStrip;
+  const hydrated = useHydrated();
+  const minutesLeft = hydrated ? minutesUntilCutoff() : null;
+
+  if (!strip) return null;
+
+  return (
+    <div className="ad-lp-daystrip" data-testid="ad-lp-daystrip">
+      <div className="ad-lp-daystrip__inner">
+        <span className="ad-lp-daystrip__pulse" aria-hidden="true" />
+        <span>
+          <strong>{strip.leadStrong}</strong> {strip.lead}
+        </span>
+        <span className="ad-lp-daystrip__cutoff">
+          {/* Reserva de altura: a frase mais longa é sempre a estática. */}
+          <span className="ad-lp-daystrip__ghost" aria-hidden="true">
+            {strip.cutoff}
+          </span>
+          <span data-testid="ad-lp-daystrip-cutoff">
+            {minutesLeft === null
+              ? strip.cutoff
+              : `Faltam ${formatMinutesLeft(minutesLeft)} pra fechar a entrega de hoje.`}
+          </span>
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function BrandBar({ config }: { config: LPConfig }) {
   const minimal = config.navMode === "minimal";
   return (
@@ -562,9 +664,11 @@ function SocialProofSection({ config }: { config: LPConfig }) {
   const carouselReviews = restReviews.length ? restReviews : reviews;
   const viewportRef = useRef<HTMLDivElement>(null);
   const [paused, setPaused] = useState(false);
+  const quoteGrid = config.proofLayout === "quote-grid";
 
   useEffect(() => {
-    if (paused || prefersReducedMotion()) return;
+    // No "quote-grid" não há carrossel para girar: o intervalo nem começa.
+    if (paused || quoteGrid || prefersReducedMotion()) return;
     const interval = window.setInterval(() => {
       const el = viewportRef.current;
       if (!el) return;
@@ -576,7 +680,7 @@ function SocialProofSection({ config }: { config: LPConfig }) {
       }
     }, 4500);
     return () => window.clearInterval(interval);
-  }, [paused]);
+  }, [paused, quoteGrid]);
 
   const handleNav = (direction: "prev" | "next") => {
     const el = viewportRef.current;
@@ -588,6 +692,59 @@ function SocialProofSection({ config }: { config: LPConfig }) {
     });
     window.setTimeout(() => setPaused(false), 8000);
   };
+
+  const googleLink = config.showGoogleReviewsLink ? (
+    <p className="ad-lp-proof__google-link">
+      <a href={BUSINESS_INFO.googleReviewsUrl} target="_blank" rel="noopener noreferrer">
+        Ver as {GLOBAL_CONFIG.googleReviewsCount} avaliações no Google
+      </a>
+    </p>
+  ) : null;
+
+  // Uma citação grande sobre entrega + quatro vozes lado a lado. O carrossel
+  // pedia clique ou espera para mostrar a segunda avaliação; aqui as cinco
+  // estão visíveis de uma vez, sem autoplay e sem botão de navegação.
+  if (quoteGrid) {
+    return (
+      <section
+        id="depoimentos"
+        className="ad-lp-proof ad-lp-proof--quotes"
+        aria-label="Avaliações de clientes"
+        data-testid="ad-lp-proof-quotes"
+      >
+        <div className="ad-lp-proof__top">
+          <p className="ad-lp-proof__eyebrow">Quem comprou</p>
+          <p className="ad-lp-proof__rating">
+            <span className="ad-lp-proof__stars" aria-hidden="true">
+              ★★★★★
+            </span>
+            <span>
+              {GLOBAL_CONFIG.googleRating} · {GLOBAL_CONFIG.googleReviewsCount} avaliações
+              públicas no Google
+            </span>
+          </p>
+        </div>
+        {heroReview ? (
+          <figure className="ad-lp-proof__shout">
+            <blockquote>{`“${heroReview.comment}”`}</blockquote>
+            <figcaption>{heroReview.authorName} · avaliação pública no Google</figcaption>
+          </figure>
+        ) : null}
+        <div className="ad-lp-proof__voices">
+          {restReviews.slice(0, 4).map((review, index) => (
+            <figure
+              className="ad-lp-voice"
+              key={`${review.reviewId || review.authorName}-${index}`}
+            >
+              <blockquote>{`“${review.comment}”`}</blockquote>
+              <figcaption>{review.authorName}</figcaption>
+            </figure>
+          ))}
+        </div>
+        {googleLink}
+      </section>
+    );
+  }
 
   return (
     <section id="depoimentos" className="ad-lp-proof" aria-label="Avaliações de clientes">
@@ -633,24 +790,25 @@ function SocialProofSection({ config }: { config: LPConfig }) {
           <ChevronRight size={22} strokeWidth={2.2} aria-hidden="true" />
         </button>
       </div>
-      {config.showGoogleReviewsLink ? (
-        <p className="ad-lp-proof__google-link">
-          <a href={BUSINESS_INFO.googleReviewsUrl} target="_blank" rel="noopener noreferrer">
-            Ver as {GLOBAL_CONFIG.googleReviewsCount} avaliações no Google
-          </a>
-        </p>
-      ) : null}
+      {googleLink}
     </section>
   );
 }
 
-function ProductBadgePill({ badge }: { badge: ProductBadge }) {
-  const label =
-    badge === "mais-vendido"
-      ? "Mais vendido"
-      : badge === "custo-beneficio"
-      ? "Custo-benefício"
-      : "Premium";
+const DEFAULT_BADGE_LABELS: Record<ProductBadge, string> = {
+  "mais-vendido": "Mais vendido",
+  "custo-beneficio": "Custo-benefício",
+  premium: "Premium",
+};
+
+function ProductBadgePill({
+  badge,
+  labels,
+}: {
+  badge: ProductBadge;
+  labels?: Partial<Record<ProductBadge, string>>;
+}) {
+  const label = labels?.[badge] ?? DEFAULT_BADGE_LABELS[badge];
   return (
     <span className={`ad-lp-card__badge ad-lp-card__badge--${badge}`}>
       {label}
@@ -789,6 +947,16 @@ function VitrineSection({
           a grade — não depois. */}
       {config.reassurances?.length ? <ReassuranceStrip items={config.reassurances} /> : null}
       {config.comparisonStrip ? <ComparisonStrip strip={config.comparisonStrip} /> : null}
+      {config.vitrineIntroLines?.length ? (
+        <div className="ad-lp-vitrine__intro" data-testid="ad-lp-vitrine-intro">
+          {config.vitrineIntroLines.map((line) => (
+            <p key={line.name}>
+              <b>{line.name}</b> {line.body}{" "}
+              <span className="ad-lp-vitrine__intro-price">{line.priceRange}</span>
+            </p>
+          ))}
+        </div>
+      ) : null}
       {filterOptions.length ? (
         <div className="ad-lp-vitrine__filters" role="group" aria-label="Filtrar produtos">
           <button
@@ -831,9 +999,22 @@ function VitrineSection({
               !!config.scarcityAppliesToAll);
           const note = config.vitrineProductNotes?.[product.id];
           const impact = config.vitrineShowSize ? sizeImpactLabel(product) : null;
+          const pitch = config.vitrineProductPitch?.[product.id];
+          const isPair = product.id === config.vitrinePairId;
+          const twelveCol = config.vitrineGrid === "twelve-col";
+          const wide = featured || isPair;
+          const sizes = twelveCol
+            ? wide
+              ? TWELVE_COL_WIDE_SIZES
+              : TWELVE_COL_CARD_SIZES
+            : featured
+            ? FEATURED_CARD_SIZES
+            : CARD_SIZES;
           return (
             <article
-              className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""}`}
+              className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""} ${
+                isPair ? "ad-lp-card--pair" : ""
+              }`}
               key={product.id}
             >
               {/* Só o selo de categoria fica sobre a foto. O de prazo desceu pro
@@ -847,7 +1028,7 @@ function VitrineSection({
                   Visto no anúncio
                 </span>
               ) : badge ? (
-                <ProductBadgePill badge={badge} />
+                <ProductBadgePill badge={badge} labels={config.productBadgeLabels} />
               ) : null}
               <a
                 href={buildAdLpWhatsAppUrl(config, product)}
@@ -864,12 +1045,13 @@ function VitrineSection({
                     fallback={PRODUCT_PLACEHOLDER}
                     alt={product.name}
                     srcSet={getProductImageSrcSet(product.image)}
-                    sizes={featured ? FEATURED_CARD_SIZES : CARD_SIZES}
+                    sizes={sizes}
                   />
                 </span>
                 <span className="ad-lp-card__body">
                   {note ? <span className="ad-lp-card__note">{note}</span> : null}
                   <span className="ad-lp-card__name">{product.name}</span>
+                  {pitch ? <span className="ad-lp-card__pitch">{pitch}</span> : null}
                   <ProductDetailsList product={product} />
                   {impact ? <span className="ad-lp-card__impact">{impact}</span> : null}
                   {showScarcity ? (
@@ -888,6 +1070,14 @@ function VitrineSection({
           );
         })}
       </div>
+      {config.pledge ? (
+        <p className="ad-lp-pledge" data-testid="ad-lp-pledge">
+          <ShieldCheck size={22} strokeWidth={1.8} aria-hidden="true" />
+          <span>
+            <b>{config.pledge.lead}</b> {config.pledge.body}
+          </span>
+        </p>
+      ) : null}
       {hasMore && !expanded ? (
         <div className="ad-lp-vitrine__more">
           <button type="button" onClick={() => setExpanded(true)}>
@@ -895,6 +1085,44 @@ function VitrineSection({
           </button>
         </div>
       ) : null}
+    </section>
+  );
+}
+
+/**
+ * Os quatro tempos do pedido. Substitui "Por que somos diferentes" e "Como
+ * funciona", que diziam quase a mesma coisa uma embaixo da outra. A numeração
+ * `01–04` é legítima porque isto é uma sequência real, e só um dos tempos é
+ * destacado: a promessa que a concorrência não faz.
+ *
+ * O CTA continua com `origin="como_funciona"` — a seção mudou de nome, o ponto
+ * de conversão e o `cta_location` do evento não.
+ */
+function BeatsSection({ config, cta }: { config: LPConfig; cta: ReactNode }) {
+  if (!config.beats?.length) return null;
+
+  return (
+    <section id="como-funciona" className="ad-lp-beats-section" aria-label="Como funciona">
+      <header className="ad-lp-section-head">
+        <h2>Do seu “oi” à porta de quem recebe.</h2>
+      </header>
+      <ol className="ad-lp-beats" data-testid="ad-lp-beats">
+        {config.beats.map((beat) => (
+          <li
+            className={`ad-lp-beats__item ${beat.key ? "ad-lp-beats__item--key" : ""}`}
+            key={beat.title}
+          >
+            <h3>{beat.title}</h3>
+            <p>{beat.body}</p>
+            {/* O exemplo ilustra o tempo destacado — mostrar a foto sendo
+                aprovada explica melhor que repetir a frase. */}
+            {beat.key && config.chatExample ? (
+              <ChatExampleCard chat={config.chatExample} />
+            ) : null}
+          </li>
+        ))}
+      </ol>
+      <div className="ad-lp-beats__cta">{cta}</div>
     </section>
   );
 }
@@ -910,7 +1138,7 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
             loading="lazy"
             sizes="(max-width: 780px) 100vw, 50vw"
           />
-          <StoreFooter />
+          <StoreFooter caption={config.storeCaption} />
         </figure>
         <div className="ad-lp-historia__body">
           <h2>{nossaHistoria.title}</h2>
@@ -921,7 +1149,13 @@ function NossaHistoriaSection({ config }: { config: LPConfig }) {
             <dl className="ad-lp-historia__stats">
               {nossaHistoria.stats.map((stat) => (
                 <div className="ad-lp-historia__stat" key={stat.label}>
-                  <dt className="ad-lp-historia__stat-value">{stat.value}</dt>
+                  <dt className="ad-lp-historia__stat-value">
+                    {config.historiaCountUp ? (
+                      <CountUpValue value={stat.value} />
+                    ) : (
+                      stat.value
+                    )}
+                  </dt>
                   <dd className="ad-lp-historia__stat-label">{stat.label}</dd>
                 </div>
               ))}
@@ -961,8 +1195,33 @@ function VitrineFaqSection({ config }: { config: LPConfig }) {
   );
 }
 
+/**
+ * Um item com `bullets` vira uma resposta com tabela; o JSON-LD junta os dois em
+ * texto corrido porque `acceptedAnswer.text` não tem lista.
+ */
+function faqAnswerText(item: FAQItem) {
+  const rows = item.bullets?.map((row) => `${row.label}: ${row.value}.`).join(" ");
+  return rows ? `${rows} ${item.answer}` : item.answer;
+}
+
 function FaqSection({ config }: { config: LPConfig }) {
-  const faqItems = [...config.faq, ...COMMON_FAQ];
+  // `faqUseCommon: false` significa que a LP já absorveu as perguntas comuns na
+  // própria lista — concatenar o COMMON_FAQ ali duplicaria pergunta.
+  const faqItems =
+    config.faqUseCommon === false ? config.faq : [...config.faq, ...COMMON_FAQ];
+  // Renderiza no SSR: o rich result não pode depender de hidratação.
+  const jsonLd = config.faqJsonLd
+    ? JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqItems.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: faqAnswerText(item) },
+        })),
+      }).replace(/</g, "\\u003c")
+    : null;
+
   return (
     <section id="faq" className="ad-lp-faq" aria-label="Perguntas frequentes">
       <header className="ad-lp-section-head">
@@ -970,8 +1229,18 @@ function FaqSection({ config }: { config: LPConfig }) {
       </header>
       <div className="ad-lp-faq__list">
         {faqItems.map((item) => (
-          <details className="ad-lp-faq__item" key={item.question}>
+          <details className="ad-lp-faq__item" key={item.question} open={item.defaultOpen}>
             <summary>{item.question}</summary>
+            {item.bullets?.length ? (
+              <ul className="ad-lp-faq__table">
+                {item.bullets.map((row) => (
+                  <li key={row.label}>
+                    <span>{row.label}</span>
+                    <b>{row.value}</b>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
             <p>{item.answer}</p>
           </details>
         ))}
@@ -979,6 +1248,9 @@ function FaqSection({ config }: { config: LPConfig }) {
       <div className="ad-lp-faq__cta">
         <CtaButton config={config} origin="faq" />
       </div>
+      {jsonLd ? (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd }} />
+      ) : null}
     </section>
   );
 }
@@ -1046,8 +1318,14 @@ function FinalCtaSection({ config }: { config: LPConfig }) {
       <div className="ad-lp-final__shape ad-lp-final__shape--top" aria-hidden="true" />
       <div className="ad-lp-final__shape ad-lp-final__shape--bottom" aria-hidden="true" />
       <div className="ad-lp-final__inner">
-        <h2>Escolha agora seu buquê e fale com a gente.</h2>
-        <p>A gente responde rápido no WhatsApp em horário comercial. Em segundos a gente confirma a data e o endereço da entrega.</p>
+        {config.finalCta?.eyebrow ? (
+          <p className="ad-lp-final__eyebrow">{config.finalCta.eyebrow}</p>
+        ) : null}
+        <h2>{config.finalCta?.title ?? "Escolha agora seu buquê e fale com a gente."}</h2>
+        <p>
+          {config.finalCta?.body ??
+            "A gente responde rápido no WhatsApp em horário comercial. Em segundos a gente confirma a data e o endereço da entrega."}
+        </p>
         <div className="ad-lp-final__cta">
           <CtaButton config={config} origin="final">Comprar no WhatsApp</CtaButton>
         </div>
@@ -1080,6 +1358,8 @@ function PageSection({
   switch (section) {
     case "hero":
       return <HeroSection config={config} />;
+    case "daystrip":
+      return <DayStripSection config={config} />;
     case "diferenciais":
       return <DifferentialsSection config={config} />;
     case "diferenciais-fundidos":
@@ -1087,6 +1367,13 @@ function PageSection({
     case "comofunciona":
       return (
         <HowItWorksSection cta={<CtaButton config={config} origin="como_funciona" />} />
+      );
+    case "beats":
+      return (
+        <BeatsSection
+          config={config}
+          cta={<CtaButton config={config} origin="como_funciona" />}
+        />
       );
     case "social":
       return <SocialProofSection config={config} />;

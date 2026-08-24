@@ -1,4 +1,4 @@
-import { CalendarCheck2, Camera, Sparkles, Truck } from "lucide-react";
+import { CalendarCheck2, Camera, MapPin, Sparkles, Truck } from "lucide-react";
 import type { HeroBadge, LPConfig } from "@/features/ad-lps/data/configs";
 
 const DEFAULT_BADGES: HeroBadge[] = [
@@ -17,6 +17,7 @@ const ICONS = {
   calendar: CalendarCheck2,
   sparkles: Sparkles,
   camera: Camera,
+  "map-pin": MapPin,
 } as const;
 
 export function HeroBadges({ config }: { config: LPConfig }) {

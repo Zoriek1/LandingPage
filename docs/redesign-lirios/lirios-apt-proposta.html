@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lírios a partir de R$ 159,90 | Plante Uma Flor</title>
+<meta name="description" content="Lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 159,90, com cartão escrito à mão por conta da casa.">
+<meta name="author" content="Plante Uma Flor">
+<link rel="canonical" href="https://lpb.planteumaflor.com/lirios-apt">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://lpb.planteumaflor.com/lirios-apt">
+<meta property="og:title" content="Lírios a partir de R$ 159,90 | Plante Uma Flor">
+<meta property="og:description" content="Lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 159,90, com cartão escrito à mão por conta da casa.">
+<meta property="og:image" content="https://lpb.planteumaflor.com/lpb/heros/lirios-apt.jpg">
+
+<script>document.documentElement.className += " js";</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..600,0..100,0..1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   PLANTE UMA FLOR — /lirios-apt — proposta de redesign
+   Tokens. Tudo que é cor, tipo ou ritmo sai daqui.
+   ============================================================ */
+:root{
+  --papel:        #F7F2E8;
+  --papel-fundo:  #EFE7D8;
+  --branco:       #FFFCF6;
+
+  --tinta:        #0E2419;
+  --tinta-2:      #1C3D2C;
+  --tinta-3:      #2F5540;
+
+  /* Acento novo: o rosa do próprio lírio da foto deles */
+  --lirio:        #A93E62;
+  --lirio-forte:  #8A2E4D;
+  --lirio-claro:  #F4DEE6;
+  --lirio-luz:    #E8A0B8;   /* o mesmo rosa, clareado pra viver sobre o verde */
+
+  /* Ouro rebaixado a fio e etiqueta, nunca botão */
+  --ouro:         #8C5E1E;
+  --ouro-fio:     #DFCDA6;
+
+  --musgo:        #58684E;
+
+  /* A única cor de ação. 5,8:1 com branco. */
+  --zap:          #127538;
+  --zap-fundo:    #0E5E2D;
+
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --corpo:   "Instrument Sans", system-ui, -apple-system, sans-serif;
+
+  --raio:    10px;
+  --raio-g:  16px;
+  --borda:   1px solid rgba(14,36,25,.12);
+
+  --lim:     1180px;
+  --gut:     clamp(20px, 5vw, 48px);
+  --barra-h: 62px;
+}
+
+*,*::before,*::after{ box-sizing:border-box; }
+html{ -webkit-text-size-adjust:100%; scroll-behavior:smooth; }
+body{
+  margin:0; background:var(--papel); color:var(--tinta);
+  font-family:var(--corpo); font-size:17px; line-height:1.6;
+  font-weight:400; -webkit-font-smoothing:antialiased;
+}
+/* o CTA fixo não pode cobrir o rodapé */
+@media (max-width:899px){ body{ padding-bottom:92px; } }
+
+img{ max-width:100%; display:block; }
+a{ color:inherit; }
+[id]{ scroll-margin-top:calc(var(--barra-h) + 12px); }
+
+h1,h2,h3{
+  font-family:var(--display); font-weight:580; line-height:1.06;
+  letter-spacing:-.015em; margin:0;
+  font-variation-settings:"SOFT" 30, "WONK" 1;
+}
+h1{ font-size:clamp(2.3rem, 6.2vw, 3.9rem); }
+h2{ font-size:clamp(1.85rem, 4.6vw, 2.9rem); }
+h3{ font-size:1.16rem; letter-spacing:-.005em; }
+p{ margin:0; }
+
+.lim{ max-width:var(--lim); margin-inline:auto; padding-inline:var(--gut); }
+.olho{
+  font-size:.74rem; font-weight:600; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--ouro);
+}
+.miolo{ color:var(--musgo); font-size:1.02rem; line-height:1.62; }
+.tabular{ font-variant-numeric:tabular-nums; }
+.sr{
+  position:absolute; width:1px; height:1px; overflow:hidden;
+  clip:rect(0 0 0 0); clip-path:inset(50%); white-space:nowrap;
+}
+.pula{
+  position:absolute; left:-999px; top:0; z-index:200;
+  background:var(--papel); color:var(--tinta); padding:.8rem 1.2rem; border-radius:0 0 var(--raio) 0;
+  font-weight:600; text-decoration:none;
+}
+.pula:focus{ left:0; }
+
+:where(a,button,summary,input):focus-visible{
+  outline:2.5px solid var(--lirio); outline-offset:3px; border-radius:4px;
+}
+
+/* ---- ação: só existe um tipo ---- */
+.zap{
+  display:inline-flex; align-items:center; justify-content:center; gap:.6rem;
+  min-height:56px; padding:0 1.7rem;
+  background:var(--zap); color:#fff; text-decoration:none;
+  font-family:var(--corpo); font-size:1.04rem; font-weight:600;
+  border:0; border-radius:var(--raio); cursor:pointer;
+  box-shadow:0 1px 0 rgba(0,0,0,.18), 0 8px 22px -12px rgba(18,117,56,.9);
+  transition:transform .16s ease, background .16s ease;
+}
+.zap:hover{ background:var(--zap-fundo); transform:translateY(-1px); }
+.zap:active{ transform:translateY(0); }
+.zap svg{ width:21px; height:21px; flex:none; }
+
+/* Primário: sólido em repouso. No hover a linha desliza e a seta entra.
+   Nada de trocar o fundo — num anúncio frio o CTA principal não pode
+   depender de hover pra parecer clicável. */
+.zap .zap-linha{ display:inline-flex; align-items:center; gap:.6rem; transition:transform .26s cubic-bezier(.2,.7,.3,1); }
+.zap .zap-seta{
+  width:0; height:19px; opacity:0; margin-left:-.6rem; flex:none;
+  transition:width .26s cubic-bezier(.2,.7,.3,1), opacity .2s ease, margin .26s ease;
+}
+.zap:hover .zap-linha{ transform:translateX(-5px); }
+.zap:hover .zap-seta{ width:19px; opacity:1; margin-left:0; }
+
+/* Secundário: aqui sim o interactive-hover-button inteiro.
+   Em repouso é discreto de propósito, então o preenchimento só acrescenta. */
+.botao-vivo{
+  position:relative; overflow:hidden; isolation:isolate;
+  display:inline-flex; align-items:center; justify-content:center;
+  min-height:48px; padding:0 1.4rem;
+  border:1.5px solid var(--ouro-fio); border-radius:var(--raio);
+  background:transparent; color:var(--tinta); text-decoration:none;
+  font-family:var(--corpo); font-size:.97rem; font-weight:600; cursor:pointer;
+  transition:border-color .3s ease;
+}
+.botao-vivo:hover, .botao-vivo:active{ border-color:var(--lirio); }
+.bv-bolha{
+  position:absolute; z-index:-1; left:18%; top:42%;
+  width:9px; height:9px; border-radius:50%; background:var(--lirio);
+  transition:all .34s cubic-bezier(.2,.7,.3,1);
+}
+.botao-vivo:hover .bv-bolha, .botao-vivo:active .bv-bolha{
+  left:0; top:0; width:100%; height:100%; border-radius:var(--raio); transform:scale(1.6);
+}
+.bv-txt, .bv-alt{ display:inline-flex; align-items:center; gap:.5rem; transition:all .3s cubic-bezier(.2,.7,.3,1); }
+.bv-alt{
+  position:absolute; inset:0; justify-content:center;
+  color:#fff; opacity:0; transform:translateX(46px);
+}
+.botao-vivo:hover .bv-txt, .botao-vivo:active .bv-txt{ opacity:0; transform:translateX(46px); }
+.botao-vivo:hover .bv-alt, .botao-vivo:active .bv-alt{ opacity:1; transform:translateX(0); }
+.bv-alt svg{ width:17px; height:17px; }
+.botao-vivo--claro{ border-color:rgba(223,205,166,.45); color:var(--papel); }
+
+/* Sem hover (celular, que é a maior parte do tráfego): estado parado e legível. */
+@media (hover:none){
+  .botao-vivo .bv-alt, .botao-vivo .bv-bolha{ display:none; }
+  .botao-vivo{ border-color:var(--ouro-fio); }
+}
+
+/* ============================================================
+   Barra
+   ============================================================ */
+.barra{ position:sticky; top:0; z-index:60; background:var(--tinta); color:var(--papel); }
+.barra .lim{ display:flex; align-items:center; justify-content:space-between; height:var(--barra-h); }
+.barra img{ height:34px; width:auto; }
+.nota{
+  display:inline-flex; align-items:center; gap:.45rem; min-height:48px;
+  font-size:.86rem; font-weight:600; color:var(--papel); text-decoration:none;
+}
+.nota span{ opacity:.68; font-weight:400; }
+
+/* ============================================================
+   HERO — assinatura: a conversa
+   ============================================================ */
+.hero{ position:relative; background:var(--tinta); color:var(--papel); overflow:hidden; }
+.hero .lim{
+  position:relative; display:grid; gap:clamp(2rem, 5vw, 3.5rem);
+  padding-block:clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 7vw, 5rem);
+  grid-template-columns:1fr;
+}
+@media (min-width:900px){
+  .hero .lim{ grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr); align-items:center; }
+}
+.hero h1{ margin-block:.85rem .95rem; color:var(--papel); max-width:15ch; }
+.hero h1 em{
+  font-style:normal; color:#fff;
+  background:linear-gradient(transparent 62%, rgba(169,62,98,.85) 62%, rgba(169,62,98,.85) 92%, transparent 92%);
+}
+.hero .miolo{ color:rgba(247,242,232,.82); max-width:42ch; font-size:1.06rem; }
+.hero .olho{ color:var(--ouro-fio); }
+.hero-acao{ display:flex; flex-wrap:wrap; align-items:center; gap:1.1rem; margin-top:1.9rem; }
+
+/* Palavra que gira — o slot carrega a ocasião, que é informação de verdade,
+   não adjetivo. Altura travada pra não mexer no CLS. */
+.gira{
+  display:block; position:relative; height:1.12em; margin-top:.06em;
+  clip-path:inset(0 -100vw 0 0);
+}
+.gira > span{
+  position:absolute; left:0; top:0; white-space:nowrap;
+  color:var(--lirio-luz); opacity:0; transform:translateY(100%);
+}
+.gira > span.aqui{ opacity:1; transform:translateY(0); }
+.gira > span.saiu{ opacity:0; transform:translateY(-100%); }
+.gira.anima > span{ transition:transform .62s cubic-bezier(.22,1,.36,1), opacity .42s ease; }
+
+.provas{ list-style:none; margin:2rem 0 0; padding:0; display:grid; gap:.62rem; }
+.provas li{ display:flex; gap:.6rem; align-items:baseline; font-size:.95rem; color:rgba(247,242,232,.8); }
+.provas b{ color:var(--papel); font-weight:600; }
+.provas i{ color:var(--ouro-fio); font-style:normal; flex:none; }
+
+.palco{ position:relative; }
+.palco-foto{
+  border-radius:var(--raio-g); overflow:hidden;
+  aspect-ratio:4/5; background:var(--tinta-2);
+  box-shadow:0 30px 60px -30px rgba(0,0,0,.75);
+}
+.palco-foto img{ width:100%; height:100%; object-fit:cover; }
+
+.conversa{
+  position:relative; width:min(340px, 88%);
+  margin:-4.5rem 0 0 auto; padding:.85rem;
+  background:#E8E2D6; border-radius:var(--raio-g);
+  box-shadow:0 24px 48px -20px rgba(0,0,0,.6);
+  transform:rotate(-1.4deg);
+}
+@media (min-width:900px){ .conversa{ margin-right:-2.2rem; } }
+.conversa-topo{
+  display:flex; align-items:center; gap:.5rem;
+  font-size:.78rem; color:#4F564B; margin:0 .25rem .6rem;
+}
+.conversa-topo .rotulo{
+  margin-left:auto; font-size:.68rem; font-weight:600; letter-spacing:.1em;
+  text-transform:uppercase; color:#4F564B;
+  border:1px solid #A9AC9F; border-radius:4px; padding:.1rem .34rem;
+}
+.pingo{ width:7px; height:7px; border-radius:50%; background:var(--zap); flex:none; }
+.balao{
+  background:#fff; border-radius:12px; padding:.6rem .75rem;
+  font-size:.92rem; line-height:1.45; color:#152018;
+  box-shadow:0 1px 1px rgba(0,0,0,.08); margin-bottom:.45rem; max-width:88%;
+}
+.balao img{ border-radius:7px; margin-bottom:.45rem; aspect-ratio:1/1; object-fit:cover; }
+.balao time{ display:block; font-size:.72rem; color:#636B5E; margin-top:.2rem; }
+.balao.eu{ background:#DCF8C6; margin-left:auto; }
+
+/* ============================================================
+   Faixa do dia
+   ============================================================ */
+.dia{ background:var(--papel-fundo); border-bottom:var(--borda); }
+.dia .lim{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.5rem 1.4rem;
+  padding-block:.95rem; font-size:.94rem; color:var(--tinta-3);
+}
+.dia strong{ color:var(--tinta); font-weight:600; }
+.batida{
+  width:8px; height:8px; border-radius:50%; background:var(--lirio); flex:none;
+  box-shadow:0 0 0 0 rgba(169,62,98,.55); animation:batida 2.4s ease-out infinite;
+}
+@keyframes batida{ 70%{ box-shadow:0 0 0 9px rgba(169,62,98,0); } 100%{ box-shadow:0 0 0 0 rgba(169,62,98,0); } }
+
+/* ============================================================
+   Seções
+   ============================================================ */
+.secao{ padding-block:clamp(3.2rem, 7vw, 5.4rem); }
+.secao-escura{ background:var(--tinta); color:var(--papel); }
+.secao-escura h2{ color:var(--papel); }
+.secao-escura .miolo{ color:rgba(247,242,232,.75); }
+.secao-papel{ background:var(--papel-fundo); }
+
+.cabeca{ max-width:44ch; margin-bottom:clamp(1.8rem, 4vw, 2.8rem); }
+.cabeca h2{ margin-block:.6rem .7rem; }
+
+/* ---- vitrine ---- */
+.duo{
+  display:grid; gap:.9rem 2.4rem; margin-bottom:2.2rem;
+  padding-bottom:1.6rem; border-bottom:1px solid var(--ouro-fio);
+}
+@media (min-width:700px){ .duo{ grid-template-columns:1fr 1fr; } }
+.duo p{ font-size:.98rem; color:var(--musgo); }
+.duo b{ display:block; font-family:var(--display); font-size:1.1rem; color:var(--tinta); font-weight:580; }
+.duo span{ color:var(--lirio-forte); font-weight:600; }
+
+.vitrine{ display:grid; gap:1.15rem; grid-template-columns:1fr; }
+@media (min-width:640px){ .vitrine{ grid-template-columns:repeat(2,1fr); } }
+/* grade de 12: heroi(6) + par(6) na primeira linha, quatro de 3 na segunda.
+   Com 6 colunas o sexto card ficava órfão. */
+@media (min-width:1000px){
+  .vitrine{ grid-template-columns:repeat(12,1fr); }
+  .item{ grid-column:span 3; }
+  .item-heroi, .item-par{ grid-column:span 6; }
+}
+
+.item{
+  display:flex; flex-direction:column; position:relative;
+  background:var(--branco); border:var(--borda); border-radius:var(--raio-g);
+  overflow:hidden; transition:border-color .18s ease, transform .18s ease;
+}
+.item:hover{ border-color:rgba(169,62,98,.45); transform:translateY(-2px); }
+.item-foto{ aspect-ratio:1/1; background:var(--papel-fundo); overflow:hidden; }
+.item-heroi .item-foto, .item-par .item-foto{ aspect-ratio:4/3; }
+.item-foto img{ width:100%; height:100%; object-fit:cover; }
+.item-corpo{ padding:1.1rem 1.15rem 1.15rem; display:flex; flex-direction:column; flex:1; gap:.5rem; }
+.item h3{ font-size:1.14rem; }
+.item-heroi h3{ font-size:1.4rem; }
+.item-fala{ font-size:.95rem; color:var(--musgo); line-height:1.5; }
+.item-preco{ display:flex; align-items:baseline; gap:.6rem; flex-wrap:wrap; margin-top:auto; padding-top:.7rem; }
+.item-preco b{
+  font-family:var(--corpo); font-size:1.6rem; font-weight:600;
+  letter-spacing:-.02em; color:var(--tinta); font-variant-numeric:tabular-nums;
+}
+.item-heroi .item-preco b{ font-size:2rem; }
+.item-preco small{ font-size:.85rem; color:var(--musgo); }
+.item-ficha{
+  font-size:.82rem; color:var(--musgo);
+  padding-top:.55rem; border-top:1px dashed var(--ouro-fio);
+}
+.item .zap{ width:100%; min-height:50px; font-size:.97rem; margin-top:.15rem; }
+.selo{
+  position:absolute; top:.8rem; left:.8rem; z-index:2;
+  font-size:.72rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+  padding:.36rem .62rem; border-radius:6px; background:var(--lirio); color:#fff;
+}
+.selo-calmo{ background:var(--tinta); color:var(--ouro-fio); }
+
+/* garantia colada no preço, não enterrada no FAQ */
+.garantia{
+  display:flex; flex-wrap:wrap; align-items:center; gap:.7rem 1.1rem;
+  margin-top:1.6rem; padding:1rem 1.2rem;
+  background:var(--lirio-claro); border-radius:var(--raio);
+  font-size:.97rem; color:var(--lirio-forte);
+}
+.garantia b{ font-weight:600; }
+.garantia svg{ width:22px; height:22px; flex:none; }
+
+/* ---- quatro tempos ---- */
+.tempos{ display:grid; gap:1.5rem; counter-reset:t; }
+@media (min-width:820px){ .tempos{ grid-template-columns:repeat(4,1fr); gap:0; } }
+.tempo{ position:relative; padding-top:2.3rem; }
+@media (min-width:820px){ .tempo{ padding:2.3rem 1.5rem 0 0; } }
+.tempo::before{
+  counter-increment:t; content:counter(t,decimal-leading-zero);
+  position:absolute; top:0; left:0;
+  font-family:var(--corpo); font-size:.8rem; font-weight:600; letter-spacing:.14em;
+  color:var(--ouro);
+}
+.tempo::after{ content:""; position:absolute; top:.42rem; left:2.4rem; right:0; height:1px; background:var(--ouro-fio); }
+.tempo h3{ margin-bottom:.45rem; }
+.tempo p{ font-size:.96rem; color:var(--musgo); line-height:1.55; }
+.tempo-chave h3{ color:var(--lirio-forte); }
+.tempo-chave p{ color:var(--tinta-3); }
+.tempo-chave::after{ background:var(--lirio); height:2px; }
+.tempo-chave::before{ color:var(--lirio); }
+
+/* ---- prova ---- */
+.grito{
+  font-family:var(--display); font-size:clamp(1.5rem, 3.6vw, 2.25rem);
+  line-height:1.28; font-weight:500; letter-spacing:-.01em;
+  color:var(--papel); margin:0 0 1rem; max-width:26ch;
+  font-variation-settings:"SOFT" 40, "WONK" 1;
+}
+.grito-quem{ font-size:.88rem; color:rgba(247,242,232,.66); }
+.vozes{ display:grid; gap:1rem; margin-top:2.6rem; }
+@media (min-width:700px){ .vozes{ grid-template-columns:repeat(2,1fr); } }
+@media (min-width:1020px){ .vozes{ grid-template-columns:repeat(4,1fr); } }
+.voz{ border-left:2px solid rgba(223,205,166,.35); padding:.15rem 0 .15rem 1rem; border-radius:0; }
+.voz p{ font-size:.94rem; line-height:1.55; color:rgba(247,242,232,.88); }
+.voz cite{ display:block; margin-top:.55rem; font-style:normal; font-size:.82rem; color:rgba(247,242,232,.6); }
+.prova-topo{ display:flex; flex-wrap:wrap; align-items:baseline; gap:.6rem 1rem; }
+.estrelas{ color:var(--ouro-fio); letter-spacing:.12em; font-size:.95rem; }
+
+/* ---- loja ---- */
+.loja{ display:grid; gap:clamp(1.8rem,4vw,3rem); align-items:center; }
+@media (min-width:860px){ .loja{ grid-template-columns:1.05fr 1fr; } }
+.loja-foto{ border-radius:var(--raio-g); overflow:hidden; border:var(--borda); }
+.loja-foto figcaption{ font-size:.85rem; color:var(--musgo); padding:.6rem .1rem 0; }
+.numeros{ display:flex; flex-wrap:wrap; gap:1.6rem 2.4rem; margin-top:1.8rem; padding-top:1.4rem; border-top:1px solid var(--ouro-fio); }
+.numeros div b{
+  display:block; font-family:var(--display); font-size:1.85rem; font-weight:580;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums;
+}
+.numeros div span{ font-size:.85rem; color:var(--musgo); }
+
+/* ---- perguntas ---- */
+.perguntas{ max-width:760px; }
+.perguntas details{ border-bottom:var(--borda); }
+.perguntas summary{
+  cursor:pointer; list-style:none; padding:1.15rem 2.5rem 1.15rem 0; position:relative;
+  font-family:var(--display); font-size:1.1rem; font-weight:580; letter-spacing:-.005em;
+}
+.perguntas summary::-webkit-details-marker{ display:none; }
+.perguntas summary::after{
+  content:"+"; position:absolute; right:.35rem; top:50%; transform:translateY(-50%);
+  font-family:var(--corpo); font-size:1.35rem; font-weight:400; color:var(--ouro);
+}
+.perguntas details[open] summary::after{ content:"–"; }
+.perguntas details p{ padding:0 1.5rem 1.3rem 0; font-size:.99rem; color:var(--musgo); line-height:1.6; }
+.frete{ list-style:none; margin:0 0 1rem; padding:0; max-width:420px; }
+.frete li{
+  display:flex; align-items:baseline; justify-content:space-between; gap:1rem;
+  padding:.5rem 0; border-bottom:1px dashed var(--ouro-fio); font-size:.97rem;
+}
+.frete li:last-child{ border-bottom:0; }
+.frete span{ color:var(--musgo); }
+.frete b{ font-weight:600; color:var(--lirio-forte); white-space:nowrap; }
+
+/* ---- fecho ---- */
+.fecho{ text-align:center; }
+.fecho .miolo{ margin:.9rem auto 2rem; max-width:46ch; }
+.fecho h2{ max-width:18ch; margin-inline:auto; }
+
+.rodape{ background:var(--tinta); color:rgba(247,242,232,.78); font-size:.87rem; line-height:1.8; }
+.rodape .lim{ padding-block:2.4rem; }
+.rodape b{ color:var(--papel); font-weight:600; }
+.rodape a{ color:var(--papel); text-decoration:underline; text-underline-offset:3px; }
+
+/* ---- CTA fixo mobile ---- */
+.trilho{
+  position:fixed; left:0; right:0; bottom:0; z-index:70;
+  padding:.7rem var(--gut) calc(.7rem + env(safe-area-inset-bottom));
+  background:rgba(14,36,25,.96); border-top:1px solid rgba(223,205,166,.2);
+  transform:translateY(110%); transition:transform .28s ease;
+}
+.trilho.ver{ transform:translateY(0); }
+.trilho .zap{ width:100%; }
+@media (min-width:900px){ .trilho{ display:none; } }
+
+/* ---- entrada. Visível por padrão: sem JS a página continua legível. ---- */
+html.js .sobe{ opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease; }
+html.js .sobe.dentro{ opacity:1; transform:none; }
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{ animation-duration:.001ms !important; transition-duration:.001ms !important; }
+  html.js .sobe{ opacity:1; transform:none; }
+  html{ scroll-behavior:auto; }
+}
+
+/* ---- chave de variante: só com ?debug=1 ---- */
+.chave{
+  display:none;
+  position:fixed; right:14px; top:76px; z-index:80;
+  background:var(--branco); border:var(--borda); border-radius:var(--raio);
+  padding:.55rem .6rem; font-size:.78rem; box-shadow:0 8px 24px -14px rgba(0,0,0,.5);
+  max-width:180px;
+}
+.chave.ligada{ display:block; }
+.chave p{ color:var(--musgo); margin-bottom:.4rem; letter-spacing:.06em; text-transform:uppercase; font-size:.68rem; font-weight:600; }
+.chave button{
+  display:block; width:100%; text-align:left; cursor:pointer;
+  background:none; border:0; padding:.34rem .35rem; border-radius:5px;
+  font:inherit; color:var(--tinta);
+}
+.chave button[aria-pressed="true"]{ background:var(--lirio-claro); color:var(--lirio-forte); font-weight:600; }
+@media (max-width:899px){ .chave.ligada{ display:none; } }
+</style>
+</head>
+<body>
+
+<a class="pula" href="#conteudo">Pular para o conteúdo principal</a>
+
+<header class="barra">
+  <div class="lim">
+    <a href="#hero" aria-label="Plante Uma Flor, ir para o topo">
+      <img src="https://lpb.planteumaflor.com/assets/logo-DDAll7yq.png" alt="Plante Uma Flor" width="120" height="34">
+    </a>
+    <a class="nota" href="https://share.google/QZylItqH7aT9MFXYA" target="_blank" rel="noopener">
+      <b>4,9</b> <span>· 184 avaliações no Google</span>
+    </a>
+  </div>
+</header>
+
+<div class="chave" id="chave" role="group" aria-label="Variante de headline (só no protótipo)">
+  <p>Headline</p>
+  <button type="button" data-var="a" aria-pressed="true">A · a foto</button>
+  <button type="button" data-var="b" aria-pressed="false">B · o preço</button>
+  <button type="button" data-var="c" aria-pressed="false">C · a ocasião</button>
+</div>
+
+<main id="conteudo">
+
+<!-- ========================= HERO ========================= -->
+<section class="hero" id="hero">
+  <div class="lim">
+    <div>
+      <p class="olho">Lírios em Goiânia · a partir de R$ 159,90</p>
+
+      <h1 id="titulo">Você vê a foto do seu buquê <em>antes</em> dele sair da loja.</h1>
+
+      <p class="miolo" id="subtitulo">Lírios frescos do produtor, montados na hora aqui no Setor Sul. Você aprova pelo WhatsApp, a gente escreve o cartão à mão e entrega hoje.</p>
+
+      <div class="hero-acao">
+        <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Vim%20pela%20p%C3%A1gina%20dos%20l%C3%ADrios%20e%20quero%20encomendar." data-cta="hero">
+          <span class="zap-linha"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24m4.52 10.29c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13s-.64.8-.79.97c-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.4-.42-.55-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.05.14-1.16-.06-.1-.22-.16-.47-.28"/></svg>
+          Falar no WhatsApp</span>
+          <svg class="zap-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a class="botao-vivo botao-vivo--claro" href="#vitrine">
+          <span class="bv-txt">Ver os 6 arranjos</span>
+          <span class="bv-alt" aria-hidden="true">Ver os 6 arranjos
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </span>
+          <span class="bv-bolha" aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <ul class="provas">
+        <li><i aria-hidden="true">·</i><span><b>Entrega hoje</b> em Goiânia, Aparecida e Senador Canedo</span></li>
+        <li><i aria-hidden="true">·</i><span><b>Cartão escrito à mão</b> por conta da casa</span></li>
+        <li><i aria-hidden="true">·</i><span><b>Frete de R$ 10 a R$ 30</b> conforme o bairro, dito antes de fechar</span></li>
+      </ul>
+    </div>
+
+    <div class="palco">
+      <div class="palco-foto">
+        <img src="https://lpb.planteumaflor.com/assets/hero-lirios-apt-900-B2XU2BfV.webp"
+             alt="Buquê de lírios rosa em papel jornal artesanal" width="900" height="1125" fetchpriority="high">
+      </div>
+
+      <figure class="conversa" style="margin-block:-4.5rem 0">
+        <figcaption class="conversa-topo">
+          <span class="pingo" aria-hidden="true"></span> Plante Uma Flor
+          <span class="rotulo">Exemplo</span>
+        </figcaption>
+        <div class="balao">
+          <img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp"
+               alt="Foto de um arranjo de lírios pronto na loja" width="300" height="300" loading="lazy">
+          Ficou assim. Pode sair pra entrega?
+          <time>14:07</time>
+        </div>
+        <div class="balao eu">
+          Pode! Ficou lindo
+          <time>14:08</time>
+        </div>
+        <div class="balao">
+          Perfeito. O cartão vai escrito à mão, como você mandou.
+          <time>14:08</time>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= FAIXA DO DIA ========================= -->
+<div class="dia">
+  <div class="lim">
+    <span class="batida" aria-hidden="true"></span>
+    <span><strong>Lírios chegam 3× por semana.</strong> A cor do dia a gente manda por foto.</span>
+    <span id="relogio">Pedido até <strong>18h</strong> de segunda a sexta (13h no sábado) sai hoje.</span>
+  </div>
+</div>
+
+<!-- ========================= VITRINE ========================= -->
+<section class="secao" id="vitrine">
+  <div class="lim">
+    <div class="cabeca sobe">
+      <p class="olho">A vitrine de hoje</p>
+      <h2>Seis tamanhos de lírio.</h2>
+      <p class="miolo">Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.</p>
+    </div>
+
+    <div class="duo sobe">
+      <p><b>Arranjo de mão</b> Papel jornal artesanal, formato de buquê de mão. <span>R$ 159,90 a R$ 289,90.</span></p>
+      <p><b>Buquê</b> Papel artesanal com fita de cetim, mais volume e acabamento. <span>R$ 299,90 a R$ 459,90.</span></p>
+    </div>
+
+    <div class="vitrine">
+
+      <article class="item item-heroi">
+        <span class="selo">Mais vendido</span>
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp" alt="Arranjo de Mão Lírios M" width="600" height="450" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Arranjo de Mão Lírios M</h3>
+          <p class="item-fala">O que mais sai. Volume suficiente pra aparecer na foto e no rosto de quem recebe.</p>
+          <div class="item-preco"><b>R$&nbsp;229,90</b><small>ou 3× de R$ 76,63 sem juros</small></div>
+          <p class="item-ficha">M · ~42 cm · papel jornal artesanal + cartão à mão</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Arranjo%20de%20M%C3%A3o%20L%C3%ADrios%20M%20(R%24%20229%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+      <article class="item item-par">
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-640-0.webp" alt="Buquê de Lírios M" width="600" height="450" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Buquê de Lírios M</h3>
+          <p class="item-fala">O presente de data marcada. Chega e ocupa o ambiente inteiro.</p>
+          <div class="item-preco"><b>R$&nbsp;399,90</b><small>ou 3× de R$ 133,30 sem juros</small></div>
+          <p class="item-ficha">M · ~50 cm · papel artesanal + fita de cetim</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Buqu%C3%AA%20de%20L%C3%ADrios%20M%20(R%24%20399%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+      <article class="item">
+        <span class="selo selo-calmo">Menor preço</span>
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/38-1223af3425b904cf2917739779596922-1024-1024.webp" alt="Arranjo de Mão Lírios P" width="600" height="600" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Arranjo de Mão Lírios P</h3>
+          <p class="item-fala">O menor. Cabe na mesa da cozinha e perfuma a sala inteira.</p>
+          <div class="item-preco"><b>R$&nbsp;159,90</b><small>ou 3× de R$ 53,30</small></div>
+          <p class="item-ficha">P · ~35 cm · papel jornal artesanal + cartão à mão</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Arranjo%20de%20M%C3%A3o%20L%C3%ADrios%20P%20(R%24%20159%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp" alt="Arranjo de Mão Lírios G" width="600" height="600" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Arranjo de Mão Lírios G</h3>
+          <p class="item-fala">Meio metro de flor, ainda em papel jornal. Pra quando o recado é grande.</p>
+          <div class="item-preco"><b>R$&nbsp;289,90</b><small>ou 3× de R$ 96,63</small></div>
+          <p class="item-ficha">G · ~50 cm · papel jornal artesanal + cartão à mão</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Arranjo%20de%20M%C3%A3o%20L%C3%ADrios%20G%20(R%24%20289%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+      <article class="item">
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/8-d0ddc261ebbf23879a17739780251538-640-0.webp" alt="Buquê de Lírios P" width="600" height="600" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Buquê de Lírios P</h3>
+          <p class="item-fala">Acabamento de buquê e fita de cetim, do tamanho de um abraço.</p>
+          <div class="item-preco"><b>R$&nbsp;299,90</b><small>ou 3× de R$ 99,97</small></div>
+          <p class="item-ficha">P · ~42 cm · papel artesanal + fita de cetim</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Buqu%C3%AA%20de%20L%C3%ADrios%20P%20(R%24%20299%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+      <article class="item">
+        <span class="selo selo-calmo">O maior</span>
+        <div class="item-foto"><img src="https://acdn-us.mitiendanube.com/stores/006/718/510/products/img_1193-c66f40f582ce89780617745668131555-640-0.webp" alt="Buquê de Lírios G" width="600" height="600" loading="lazy"></div>
+        <div class="item-corpo">
+          <h3>Buquê de Lírios G</h3>
+          <p class="item-fala">Sessenta centímetros. É o maior que a gente monta.</p>
+          <div class="item-preco"><b>R$&nbsp;459,90</b><small>ou 3× de R$ 153,30</small></div>
+          <p class="item-ficha">G · ~60 cm · papel artesanal + fita de cetim</p>
+          <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Quero%20o%20Buqu%C3%AA%20de%20L%C3%ADrios%20G%20(R%24%20459%2C90)." data-cta="vitrine">Quero este</a>
+        </div>
+      </article>
+
+    </div>
+
+    <p class="garantia sobe">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg>
+      <span><b>Não gostou? Refazemos, trocamos ou devolvemos no mesmo dia.</b> E o frete fica entre R$ 10 e R$ 30 conforme o bairro — confirmado no WhatsApp antes de você fechar.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ========================= QUATRO TEMPOS ========================= -->
+<section class="secao secao-papel">
+  <div class="lim">
+    <div class="cabeca sobe">
+      <p class="olho">Do clique à campainha</p>
+      <h2>Quatro tempos, e um deles é seu.</h2>
+    </div>
+    <div class="tempos sobe">
+      <div class="tempo">
+        <h3>Você escolhe</h3>
+        <p>Passa a vitrine, escolhe o tamanho e chama a gente no WhatsApp.</p>
+      </div>
+      <div class="tempo">
+        <h3>A gente monta</h3>
+        <p>Com a flor que chegou nesta semana. Você diz o recado do cartão.</p>
+      </div>
+      <div class="tempo tempo-chave">
+        <h3>Você aprova a foto</h3>
+        <p>Antes de sair da loja, mandamos a foto real do arranjo pronto. Ele só sai depois do seu ok.</p>
+      </div>
+      <div class="tempo">
+        <h3>Chega hoje</h3>
+        <p>Entrega própria em Goiânia, Aparecida e Senador Canedo, ou na data que você marcar.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PROVA ========================= -->
+<section class="secao secao-escura">
+  <div class="lim">
+    <div class="prova-topo sobe">
+      <p class="olho">Quem comprou</p>
+      <p class="estrelas">★★★★★ <span style="color:rgba(247,242,232,.66); letter-spacing:0">4,9 · 184 avaliações públicas no Google</span></p>
+    </div>
+
+    <blockquote class="grito sobe" style="margin-top:1.4rem">
+      “Produto chegou no dia e na hora combinado, muito lindo, surpreendeu e superou minhas expectativas.”
+    </blockquote>
+    <p class="grito-quem sobe">Marcos Vinícius · avaliação pública no Google</p>
+
+    <div class="vozes sobe">
+      <div class="voz">
+        <p>“Conversei com a empresa por WhatsApp e me responderam muito rápido. Funcionário Caio me atendeu, hiper simpático e paciente.”</p>
+        <cite>Melissa Pimentel</cite>
+      </div>
+      <div class="voz">
+        <p>“Flores lindas e cheirosas, além de um atendimento direto, sem ser grosseiro, e solícito.”</p>
+        <cite>sffart gamer</cite>
+      </div>
+      <div class="voz">
+        <p>“Atendimento excepcional!! O moço que me atendeu foi muito atencioso e cuidadoso em cada detalhe!”</p>
+        <cite>Hellen Araújo</cite>
+      </div>
+      <div class="voz">
+        <p>“O atendimento foi ótimo e muito cordial. Os arranjos são lindos e com valores justos, além do diferencial de fazerem entrega.”</p>
+        <cite>Tainá Santos</cite>
+      </div>
+    </div>
+
+    <p style="margin-top:2.2rem">
+      <a class="botao-vivo botao-vivo--claro" href="https://share.google/QZylItqH7aT9MFXYA" target="_blank" rel="noopener">
+        <span class="bv-txt">Ler as 184 no Google</span>
+        <span class="bv-alt" aria-hidden="true">Ler as 184 no Google
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </span>
+        <span class="bv-bolha" aria-hidden="true"></span>
+      </a>
+    </p>
+  </div>
+</section>
+
+<!-- ========================= A LOJA ========================= -->
+<section class="secao">
+  <div class="lim">
+    <div class="loja sobe">
+      <figure class="loja-foto" style="margin:0">
+        <img src="https://lpb.planteumaflor.com/assets/fachada-BaaP9ggM.jpg"
+             alt="Fachada da Plante Uma Flor em Goiânia, com o carro de entrega na porta"
+             width="900" height="600" loading="lazy">
+        <figcaption>Rua 132, Setor Sul. A entrega sai desta porta, no nosso carro.</figcaption>
+      </figure>
+      <div>
+        <p class="olho">Quatro décadas</p>
+        <h2 style="margin-block:.6rem 1rem">Quatro décadas plantando flores em Goiânia.</h2>
+        <p class="miolo">Começamos pequenininhos, vendendo rosas no bairro, e seguimos com o mesmo princípio: cada buquê sai daqui como se fosse pra alguém da nossa família.</p>
+        <p class="miolo" style="margin-top:.9rem">Hoje a gente recebe flor direto do produtor três vezes por semana e monta na hora. Quem responde no WhatsApp trabalha na floricultura, não é robô.</p>
+        <div class="numeros">
+          <div><b class="tabular conta" data-num="3000" data-pre="+" data-mil="1">+3.000</b><span>buquês entregues</span></div>
+          <div><b class="tabular conta" data-num="40">40</b><span>anos em Goiânia</span></div>
+          <div><b class="tabular conta" data-num="4.9" data-dec="1">4,9</b><span>no Google</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PERGUNTAS ========================= -->
+<section class="secao secao-papel">
+  <div class="lim">
+    <div class="cabeca sobe">
+      <p class="olho">Antes de você perguntar</p>
+      <h2>O que costuma travar a decisão.</h2>
+    </div>
+    <div class="perguntas sobe">
+      <details open>
+        <summary>Quanto vou pagar de frete?</summary>
+        <ul class="frete">
+          <li><span>Setor Sul e Marista</span> <b class="tabular">R$ 10,00</b></li>
+          <li><span>Demais bairros, até 20 km</span> <b class="tabular">R$ 25,00</b></li>
+          <li><span>De 20 a 30 km</span> <b class="tabular">R$ 30,00</b></li>
+        </ul>
+        <p>Manda o endereço ou o CEP no WhatsApp que a gente confirma o valor exato antes de você fechar. O preço que você fecha é o preço final.</p>
+      </details>
+      <details>
+        <summary>Ainda dá tempo de receber hoje?</summary>
+        <p>Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo. Passou do horário, a gente já agenda para a data que você escolher.</p>
+      </details>
+      <details>
+        <summary>O buquê vai igual à foto do site?</summary>
+        <p>Vai. E pra você ter certeza, antes de sair pra entrega a gente manda uma foto real do arranjo pronto. Ele só sai depois que você aprovar. Se não sair como combinado, refazemos, trocamos ou devolvemos no mesmo dia.</p>
+      </details>
+      <details>
+        <summary>Como posso pagar?</summary>
+        <p>Pix, cartão de crédito em até 3× sem juros, débito ou dinheiro na hora da entrega. Não precisa pagar antes se você não quiser. A gente acerta tudo no WhatsApp.</p>
+      </details>
+      <details>
+        <summary>Lírios duram menos que rosas?</summary>
+        <p>Não. Com cuidado básico, lírios duram de 7 a 10 dias bonitos. A gente já manda as dicas de conservação junto com o buquê.</p>
+      </details>
+      <details>
+        <summary>Tem outras cores além de rosa?</summary>
+        <p>Tem sim, depende do que chegou no dia. Pergunta pra gente no WhatsApp que mando foto na hora do que está na loja.</p>
+      </details>
+      <details>
+        <summary>O perfume é forte mesmo?</summary>
+        <p>É marcante — é uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.</p>
+      </details>
+      <details>
+        <summary>Posso agendar para outro dia?</summary>
+        <p>Pode. Você diz a data no WhatsApp e a gente já bloqueia na agenda. Em datas comemorativas confirmamos o horário com antecedência pra não dar aperto.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= FECHO ========================= -->
+<section class="secao secao-escura fecho">
+  <div class="lim">
+    <p class="olho sobe">Leva menos de um minuto</p>
+    <h2 class="sobe" style="margin-top:.7rem">Manda o endereço e a data. A gente cuida do resto.</h2>
+    <p class="miolo sobe">Quem responde é gente da floricultura, em horário comercial. Você escolhe o arranjo, escreve o recado do cartão e aprova a foto antes de sair.</p>
+    <p class="sobe">
+      <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Vim%20pela%20p%C3%A1gina%20dos%20l%C3%ADrios%20e%20quero%20encomendar." data-cta="final">
+        <span class="zap-linha"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24m4.52 10.29c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13s-.64.8-.79.97c-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.4-.42-.55-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.05.14-1.16-.06-.1-.22-.16-.47-.28"/></svg>
+        Encomendar meus lírios</span>
+        <svg class="zap-seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer class="rodape">
+  <div class="lim">
+    <p><b>FLORICULTURA PLANTE UMA FLOR LTDA</b> · CNPJ 65.625.103/0001-92</p>
+    <p>Rua 132, 289 — Setor Sul — Goiânia, GO — CEP 74093-210</p>
+    <p>Segunda a sexta, 08h–18h. Sábado, 08h–13h.</p>
+    <p>WhatsApp <a href="https://wa.me/5562996503403">(62) 99650-3403</a> · Tel. <a href="tel:+556232819367">(62) 3281-9367</a> · Cel. <a href="tel:+5562993219814">(62) 99321-9814</a></p>
+    <p>Entregas em Goiânia, Aparecida de Goiânia e Senador Canedo.</p>
+  </div>
+</footer>
+
+<div class="trilho" id="trilho">
+  <a class="zap" href="https://wa.me/5562996503403?text=Oi!%20Vim%20pela%20p%C3%A1gina%20dos%20l%C3%ADrios%20e%20quero%20encomendar." data-cta="sticky">
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2m0 1.67c2.2 0 4.27.86 5.83 2.42a8.2 8.2 0 0 1 2.41 5.82c0 4.54-3.7 8.24-8.25 8.24a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24m4.52 10.29c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13s-.64.8-.79.97c-.14.16-.29.18-.54.06-.25-.13-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.01-.38.11-.51.11-.11.25-.29.37-.43.13-.15.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.35-.77-1.84-.2-.49-.4-.42-.55-.43h-.47c-.16 0-.43.06-.65.31-.22.25-.85.83-.85 2.03s.87 2.35.99 2.51c.12.17 1.71 2.61 4.14 3.66.58.25 1.03.4 1.38.51.58.19 1.11.16 1.53.1.47-.07 1.44-.59 1.64-1.16.2-.57.2-1.05.14-1.16-.06-.1-.22-.16-.47-.28"/></svg>
+    Falar no WhatsApp
+  </a>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@graph":[
+    {
+      "@type":"Florist",
+      "@id":"https://www.planteumaflor.com/#loja",
+      "name":"Plante Uma Flor",
+      "legalName":"FLORICULTURA PLANTE UMA FLOR LTDA",
+      "url":"https://www.planteumaflor.com",
+      "telephone":"+556232819367",
+      "image":"https://lpb.planteumaflor.com/assets/fachada-BaaP9ggM.jpg",
+      "address":{"@type":"PostalAddress","streetAddress":"Rua 132, 289 - Setor Sul","addressLocality":"Goiânia","addressRegion":"GO","postalCode":"74093-210","addressCountry":"BR"},
+      "openingHoursSpecification":[
+        {"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"18:00"},
+        {"@type":"OpeningHoursSpecification","dayOfWeek":"Saturday","opens":"08:00","closes":"13:00"}
+      ],
+      "areaServed":["Goiânia","Aparecida de Goiânia","Senador Canedo"],
+      "aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","reviewCount":"184"}
+    },
+    {
+      "@type":"FAQPage",
+      "mainEntity":[
+        {"@type":"Question","name":"Quanto vou pagar de frete?","acceptedAnswer":{"@type":"Answer","text":"R$ 10,00 no Setor Sul e no Marista. R$ 25,00 nos demais bairros até 20 km e R$ 30,00 de 20 a 30 km. Você manda o endereço ou o CEP no WhatsApp e a gente confirma o valor exato antes de você fechar."}},
+        {"@type":"Question","name":"Ainda dá tempo de receber hoje?","acceptedAnswer":{"@type":"Answer","text":"Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo."}},
+        {"@type":"Question","name":"O buquê vai igual à foto do site?","acceptedAnswer":{"@type":"Answer","text":"Antes de sair pra entrega a gente manda uma foto real do arranjo pronto. Ele só sai depois que você aprovar. Se não sair como combinado, refazemos, trocamos ou devolvemos no mesmo dia."}},
+        {"@type":"Question","name":"Como posso pagar?","acceptedAnswer":{"@type":"Answer","text":"Pix, cartão de crédito em até 3x sem juros, débito ou dinheiro na hora da entrega."}},
+        {"@type":"Question","name":"Lírios duram menos que rosas?","acceptedAnswer":{"@type":"Answer","text":"Não. Com cuidado básico, lírios duram de 7 a 10 dias bonitos."}},
+        {"@type":"Question","name":"Posso agendar para outro dia?","acceptedAnswer":{"@type":"Answer","text":"Pode. Você diz a data no WhatsApp e a gente já bloqueia na agenda."}}
+      ]
+    }
+  ]
+}
+</script>
+
+<script>
+var CALMO = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ============================================================
+   TRACKING — ponto único de saída.
+   No repo, troque o corpo por trackWhatsAppClick() de src/lib/tracking.ts,
+   que já cuida de dataLayer + Meta Contact + POST da API de leads.
+   Não crie caminho paralelo pro wa.me: o helper monta mensagem, token e atribuição.
+   ============================================================ */
+document.addEventListener("click", function(e){
+  var a = e.target.closest("[data-cta]");
+  if (!a) return;
+  var evento = {
+    event: "whatsapp_click",
+    cta_location: a.dataset.cta,
+    cta_label: (a.textContent || "").trim(),
+    lp_slug: "lirios-apt",
+    destination_url: a.href
+  };
+  (window.dataLayer = window.dataLayer || []).push(evento);
+  if (window.__debug) console.log("[cta]", evento);
+});
+
+/* ---------- entrada das seções ---------- */
+(function(){
+  var alvos = document.querySelectorAll(".sobe");
+  if (CALMO || !("IntersectionObserver" in window)) {
+    alvos.forEach(function(e){ e.classList.add("dentro"); });
+    return;
+  }
+  var obs = new IntersectionObserver(function(linhas){
+    linhas.forEach(function(l){
+      if (l.isIntersecting) { l.target.classList.add("dentro"); obs.unobserve(l.target); }
+    });
+  }, { rootMargin:"0px 0px -8% 0px", threshold:.08 });
+  alvos.forEach(function(e){ obs.observe(e); });
+})();
+
+/* ---------- relógio de corte: só diz a verdade ----------
+   Seg–sex fecha 18h, sábado 13h, domingo não abre.
+   Fora da janela, volta a mensagem estática. Nada de contagem inventada. */
+(function(){
+  var el = document.getElementById("relogio");
+  if (!el) return;
+
+  function corteDeHoje(d){
+    var dia = d.getDay();               // 0 domingo … 6 sábado
+    if (dia === 0) return null;
+    if (dia === 6) return 13;
+    return 18;
+  }
+
+  function pintar(){
+    var agora = new Date();
+    var corte = corteDeHoje(agora);
+    if (corte === null || agora.getHours() >= corte || agora.getHours() < 8) {
+      el.innerHTML = "Pedido até <strong>18h</strong> de segunda a sexta (13h no sábado) sai hoje.";
+      return;
+    }
+    var fim = new Date(agora); fim.setHours(corte, 0, 0, 0);
+    var min = Math.floor((fim - agora) / 60000);
+    var h = Math.floor(min / 60), m = min % 60;
+    var falta = h > 0 ? h + "h" + (m ? " " + m + "min" : "") : m + "min";
+    el.innerHTML = "Faltam <strong>" + falta + "</strong> pra fechar a entrega de hoje.";
+  }
+
+  pintar();
+  setInterval(pintar, 60000);
+})();
+
+/* ---------- números que contam ao entrar na tela ---------- */
+(function(){
+  if (CALMO || !("IntersectionObserver" in window)) return;
+
+  function escrever(el, v){
+    var dec = el.dataset.dec ? 1 : 0;
+    var txt = v.toFixed(dec).replace(".", ",");
+    if (el.dataset.mil) txt = txt.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    el.textContent = (el.dataset.pre || "") + txt;
+  }
+
+  var obs = new IntersectionObserver(function(linhas){
+    linhas.forEach(function(l){
+      if (!l.isIntersecting) return;
+      obs.unobserve(l.target);
+      var el = l.target, fim = parseFloat(el.dataset.num);
+      // parte de um número com a mesma quantidade de dígitos: sem pulo de largura
+      var de = Math.pow(10, String(Math.floor(fim)).length - 1);
+      if (de >= fim) de = 0;
+      var ini = performance.now(), dur = 1100;
+      (function passo(agora){
+        var t = Math.min((agora - ini) / dur, 1);
+        escrever(el, de + (fim - de) * (1 - Math.pow(1 - t, 3)));
+        if (t < 1) requestAnimationFrame(passo);
+        else escrever(el, fim);
+      })(ini);
+    });
+  }, { threshold:.6 });
+  document.querySelectorAll(".conta").forEach(function(e){ obs.observe(e); });
+})();
+
+/* ---------- CTA fixo aparece depois do hero ---------- */
+(function(){
+  var trilho = document.getElementById("trilho");
+  var hero = document.getElementById("hero");
+  if (!("IntersectionObserver" in window)) return;
+  new IntersectionObserver(function(l){
+    trilho.classList.toggle("ver", !l[0].isIntersecting);
+  }, { threshold:0 }).observe(hero);
+})();
+
+/* ---------- palavra que gira (variante C) ---------- */
+var OCASIOES = ["um aniversário", "um me perdoa", "um obrigado", "um bom dia", "nenhum motivo"];
+var pararGiro = null;
+
+function montarGiro(){
+  var caixa = document.getElementById("gira");
+  if (!caixa) return;
+  var itens = caixa.querySelectorAll("span");
+  itens[0].classList.add("aqui");
+  if (CALMO) return;
+
+  requestAnimationFrame(function(){ caixa.classList.add("anima"); });
+
+  var i = 0, timer = null;
+  function girar(){
+    var sai = itens[i];
+    i = (i + 1) % itens.length;
+    var entra = itens[i];
+
+    sai.classList.remove("aqui");
+    sai.classList.add("saiu");
+
+    // recoloca o que entra lá embaixo SEM animar o caminho de volta
+    entra.style.transition = "none";
+    entra.classList.remove("saiu");
+    void entra.offsetWidth;
+    entra.style.transition = "";
+    void entra.offsetWidth;
+    entra.classList.add("aqui");
+  }
+  timer = setInterval(girar, 2600);
+
+  var hero = document.getElementById("hero");
+  var vigia = new IntersectionObserver(function(l){
+    if (l[0].isIntersecting) { if (!timer) timer = setInterval(girar, 2600); }
+    else { clearInterval(timer); timer = null; }
+  }, { threshold:0 });
+  vigia.observe(hero);
+
+  pararGiro = function(){ clearInterval(timer); vigia.disconnect(); };
+}
+
+/* ---------- chave A/B/C de headline — só com ?debug=1 ---------- */
+(function(){
+  if (!/[?&]debug=1/.test(location.search)) return;
+  window.__debug = true;
+  document.getElementById("chave").classList.add("ligada");
+
+  var giroHTML = '<span class="sr">um aniversário, um me perdoa, um obrigado, um bom dia ou nenhum motivo.</span>'
+    + '<span class="gira" id="gira" aria-hidden="true">'
+    + OCASIOES.map(function(o){ return '<span>' + o + '</span>'; }).join('')
+    + '</span>';
+
+  var VAR = {
+    a: {
+      titulo: 'Você vê a foto do seu buquê <em>antes</em> dele sair da loja.',
+      sub: 'Lírios frescos do produtor, montados na hora aqui no Setor Sul. Você aprova pelo WhatsApp, a gente escreve o cartão à mão e entrega hoje.'
+    },
+    b: {
+      titulo: 'Lírios em Goiânia a partir de <em>R$ 159,90</em>.',
+      sub: 'Frescos do produtor e montados na hora. Você aprova a foto real antes da entrega e o cartão escrito à mão vai por conta da casa.'
+    },
+    c: {
+      titulo: 'Lírios para ' + giroHTML,
+      sub: 'A partir de R$ 159,90, montados na hora em Goiânia. Você aprova a foto real antes da entrega e o cartão vai escrito à mão.',
+      giro: true
+    }
+  };
+
+  var t = document.getElementById("titulo");
+  var s = document.getElementById("subtitulo");
+
+  function aplicar(v){
+    if (pararGiro) { pararGiro(); pararGiro = null; }
+    t.innerHTML = VAR[v].titulo;
+    s.textContent = VAR[v].sub;
+    if (VAR[v].giro) montarGiro();
+  }
+
+  document.querySelectorAll(".chave button").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".chave button").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      aplicar(b.dataset.var);
+    });
+  });
+})();
+</script>
+</body>
+</html>

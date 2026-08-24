@@ -1,0 +1,426 @@
+/* ============================================================================
+   /lirios-apt — tokens do redesign
+   ----------------------------------------------------------------------------
+   Escopado por [data-slug="lirios-apt"], o mesmo gancho que theme.css já usa
+   para girassol. Nenhuma outra LP e nem a home enxergam nada daqui.
+
+   Onde colocar: no fim de src/features/ad-lps/theme.css, depois dos blocos
+   [data-accent="…"] — a especificidade de [data-slug] empata com a de
+   [data-accent], então quem vem depois vence.
+   ============================================================================ */
+
+.ad-lp-theme[data-slug="lirios-apt"] {
+
+  /* --- Tipografia -----------------------------------------------------------
+     Fraunces no lugar de Playfair: aguenta corpo grande no mobile sem afinar,
+     e a irregularidade dela combina com loja de família. Instrument Sans no
+     lugar de Montserrat: ritmo melhor em português com acento, e mais estreita,
+     o que ganha linha no celular.
+     As duas variáveis são lidas pelo @layer base do theme.css (body e h1–h6),
+     que resolve o var() na posição do elemento — então redefinir aqui basta.  */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Instrument Sans", system-ui, -apple-system, sans-serif;
+
+  /* --- Papel ----------------------------------------------------------------
+     Praticamente os mesmos cremes do tema base, só um grau mais quentes.      */
+  --ad-bg: #f7f2e8;
+  --ad-bg-warm: #efe7d8;
+  --ad-surface: #fffcf6;
+
+  /* --- Tinta ----------------------------------------------------------------
+     Verde mais fundo que o base (#173b2a → #0e2419) para o texto ter peso
+     e para o hero escuro parecer tinta, não fundo colorido.                   */
+  --ad-text: #0e2419;
+  --ad-brand: #1c3d2c;
+  --ad-brand-deep: #0e2419;
+  --ad-line: rgba(14, 36, 25, 0.12);
+
+  /* Texto secundário. Verde acinzentado em vez de cinza neutro: mantém tudo na
+     família botânica. 5,4:1 sobre --ad-bg e 4,9:1 sobre --ad-bg-warm.         */
+  --ad-muted: #58684e;
+
+  /* --- Acento: o rosa do próprio lírio da foto ------------------------------
+     O tema lily usava #988159, um tan indistinguível do tema rose. O accent
+     desta LP passa a sair do pigmento da flor que ela vende.
+     Contrastes conferidos:
+       --ad-accent      #a93e62  → 5,3:1 sobre #f7f2e8   (texto sobre creme)
+       --ad-accent-deep #8a2e4d  → 7,4:1 sobre #fffcf6   (CTA do card, números)
+       --ad-accent-luz  #e8a0b8  → 7,9:1 sobre #0e2419   (texto sobre o verde)
+       --ad-accent-chip #f4dee6  com texto --ad-brand-deep → 13,8:1
+     O chip aqui inverte a lógica do tema base: fundo claro e texto escuro,
+     porque o rosa saturado como fundo de chip reprovaria.                     */
+  --ad-accent: #a93e62;
+  --ad-accent-deep: #8a2e4d;
+  --ad-accent-luz: #e8a0b8;
+  --ad-accent-chip: #f4dee6;
+  --ad-accent-soft: #f4dee6;
+
+  /* --- Ouro: rebaixado a fio e etiqueta, nunca botão ------------------------
+     #c7a25a dá 3,5:1 sobre creme e reprova em texto pequeno, que é justo onde
+     o olho da seção vive. Escurecido na própria matiz até 5,0:1.              */
+  --ad-gold: #8c5e1e;
+  --ad-gold-deep: #8c5e1e;
+  --ad-gold-fio: #dfcda6;
+
+  /* --- Ação: uma cor só ------------------------------------------------------
+     O #25d366 com texto branco dá 2,4:1 e com --ad-brand-deep dá 6,6:1 — o
+     tema base resolve isso usando texto escuro no CTA. Aqui o botão passa a
+     ter texto branco, então o verde precisa escurecer: #127538 dá 5,8:1.
+     Continua lendo como verde de WhatsApp.                                    */
+  --ad-whatsapp: #127538;
+  --ad-whatsapp-deep: #0e5e2d;
+
+  --ad-shadow: 0 16px 42px rgba(14, 36, 25, 0.12);
+}
+
+/* ----------------------------------------------------------------------------
+   Ajustes de componente que decorrem dos tokens acima.
+   Só o que os tokens sozinhos não resolvem.
+   -------------------------------------------------------------------------- */
+
+/* O CTA do tema base tem texto --ad-brand-deep sobre verde claro. Aqui é
+   branco sobre verde escuro, e o raio acompanha a linguagem da página
+   (10px), em vez da pílula. */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-cta {
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18), 0 8px 22px -12px rgba(18, 117, 56, 0.9);
+}
+
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-cta:hover {
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.18), 0 12px 28px -12px rgba(18, 117, 56, 0.9);
+}
+
+/* Chip do hero: fundo claro, texto escuro (ver nota em --ad-accent-chip). */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-hero__anchor {
+  color: var(--ad-brand-deep);
+  background: var(--ad-accent-chip);
+}
+
+/* Olho de seção e fios: o ouro vira estrutura, não destaque. */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-historia__stat-label,
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-guarantee__badge {
+  color: var(--ad-gold);
+  letter-spacing: 0.16em;
+}
+
+/* Selo do card: o "Mais vendido" é o único que ganha o rosa cheio.
+   Os outros ficam escuros com fio dourado — hierarquia, não decoração.
+   O tema base usa gradiente aqui; nesta LP é chapado. */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-card__badge {
+  border-radius: 6px;
+  background: var(--ad-brand-deep);
+  color: var(--ad-gold-fio);
+  box-shadow: none;
+}
+
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-card__badge--mais-vendido {
+  background: var(--ad-accent);
+  color: #fff;
+}
+
+/* Garantia: o tema base pinta um radial dourado atrás. Aqui é chapado —
+   a seção já carrega peso pelo rosa do bloco colado à vitrine. */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-guarantee {
+  background: var(--ad-bg-warm);
+}
+
+/* Fecho: gradiente do tema base vira cor chapada. */
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-final {
+  background: var(--ad-brand-deep);
+}
+
+.ad-lp-theme[data-slug="lirios-apt"] .ad-lp-final__shape {
+  display: none;
+}
+
+/* ----------------------------------------------------------------------------
+   Componentes novos desta LP.
+   Os nomes seguem a convenção .ad-lp-* pra não destoar do resto da folha.
+   -------------------------------------------------------------------------- */
+
+/* --- Faixa do dia: uma linha, não quatro caixas --------------------------- */
+.ad-lp-daystrip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.4rem;
+  padding: 0.95rem var(--ad-gutter);
+  background: var(--ad-bg-warm);
+  border-bottom: 1px solid var(--ad-line);
+  color: var(--ad-brand);
+  font-size: 0.94rem;
+}
+
+.ad-lp-daystrip strong {
+  color: var(--ad-text);
+  font-weight: 600;
+}
+
+.ad-lp-daystrip__pulse {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ad-accent);
+  box-shadow: 0 0 0 0 rgba(169, 62, 98, 0.55);
+  animation: ad-lp-pulse 2.4s ease-out infinite;
+}
+
+@keyframes ad-lp-pulse {
+  70% { box-shadow: 0 0 0 9px rgba(169, 62, 98, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(169, 62, 98, 0); }
+}
+
+/* --- Card de conversa do hero -------------------------------------------- */
+.ad-lp-chat {
+  position: relative;
+  width: min(340px, 88%);
+  margin: -4.5rem 0 0 auto;
+  padding: 0.85rem;
+  background: #e8e2d6;
+  border-radius: 16px;
+  box-shadow: 0 24px 48px -20px rgba(0, 0, 0, 0.6);
+  transform: rotate(-1.4deg);
+}
+
+@media (min-width: 900px) {
+  .ad-lp-chat { margin-right: -2.2rem; }
+}
+
+.ad-lp-chat__head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0.25rem 0.6rem;
+  color: #4f564b;
+  font-size: 0.78rem;
+}
+
+/* O rótulo não é decorativo. Sem ele o card passa por print real de conversa,
+   e aí vira propaganda enganosa. Não remova. */
+.ad-lp-chat__label {
+  margin-left: auto;
+  padding: 0.1rem 0.34rem;
+  border: 1px solid #a9ac9f;
+  border-radius: 4px;
+  color: #4f564b;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ad-lp-chat__dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ad-whatsapp);
+}
+
+.ad-lp-chat__bubble {
+  max-width: 88%;
+  margin-bottom: 0.45rem;
+  padding: 0.6rem 0.75rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.08);
+  color: #152018;
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+.ad-lp-chat__bubble img {
+  margin-bottom: 0.45rem;
+  aspect-ratio: 1 / 1;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.ad-lp-chat__bubble time {
+  display: block;
+  margin-top: 0.2rem;
+  color: #636b5e;
+  font-size: 0.72rem;
+}
+
+.ad-lp-chat__bubble--mine {
+  margin-left: auto;
+  background: #dcf8c6;
+}
+
+/* --- Quatro tempos: linha do tempo, não quatro cards iguais --------------- */
+.ad-lp-beats {
+  display: grid;
+  gap: 1.5rem;
+  counter-reset: beat;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 820px) {
+  .ad-lp-beats { grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .ad-lp-beats__item { padding: 2.3rem 1.5rem 0 0; }
+}
+
+.ad-lp-beats__item {
+  position: relative;
+  padding-top: 2.3rem;
+}
+
+.ad-lp-beats__item::before {
+  counter-increment: beat;
+  content: counter(beat, decimal-leading-zero);
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--ad-gold);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+
+.ad-lp-beats__item::after {
+  content: "";
+  position: absolute;
+  top: 0.42rem;
+  right: 0;
+  left: 2.4rem;
+  height: 1px;
+  background: var(--ad-gold-fio);
+}
+
+/* O terceiro tempo é a promessa que só vocês fazem. Ele é o único destacado. */
+.ad-lp-beats__item--key::before { color: var(--ad-accent); }
+.ad-lp-beats__item--key::after { height: 2px; background: var(--ad-accent); }
+.ad-lp-beats__item--key h3 { color: var(--ad-accent-deep); }
+.ad-lp-beats__item--key p { color: var(--ad-brand); }
+
+/* --- Garantia colada no preço -------------------------------------------- */
+.ad-lp-pledge {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem 1.1rem;
+  max-width: 1220px;
+  margin: 1.6rem auto 0;
+  padding: 1rem 1.2rem;
+  background: var(--ad-accent-soft);
+  border-radius: 10px;
+  color: var(--ad-accent-deep);
+  font-size: 0.97rem;
+}
+
+.ad-lp-pledge b { font-weight: 600; }
+.ad-lp-pledge svg { flex: none; width: 22px; height: 22px; }
+
+/* --- Palavra que gira (só se você for testar a headline de ocasião) -------
+   Altura travada em 1.12em: sem isso o CLS sai de zero. */
+.ad-lp-rotator {
+  display: block;
+  position: relative;
+  height: 1.12em;
+  margin-top: 0.06em;
+  clip-path: inset(0 -100vw 0 0);
+}
+
+.ad-lp-rotator > span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  white-space: nowrap;
+  color: var(--ad-accent-luz);
+  opacity: 0;
+  transform: translateY(100%);
+}
+
+.ad-lp-rotator > span[data-state="in"] { opacity: 1; transform: translateY(0); }
+.ad-lp-rotator > span[data-state="out"] { opacity: 0; transform: translateY(-100%); }
+
+.ad-lp-rotator[data-animated="true"] > span {
+  transition: transform 0.62s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.42s ease;
+}
+
+/* --- Botão secundário com preenchimento no hover -------------------------
+   Fica no secundário de propósito. O CTA principal continua sólido em
+   repouso: num anúncio frio ele não pode depender de hover pra parecer
+   clicável, e no celular hover não existe. */
+.ad-lp-fillbtn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.4rem;
+  border: 1.5px solid var(--ad-gold-fio);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ad-text);
+  font-family: var(--font-body);
+  font-size: 0.97rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.ad-lp-fillbtn--light { border-color: rgba(223, 205, 166, 0.45); color: var(--ad-surface); }
+.ad-lp-fillbtn:hover, .ad-lp-fillbtn:active { border-color: var(--ad-accent); }
+
+.ad-lp-fillbtn__blob {
+  position: absolute;
+  z-index: -1;
+  top: 42%;
+  left: 18%;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--ad-accent);
+  transition: all 0.34s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.ad-lp-fillbtn:hover .ad-lp-fillbtn__blob,
+.ad-lp-fillbtn:active .ad-lp-fillbtn__blob {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  transform: scale(1.6);
+}
+
+.ad-lp-fillbtn__face,
+.ad-lp-fillbtn__hover {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.ad-lp-fillbtn__hover {
+  position: absolute;
+  inset: 0;
+  justify-content: center;
+  color: #fff;
+  opacity: 0;
+  transform: translateX(46px);
+}
+
+.ad-lp-fillbtn:hover .ad-lp-fillbtn__face,
+.ad-lp-fillbtn:active .ad-lp-fillbtn__face { opacity: 0; transform: translateX(46px); }
+
+.ad-lp-fillbtn:hover .ad-lp-fillbtn__hover,
+.ad-lp-fillbtn:active .ad-lp-fillbtn__hover { opacity: 1; transform: translateX(0); }
+
+/* Sem hover (a maior parte do tráfego): estado parado e legível. */
+@media (hover: none) {
+  .ad-lp-fillbtn__hover,
+  .ad-lp-fillbtn__blob { display: none; }
+  .ad-lp-fillbtn { border-color: var(--ad-gold-fio); }
+}

@@ -1,4 +1,5 @@
 import { formatBrl, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
+import { DELIVERY_FEES } from "@/lib/business-info";
 
 export type Accent = "rose" | "lily" | "sun" | "urgent" | "classic";
 export type HeroMode = "overlay" | "standalone";
@@ -6,6 +7,14 @@ export type HeroMode = "overlay" | "standalone";
 export type FAQItem = {
   question: string;
   answer: string;
+  /** Abre o `<details>` já expandido. Use em no máximo uma pergunta por página. */
+  defaultOpen?: boolean;
+  /**
+   * Tabela de valores renderizada antes da resposta (ex.: faixas de frete).
+   * A fonte dos números é `DELIVERY_FEES` em `@/lib/business-info` — não
+   * duplique as strings aqui.
+   */
+  bullets?: { label: string; value: string }[];
 };
 
 export type ProductDetails = {
@@ -75,6 +84,8 @@ export type GuaranteeContent = {
  */
 export type SectionKey =
   | "hero"
+  | "daystrip"
+  | "beats"
   | "guarantee"
   | "vitrine"
   | "social"
@@ -132,6 +143,14 @@ export type LPConfig = {
   showReviewAvatars?: boolean;
   /** Ordem das seções da página. Default: `DEFAULT_SECTION_ORDER`. */
   sectionOrder?: SectionKey[];
+  /**
+   * Default: true — o FAQ do rodapé é `faq` seguido de `COMMON_FAQ`. Em false,
+   * `faq` é a lista inteira: use quando a LP já absorveu as perguntas comuns e
+   * repeti-las criaria pergunta duplicada.
+   */
+  faqUseCommon?: boolean;
+  /** Em true, o FAQ do rodapé emite `FAQPage` em JSON-LD. Default: false. */
+  faqJsonLd?: boolean;
   /** FAQ curto renderizado logo abaixo da vitrine (além do FAQ do rodapé). */
   vitrineFaq?: FAQItem[];
   /** Título do bloco `vitrineFaq`. Default: "Dúvidas rápidas". */
@@ -178,6 +197,65 @@ export type LPConfig = {
   /** Em true, cards com tamanho P/M/G ganham rótulo de impacto (delicado/marcante/grande impacto). */
   vitrineShowSize?: boolean;
   /**
+   * Linha de intenção do card, por produto: o que o arranjo resolve, no lugar
+   * que a ficha técnica ocupava. Quem não tem entrada segue sem a linha.
+   */
+  vitrineProductPitch?: Record<string, string>;
+  /**
+   * Rótulo alternativo dos selos de produto. `inferProductBadge` continua
+   * decidindo quem leva selo; isto só troca a palavra. Default: "Mais vendido",
+   * "Custo-benefício" e "Premium".
+   */
+  productBadgeLabels?: Partial<Record<ProductBadge, string>>;
+  /**
+   * Duas ou três linhas de texto acima da grade, separando as famílias de
+   * produto por faixa de preço. Linhas, não cards: card dentro de card empurra
+   * a grade para baixo sem responder nada.
+   */
+  vitrineIntroLines?: { name: string; body: string; priceRange: string }[];
+  /** Garantia colada abaixo da grade, no lugar da seção `guarantee`. */
+  pledge?: { lead: string; body: string };
+  /**
+   * Card que divide a primeira linha com o destaque na grade de 12 colunas.
+   * Ganha a mesma largura e o mesmo `sizes` do destaque.
+   */
+  vitrinePairId?: string;
+  /**
+   * Grade da vitrine. Default: 2 colunas no mobile, 3 a partir de 720px e 4 a
+   * partir de 1024px. "twelve-col" é a grade de 6 produtos com destaque e par
+   * em `span 6` — ver o bloco do slug em theme.css.
+   */
+  vitrineGrid?: "twelve-col";
+  /**
+   * Card de conversa que ilustra o tempo destacado da seção `beats`. Fica fora
+   * da dobra de propósito: o anúncio promete preço, e a promessa da foto se
+   * explica onde a sequência do pedido é contada.
+   */
+  chatExample?: ChatExample;
+  /**
+   * Os tempos do pedido, na seção `beats`: uma sequência real, por isso a
+   * numeração. `key` marca o único destacado — se tudo destaca, nada destaca.
+   */
+  beats?: { title: string; body: string; key?: boolean }[];
+  /**
+   * Layout da prova. Default: "carousel" (citação em destaque + carrossel).
+   * "quote-grid" troca o carrossel por uma grade fixa de quatro citações, sem
+   * autoplay e sem botões de navegação.
+   */
+  proofLayout?: "carousel" | "quote-grid";
+  /** Legenda da foto da fachada. Default: o texto padrão de StoreFooter. */
+  storeCaption?: string;
+  /**
+   * Em true, os números da seção "nossa história" contam ao entrar na tela.
+   * O valor final já está no HTML: a contagem é acréscimo, não a fonte do
+   * número, e não roda em `prefers-reduced-motion`.
+   */
+  historiaCountUp?: boolean;
+  /** Copy do fecho. Default: os textos fixos de FinalCtaSection. */
+  finalCta?: { eyebrow?: string; title: string; body: string };
+  /** Faixa do dia (`sectionOrder: [... "daystrip" ...]`). */
+  dayStrip?: DayStripContent;
+  /**
    * Ação do CTA principal do hero. Default: "price-range" (abre o seletor de
    * faixa de preço). "scroll-vitrine" rola até a vitrine (#vitrine) — também
    * funciona sem JavaScript via âncora.
@@ -215,7 +293,42 @@ export type LPConfigVariant = Partial<
 
 export type HeroBadge = {
   text: string;
-  icon?: "truck" | "calendar" | "sparkles" | "camera";
+  icon?: "truck" | "calendar" | "sparkles" | "camera" | "map-pin";
+};
+
+/**
+ * Um balão do card de conversa. `mine` é o balão de quem comprou (verde,
+ * alinhado à direita); `imageProductId` carrega a foto do produto dentro do
+ * balão, servida pela mesma CDN dos cards da vitrine.
+ */
+export type ChatExampleBubble = {
+  text: string;
+  time: string;
+  mine?: boolean;
+  imageProductId?: string;
+  imageAlt?: string;
+};
+
+/**
+ * Card de conversa que ilustra a promessa da foto. `label` é o rótulo visível
+ * que impede o bloco de passar por print real de conversa — não é decorativo e
+ * não tem default.
+ */
+export type ChatExample = {
+  contact: string;
+  label: string;
+  bubbles: ChatExampleBubble[];
+};
+
+/**
+ * Faixa logo abaixo do hero. `cutoff` é a frase estática do prazo, renderizada
+ * no SSR; dentro da janela de corte o cliente a substitui pelo tempo restante
+ * (ver DayStripSection).
+ */
+export type DayStripContent = {
+  leadStrong: string;
+  lead: string;
+  cutoff: string;
 };
 
 export type Reassurance = {
@@ -981,65 +1094,56 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroImage: "/lpb/heros/lirios-apt.jpg",
     heroImageAlt: "Buquê de lírios rosa em papel jornal artesanal",
     heroMode: "standalone",
+    // O anúncio promete "Lírios a partir de R$ 159,90", então o message match
+    // fica no olho (`priceAnchor`) e o h1 carrega o que nenhuma floricultura de
+    // Goiânia copia numa tarde. Antes o preço aparecia três vezes acima da
+    // primeira prova; agora aparece uma.
     headline: "Lírios a partir de R$ 159,90.",
     subheadline:
-      "Lírios frescos do produtor, montados na hora em Goiânia. Você aprova a foto real antes da entrega e o cartão escrito à mão vai por conta da casa.",
-    priceAnchor: "A partir de R$ 159,90",
+      "Frescos do produtor e montados na hora aqui no Setor Sul. Você aprova a foto antes da entrega e o cartão escrito à mão vai por conta da casa.",
+    // Sem `priceAnchor`: o chip acima do h1 repetia o mesmo preço do título, e o
+    // anúncio promete o preço — quem chega precisa reconhecê-lo uma vez, grande,
+    // não duas vezes empilhadas.
     // Sem `urgencyWindow`: a faixa de prazo ficava entre os CTAs e os selos,
     // num box escuro que disputava atenção com o botão do WhatsApp logo acima.
-    // O prazo continua dito no primeiro selo do hero ("Entrega hoje ou agendada")
-    // e respondido por inteiro no FAQ ("Ainda dá tempo de receber hoje?").
-    // P1.1: fotos reais e carta escrita à mão entram nos diferenciais do hero.
+    // O prazo continua dito no primeiro selo do hero e respondido por inteiro no
+    // FAQ ("Ainda dá tempo de receber hoje?").
+    // As três linhas de prova do hero: prazo, cortesia e a objeção do frete.
+    // Sem valor de frete aqui — os números vivem num lugar só, o FAQ.
+    // O prazo, a prova e a cortesia. A promessa da foto vive aqui e na
+    // subheadline, não no h1: o anúncio fala de preço, e a página tem que
+    // devolver o preço antes de propor outro assunto.
     heroBadges: [
-      { text: "Entrega hoje ou agendada em Goiânia", icon: "truck" },
+      { text: "Entrega hoje em Goiânia, Aparecida e Senador Canedo", icon: "truck" },
       { text: "Você aprova a foto real antes da entrega", icon: "camera" },
-      { text: "Embalagem caprichada e cartão escrito à mão grátis", icon: "sparkles" },
+      { text: "Cartão escrito à mão por conta da casa", icon: "sparkles" },
     ],
-    // P3.2: as quatro objeções de quem chega do anúncio — custo total, prova do
-    // produto, cor disponível e pagamento — respondidas sem exigir um clique, no
-    // topo da vitrine. Título = a promessa que derruba a objeção; corpo = como
-    // ela se cumpre. Copy curta de propósito: a faixa é para escanear, e cada
-    // linha extra empurra a vitrine para baixo no mobile.
-    reassurances: [
-      {
-        icon: "truck",
-        title: "Frete sem surpresa",
-        body: "Calculado pelo seu CEP e informado antes de você fechar.",
-      },
-      {
-        icon: "camera",
-        title: "Foto antes de sair",
-        body: "Você vê o arranjo pronto e libera a entrega.",
-      },
-      {
-        icon: "flower",
-        title: "Cor do dia",
-        body: "Lírios chegam 3× por semana. Mandamos foto do que tem hoje.",
-      },
-      {
-        icon: "card",
-        title: "Pague como preferir",
-        body: "Pix, débito, dinheiro na entrega ou 3× sem juros.",
-      },
-    ],
-    // P1.2: comparação direta entre as duas famílias de lírios logo acima da grade.
-    comparisonStrip: {
-      options: [
+    heroSecondaryCta: { label: "Ver os 6 arranjos", action: "scroll-vitrine" },
+    // Ilustra o tempo "Você aprova a foto", na seção dos quatro tempos. O rótulo
+    // "Exemplo" é o que separa isto de um print real de conversa: sem ele o
+    // bloco vira propaganda enganosa. A foto é a do Arranjo de Mão G, diferente
+    // da do card em destaque da vitrine — repetir a mesma imagem desperdiçaria
+    // as duas.
+    chatExample: {
+      contact: "Plante Uma Flor",
+      label: "Exemplo",
+      bubbles: [
         {
-          name: "Arranjo de Mão",
-          priceRange: "R$ 159,90–289,90",
-          description: "Melhor custo-benefício e presente delicado",
+          text: "Ficou assim. Pode sair pra entrega?",
+          time: "14:07",
+          imageProductId: "arranjo-mao-lirios-g",
+          imageAlt: "Foto de um arranjo de lírios pronto na loja",
         },
-        {
-          name: "Buquê de Lírios",
-          priceRange: "R$ 299,90–459,90",
-          description: "Mais volume, acabamento premium e maior impacto",
-        },
+        { text: "Pode! Ficou lindo", time: "14:08", mine: true },
+        { text: "Perfeito. O cartão vai escrito à mão, como você mandou.", time: "14:08" },
       ],
     },
-    vitrineVisibleCount: 6,
-    // P1.3: os três tamanhos ganham leitura de impacto no card, sem trocar fotos.
-    vitrineShowSize: true,
+    // O horário sai de `lib/urgency.ts`, o mesmo corte que as outras LPs usam.
+    dayStrip: {
+      leadStrong: "Lírios chegam 3× por semana.",
+      lead: "A cor do dia a gente manda por foto.",
+      cutoff: "Pedido até 18h de segunda a sexta (13h no sábado) sai hoje.",
+    },
     navMode: "minimal",
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
@@ -1047,49 +1151,158 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     // precisa acreditar.
     showGoogleReviewsLink: true,
     vitrineCardCta: "Escolher este e comprar no WhatsApp",
+    // "diferenciais-fundidos" e "comofunciona" diziam quase a mesma coisa, uma
+    // embaixo da outra; viram os quatro tempos. O CTA que vivia no "como
+    // funciona" continua existindo dentro deles, com a mesma origem — a página
+    // perde a repetição, não o ponto de conversão.
     sectionOrder: [
       "hero",
-      "guarantee",
+      "daystrip",
       "vitrine",
+      "beats",
       "social",
-      "diferenciais-fundidos",
-      "comofunciona",
       "historia",
       "faq",
       "final",
     ],
+    beats: [
+      {
+        title: "Você escolhe",
+        body: "Passa a vitrine, escolhe o tamanho e chama a gente no WhatsApp.",
+      },
+      {
+        title: "A gente monta",
+        body: "Com a flor que chegou nesta semana. Você diz o recado do cartão.",
+      },
+      {
+        title: "Você aprova a foto",
+        body:
+          "Antes de sair da loja, mandamos a foto real do arranjo pronto. Ele só sai depois do seu ok.",
+        key: true,
+      },
+      {
+        title: "Chega hoje",
+        body:
+          "Entrega própria em Goiânia, Aparecida e Senador Canedo, ou na data que você marcar.",
+      },
+    ],
+    // Sem carrossel: nesta LP a prova é uma citação grande sobre entrega e uma
+    // grade fixa de quatro. Some com o autoplay e com os dois botões de
+    // navegação — só aqui, as outras 16 seguem no carrossel.
+    proofLayout: "quote-grid",
+    storeCaption: "Rua 132, Setor Sul. A entrega sai desta porta, no nosso carro.",
+    historiaCountUp: true,
+    finalCta: {
+      eyebrow: "Leva menos de um minuto",
+      title: "Manda o endereço e a data. A gente cuida do resto.",
+      body:
+        "Quem responde é gente da floricultura, em horário comercial. Você escolhe o arranjo, escreve o recado do cartão e aprova a foto antes de sair.",
+    },
     ctaCopy: {
       hero: "Comprar no WhatsApp",
       como_funciona: "Comprar no WhatsApp",
       faq: "Quero encomendar meus lírios",
       sticky: "Comprar no WhatsApp",
       final: "Quero encomendar",
-      guarantee: "Comprar com garantia no WhatsApp",
     },
-    // sffart-gamer é a única avaliação que fala de perfume ("cheirosas") e não
-    // cita rosas — é o destaque coerente numa página de lírios.
-    testimonialOrder: ["sffart-gamer", "taina-santos", "hellen-araujo"],
+    // Numa LP fria o medo é a entrega, não a simpatia do atendimento: quem abre
+    // a prova é a avaliação que fala de dia e hora combinados.
+    testimonialOrder: [
+      "marcos-vinicius",
+      "melissa-pimentel",
+      "sffart-gamer",
+      "hellen-araujo",
+      "taina-santos",
+    ],
     vitrineTitle: "Buquês de lírios",
     vitrineSubtitle: "Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.",
-    // Rosa vermelha e flor-do-campo cortavam a leitura de preço dos lírios no
-    // meio da grade; ficam no fim, rotuladas como alternativa.
+    // Só lírios: a rosa vermelha e a flor-do-campo saíram: numa vitrine de seis
+    // cards, dois fora de tema custam duas vagas e nenhuma delas converte lírio.
     vitrineProductIds: [
-      "arranjo-mao-lirios-p",
       "arranjo-mao-lirios-m",
+      "buque-lirios-m",
+      "arranjo-mao-lirios-p",
       "arranjo-mao-lirios-g",
       "buque-lirios-p",
-      "buque-lirios-m",
       "buque-lirios-g",
-      "buque-rosas-astromelias",
-      "buque-flor-campo-m",
     ],
     vitrineHighlightId: "arranjo-mao-lirios-m",
-    vitrineProductNotes: {
-      "buque-rosas-astromelias": "Se quiser variar",
-      "buque-flor-campo-m": "Se quiser variar",
+    vitrinePairId: "buque-lirios-m",
+    // Seis produtos numa grade de 6 colunas deixam o sexto card órfão, com
+    // quatro colunas vazias ao lado. Em 12, destaque e par ocupam `span 6` na
+    // primeira linha e os quatro restantes `span 3` na segunda: duas linhas
+    // cheias. Ver o bloco [data-slug="lirios-apt"] em theme.css.
+    vitrineGrid: "twelve-col",
+    vitrineIntroLines: [
+      {
+        name: "Arranjo de mão",
+        body: "Papel jornal artesanal, formato de buquê de mão.",
+        priceRange: "R$ 159,90 a R$ 289,90.",
+      },
+      {
+        name: "Buquê",
+        body: "Papel artesanal com fita de cetim, mais volume e acabamento.",
+        priceRange: "R$ 299,90 a R$ 459,90.",
+      },
+    ],
+    // A linha mais valiosa do card era "P · ~35cm · papel jornal artesanal".
+    // Isso é ficha técnica: diz o que o arranjo é, não o que ele resolve. A
+    // ficha desce para baixo do preço, fina, e o topo do corpo fica com isto.
+    vitrineProductPitch: {
+      "arranjo-mao-lirios-m":
+        "O que mais sai. Volume suficiente pra aparecer na foto e no rosto de quem recebe.",
+      "buque-lirios-m": "O presente de data marcada. Chega e ocupa o ambiente inteiro.",
+      "arranjo-mao-lirios-p": "O menor. Cabe na mesa da cozinha e perfuma a sala inteira.",
+      "arranjo-mao-lirios-g":
+        "Meio metro de flor, ainda em papel jornal. Pra quando o recado é grande.",
+      "buque-lirios-p": "Acabamento de buquê e fita de cetim, do tamanho de um abraço.",
+      "buque-lirios-g": "Sessenta centímetros. É o maior que a gente monta.",
     },
-    vitrineFaqTitle: "Dúvidas sobre lírios",
-    vitrineFaq: [
+    // "Custo-benefício" e "Premium" descrevem a loja; "Menor preço" e "O maior"
+    // descrevem o produto na frente de quem está escolhendo tamanho.
+    productBadgeLabels: {
+      "custo-beneficio": "Menor preço",
+      premium: "O maior",
+    },
+    // A garantia sai da seção própria e cola embaixo dos preços, que é onde a
+    // dúvida aparece. Sem valor de frete: os números vivem só no FAQ.
+    pledge: {
+      lead: "Não gostou? Refazemos, trocamos ou devolvemos no mesmo dia.",
+      body:
+        "E o frete varia conforme o bairro, confirmado no WhatsApp antes de você fechar.",
+    },
+    // Um FAQ só, na ordem em que as dúvidas travam a compra — frete primeiro,
+    // porque "varia conforme o bairro" lê-se como "pode ser caro". As perguntas
+    // do COMMON_FAQ que valiam aqui já estão na lista (foto, pagamento,
+    // agendamento), então `faqUseCommon` fica em false para não duplicá-las.
+    faqUseCommon: false,
+    faqJsonLd: true,
+    faq: [
+      {
+        question: "Quanto vou pagar de frete?",
+        bullets: DELIVERY_FEES,
+        defaultOpen: true,
+        answer:
+          "Manda o endereço ou o CEP no WhatsApp que a gente confirma o valor exato antes de você fechar. O preço que você fecha é o preço final.",
+      },
+      {
+        question: "Ainda dá tempo de receber hoje?",
+        answer:
+          "Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo. Passou do horário, a gente já agenda para a próxima data que você escolher.",
+      },
+      {
+        // Fusão de "O buquê vai igual à foto?" com "Vocês enviam foto antes de
+        // entregar?" — diziam a mesma coisa em duas perguntas — e a garantia
+        // entra aqui em vez de virar seção própria.
+        question: "O buquê vai igual à foto do site?",
+        answer:
+          "Vai. E pra você ter certeza, antes de sair pra entrega a gente manda uma foto real do arranjo pronto. Ele só sai depois que você aprovar. Se não sair como combinado, refazemos, trocamos ou devolvemos no mesmo dia.",
+      },
+      {
+        question: "Como posso pagar?",
+        answer:
+          "Pix, cartão de crédito em até 3x sem juros, débito ou dinheiro na hora da entrega. Não precisa pagar antes se você não quiser. A gente acerta tudo no WhatsApp.",
+      },
       {
         question: "Lírios duram menos que rosas?",
         answer:
@@ -1105,28 +1318,19 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
         answer:
           "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
       },
-    ],
-    // As três perguntas sobre o lírio em si subiram para `vitrineFaq`, coladas na
-    // grade. O que sobra aqui são as objeções de custo e logística (P3.3) — elas
-    // renderizam antes do COMMON_FAQ, ver FaqSection.
-    faq: [
       {
-        question: "Quanto vou pagar de frete?",
+        question: "Posso agendar para outro dia?",
         answer:
-          "O frete varia conforme o bairro. Você manda o endereço ou o CEP no WhatsApp e a gente informa o valor exato antes de você confirmar o pedido — o preço que você fecha é o preço final.",
-      },
-      {
-        question: "Ainda dá tempo de receber hoje?",
-        answer:
-          "Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo. Passou do horário, a gente já agenda para a próxima data que você escolher.",
-      },
-      {
-        question: "Preciso pagar antes da entrega?",
-        answer:
-          "Não obrigatoriamente. Dá para pagar por Pix ou cartão antes, ou em dinheiro/débito na hora da entrega. A gente combina no WhatsApp.",
+          "Pode sim. Você diz a data no WhatsApp e a gente já bloqueia ali na agenda. Em datas comemorativas a gente confirma o horário com antecedência pra não dar nenhum aperto.",
       },
     ],
-    nossaHistoria: DEFAULT_NOSSA_HISTORIA,
+    nossaHistoria: {
+      ...DEFAULT_NOSSA_HISTORIA,
+      paragraphs: [
+        DEFAULT_NOSSA_HISTORIA.paragraphs[0],
+        "Hoje a gente recebe flor direto do produtor três vezes por semana e monta na hora. Quem responde no WhatsApp trabalha na floricultura, não é robô.",
+      ],
+    },
     pageTitle: "Lírios a partir de R$ 159,90 | Plante Uma Flor",
     pageDescription:
       "Lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 159,90, com cartão escrito à mão por conta da casa.",

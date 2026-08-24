@@ -19,7 +19,19 @@ describe("entry-server render() under Node (no window)", () => {
   it.each(PRERENDERED_SLUGS)("%s contains the configured h1 headline", (slug) => {
     const html = render(slug);
     const config = LP_CONFIGS[slug];
-    expect(html).toContain(`<h1 class="ad-lp-hero__title">${config.headline}</h1>`);
+    // O h1 aceita marcação inline (assertContentPresent, em
+    // scripts/prerender-ad-lps.mjs, exige texto e não um nó de texto único), mas
+    // nenhuma LP usa hoje: o que se cobra aqui é a headline configurada.
+    const heading = html.match(/<h1 class="ad-lp-hero__title">([\s\S]*?)<\/h1>/);
+    expect(heading).not.toBeNull();
+    expect(heading?.[1].replace(/<[^>]+>/g, "")).toBe(config.headline);
+  });
+
+  it("leads the /lirios-apt hero with the price the ad promises", () => {
+    const html = render("lirios-apt");
+    expect(html).toContain('<h1 class="ad-lp-hero__title">Lírios a partir de R$ 159,90.</h1>');
+    // Sem chip acima do h1: ele só repetia o mesmo preço do título.
+    expect(html).not.toContain("ad-lp-hero__anchor");
   });
 
   it("lirios-apt hero picture matches the AVIF/WebP preload contract", () => {
@@ -31,6 +43,9 @@ describe("entry-server render() under Node (no window)", () => {
     expect(heroSources).toHaveLength(2);
     expect(heroSources[0][1]).toBe("image/avif");
     expect(heroSources[0][2]).toMatch(/480w.*900w/);
+    // A foto do hero é fundo de tela cheia. O mesmo valor vive em HERO_SIZES
+    // (vite.config.ts) e é conferido contra o preload por
+    // assertHeroPreloadMatchesPicture.
     expect(heroSources[0][3]).toBe("100vw");
     expect(heroSources[1][1]).toBe("image/webp");
 
