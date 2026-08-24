@@ -60,13 +60,6 @@ export const FALLBACK_REVIEWS: GoogleReview[] = [
       "Extremamente satisfeita, ótimo atendimento. As flores, mais que perfeitas! Obrigada pelo trabalho excelente!!",
   },
   {
-    // TODO: este texto diverge de public/lpb/google-reviews.json, que traz a
-    // avaliação inteira ("…com certeza vou comprar mais vezes. Flores lindas!!").
-    // O fallback é o que aparece no HTML pré-renderizado; depois da hidratação
-    // useGoogleReviews() troca pelo JSON, então o card muda de altura. Alinhar
-    // os dois é a correção certa, mas FALLBACK_REVIEWS é compartilhado e
-    // /dia-dos-namorados também exibe esta avaliação — fora do escopo do
-    // redesign da /lirios-apt. Mesma coisa vale para "sffart-gamer" abaixo.
     reviewId: "melissa-pimentel",
     authorName: "Melissa Pimentel",
     authorPhotoUrl: null,
@@ -74,11 +67,9 @@ export const FALLBACK_REVIEWS: GoogleReview[] = [
     relativeTime: "16 de abr. de 2025",
     reviewCountLabel: "3 avaliações",
     comment:
-      "Conversei com a empresa por WhatsApp e me responderam muito rápido. Funcionário Caio me atendeu, hiper simpático e paciente.",
+      "Conversei com a empresa por WhatsApp e me responderam muito rápido! Funcionário Caio me atendeu, hiper simpático e paciente, com certeza vou comprar mais vezes. Flores lindas!!",
   },
   {
-    // Avaliação real do Google (google-reviews.json). Fica no fallback porque é a
-    // única que fala de perfume — é o destaque da /lirios-apt.
     reviewId: "sffart-gamer",
     authorName: "sffart gamer",
     authorPhotoUrl: null,

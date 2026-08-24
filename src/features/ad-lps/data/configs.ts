@@ -1,5 +1,6 @@
 import { formatBrl, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
-import { DELIVERY_FEES } from "@/lib/business-info";
+import { LILY_PRODUCTS, lilyFamilyProducts } from "@/data/lily-products";
+import { DELIVERY_FEE_GUIDANCE, DELIVERY_FEES } from "@/lib/business-info";
 
 export type Accent = "rose" | "lily" | "sun" | "urgent" | "classic";
 export type HeroMode = "overlay" | "standalone";
@@ -77,6 +78,28 @@ export type GuaranteeContent = {
   ctaLabel: string;
 };
 
+export type DeliveryInfoContent = {
+  summary: string;
+  intro: string;
+  items: Array<{ title: string; body: string }>;
+};
+
+export type IntegratedTrustContent = {
+  title: string;
+  subtitle?: string;
+  items: Array<{
+    icon: "flower" | "camera" | "card" | "message";
+    title: string;
+    body: string;
+  }>;
+  guarantee: GuaranteeContent;
+};
+
+export type FinalTrustItem = {
+  icon: "star" | "camera" | "message";
+  text: string;
+};
+
 /**
  * Chaves de seção usadas por `LPConfig.sectionOrder`. `diferenciais` é a dupla
  * original ("Por que somos diferentes"); `diferenciais-fundidos` é o bloco único
@@ -84,7 +107,7 @@ export type GuaranteeContent = {
  */
 export type SectionKey =
   | "hero"
-  | "daystrip"
+  | "delivery-info"
   | "beats"
   | "guarantee"
   | "vitrine"
@@ -95,6 +118,7 @@ export type SectionKey =
   | "historia"
   | "bonus"
   | "faq"
+  | "trust"
   | "final";
 
 /**
@@ -130,6 +154,8 @@ export type LPConfig = {
   vitrineProductIds: string[];
   vitrineHighlightId?: string;
   vitrineVisibleCount?: number;
+  /** Revelação progressiva nativa no mobile; no desktop todos entram na mesma grade. */
+  vitrineMobileProgressive?: { initialCount: number; expandLabel: string };
   scarcityMessage?: string;
   faq: FAQItem[];
   nossaHistoria: NossaHistoriaContent;
@@ -139,6 +165,10 @@ export type LPConfig = {
   navMode?: "full" | "minimal";
   /** Texto do CTA dentro do card de produto. Default: "Quero encomendar pelo WhatsApp". */
   vitrineCardCta?: string;
+  /** Default mantém o card inteiro como link; "button" cria CTA próprio no corpo. */
+  vitrineCardCtaMode?: "card-link" | "button";
+  /** Override visual por rota. Preço e mensagem continuam vindo do catálogo. */
+  productImageOverrides?: Record<string, string>;
   /** Default: true. Em false, os depoimentos saem sem avatar de iniciais. */
   showReviewAvatars?: boolean;
   /** Ordem das seções da página. Default: `DEFAULT_SECTION_ORDER`. */
@@ -212,20 +242,7 @@ export type LPConfig = {
    * produto por faixa de preço. Linhas, não cards: card dentro de card empurra
    * a grade para baixo sem responder nada.
    */
-  vitrineIntroLines?: { name: string; body: string; priceRange: string }[];
-  /** Garantia colada abaixo da grade, no lugar da seção `guarantee`. */
-  pledge?: { lead: string; body: string };
-  /**
-   * Card que divide a primeira linha com o destaque na grade de 12 colunas.
-   * Ganha a mesma largura e o mesmo `sizes` do destaque.
-   */
-  vitrinePairId?: string;
-  /**
-   * Grade da vitrine. Default: 2 colunas no mobile, 3 a partir de 720px e 4 a
-   * partir de 1024px. "twelve-col" é a grade de 6 produtos com destaque e par
-   * em `span 6` — ver o bloco do slug em theme.css.
-   */
-  vitrineGrid?: "twelve-col";
+  vitrineIntroLines?: { name: string; body: string; productIds: string[] }[];
   /**
    * Card de conversa que ilustra o tempo destacado da seção `beats`. Fica fora
    * da dobra de propósito: o anúncio promete preço, e a promessa da foto se
@@ -253,8 +270,14 @@ export type LPConfig = {
   historiaCountUp?: boolean;
   /** Copy do fecho. Default: os textos fixos de FinalCtaSection. */
   finalCta?: { eyebrow?: string; title: string; body: string };
-  /** Faixa do dia (`sectionOrder: [... "daystrip" ...]`). */
-  dayStrip?: DayStripContent;
+  /** Informações de entrega em `<details>`, funcionais também sem JavaScript. */
+  deliveryInfo?: DeliveryInfoContent;
+  /** Quatro diferenciais e garantia em um único bloco. */
+  integratedTrust?: IntegratedTrustContent;
+  /** Provas compactas renderizadas dentro do CTA final. */
+  finalTrustItems?: FinalTrustItem[];
+  /** No mobile, barra e CTA fixo só aparecem depois que o hero deixa a tela. */
+  mobileChromeAfterHero?: boolean;
   /**
    * Ação do CTA principal do hero. Default: "price-range" (abre o seletor de
    * faixa de preço). "scroll-vitrine" rola até a vitrine (#vitrine) — também
@@ -325,12 +348,6 @@ export type ChatExample = {
  * no SSR; dentro da janela de corte o cliente a substitui pelo tempo restante
  * (ver DayStripSection).
  */
-export type DayStripContent = {
-  leadStrong: string;
-  lead: string;
-  cutoff: string;
-};
-
 export type Reassurance = {
   icon: "truck" | "camera" | "flower" | "card";
   title: string;
@@ -345,7 +362,7 @@ export const GLOBAL_CONFIG = {
   brandName: "Plante Uma Flor",
   brandTagline: "Floricultura",
   googleRating: "4.9",
-  googleReviewsCount: "184",
+  googleReviewsCount: "203",
   cityRegion: "Goiânia e região metropolitana",
 } as const;
 
@@ -431,6 +448,33 @@ export const GUARANTEE: GuaranteeContent = {
     "Antes de sair da loja, mandamos a foto real do arranjo pronto. Se algo não sair como combinado, resolvemos no mesmo dia pelo WhatsApp.",
   ctaLabel: "Ver detalhes da garantia",
 };
+
+const LILY_HEIGHTS: Record<string, number> = {
+  "arranjo:P": 35,
+  "arranjo:M": 42,
+  "arranjo:G": 50,
+  "buque:P": 42,
+  "buque:M": 50,
+  "buque:G": 60,
+};
+
+const LILY_PRODUCT_CONFIGS = Object.fromEntries(
+  LILY_PRODUCTS.map((product) => [
+    product.id,
+    {
+      ...product,
+      category: "lirios" as const,
+      details: {
+        size: product.size,
+        heightCm: LILY_HEIGHTS[`${product.family}:${product.size}`],
+        includes:
+          product.family === "arranjo"
+            ? ["Papel jornal artesanal", "Cartão à mão"]
+            : ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
+      },
+    },
+  ]),
+) as Record<string, Product>;
 
 export const PRODUCTS: Record<string, Product> = {
   "arranjo-mao-rosas": {
@@ -538,91 +582,7 @@ export const PRODUCTS: Record<string, Product> = {
       includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
     },
   },
-  "arranjo-mao-lirios-p": {
-    id: "arranjo-mao-lirios-p",
-    storeSlug: "arranjo-mao-lirios",
-    name: "Arranjo de Mão Lírios P",
-    priceBrl: "R$ 159,90",
-    category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/38-1223af3425b904cf2917739779596922-1024-1024.webp",
-    waText: "Oi! Quero o Arranjo de Mão Lírios P (R$ 159,90).",
-    details: {
-      size: "P",
-      heightCm: 35,
-      includes: ["Papel jornal artesanal", "Cartão à mão"],
-    },
-  },
-  "arranjo-mao-lirios-m": {
-    id: "arranjo-mao-lirios-m",
-    storeSlug: "arranjo-mao-lirios",
-    name: "Arranjo de Mão Lírios M",
-    priceBrl: "R$ 229,90",
-    category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
-    waText: "Oi! Quero o Arranjo de Mão Lírios M (R$ 229,90).",
-    details: {
-      size: "M",
-      heightCm: 42,
-      includes: ["Papel jornal artesanal", "Cartão à mão"],
-    },
-  },
-  "arranjo-mao-lirios-g": {
-    id: "arranjo-mao-lirios-g",
-    storeSlug: "arranjo-mao-lirios",
-    name: "Arranjo de Mão Lírios G",
-    priceBrl: "R$ 289,90",
-    category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp",
-    waText: "Oi! Quero o Arranjo de Mão Lírios G (R$ 289,90).",
-    details: {
-      size: "G",
-      heightCm: 50,
-      includes: ["Papel jornal artesanal", "Cartão à mão"],
-    },
-  },
-  "buque-lirios-m": {
-    id: "buque-lirios-m",
-    storeSlug: "buque-lirios",
-    name: "Buquê de Lírios M",
-    priceBrl: "R$ 399,90",
-    category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-640-0.webp",
-    waText: "Oi! Quero o Buquê de Lírios M (R$ 399,90).",
-    details: {
-      size: "M",
-      heightCm: 50,
-      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
-    },
-  },
-  "buque-lirios-p": {
-    id: "buque-lirios-p",
-    storeSlug: "buque-lirios",
-    name: "Buquê de Lírios P",
-    priceBrl: "R$ 299,90",
-    category: "lirios",
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/8-d0ddc261ebbf23879a17739780251538-640-0.webp",
-    waText: "Oi! Quero o Buquê de Lírios P (R$ 299,90).",
-    details: {
-      size: "P",
-      heightCm: 42,
-      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
-    },
-  },
-  "buque-lirios-g": {
-    id: "buque-lirios-g",
-    storeSlug: "buque-lirios",
-    name: "Buquê de Lírios G",
-    priceBrl: "R$ 459,90",
-    category: "lirios",
-    // P1.4: foto própria do tamanho G — antes era a mesma foto do M.
-    image: "https://acdn-us.mitiendanube.com/stores/006/718/510/products/img_1193-c66f40f582ce89780617745668131555-640-0.webp",
-    waText: "Oi! Quero o Buquê de Lírios G (R$ 459,90).",
-    details: {
-      size: "G",
-      heightCm: 60,
-      includes: ["Papel artesanal", "Fita de cetim", "Cartão à mão"],
-    },
-  },
+  ...LILY_PRODUCT_CONFIGS,
   "girassol-avulso": {
     id: "girassol-avulso",
     storeSlug: "girassol-avulso",
@@ -782,6 +742,18 @@ export function inferProductBadge(
     return "premium";
   }
   return undefined;
+}
+
+const lilyArrangements = lilyFamilyProducts("arranjo");
+const lilyBouquets = lilyFamilyProducts("buque");
+const lilyProductIds = [...lilyArrangements, ...lilyBouquets].map((product) => product.id);
+const lilyMinPrice = formatBrl(
+  Math.min(...LILY_PRODUCTS.map((product) => parsePriceBrl(product.priceBrl))),
+);
+
+function lilyFamilyRange(products: typeof LILY_PRODUCTS) {
+  const prices = products.map((product) => parsePriceBrl(product.priceBrl));
+  return `${formatBrl(Math.min(...prices))} a ${formatBrl(Math.max(...prices))}`;
 }
 
 export const LP_CONFIGS: Record<string, LPConfig> = {
@@ -1098,12 +1070,10 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     // fica no olho (`priceAnchor`) e o h1 carrega o que nenhuma floricultura de
     // Goiânia copia numa tarde. Antes o preço aparecia três vezes acima da
     // primeira prova; agora aparece uma.
-    headline: "Lírios a partir de R$ 159,90.",
+    headline: `Lírios a partir de ${lilyMinPrice}.`,
     subheadline:
-      "Frescos do produtor e montados na hora aqui no Setor Sul. Você aprova a foto antes da entrega e o cartão escrito à mão vai por conta da casa.",
-    // Sem `priceAnchor`: o chip acima do h1 repetia o mesmo preço do título, e o
-    // anúncio promete o preço — quem chega precisa reconhecê-lo uma vez, grande,
-    // não duas vezes empilhadas.
+      "Recebemos flores frescas do produtor e montamos cada pedido no Setor Sul. Você aprova a foto antes da entrega e recebe o cartão escrito à mão.",
+    priceAnchor: `A partir de ${lilyMinPrice}`,
     // Sem `urgencyWindow`: a faixa de prazo ficava entre os CTAs e os selos,
     // num box escuro que disputava atenção com o botão do WhatsApp logo acima.
     // O prazo continua dito no primeiro selo do hero e respondido por inteiro no
@@ -1116,7 +1086,7 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     heroBadges: [
       { text: "Entrega hoje em Goiânia, Aparecida e Senador Canedo", icon: "truck" },
       { text: "Você aprova a foto real antes da entrega", icon: "camera" },
-      { text: "Cartão escrito à mão por conta da casa", icon: "sparkles" },
+      { text: "Cartão escrito à mão incluído", icon: "sparkles" },
     ],
     heroSecondaryCta: { label: "Ver os 6 arranjos", action: "scroll-vitrine" },
     // Ilustra o tempo "Você aprova a foto", na seção dos quatro tempos. O rótulo
@@ -1129,61 +1099,82 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       label: "Exemplo",
       bubbles: [
         {
-          text: "Ficou assim. Pode sair pra entrega?",
+          text: "Ficou assim. Podemos sair para a entrega?",
           time: "14:07",
           imageProductId: "arranjo-mao-lirios-g",
           imageAlt: "Foto de um arranjo de lírios pronto na loja",
         },
         { text: "Pode! Ficou lindo", time: "14:08", mine: true },
-        { text: "Perfeito. O cartão vai escrito à mão, como você mandou.", time: "14:08" },
+        { text: "Perfeito. Escrevemos o cartão à mão como você pediu.", time: "14:08" },
       ],
     },
-    // O horário sai de `lib/urgency.ts`, o mesmo corte que as outras LPs usam.
-    dayStrip: {
-      leadStrong: "Lírios chegam 3× por semana.",
-      lead: "A cor do dia a gente manda por foto.",
-      cutoff: "Pedido até 18h de segunda a sexta (13h no sábado) sai hoje.",
+    deliveryInfo: {
+      summary: "Informações de entrega",
+      intro: "Entregamos em Goiânia, Aparecida de Goiânia e Senador Canedo.",
+      items: [
+        {
+          title: "Horário de corte",
+          body: "Pedidos fechados até 18h de segunda a sexta e até 13h no sábado podem sair no mesmo dia.",
+        },
+        {
+          title: "Aprovação antes do envio",
+          body: "Enviamos a foto do arranjo pronto pelo WhatsApp e aguardamos sua aprovação.",
+        },
+        {
+          title: "Cartão personalizado",
+          body: "Você envia a mensagem e escrevemos o cartão à mão, sem custo adicional.",
+        },
+        {
+          title: "Frete confirmado antes da compra",
+          body: `${DELIVERY_FEE_GUIDANCE} Confirmamos o valor exato pelo endereço ou CEP antes de fechar o pedido.`,
+        },
+      ],
     },
     navMode: "minimal",
+    mobileChromeAfterHero: true,
     showReviewAvatars: false,
     reviewSealText: "Avaliação pública no Google",
     // P3.4: nota que a pessoa consegue conferir vale mais que nota em que ela
     // precisa acreditar.
     showGoogleReviewsLink: true,
-    vitrineCardCta: "Escolher este e comprar no WhatsApp",
+    vitrineCardCta: "Comprar este no WhatsApp",
+    vitrineCardCtaMode: "button",
+    vitrineMobileProgressive: { initialCount: 3, expandLabel: "Ver os 3 buquês" },
+    productImageOverrides: {},
     // "diferenciais-fundidos" e "comofunciona" diziam quase a mesma coisa, uma
     // embaixo da outra; viram os quatro tempos. O CTA que vivia no "como
     // funciona" continua existindo dentro deles, com a mesma origem — a página
     // perde a repetição, não o ponto de conversão.
     sectionOrder: [
       "hero",
-      "daystrip",
+      "delivery-info",
       "vitrine",
       "beats",
       "social",
       "historia",
       "faq",
+      "trust",
       "final",
     ],
     beats: [
       {
         title: "Você escolhe",
-        body: "Passa a vitrine, escolhe o tamanho e chama a gente no WhatsApp.",
+        body: "Veja a vitrine, escolha o tamanho e fale conosco pelo WhatsApp.",
       },
       {
-        title: "A gente monta",
-        body: "Com a flor que chegou nesta semana. Você diz o recado do cartão.",
+        title: "Montamos seu pedido",
+        body: "Usamos as flores recebidas nesta semana e escrevemos o recado do cartão.",
       },
       {
         title: "Você aprova a foto",
         body:
-          "Antes de sair da loja, mandamos a foto real do arranjo pronto. Ele só sai depois do seu ok.",
+          "Antes de sair da loja, enviamos a foto real do arranjo pronto. Ele só sai depois da sua aprovação.",
         key: true,
       },
       {
         title: "Chega hoje",
         body:
-          "Entrega própria em Goiânia, Aparecida e Senador Canedo, ou na data que você marcar.",
+          "Fazemos a entrega em Goiânia, Aparecida e Senador Canedo ou na data agendada.",
       },
     ],
     // Sem carrossel: nesta LP a prova é uma citação grande sobre entrega e uma
@@ -1194,55 +1185,43 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     historiaCountUp: true,
     finalCta: {
       eyebrow: "Leva menos de um minuto",
-      title: "Manda o endereço e a data. A gente cuida do resto.",
+      title: "Envie o endereço e a data. Cuidamos do restante.",
       body:
-        "Quem responde é gente da floricultura, em horário comercial. Você escolhe o arranjo, escreve o recado do cartão e aprova a foto antes de sair.",
+        "Nossa equipe atende no WhatsApp em horário comercial. Você escolhe o arranjo, envia o recado do cartão e aprova a foto antes da entrega.",
     },
     ctaCopy: {
       hero: "Comprar no WhatsApp",
       como_funciona: "Comprar no WhatsApp",
-      faq: "Quero encomendar meus lírios",
+      faq: "Comprar no WhatsApp",
       sticky: "Comprar no WhatsApp",
-      final: "Quero encomendar",
+      final: "Comprar no WhatsApp",
+      guarantee: "Comprar no WhatsApp",
     },
     // Numa LP fria o medo é a entrega, não a simpatia do atendimento: quem abre
     // a prova é a avaliação que fala de dia e hora combinados.
     testimonialOrder: [
       "marcos-vinicius",
       "melissa-pimentel",
-      "sffart-gamer",
       "hellen-araujo",
       "taina-santos",
+      "fabiana-moraes",
     ],
-    vitrineTitle: "Buquês de lírios",
+    vitrineTitle: "Lírios para seu amor",
     vitrineSubtitle: "Perfume marcante, presença única. Daquelas flores que se sentem antes mesmo de ver.",
     // Só lírios: a rosa vermelha e a flor-do-campo saíram: numa vitrine de seis
     // cards, dois fora de tema custam duas vagas e nenhuma delas converte lírio.
-    vitrineProductIds: [
-      "arranjo-mao-lirios-m",
-      "buque-lirios-m",
-      "arranjo-mao-lirios-p",
-      "arranjo-mao-lirios-g",
-      "buque-lirios-p",
-      "buque-lirios-g",
-    ],
+    vitrineProductIds: lilyProductIds,
     vitrineHighlightId: "arranjo-mao-lirios-m",
-    vitrinePairId: "buque-lirios-m",
-    // Seis produtos numa grade de 6 colunas deixam o sexto card órfão, com
-    // quatro colunas vazias ao lado. Em 12, destaque e par ocupam `span 6` na
-    // primeira linha e os quatro restantes `span 3` na segunda: duas linhas
-    // cheias. Ver o bloco [data-slug="lirios-apt"] em theme.css.
-    vitrineGrid: "twelve-col",
     vitrineIntroLines: [
       {
         name: "Arranjo de mão",
         body: "Papel jornal artesanal, formato de buquê de mão.",
-        priceRange: "R$ 159,90 a R$ 289,90.",
+        productIds: lilyArrangements.map((product) => product.id),
       },
       {
         name: "Buquê",
         body: "Papel artesanal com fita de cetim, mais volume e acabamento.",
-        priceRange: "R$ 299,90 a R$ 459,90.",
+        productIds: lilyBouquets.map((product) => product.id),
       },
     ],
     // A linha mais valiosa do card era "P · ~35cm · papel jornal artesanal".
@@ -1250,13 +1229,13 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
     // ficha desce para baixo do preço, fina, e o topo do corpo fica com isto.
     vitrineProductPitch: {
       "arranjo-mao-lirios-m":
-        "O que mais sai. Volume suficiente pra aparecer na foto e no rosto de quem recebe.",
-      "buque-lirios-m": "O presente de data marcada. Chega e ocupa o ambiente inteiro.",
-      "arranjo-mao-lirios-p": "O menor. Cabe na mesa da cozinha e perfuma a sala inteira.",
+        "O mais vendido, com volume para marcar a foto e a lembrança de quem recebe.",
+      "buque-lirios-m": "Uma escolha marcante para datas especiais e ambientes amplos.",
+      "arranjo-mao-lirios-p": "Compacto, ideal para mesa, cabeceira ou escritório.",
       "arranjo-mao-lirios-g":
-        "Meio metro de flor, ainda em papel jornal. Pra quando o recado é grande.",
-      "buque-lirios-p": "Acabamento de buquê e fita de cetim, do tamanho de um abraço.",
-      "buque-lirios-g": "Sessenta centímetros. É o maior que a gente monta.",
+        "Meio metro de flores em papel jornal artesanal para um gesto de grande presença.",
+      "buque-lirios-p": "Acabamento de buquê e fita de cetim em um tamanho delicado.",
+      "buque-lirios-g": "Sessenta centímetros e o maior volume da nossa seleção.",
     },
     // "Custo-benefício" e "Premium" descrevem a loja; "Menor preço" e "O maior"
     // descrevem o produto na frente de quem está escolhendo tamanho.
@@ -1264,13 +1243,43 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
       "custo-beneficio": "Menor preço",
       premium: "O maior",
     },
-    // A garantia sai da seção própria e cola embaixo dos preços, que é onde a
-    // dúvida aparece. Sem valor de frete: os números vivem só no FAQ.
-    pledge: {
-      lead: "Não gostou? Refazemos, trocamos ou devolvemos no mesmo dia.",
-      body:
-        "E o frete varia conforme o bairro, confirmado no WhatsApp antes de você fechar.",
+    integratedTrust: {
+      title: "Cuidado em cada etapa",
+      subtitle: "Da escolha à entrega, você acompanha o pedido com transparência.",
+      items: [
+        {
+          icon: "flower",
+          title: "Flores direto do produtor",
+          body: "Recebemos lírios frescos três vezes por semana e montamos cada pedido na loja.",
+        },
+        {
+          icon: "camera",
+          title: "Foto para aprovação",
+          body: "Você vê o arranjo pronto e aprova pelo WhatsApp antes da entrega.",
+        },
+        {
+          icon: "card",
+          title: "Cartão escrito à mão",
+          body: "Sua mensagem acompanha o presente sem custo adicional.",
+        },
+        {
+          icon: "message",
+          title: "Atendimento da floricultura",
+          body: "Quem responde trabalha na loja e conhece os produtos disponíveis.",
+        },
+      ],
+      guarantee: {
+        badge: "Garantia Plante Uma Flor",
+        title: "Você aprova antes de enviarmos.",
+        body: "Se o arranjo não sair como combinado, refazemos, trocamos ou devolvemos o valor no mesmo dia.",
+        ctaLabel: "Comprar no WhatsApp",
+      },
     },
+    finalTrustItems: [
+      { icon: "star", text: "4,9 no Google" },
+      { icon: "camera", text: "Foto para aprovação" },
+      { icon: "message", text: "Atendimento pela floricultura" },
+    ],
     // Um FAQ só, na ordem em que as dúvidas travam a compra — frete primeiro,
     // porque "varia conforme o bairro" lê-se como "pode ser caro". As perguntas
     // do COMMON_FAQ que valiam aqui já estão na lista (foto, pagamento,
@@ -1283,12 +1292,12 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
         bullets: DELIVERY_FEES,
         defaultOpen: true,
         answer:
-          "Manda o endereço ou o CEP no WhatsApp que a gente confirma o valor exato antes de você fechar. O preço que você fecha é o preço final.",
+          `${DELIVERY_FEE_GUIDANCE} Envie o endereço ou CEP no WhatsApp para confirmarmos o valor exato e o total antes do pedido.`,
       },
       {
         question: "Ainda dá tempo de receber hoje?",
         answer:
-          "Se você fechar até as 18h de segunda a sexta (ou até as 13h no sábado), entregamos hoje em Goiânia, Aparecida e Senador Canedo. Passou do horário, a gente já agenda para a próxima data que você escolher.",
+          "Pedidos fechados até 18h de segunda a sexta ou até 13h no sábado podem ser entregues no mesmo dia em Goiânia, Aparecida e Senador Canedo. Depois do corte, agendamos a próxima data disponível.",
       },
       {
         // Fusão de "O buquê vai igual à foto?" com "Vocês enviam foto antes de
@@ -1296,44 +1305,49 @@ export const LP_CONFIGS: Record<string, LPConfig> = {
         // entra aqui em vez de virar seção própria.
         question: "O buquê vai igual à foto do site?",
         answer:
-          "Vai. E pra você ter certeza, antes de sair pra entrega a gente manda uma foto real do arranjo pronto. Ele só sai depois que você aprovar. Se não sair como combinado, refazemos, trocamos ou devolvemos no mesmo dia.",
+          "Antes da entrega, enviamos uma foto real do arranjo pronto. Ele só sai depois da sua aprovação. Se não sair como combinado, refazemos, trocamos ou devolvemos o valor no mesmo dia.",
       },
       {
         question: "Como posso pagar?",
         answer:
-          "Pix, cartão de crédito em até 3x sem juros, débito ou dinheiro na hora da entrega. Não precisa pagar antes se você não quiser. A gente acerta tudo no WhatsApp.",
+          "Aceitamos Pix, cartão de crédito em até 3x sem juros, débito ou dinheiro na entrega. Confirmamos a forma de pagamento pelo WhatsApp.",
       },
       {
         question: "Lírios duram menos que rosas?",
         answer:
-          "Não. Com cuidado básico, lírios duram de 7 a 10 dias bonitos. A gente já manda as dicas de conservação junto com o buquê.",
+          "Não. Com cuidados básicos, os lírios permanecem bonitos de 7 a 10 dias. Enviamos as orientações de conservação com o buquê.",
       },
       {
         question: "Tem outras cores além de rosa?",
         answer:
-          "Tem sim, depende do que chegou no dia. Pergunta pra gente no WhatsApp que mando foto na hora.",
+          "A disponibilidade depende das flores recebidas no dia. Fale conosco pelo WhatsApp para ver fotos das cores disponíveis.",
       },
       {
         question: "O perfume é forte mesmo?",
         answer:
-          "É marcante. É uma das coisas que as pessoas mais amam neles. Pra ambientes pequenos e fechados, é melhor pensar duas vezes; pra sala, escritório ou varanda, é perfeito.",
+          "O perfume é marcante. Para ambientes pequenos e fechados, vale considerar essa intensidade. Em salas, escritórios e varandas, ele se espalha melhor.",
       },
       {
         question: "Posso agendar para outro dia?",
         answer:
-          "Pode sim. Você diz a data no WhatsApp e a gente já bloqueia ali na agenda. Em datas comemorativas a gente confirma o horário com antecedência pra não dar nenhum aperto.",
+          "Sim. Informe a data pelo WhatsApp para reservarmos a agenda. Em datas comemorativas, confirmamos a janela de entrega com antecedência.",
       },
     ],
     nossaHistoria: {
       ...DEFAULT_NOSSA_HISTORIA,
       paragraphs: [
-        DEFAULT_NOSSA_HISTORIA.paragraphs[0],
-        "Hoje a gente recebe flor direto do produtor três vezes por semana e monta na hora. Quem responde no WhatsApp trabalha na floricultura, não é robô.",
+        "Somos uma família de floricultores com 40 anos de história em Goiânia. Cada buquê é preparado com o mesmo cuidado que dedicamos a um presente para nossa própria família.",
+        "Recebemos flores direto do produtor três vezes por semana e montamos os pedidos na loja. Quem atende no WhatsApp faz parte da floricultura e conhece cada opção disponível.",
+      ],
+      stats: [
+        { label: "Buquês", value: "+3.000" },
+        { label: "Em Goiânia", value: "40 anos" },
+        { label: "No Google", value: "4,9 ★" },
       ],
     },
-    pageTitle: "Lírios a partir de R$ 159,90 | Plante Uma Flor",
+    pageTitle: `Lírios a partir de ${lilyMinPrice} | Plante Uma Flor`,
     pageDescription:
-      "Lírios em papel artesanal, entregues hoje em Goiânia. A partir de R$ 159,90, com cartão escrito à mão por conta da casa.",
+      `Lírios em papel artesanal a partir de ${lilyMinPrice}, com entrega em Goiânia, foto para aprovação e cartão escrito à mão.`,
   },
   "carro-low": {
     slug: "carro-low",

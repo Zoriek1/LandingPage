@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import {
   ArrowDown,
   Camera,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   CreditCard,
@@ -50,7 +51,7 @@ import {
   orderReviews,
   type GoogleReview,
 } from "@/features/ad-lps/lib/reviews";
-import { formatInstallments, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
+import { formatBrl, formatInstallments, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
 import { useResolvedConfig } from "@/features/ad-lps/lib/useQueryVariant";
 import { useIsPastCutoff } from "@/features/ad-lps/lib/useCutoffCopy";
 import { HeroReviewCard, ReviewCard } from "@/features/ad-lps/components/ReviewCard";
@@ -68,8 +69,7 @@ import {
   openAdLpWhatsApp,
 } from "@/features/ad-lps/lib/whatsapp";
 import {
-  formatMinutesLeft,
-  minutesUntilCutoff,
+  resolveDeliveryTiming,
   resolveUrgencyMessage,
 } from "@/features/ad-lps/lib/urgency";
 import {
@@ -297,18 +297,8 @@ const CARD_SIZES =
   "(max-width: 719px) calc(46vw - 8px), (max-width: 1259px) 30vw, 400px";
 const FEATURED_CARD_SIZES =
   "(max-width: 719px) calc(46vw - 8px), (max-width: 1023px) 30vw, (max-width: 1259px) 62vw, 810px";
-
-/**
- * A grade de 12 colunas (`vitrineGrid: "twelve-col"`) tem breakpoints próprios:
- * uma coluna até 639px, duas até 999px e, acima disso, `span 3` para o card
- * comum e `span 6` para o destaque e o par. O container trava em 1220px, o que
- * dá ~290px e ~600px por card. Descrever a grade antiga aqui faria o navegador
- * baixar a variante errada da CDN.
- */
-const TWELVE_COL_CARD_SIZES =
-  "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 24vw, 290px";
-const TWELVE_COL_WIDE_SIZES =
-  "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 48vw, 600px";
+const PROGRESSIVE_CARD_SIZES =
+  "(max-width: 719px) 92vw, (max-width: 1259px) 30vw, 390px";
 
 function BonusIcon({ icon }: { icon: BrandBonus["icon"] }) {
   const props = { size: 22, strokeWidth: 1.7 };
@@ -413,6 +403,7 @@ function HeroSection({ config }: { config: LPConfig }) {
     action: "scroll-vitrine" as const,
   };
   const urgencyMessage = hydrated ? resolveUrgencyMessage(config) : null;
+  const deliveryTiming = hydrated && config.deliveryInfo ? resolveDeliveryTiming() : null;
 
   return (
     <section id="hero" className="ad-lp-hero">
@@ -490,17 +481,25 @@ function HeroSection({ config }: { config: LPConfig }) {
               // Rolar até a vitrine é navegação, não conversão: no mobile este
               // botão vira link de texto para não competir com o CTA do
               // WhatsApp (ver .ad-lp-secondary-cta--quiet).
-              <button
-                type="button"
+              <a
+                href="#vitrine"
                 className="ad-lp-secondary-cta ad-lp-secondary-cta--quiet"
                 data-testid="ad-lp-see-products"
-                onClick={scrollToProducts}
+                onClick={(event) => {
+                  event.preventDefault();
+                  scrollToProducts();
+                }}
               >
                 <span>{secondaryCta.label}</span>
                 <ArrowDown size={19} strokeWidth={2.2} aria-hidden="true" />
-              </button>
+              </a>
             )}
           </div>
+          {deliveryTiming ? (
+            <p className="ad-lp-hero__delivery-timing" data-testid="ad-lp-hero-delivery-timing">
+              {deliveryTiming.message}
+            </p>
+          ) : null}
           {urgencyMessage ? (
             <p className="ad-lp-hero__urgency" data-testid="ad-lp-urgency-line">
               {urgencyMessage}
@@ -514,49 +513,62 @@ function HeroSection({ config }: { config: LPConfig }) {
 }
 
 /**
- * Faixa do dia, logo abaixo do hero. O SSR entrega a frase estática do prazo;
- * já hidratado, dentro da janela de atendimento, ela vira o tempo que falta
- * para o corte. Fora da janela (domingo, antes das 08h, depois do corte) a
- * frase estática fica — urgência falsa derruba a confiança que o resto da
- * página constrói.
- *
- * A altura da linha é reservada no CSS para o CLS seguir em 0,000 quando o
- * texto troca.
+ * Bloco visível logo abaixo do hero. Entrega é uma objeção central desta LP,
+ * então horário, cobertura e condições não ficam atrás de uma interação.
+ * O SSR entrega a frase estática; após a hidratação ela vira a orientação
+ * correspondente ao horário local da loja.
  */
-function DayStripSection({ config }: { config: LPConfig }) {
-  const strip = config.dayStrip;
+function DeliveryInfoSection({ config }: { config: LPConfig }) {
+  const deliveryInfo = config.deliveryInfo;
   const hydrated = useHydrated();
-  const minutesLeft = hydrated ? minutesUntilCutoff() : null;
+  const timing = hydrated ? resolveDeliveryTiming() : null;
 
-  if (!strip) return null;
+  if (!deliveryInfo) return null;
 
   return (
-    <div className="ad-lp-daystrip" data-testid="ad-lp-daystrip">
-      <div className="ad-lp-daystrip__inner">
-        <span className="ad-lp-daystrip__pulse" aria-hidden="true" />
-        <span>
-          <strong>{strip.leadStrong}</strong> {strip.lead}
-        </span>
-        <span className="ad-lp-daystrip__cutoff">
-          {/* Reserva de altura: a frase mais longa é sempre a estática. */}
-          <span className="ad-lp-daystrip__ghost" aria-hidden="true">
-            {strip.cutoff}
-          </span>
-          <span data-testid="ad-lp-daystrip-cutoff">
-            {minutesLeft === null
-              ? strip.cutoff
-              : `Faltam ${formatMinutesLeft(minutesLeft)} pra fechar a entrega de hoje.`}
-          </span>
-        </span>
+    <section className="ad-lp-delivery" aria-label="Informações de entrega">
+      <div className="ad-lp-delivery__panel" data-testid="ad-lp-delivery-info">
+        <h2>{deliveryInfo.summary}</h2>
+        <div className="ad-lp-delivery__content">
+          <p>{deliveryInfo.intro}</p>
+          <p className="ad-lp-delivery__timing" data-testid="ad-lp-delivery-timing">
+            {timing?.message ??
+              "Pedidos fechados até 18h de segunda a sexta e até 13h no sábado podem sair no mesmo dia."}
+          </p>
+          <dl>
+            {deliveryInfo.items.map((item) => (
+              <div key={item.title}>
+                <dt>{item.title}</dt>
+                <dd>{item.body}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
 function BrandBar({ config }: { config: LPConfig }) {
   const minimal = config.navMode === "minimal";
+  const [visible, setVisible] = useState(!config.mobileChromeAfterHero);
+
+  useEffect(() => {
+    if (!config.mobileChromeAfterHero) return;
+    const hero = document.getElementById("hero");
+    if (!hero || typeof IntersectionObserver !== "function") return;
+    const observer = new IntersectionObserver(([entry]) => setVisible(!entry.isIntersecting), {
+      threshold: 0,
+    });
+    observer.observe(hero);
+    return () => observer.disconnect();
+  }, [config.mobileChromeAfterHero]);
+
   return (
-    <header className={`ad-lp-brand-bar ${minimal ? "ad-lp-brand-bar--minimal" : ""}`}>
+    <header
+      className={`ad-lp-brand-bar ${minimal ? "ad-lp-brand-bar--minimal" : ""}`}
+      data-visible={visible}
+    >
       <a href="#hero" className="ad-lp-logo" aria-label="Plante Uma Flor">
         <picture>
           <source type="image/webp" srcSet={logoWebpUrl} />
@@ -712,36 +724,38 @@ function SocialProofSection({ config }: { config: LPConfig }) {
         aria-label="Avaliações de clientes"
         data-testid="ad-lp-proof-quotes"
       >
-        <div className="ad-lp-proof__top">
-          <p className="ad-lp-proof__eyebrow">Quem comprou</p>
-          <p className="ad-lp-proof__rating">
-            <span className="ad-lp-proof__stars" aria-hidden="true">
-              ★★★★★
-            </span>
-            <span>
-              {GLOBAL_CONFIG.googleRating} · {GLOBAL_CONFIG.googleReviewsCount} avaliações
-              públicas no Google
-            </span>
-          </p>
-        </div>
-        {heroReview ? (
-          <figure className="ad-lp-proof__shout">
-            <blockquote>{`“${heroReview.comment}”`}</blockquote>
-            <figcaption>{heroReview.authorName} · avaliação pública no Google</figcaption>
-          </figure>
-        ) : null}
-        <div className="ad-lp-proof__voices">
-          {restReviews.slice(0, 4).map((review, index) => (
-            <figure
-              className="ad-lp-voice"
-              key={`${review.reviewId || review.authorName}-${index}`}
-            >
-              <blockquote>{`“${review.comment}”`}</blockquote>
-              <figcaption>{review.authorName}</figcaption>
+        <div className="ad-lp-proof__inner">
+          <div className="ad-lp-proof__top">
+            <p className="ad-lp-proof__eyebrow">Quem comprou</p>
+            <p className="ad-lp-proof__rating">
+              <span className="ad-lp-proof__stars" aria-hidden="true">
+                ★★★★★
+              </span>
+              <span>
+                {GLOBAL_CONFIG.googleRating} · {GLOBAL_CONFIG.googleReviewsCount} avaliações
+                públicas no Google
+              </span>
+            </p>
+          </div>
+          {heroReview ? (
+            <figure className="ad-lp-proof__shout">
+              <blockquote>{`“${heroReview.comment}”`}</blockquote>
+              <figcaption>{heroReview.authorName} · avaliação pública no Google</figcaption>
             </figure>
-          ))}
+          ) : null}
+          <div className="ad-lp-proof__voices">
+            {restReviews.slice(0, 4).map((review, index) => (
+              <figure
+                className="ad-lp-voice"
+                key={`${review.reviewId || review.authorName}-${index}`}
+              >
+                <blockquote>{`“${review.comment}”`}</blockquote>
+                <figcaption>{review.authorName}</figcaption>
+              </figure>
+            ))}
+          </div>
+          {googleLink}
         </div>
-        {googleLink}
       </section>
     );
   }
@@ -916,6 +930,139 @@ function useVitrineFilters(products: Product[], enabled: boolean) {
   }, [products, enabled]);
 }
 
+function ProductWhatsAppCta({
+  config,
+  product,
+}: {
+  config: LPConfig;
+  product: Product;
+}) {
+  const hydrated = useHydrated();
+  const content = (
+    <>
+      <WhatsAppCtaIcon />
+      <span>{config.vitrineCardCta ?? "Comprar este no WhatsApp"}</span>
+    </>
+  );
+
+  if (!hydrated) {
+    return (
+      <a
+        href={buildAdLpWhatsAppUrl(config, product)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ad-lp-card__button"
+        data-testid={`product-cta-${product.id}`}
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      className="ad-lp-card__button"
+      data-testid={`product-cta-${product.id}`}
+      onClick={() => openAdLpWhatsApp({ config, origin: "vitrine", product })}
+    >
+      {content}
+    </button>
+  );
+}
+
+function VitrineProductCard({
+  config,
+  product,
+  products,
+}: {
+  config: LPConfig;
+  product: Product;
+  products: Product[];
+}) {
+  const featured = product.id === config.vitrineHighlightId;
+  const badge = inferProductBadge(product, products, config.vitrineHighlightId);
+  const isAdMatch = !!config.variantProductId && product.id === config.variantProductId;
+  const showScarcity =
+    !!config.scarcityMessage &&
+    (badge === "mais-vendido" || badge === "custo-beneficio" || !!config.scarcityAppliesToAll);
+  const note = config.vitrineProductNotes?.[product.id];
+  const impact = config.vitrineShowSize ? sizeImpactLabel(product) : null;
+  const pitch = config.vitrineProductPitch?.[product.id];
+  const buttonMode = config.vitrineCardCtaMode === "button";
+  const sizes = buttonMode ? PROGRESSIVE_CARD_SIZES : featured ? FEATURED_CARD_SIZES : CARD_SIZES;
+
+  const content = (
+    <>
+      <span className="ad-lp-card__media">
+        <ImageWithFallback
+          src={product.image}
+          fallback={PRODUCT_PLACEHOLDER}
+          alt={product.name}
+          srcSet={getProductImageSrcSet(product.image)}
+          sizes={sizes}
+        />
+      </span>
+      <span className="ad-lp-card__body">
+        {note ? <span className="ad-lp-card__note">{note}</span> : null}
+        <span className="ad-lp-card__name">{product.name}</span>
+        {pitch ? <span className="ad-lp-card__pitch">{pitch}</span> : null}
+        <ProductDetailsList product={product} />
+        {impact ? <span className="ad-lp-card__impact">{impact}</span> : null}
+        {showScarcity ? <span className="ad-lp-card__scarcity">{config.scarcityMessage}</span> : null}
+        <span className="ad-lp-card__price">{product.priceBrl}</span>
+        <span className="ad-lp-card__installments">{formatInstallments(product.priceBrl)}</span>
+        {buttonMode ? (
+          <ProductWhatsAppCta config={config} product={product} />
+        ) : (
+          <span className="ad-lp-card__cta">
+            {config.vitrineCardCta ?? "Quero encomendar pelo WhatsApp"}
+          </span>
+        )}
+      </span>
+    </>
+  );
+
+  return (
+    <article
+      className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""} ${
+        buttonMode ? "ad-lp-card--button" : ""
+      }`}
+      data-testid={buttonMode ? `product-card-${product.id}` : undefined}
+    >
+      {isAdMatch ? (
+        <span className="ad-lp-card__badge ad-lp-card__badge--ad-match">Visto no anúncio</span>
+      ) : badge ? (
+        <ProductBadgePill badge={badge} labels={config.productBadgeLabels} />
+      ) : null}
+      {buttonMode ? (
+        <div className="ad-lp-card__link">{content}</div>
+      ) : (
+        <a
+          href={buildAdLpWhatsAppUrl(config, product)}
+          className="ad-lp-card__link"
+          data-testid={`product-card-${product.id}`}
+          onClick={(event) => {
+            event.preventDefault();
+            openAdLpWhatsApp({ config, origin: "vitrine", product });
+          }}
+        >
+          {content}
+        </a>
+      )}
+    </article>
+  );
+}
+
+function priceRangeForIds(productIds: string[], products: Product[]) {
+  const prices = productIds
+    .map((id) => products.find((product) => product.id === id))
+    .filter(Boolean)
+    .map((product) => parsePriceBrl(product!.priceBrl));
+  if (!prices.length) return "";
+  return `${formatBrl(Math.min(...prices))} a ${formatBrl(Math.max(...prices))}`;
+}
+
 function VitrineSection({
   config,
   products,
@@ -952,7 +1099,9 @@ function VitrineSection({
           {config.vitrineIntroLines.map((line) => (
             <p key={line.name}>
               <b>{line.name}</b> {line.body}{" "}
-              <span className="ad-lp-vitrine__intro-price">{line.priceRange}</span>
+              <span className="ad-lp-vitrine__intro-price">
+                {priceRangeForIds(line.productIds, products)}.
+              </span>
             </p>
           ))}
         </div>
@@ -988,97 +1137,52 @@ function VitrineSection({
         </div>
       ) : null}
       <div className="ad-lp-vitrine__grid">
-        {visibleProducts.map((product) => {
-          const featured = product.id === config.vitrineHighlightId;
-          const badge = inferProductBadge(product, products, config.vitrineHighlightId);
-          const isAdMatch = !!config.variantProductId && product.id === config.variantProductId;
-          const showScarcity =
-            !!config.scarcityMessage &&
-            (badge === "mais-vendido" ||
-              badge === "custo-beneficio" ||
-              !!config.scarcityAppliesToAll);
-          const note = config.vitrineProductNotes?.[product.id];
-          const impact = config.vitrineShowSize ? sizeImpactLabel(product) : null;
-          const pitch = config.vitrineProductPitch?.[product.id];
-          const isPair = product.id === config.vitrinePairId;
-          const twelveCol = config.vitrineGrid === "twelve-col";
-          const wide = featured || isPair;
-          const sizes = twelveCol
-            ? wide
-              ? TWELVE_COL_WIDE_SIZES
-              : TWELVE_COL_CARD_SIZES
-            : featured
-            ? FEATURED_CARD_SIZES
-            : CARD_SIZES;
-          return (
-            <article
-              className={`ad-lp-card ${featured ? "ad-lp-card--featured" : ""} ${
-                isPair ? "ad-lp-card--pair" : ""
-              }`}
-              key={product.id}
+        {config.vitrineMobileProgressive ? (
+          <>
+            {filteredProducts
+              .slice(0, config.vitrineMobileProgressive.initialCount)
+              .map((product) => (
+                <VitrineProductCard
+                  key={product.id}
+                  config={config}
+                  product={product}
+                  products={products}
+                />
+              ))}
+            <details className="ad-lp-vitrine__progressive" data-testid="ad-lp-vitrine-progressive">
+              <summary aria-controls="ad-lp-progressive-products">
+                <span>{config.vitrineMobileProgressive.expandLabel}</span>
+                <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
+              </summary>
+            </details>
+            <div
+              id="ad-lp-progressive-products"
+              className="ad-lp-vitrine__progressive-grid"
             >
-              {/* Só o selo de categoria fica sobre a foto. O de prazo desceu pro
-                  corpo do card: empilhados, os dois tampavam metade da flor no
-                  card de 156px do mobile. */}
-              {/* "Visto no anúncio" é mais específico para quem clicou vindo do
-                  criativo — some com o selo genérico em vez de empilhar os dois
-                  no mesmo canto da foto. */}
-              {isAdMatch ? (
-                <span className="ad-lp-card__badge ad-lp-card__badge--ad-match">
-                  Visto no anúncio
-                </span>
-              ) : badge ? (
-                <ProductBadgePill badge={badge} labels={config.productBadgeLabels} />
-              ) : null}
-              <a
-                href={buildAdLpWhatsAppUrl(config, product)}
-                className="ad-lp-card__link"
-                data-testid={`product-card-${product.id}`}
-                onClick={(event) => {
-                  event.preventDefault();
-                  openAdLpWhatsApp({ config, origin: "vitrine", product });
-                }}
-              >
-                <span className="ad-lp-card__media">
-                  <ImageWithFallback
-                    src={product.image}
-                    fallback={PRODUCT_PLACEHOLDER}
-                    alt={product.name}
-                    srcSet={getProductImageSrcSet(product.image)}
-                    sizes={sizes}
+              {filteredProducts
+                .slice(config.vitrineMobileProgressive.initialCount)
+                .map((product) => (
+                  <VitrineProductCard
+                    key={product.id}
+                    config={config}
+                    product={product}
+                    products={products}
                   />
-                </span>
-                <span className="ad-lp-card__body">
-                  {note ? <span className="ad-lp-card__note">{note}</span> : null}
-                  <span className="ad-lp-card__name">{product.name}</span>
-                  {pitch ? <span className="ad-lp-card__pitch">{pitch}</span> : null}
-                  <ProductDetailsList product={product} />
-                  {impact ? <span className="ad-lp-card__impact">{impact}</span> : null}
-                  {showScarcity ? (
-                    <span className="ad-lp-card__scarcity">{config.scarcityMessage}</span>
-                  ) : null}
-                  <span className="ad-lp-card__price">{product.priceBrl}</span>
-                  <span className="ad-lp-card__installments">
-                    {formatInstallments(product.priceBrl)}
-                  </span>
-                  <span className="ad-lp-card__cta">
-                    {config.vitrineCardCta ?? "Quero encomendar pelo WhatsApp"}
-                  </span>
-                </span>
-              </a>
-            </article>
-          );
-        })}
+                ))}
+            </div>
+          </>
+        ) : (
+          visibleProducts.map((product) => (
+            <VitrineProductCard
+              key={product.id}
+              config={config}
+              product={product}
+              products={products}
+            />
+          ))
+        )}
       </div>
-      {config.pledge ? (
-        <p className="ad-lp-pledge" data-testid="ad-lp-pledge">
-          <ShieldCheck size={22} strokeWidth={1.8} aria-hidden="true" />
-          <span>
-            <b>{config.pledge.lead}</b> {config.pledge.body}
-          </span>
-        </p>
-      ) : null}
-      {hasMore && !expanded ? (
+      {!config.vitrineMobileProgressive && hasMore && !expanded ? (
         <div className="ad-lp-vitrine__more">
           <button type="button" onClick={() => setExpanded(true)}>
             Quero ver mais opções ({filteredProducts.length - initialCount})
@@ -1101,28 +1205,30 @@ function VitrineSection({
 function BeatsSection({ config, cta }: { config: LPConfig; cta: ReactNode }) {
   if (!config.beats?.length) return null;
 
+  const chat = config.chatExample ? <ChatExampleCard chat={config.chatExample} /> : null;
+
   return (
     <section id="como-funciona" className="ad-lp-beats-section" aria-label="Como funciona">
       <header className="ad-lp-section-head">
         <h2>Do seu “oi” à porta de quem recebe.</h2>
       </header>
-      <ol className="ad-lp-beats" data-testid="ad-lp-beats">
-        {config.beats.map((beat) => (
-          <li
-            className={`ad-lp-beats__item ${beat.key ? "ad-lp-beats__item--key" : ""}`}
-            key={beat.title}
-          >
-            <h3>{beat.title}</h3>
-            <p>{beat.body}</p>
-            {/* O exemplo ilustra o tempo destacado — mostrar a foto sendo
-                aprovada explica melhor que repetir a frase. */}
-            {beat.key && config.chatExample ? (
-              <ChatExampleCard chat={config.chatExample} />
-            ) : null}
-          </li>
-        ))}
-      </ol>
-      <div className="ad-lp-beats__cta">{cta}</div>
+      <div className="ad-lp-beats__layout">
+        <div className="ad-lp-beats__main">
+          <ol className="ad-lp-beats" data-testid="ad-lp-beats">
+            {config.beats.map((beat) => (
+              <li
+                className={`ad-lp-beats__item ${beat.key ? "ad-lp-beats__item--key" : ""}`}
+                key={beat.title}
+              >
+                <h3>{beat.title}</h3>
+                <p>{beat.body}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="ad-lp-beats__cta">{cta}</div>
+        </div>
+        {chat ? <div className="ad-lp-beats__conversation">{chat}</div> : null}
+      </div>
     </section>
   );
 }
@@ -1186,7 +1292,10 @@ function VitrineFaqSection({ config }: { config: LPConfig }) {
       <div className="ad-lp-faq__list">
         {config.vitrineFaq.map((item) => (
           <details className="ad-lp-faq__item" key={item.question}>
-            <summary>{item.question}</summary>
+            <summary>
+              <span>{item.question}</span>
+              <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
+            </summary>
             <p>{item.answer}</p>
           </details>
         ))}
@@ -1230,7 +1339,10 @@ function FaqSection({ config }: { config: LPConfig }) {
       <div className="ad-lp-faq__list">
         {faqItems.map((item) => (
           <details className="ad-lp-faq__item" key={item.question} open={item.defaultOpen}>
-            <summary>{item.question}</summary>
+            <summary>
+              <span>{item.question}</span>
+              <ChevronDown size={20} strokeWidth={2} aria-hidden="true" />
+            </summary>
             {item.bullets?.length ? (
               <ul className="ad-lp-faq__table">
                 {item.bullets.map((row) => (
@@ -1264,15 +1376,16 @@ function StickyCta({ config }: { config: LPConfig }) {
     // novo, e o PageSpeed contabilizava 68 ms de reflow forçado. O observer
     // resolve o mesmo gatilho sem ler geometria.
     const sentinel = document.getElementById(STICKY_SENTINEL_ID);
-    if (!sentinel || typeof IntersectionObserver !== "function") return;
+    const target = config.mobileChromeAfterHero ? document.getElementById("hero") : sentinel;
+    if (!target || typeof IntersectionObserver !== "function") return;
 
     const observer = new IntersectionObserver(
       ([entry]) => setVisible(!entry.isIntersecting),
       { threshold: 0 },
     );
-    observer.observe(sentinel);
+    observer.observe(target);
     return () => observer.disconnect();
-  }, []);
+  }, [config.mobileChromeAfterHero]);
 
   return (
     <div className="ad-lp-sticky" data-visible={visible} hidden={!visible}>
@@ -1312,6 +1425,59 @@ function GuaranteeSection({ config }: { config: LPConfig }) {
   );
 }
 
+function TrustIcon({ icon }: { icon: "flower" | "camera" | "card" | "message" }) {
+  const props = { size: 24, strokeWidth: 1.7, "aria-hidden": true as const };
+  if (icon === "flower") return <Flower2 {...props} />;
+  if (icon === "camera") return <Camera {...props} />;
+  if (icon === "card") return <CreditCard {...props} />;
+  return <MessageCircle {...props} />;
+}
+
+function IntegratedTrustSection({ config }: { config: LPConfig }) {
+  const trust = config.integratedTrust;
+  if (!trust) return null;
+
+  return (
+    <section className="ad-lp-trust" aria-label="Diferenciais e garantia" data-testid="ad-lp-trust">
+      <header className="ad-lp-section-head">
+        <h2>{trust.title}</h2>
+        {trust.subtitle ? <p>{trust.subtitle}</p> : null}
+      </header>
+      <ul className="ad-lp-trust__items">
+        {trust.items.map((item) => (
+          <li key={item.title}>
+            <span className="ad-lp-trust__icon">
+              <TrustIcon icon={item.icon} />
+            </span>
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </li>
+        ))}
+      </ul>
+      <div className="ad-lp-trust__guarantee">
+        <span className="ad-lp-trust__guarantee-icon" aria-hidden="true">
+          <ShieldCheck size={36} strokeWidth={1.6} />
+        </span>
+        <div>
+          <p className="ad-lp-trust__badge">{trust.guarantee.badge}</p>
+          <h3>{trust.guarantee.title}</h3>
+          <p>{trust.guarantee.body}</p>
+        </div>
+        <CtaButton config={config} origin="guarantee">
+          {trust.guarantee.ctaLabel}
+        </CtaButton>
+      </div>
+    </section>
+  );
+}
+
+function FinalTrustIcon({ icon }: { icon: "star" | "camera" | "message" }) {
+  const props = { size: 18, strokeWidth: 1.9, "aria-hidden": true as const };
+  if (icon === "star") return <Star {...props} fill="currentColor" />;
+  if (icon === "camera") return <Camera {...props} />;
+  return <MessageCircle {...props} />;
+}
+
 function FinalCtaSection({ config }: { config: LPConfig }) {
   return (
     <section className="ad-lp-final" aria-label="Comprar pelo WhatsApp">
@@ -1329,6 +1495,16 @@ function FinalCtaSection({ config }: { config: LPConfig }) {
         <div className="ad-lp-final__cta">
           <CtaButton config={config} origin="final">Comprar no WhatsApp</CtaButton>
         </div>
+        {config.finalTrustItems?.length ? (
+          <ul className="ad-lp-final__trust" aria-label="Confiança para comprar">
+            {config.finalTrustItems.map((item) => (
+              <li key={item.text}>
+                <FinalTrustIcon icon={item.icon} />
+                <span>{item.text}</span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </section>
   );
@@ -1358,8 +1534,8 @@ function PageSection({
   switch (section) {
     case "hero":
       return <HeroSection config={config} />;
-    case "daystrip":
-      return <DayStripSection config={config} />;
+    case "delivery-info":
+      return <DeliveryInfoSection config={config} />;
     case "diferenciais":
       return <DifferentialsSection config={config} />;
     case "diferenciais-fundidos":
@@ -1392,6 +1568,8 @@ function PageSection({
       return <FaqSection config={config} />;
     case "guarantee":
       return <GuaranteeSection config={config} />;
+    case "trust":
+      return <IntegratedTrustSection config={config} />;
     case "final":
       return <FinalCtaSection config={config} />;
     default:
@@ -1412,7 +1590,13 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
   }, [config, resolvedConfig]);
 
   const products = useMemo(() => {
-    const base = resolvedConfig.vitrineProductIds.map((id) => PRODUCTS[id]).filter(Boolean);
+    const base = resolvedConfig.vitrineProductIds
+      .map((id) => PRODUCTS[id])
+      .filter(Boolean)
+      .map((product) => {
+        const override = resolvedConfig.productImageOverrides?.[product.id]?.trim();
+        return override ? { ...product, image: override } : product;
+      });
     if (!resolvedConfig.variantProductId) return base;
     // Produto do anúncio primeiro; sort é estável (ES2019+), a ordem original
     // do resto da vitrine não muda.
@@ -1424,7 +1608,12 @@ export default function AdLandingPage({ slug }: AdLandingPageProps) {
   }, [resolvedConfig]);
 
   return (
-    <div className="ad-lp-theme" data-accent={config.accent} data-slug={config.slug}>
+    <div
+      className="ad-lp-theme"
+      data-accent={config.accent}
+      data-slug={config.slug}
+      data-chrome-after-hero={config.mobileChromeAfterHero || undefined}
+    >
       <DocumentMeta
         title={config.pageTitle}
         description={config.pageDescription}

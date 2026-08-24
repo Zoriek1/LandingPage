@@ -168,7 +168,7 @@ O carrossel horizontal de cards pequenos sai. Vira: uma citação grande + grade
 
 Na grade de 4: Melissa Pimentel, sffart gamer, Hellen Araújo, Tainá Santos. Textos exatamente como estão em `public/lpb/google-reviews.json`.
 
-Agregado: `4,9 · 184 avaliações públicas no Google`, com link pro Google. Esses números vêm do JSON — se ele mudar, mudam.
+Agregado: `4,9 · 203 avaliações públicas no Google`, com link pro Google. Esses números vêm do JSON — se ele mudar, mudam.
 
 ---
 

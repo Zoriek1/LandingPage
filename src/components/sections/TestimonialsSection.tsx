@@ -58,7 +58,7 @@ const getInitials = (name: string) =>
 
 const useGoogleReviews = () => {
   const [reviews, setReviews] = useState<Review[]>(FALLBACK_REVIEWS);
-  const [summary, setSummary] = useState({ rating: "4.9", count: "184" });
+  const [summary, setSummary] = useState({ rating: "4.9", count: "203" });
 
   useEffect(() => {
     if (typeof fetch !== "function") return;
@@ -78,7 +78,7 @@ const useGoogleReviews = () => {
         if (payload.businessRating) {
           setSummary({
             rating: String(payload.businessRating),
-            count: String(payload.businessReviewCount ?? "184"),
+            count: String(payload.businessReviewCount ?? "203"),
           });
         }
       })

@@ -76,3 +76,58 @@ export function formatMinutesLeft(total: number): string {
   if (hours) return `${hours}h`;
   return `${minutes}min`;
 }
+
+export type DeliveryTimingStatus = "before-opening" | "active" | "after-cutoff" | "closed";
+
+export type DeliveryTiming = {
+  status: DeliveryTimingStatus;
+  message: string;
+  minutesLeft: number | null;
+};
+
+/** Copy operacional única para hero e informações de entrega. */
+export function resolveDeliveryTiming(now: Date = new Date()): DeliveryTiming {
+  const { weekday, minutesSinceMidnight } = saoPauloParts(now);
+
+  if (weekday === "dom.") {
+    return {
+      status: "closed",
+      minutesLeft: null,
+      message:
+        "A loja está fechada aos domingos. Envie seu pedido para combinar uma próxima entrega.",
+    };
+  }
+
+  const cutoff = WEEKDAY_CUTOFF_MINUTES[weekday];
+  if (cutoff === undefined) {
+    return {
+      status: "closed",
+      minutesLeft: null,
+      message: "Consulte pelo WhatsApp o próximo horário disponível para entrega.",
+    };
+  }
+
+  if (minutesSinceMidnight < OPENING_MINUTES) {
+    return {
+      status: "before-opening",
+      minutesLeft: null,
+      message: "A loja abre às 8h. Envie seu pedido agora para combinar a entrega.",
+    };
+  }
+
+  if (minutesSinceMidnight < cutoff) {
+    const minutesLeft = cutoff - minutesSinceMidnight;
+    return {
+      status: "active",
+      minutesLeft,
+      message: `Faltam ${formatMinutesLeft(minutesLeft)} para fechar as entregas de hoje.`,
+    };
+  }
+
+  const cutoffLabel = weekday === "sab." ? "13h" : "18h";
+  return {
+    status: "after-cutoff",
+    minutesLeft: null,
+    message: `As entregas de hoje encerraram às ${cutoffLabel}. Você pode agendar o próximo dia de entrega.`,
+  };
+}

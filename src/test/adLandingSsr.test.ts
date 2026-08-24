@@ -30,8 +30,7 @@ describe("entry-server render() under Node (no window)", () => {
   it("leads the /lirios-apt hero with the price the ad promises", () => {
     const html = render("lirios-apt");
     expect(html).toContain('<h1 class="ad-lp-hero__title">Lírios a partir de R$ 159,90.</h1>');
-    // Sem chip acima do h1: ele só repetia o mesmo preço do título.
-    expect(html).not.toContain("ad-lp-hero__anchor");
+    expect(html).toContain('<p class="ad-lp-hero__anchor">A partir de R$ 159,90</p>');
   });
 
   it("lirios-apt hero picture matches the AVIF/WebP preload contract", () => {

@@ -21,13 +21,16 @@ export const BUSINESS_INFO = {
 } as const;
 
 /**
- * Frete por faixa, confirmado pelo cliente em 23/08/2026. Fonte única: quem
- * precisar do valor consome daqui, não copia a string. A tabela não cobre a
- * faixa entre o Setor Sul e os 20 km — quem exibe fecha com a frase do CEP em
- * vez de preencher a lacuna por conta própria.
+ * Frete por faixa, confirmado pelo cliente em 24/08/2026. Fonte única: quem
+ * precisar do valor consome daqui, não copia a string. R$ 25,00 é o teto para
+ * as entregas usuais de até 20 km, não o preço padrão dos demais bairros.
  */
 export const DELIVERY_FEES: { label: string; value: string }[] = [
   { label: "Setor Sul e Marista", value: "R$ 10,00" },
-  { label: "Demais bairros, até 20 km", value: "R$ 25,00" },
+  { label: "Maioria dos bairros", value: "R$ 15,00" },
+  { label: "Outras regiões, até 20 km", value: "até R$ 25,00" },
   { label: "De 20 a 30 km", value: "R$ 30,00" },
 ];
+
+export const DELIVERY_FEE_GUIDANCE =
+  "Na maioria dos bairros, o frete custa R$ 15,00. Para entregas usuais de até 20 km, R$ 25,00 é o teto, não o valor padrão.";

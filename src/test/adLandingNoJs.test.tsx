@@ -39,6 +39,7 @@ const CTA_TEST_IDS = [
   "ad-lp-cta-faq",
   "ad-lp-cta-sticky",
   "ad-lp-cta-como_funciona",
+  "ad-lp-cta-guarantee",
 ] as const;
 
 describe("AdLandingPage: no-JS CTA contract", () => {
@@ -57,7 +58,7 @@ describe("AdLandingPage: no-JS CTA contract", () => {
     }
   });
 
-  it("has exactly 5 conversion CTAs in the SSR output", () => {
+  it("has exactly 6 conversion CTAs in the SSR output", () => {
     const html = renderToString(<AdLandingPage slug="lirios-apt" />);
     const container = document.createElement("div");
     container.innerHTML = html;
@@ -83,5 +84,20 @@ describe("AdLandingPage: no-JS CTA contract", () => {
     );
 
     expect(ctaButtons).toHaveLength(0);
+  });
+
+  it("renders all six product CTAs as WhatsApp links before hydration", () => {
+    const html = renderToString(<AdLandingPage slug="lirios-apt" />);
+    const container = document.createElement("div");
+    container.innerHTML = html;
+
+    const productLinks = container.querySelectorAll<HTMLAnchorElement>(
+      'a[data-testid^="product-cta-"]',
+    );
+    expect(productLinks).toHaveLength(6);
+    for (const link of productLinks) {
+      expect(link).toHaveAttribute("href", WHATSAPP_URL);
+      expect(link).toHaveTextContent("Comprar este no WhatsApp");
+    }
   });
 });

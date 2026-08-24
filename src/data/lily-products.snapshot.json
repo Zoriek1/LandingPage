@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "families": {
+    "arranjo": {
+      "sourceUrl": "https://www.planteumaflor.com/produtos/arranjo-mao-lirios/",
+      "products": [
+        {
+          "id": "arranjo-mao-lirios-p",
+          "family": "arranjo",
+          "size": "P",
+          "storeSlug": "arranjo-mao-lirios",
+          "name": "Arranjo de Mão Lírios P",
+          "priceBrl": "R$ 159,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/38-1223af3425b904cf2917739779596922-1024-1024.webp",
+          "waText": "Oi! Quero o Arranjo de Mão Lírios P (R$ 159,90)."
+        },
+        {
+          "id": "arranjo-mao-lirios-m",
+          "family": "arranjo",
+          "size": "M",
+          "storeSlug": "arranjo-mao-lirios",
+          "name": "Arranjo de Mão Lírios M",
+          "priceBrl": "R$ 229,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/41-28b68fc71bb1cd62fc17739779592690-1024-1024.webp",
+          "waText": "Oi! Quero o Arranjo de Mão Lírios M (R$ 229,90)."
+        },
+        {
+          "id": "arranjo-mao-lirios-g",
+          "family": "arranjo",
+          "size": "G",
+          "storeSlug": "arranjo-mao-lirios",
+          "name": "Arranjo de Mão Lírios G",
+          "priceBrl": "R$ 289,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/19-55fd9b51dfb250f77017739779598056-1024-1024.webp",
+          "waText": "Oi! Quero o Arranjo de Mão Lírios G (R$ 289,90)."
+        }
+      ]
+    },
+    "buque": {
+      "sourceUrl": "https://www.planteumaflor.com/produtos/buque-lirios/",
+      "products": [
+        {
+          "id": "buque-lirios-p",
+          "family": "buque",
+          "size": "P",
+          "storeSlug": "buque-lirios",
+          "name": "Buquê de Lírios P",
+          "priceBrl": "R$ 299,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/8-d0ddc261ebbf23879a17739780251538-1024-1024.webp",
+          "waText": "Oi! Quero o Buquê de Lírios P (R$ 299,90)."
+        },
+        {
+          "id": "buque-lirios-m",
+          "family": "buque",
+          "size": "M",
+          "storeSlug": "buque-lirios",
+          "name": "Buquê de Lírios M",
+          "priceBrl": "R$ 389,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/25-a22098d763e0c73efe17739780254780-1024-1024.webp",
+          "waText": "Oi! Quero o Buquê de Lírios M (R$ 389,90)."
+        },
+        {
+          "id": "buque-lirios-g",
+          "family": "buque",
+          "size": "G",
+          "storeSlug": "buque-lirios",
+          "name": "Buquê de Lírios G",
+          "priceBrl": "R$ 424,90",
+          "image": "https://acdn-us.mitiendanube.com/stores/006/718/510/products/img_1193-c66f40f582ce89780617745668131555-1024-1024.webp",
+          "waText": "Oi! Quero o Buquê de Lírios G (R$ 424,90)."
+        }
+      ]
+    }
+  }
+}

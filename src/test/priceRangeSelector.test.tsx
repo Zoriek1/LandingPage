@@ -31,7 +31,11 @@ const EXPECTED_RANGES = {
   "/urgencia": ["R$ 99,90 a R$ 230", "R$ 230 a R$ 300", "Acima de R$ 300"],
   "/aniversario": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 450", "Acima de R$ 450"],
   "/rosas-apt": ["R$ 99,90 a R$ 200", "R$ 200 a R$ 300", "Acima de R$ 300"],
-  "/lirios-apt": ["R$ 159,90 a R$ 230", "R$ 230 a R$ 400", "Acima de R$ 400"],
+  "/lirios-apt": [
+    "R$ 159,90 a R$ 229,90",
+    "R$ 289,90 a R$ 389,90",
+    "Acima de R$ 389,90",
+  ],
   "/carro-low": ["R$ 65,00 a R$ 100", "R$ 100 a R$ 150", "Acima de R$ 150"],
   "/carro-high": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
   "/presente-hoje": ["R$ 99,90 a R$ 160", "R$ 160 a R$ 300", "Acima de R$ 300"],

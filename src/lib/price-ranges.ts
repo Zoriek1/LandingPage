@@ -1,4 +1,8 @@
 import type { TrackingParams } from "@/lib/tracking";
+import { LILY_PRODUCTS_BY_ID } from "@/data/lily-products";
+
+const lilyPrice = (id: string) => LILY_PRODUCTS_BY_ID[id].priceBrl;
+const lilyFloor = lilyPrice("arranjo-mao-lirios-p");
 
 export type PriceRangeKey = "low" | "mid" | "high";
 
@@ -135,11 +139,23 @@ const BASE_PRICE_RANGE_CONFIGS: Partial<Record<PriceRangeRoute, PriceRangeConfig
   "/lirios-apt": {
     lpSlug: "lirios-apt",
     messageContext: "arranjos de lírios —",
-    lowFloorBrl: "R$ 159,90",
+    lowFloorBrl: lilyFloor,
     ranges: [
-      { key: "low", label: "R$ 159,90 a R$ 230", outcome: LOW_OUTCOME },
-      { key: "mid", label: "R$ 230 a R$ 400", outcome: MID_OUTCOME },
-      { key: "high", label: "Acima de R$ 400", outcome: HIGH_OUTCOME },
+      {
+        key: "low",
+        label: `${lilyFloor} a ${lilyPrice("arranjo-mao-lirios-m")}`,
+        outcome: LOW_OUTCOME,
+      },
+      {
+        key: "mid",
+        label: `${lilyPrice("arranjo-mao-lirios-g")} a ${lilyPrice("buque-lirios-m")}`,
+        outcome: MID_OUTCOME,
+      },
+      {
+        key: "high",
+        label: `Acima de ${lilyPrice("buque-lirios-m")}`,
+        outcome: HIGH_OUTCOME,
+      },
     ],
   },
   "/carro-low": {

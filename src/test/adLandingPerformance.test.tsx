@@ -154,21 +154,43 @@ describe("ad landing delivery", () => {
     expect(product.getAttribute("sizes")).not.toMatch(/50vw/);
   });
 
-  it("describes the twelve-column grid in the sizes of the /lirios-apt cards", async () => {
+  it("describes the one-column mobile and 3x2 desktop lírios grid", async () => {
     window.history.pushState({}, "", "/lirios-apt");
     render(<App />);
 
-    // Uma coluna até 639px, duas até 999px, depois span 3 (~24vw, 290px no
-    // container travado). O card largo — destaque e par — ocupa span 6.
+    // Uma coluna no mobile e três colunas no desktop. O destaque mantém o
+    // mesmo tamanho de card e usa apenas borda, badge e sombra.
     const normal = await screen.findByAltText("Arranjo de Mão Lírios P");
     expect(normal.getAttribute("sizes")).toBe(
-      "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 24vw, 290px",
+      "(max-width: 719px) 92vw, (max-width: 1259px) 30vw, 390px",
     );
 
     for (const alt of ["Arranjo de Mão Lírios M", "Buquê de Lírios M"]) {
       expect(screen.getByAltText(alt).getAttribute("sizes")).toBe(
-        "(max-width: 639px) 92vw, (max-width: 999px) calc(46vw - 8px), (max-width: 1259px) 48vw, 600px",
+        "(max-width: 719px) 92vw, (max-width: 1259px) 30vw, 390px",
       );
     }
+  });
+
+  it("ships the lírios mobile framing, 48px targets, focus and reduced motion rules", () => {
+    const themeCss = readProjectFile("src/features/ad-lps/theme.css");
+    const criticalCss = readProjectFile("src/features/ad-lps/critical-lirios-apt.css");
+
+    expect(themeCss).toMatch(/data-slug="lirios-apt"[\s\S]*object-fit:\s*cover/);
+    expect(themeCss).toMatch(/\.ad-lp-card__button[\s\S]*min-height:\s*48px/);
+    expect(themeCss).toMatch(/\.ad-lp-faq__item summary[\s\S]*min-height:\s*48px/);
+    expect(themeCss).toMatch(/\.ad-lp-card__button:focus-visible/);
+    expect(themeCss).toMatch(/\.ad-lp-vitrine__progressive\s*\{\s*display:\s*block/);
+    expect(themeCss).toMatch(
+      /\.ad-lp-vitrine__progressive\[open\] \+ \.ad-lp-vitrine__progressive-grid\s*\{\s*display:\s*grid/,
+    );
+    expect(themeCss).toMatch(
+      /@media \(min-width: 720px\)[\s\S]*data-slug="lirios-apt"\] \.ad-lp-vitrine__progressive-grid\s*\{\s*display:\s*contents/,
+    );
+    expect(themeCss).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
+    expect(criticalCss).toContain("--ad-accent:#988159");
+    expect(criticalCss).toContain("object-fit:cover");
+    expect(criticalCss).toContain('data-chrome-after-hero="true"');
+    expect(criticalCss).not.toContain("#a93e62");
   });
 });

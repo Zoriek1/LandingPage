@@ -132,9 +132,10 @@ describe("ad landing pages", () => {
     const { container } = renderAt(`/${slug}`);
 
     await screen.findByTestId("ad-lp-cta-hero");
-    expect(container.querySelector(".ad-lp-nav")).toBeNull();
-    expect(container.querySelector('a[href="#como-funciona"]')).toBeNull();
-    expect(container.querySelector('a[href="#vitrine"]')).toBeNull();
+    const header = container.querySelector(".ad-lp-brand-bar")!;
+    expect(header.querySelector(".ad-lp-nav")).toBeNull();
+    expect(header.querySelector('a[href="#como-funciona"]')).toBeNull();
+    expect(header.querySelector('a[href="#vitrine"]')).toBeNull();
   });
 
   // A /lirios-apt saiu daqui: a prova dela não usa mais os cards do carrossel
@@ -172,28 +173,23 @@ describe("ad landing pages", () => {
     },
   );
 
-  it("lirios-apt glues the guarantee under the prices instead of giving it a section", async () => {
+  it("lirios-apt unifies four trust items and the guarantee after the FAQ", async () => {
     const { container } = renderAt("/lirios-apt");
 
     await screen.findByTestId("ad-lp-cta-hero");
     const sections = Array.from(container.querySelectorAll("#ad-lp-main > section"));
     expect(sections[0]?.className).toContain("ad-lp-hero");
-    expect(sections[1]?.className).toContain("ad-lp-vitrine");
+    expect(sections[1]?.className).toContain("ad-lp-delivery");
+    expect(sections[2]?.className).toContain("ad-lp-vitrine");
+    expect(screen.getByTestId("ad-lp-delivery-info").tagName).toBe("DIV");
+    expect(screen.getByRole("heading", { name: "Informações de entrega" })).toBeInTheDocument();
     expect(container.querySelector(".ad-lp-guarantee")).toBeNull();
+    expect(container.querySelector(".ad-lp-pledge")).toBeNull();
 
-    const pledge = screen.getByTestId("ad-lp-pledge");
-    expect(document.getElementById("vitrine")?.contains(pledge)).toBe(true);
-    expect(pledge).toHaveTextContent(
-      "Não gostou? Refazemos, trocamos ou devolvemos no mesmo dia.",
-    );
-    // Os valores de frete continuam num lugar só, o FAQ.
-    expect(pledge).not.toHaveTextContent("R$");
-
-    // O bloco fica depois da grade: a dúvida da garantia nasce no preço.
-    const lastCard = container.querySelector(
-      "[data-testid='product-card-buque-lirios-g']",
-    )!;
-    expect(lastCard.compareDocumentPosition(pledge)).toBe(
+    const trust = screen.getByTestId("ad-lp-trust");
+    expect(trust.querySelectorAll(".ad-lp-trust__items li")).toHaveLength(4);
+    expect(trust).toHaveTextContent("Se o arranjo não sair como combinado");
+    expect(document.getElementById("faq")?.compareDocumentPosition(trust)).toBe(
       Node.DOCUMENT_POSITION_FOLLOWING,
     );
   });
@@ -215,7 +211,7 @@ describe("ad landing pages", () => {
     expect(rosas.container.querySelector("#bonus")).toBeInTheDocument();
   });
 
-  it("keeps the lírios vitrine to six lily products, with no expander", async () => {
+  it("keeps six ordered lily products with a native mobile expander", async () => {
     const { container } = renderAt("/lirios-apt");
 
     await screen.findByTestId("ad-lp-cta-hero");
@@ -225,13 +221,18 @@ describe("ad landing pages", () => {
     // A rosa vermelha e a flor-do-campo saíram: numa grade de seis, dois cards
     // fora de tema custam duas vagas e não convertem lírio.
     expect(ids).toEqual([
-      "product-card-arranjo-mao-lirios-m",
-      "product-card-buque-lirios-m",
       "product-card-arranjo-mao-lirios-p",
+      "product-card-arranjo-mao-lirios-m",
       "product-card-arranjo-mao-lirios-g",
       "product-card-buque-lirios-p",
+      "product-card-buque-lirios-m",
       "product-card-buque-lirios-g",
     ]);
+    const progressive = screen.getByTestId("ad-lp-vitrine-progressive");
+    expect(progressive.tagName).toBe("DETAILS");
+    expect(progressive).not.toHaveAttribute("open");
+    expect(progressive.querySelector("summary")).toHaveTextContent("Ver os 3 buquês");
+    expect(screen.getByRole("heading", { name: "Lírios para seu amor" })).toBeInTheDocument();
     expect(screen.queryByText(/Quero ver mais opções/)).not.toBeInTheDocument();
     expect(screen.queryByText("Se quiser variar")).not.toBeInTheDocument();
 
@@ -385,14 +386,14 @@ describe("ad landing pages", () => {
   it("shows the Google reviews link on girassol but not on an unrelated LP", async () => {
     const { unmount } = renderAt("/girassol");
     await screen.findByTestId("ad-lp-cta-hero");
-    const link = await screen.findByRole("link", { name: /Ver as 184 avaliações no Google/ });
+    const link = await screen.findByRole("link", { name: /Ver as 203 avaliações no Google/ });
     expect(link).toHaveAttribute("href", "https://share.google/QZylItqH7aT9MFXYA");
     expect(link).toHaveAttribute("target", "_blank");
     unmount();
 
     renderAt("/urgencia");
     await screen.findByTestId("ad-lp-cta-hero");
-    expect(screen.queryByRole("link", { name: /Ver as 184 avaliações no Google/ })).toBeNull();
+    expect(screen.queryByRole("link", { name: /Ver as 203 avaliações no Google/ })).toBeNull();
   });
 
   it("reconciliacao's default state has no product-specific CTA (still opens the intent picker)", async () => {

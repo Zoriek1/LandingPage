@@ -2,7 +2,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
 import { PRODUCTS } from "@/features/ad-lps/data/configs";
-import { DELIVERY_FEES } from "@/lib/business-info";
+import { DELIVERY_FEE_GUIDANCE, DELIVERY_FEES } from "@/lib/business-info";
 
 const { openWhatsAppModal } = vi.hoisted(() => ({
   openWhatsAppModal: vi.fn(),
@@ -34,7 +34,7 @@ describe("ad LP CRO — hero badges (P1.1)", () => {
 
     const badges = await screen.findByLabelText("Diferenciais");
     expect(badges).toHaveTextContent("Entrega hoje em Goiânia, Aparecida e Senador Canedo");
-    expect(badges).toHaveTextContent("Cartão escrito à mão por conta da casa");
+    expect(badges).toHaveTextContent("Cartão escrito à mão incluído");
     // A promessa da foto vive aqui e na subheadline — não no h1, que devolve o
     // preço do anúncio.
     expect(badges).toHaveTextContent("Você aprova a foto real antes da entrega");
@@ -382,8 +382,8 @@ describe("ad LP CRO — redesign da /lirios-apt", () => {
       expect(freight).toHaveTextContent(fee.label);
       expect(freight).toHaveTextContent(fee.value);
     }
-    // A tabela não cobre a faixa entre o Setor Sul e os 20 km — a frase do CEP
-    // fecha isso sem prometer valor que o cliente não deu.
+    expect(freight).toHaveTextContent("Na maioria dos bairros, o frete custa R$ 15,00");
+    expect(freight).toHaveTextContent("R$ 25,00 é o teto, não o valor padrão");
     expect(freight).toHaveTextContent(/CEP no WhatsApp/);
   });
 
@@ -422,6 +422,13 @@ describe("ad LP CRO — redesign da /lirios-apt", () => {
 });
 
 describe("ad LP CRO — vitrine da /lirios-apt", () => {
+  beforeEach(() => {
+    openWhatsAppModal.mockClear();
+    window.dataLayer = [];
+    localStorage.clear();
+    sessionStorage.clear();
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -432,7 +439,7 @@ describe("ad LP CRO — vitrine da /lirios-apt", () => {
     const card = await screen.findByTestId("product-card-arranjo-mao-lirios-m");
     const pitch = card.querySelector(".ad-lp-card__pitch")!;
     expect(pitch).toHaveTextContent(
-      "O que mais sai. Volume suficiente pra aparecer na foto e no rosto de quem recebe.",
+      "O mais vendido, com volume para marcar a foto e a lembrança de quem recebe.",
     );
     // A linha vem logo depois do nome; a ficha técnica continua no card, só que
     // depois do preço (a ordem visual é feita por `order` no CSS do slug).
@@ -480,11 +487,32 @@ describe("ad LP CRO — vitrine da /lirios-apt", () => {
     expect(lines[0]).toHaveTextContent("Arranjo de mão");
     expect(lines[0]).toHaveTextContent("R$ 159,90 a R$ 289,90.");
     expect(lines[1]).toHaveTextContent("Buquê");
-    expect(lines[1]).toHaveTextContent("R$ 299,90 a R$ 459,90.");
+    expect(lines[1]).toHaveTextContent("R$ 299,90 a R$ 424,90.");
 
     // Acima da grade, dentro da vitrine.
     const grid = document.querySelector(".ad-lp-vitrine__grid")!;
     expect(intro.compareDocumentPosition(grid)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
+  it("hydrates each product CTA into a button and preserves the conversion payload", async () => {
+    renderAt("/lirios-apt?utm_source=meta&utm_campaign=lirios");
+
+    const cta = await screen.findByTestId("product-cta-buque-lirios-m");
+    expect(cta.tagName).toBe("BUTTON");
+    expect(cta).toHaveTextContent("Comprar este no WhatsApp");
+    fireEvent.click(cta);
+
+    expect(openWhatsAppModal).toHaveBeenCalledTimes(1);
+    const [, payload, message] = openWhatsAppModal.mock.calls[0];
+    expect(payload).toMatchObject({
+      lp_slug: "lirios-apt",
+      cta_location: "vitrine",
+      cta_label: "produto_whatsapp",
+      product_id: "buque-lirios-m",
+      product_name: "Buquê de Lírios M",
+      product_price: "R$ 389,90",
+    });
+    expect(message).toContain("Buquê de Lírios M - R$ 389,90");
   });
 
   it("leaves the other LPs without intent lines, pledge or intro", async () => {
@@ -512,18 +540,19 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
     cleanup();
   });
 
-  it("leads the hero with the price the ad promises, and only once", async () => {
+  it("restores the editorial price chip and keeps the promised price in the headline", async () => {
     const { container } = renderAt("/lirios-apt");
     await screen.findByTestId("ad-lp-cta-hero");
 
     const title = await screen.findByRole("heading", { level: 1 });
     expect(title.textContent).toBe("Lírios a partir de R$ 159,90.");
 
-    // O chip acima do h1 repetia o mesmo preço; o hero fala em preço uma vez.
-    expect(container.querySelector(".ad-lp-hero__anchor")).toBeNull();
+    expect(container.querySelector(".ad-lp-hero__anchor")).toHaveTextContent(
+      "A partir de R$ 159,90",
+    );
     expect(container.querySelectorAll(".ad-lp-hero__content *:not(script)")).not.toHaveLength(0);
     const heroText = container.querySelector(".ad-lp-hero__content")!.textContent ?? "";
-    expect(heroText.match(/R\$ 159,90/g)).toHaveLength(1);
+    expect(heroText.match(/R\$ 159,90/g)).toHaveLength(2);
 
     // E a foto volta a ser fundo: nada de coluna, nada de card sobreposto.
     const hero = container.querySelector(".ad-lp-hero")!;
@@ -544,17 +573,19 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
     expect(screen.getByRole("heading", { level: 1 }).textContent).not.toContain("foto");
   });
 
-  it("shows the WhatsApp example card inside the beat it illustrates", async () => {
+  it("keeps the CTA in the steps column and the WhatsApp example in its own column", async () => {
     renderAt("/lirios-apt");
     await screen.findByTestId("ad-lp-cta-hero");
 
     const chat = screen.getByTestId("ad-lp-chat-example");
 
-    // Fora da dobra, dentro do tempo destacado: a promessa se explica onde a
-    // sequência do pedido é contada.
-    const beat = chat.closest(".ad-lp-beats__item")!;
-    expect(beat.className).toContain("ad-lp-beats__item--key");
-    expect(beat).toHaveTextContent("Você aprova a foto");
+    const layout = chat.closest(".ad-lp-beats__layout")!;
+    const main = layout.querySelector(".ad-lp-beats__main")!;
+    const cta = screen.getByTestId("ad-lp-cta-como_funciona");
+    expect(main).toContainElement(cta);
+    expect(chat.closest(".ad-lp-beats__conversation")).not.toBeNull();
+    expect(chat.closest(".ad-lp-beats__item")).toBeNull();
+    expect(main).toHaveTextContent("Você aprova a foto");
     expect(chat.closest("#hero")).toBeNull();
 
     // O rótulo é o que separa isto de um print real de conversa. Precisa estar
@@ -565,10 +596,10 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
 
     const bubbles = chat.querySelectorAll(".ad-lp-chat__bubble");
     expect(bubbles).toHaveLength(3);
-    expect(bubbles[0]).toHaveTextContent("Ficou assim. Pode sair pra entrega?");
+    expect(bubbles[0]).toHaveTextContent("Ficou assim. Podemos sair para a entrega?");
     expect(bubbles[1].className).toContain("ad-lp-chat__bubble--mine");
     expect(bubbles[1]).toHaveTextContent("Pode! Ficou lindo");
-    expect(bubbles[2]).toHaveTextContent("O cartão vai escrito à mão");
+    expect(bubbles[2]).toHaveTextContent("Escrevemos o cartão à mão");
 
     // A foto do card é a do Arranjo de Mão G, diferente da do card em destaque
     // da vitrine: repetir a mesma imagem desperdiçaria as duas.
@@ -585,16 +616,18 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
     expect(document.querySelector(".ad-lp-hero--split")).toBeNull();
   });
 
-  it("keeps the static cutoff sentence outside the delivery window", async () => {
+  it("shows a calm closed-store message on Sunday", async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-08-23T15:00:00Z")); // dom 12:00 em SP
 
     renderAt("/lirios-apt");
 
-    const strip = screen.getByTestId("ad-lp-daystrip");
-    expect(strip).toHaveTextContent("Lírios chegam 3× por semana.");
-    expect(screen.getByTestId("ad-lp-daystrip-cutoff")).toHaveTextContent(
-      "Pedido até 18h de segunda a sexta (13h no sábado) sai hoje.",
+    const delivery = screen.getByTestId("ad-lp-delivery-info");
+    expect(delivery.tagName).toBe("DIV");
+    expect(delivery).toHaveTextContent("Informações de entrega");
+    expect(delivery).toHaveTextContent(DELIVERY_FEE_GUIDANCE);
+    expect(screen.getByTestId("ad-lp-delivery-timing")).toHaveTextContent(
+      "A loja está fechada aos domingos",
     );
   });
 
@@ -604,8 +637,8 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
 
     renderAt("/lirios-apt");
 
-    expect(screen.getByTestId("ad-lp-daystrip-cutoff")).toHaveTextContent(
-      "Faltam 2h 40min pra fechar a entrega de hoje.",
+    expect(screen.getByTestId("ad-lp-delivery-timing")).toHaveTextContent(
+      "Faltam 2h 40min para fechar as entregas de hoje.",
     );
   });
 
@@ -615,28 +648,16 @@ describe("ad LP CRO — hero e faixa do dia da /lirios-apt", () => {
 
     renderAt("/lirios-apt");
 
-    expect(screen.getByTestId("ad-lp-daystrip-cutoff")).toHaveTextContent(
-      "Pedido até 18h de segunda a sexta (13h no sábado) sai hoje.",
+    expect(screen.getByTestId("ad-lp-delivery-timing")).toHaveTextContent(
+      "A loja abre às 8h. Envie seu pedido agora para combinar a entrega.",
     );
   });
 
-  it("reserves the height of the cutoff line so the swap costs no layout shift", async () => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date("2026-08-24T18:20:00Z")); // seg 15:20 em SP
-
-    renderAt("/lirios-apt");
-
-    // A frase estática segue no DOM, invisível, segurando a altura do slot.
-    const ghost = document.querySelector(".ad-lp-daystrip__ghost")!;
-    expect(ghost).toHaveTextContent("Pedido até 18h de segunda a sexta");
-    expect(ghost.getAttribute("aria-hidden")).toBe("true");
-  });
-
-  it("leaves the day strip out of the other LPs", async () => {
+  it("leaves delivery details out of the other LPs", async () => {
     renderAt("/presente-hoje");
 
     await screen.findByTestId("ad-lp-cta-hero");
-    expect(screen.queryByTestId("ad-lp-daystrip")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("ad-lp-delivery-info")).not.toBeInTheDocument();
   });
 });
 
@@ -670,9 +691,9 @@ describe("ad LP CRO — prova, loja e fecho da /lirios-apt", () => {
     expect(voices).toHaveLength(4);
     expect([...voices].map((voice) => voice.querySelector("figcaption")?.textContent)).toEqual([
       "Melissa Pimentel",
-      "sffart gamer",
       "Hellen Araújo",
       "Tainá Santos",
+      "Fabiana Moraes",
     ]);
 
     // Sem carrossel: nada de autoplay nem de botões de navegação nesta LP.
@@ -681,7 +702,7 @@ describe("ad LP CRO — prova, loja e fecho da /lirios-apt", () => {
     expect(screen.queryByLabelText("Avaliação anterior")).not.toBeInTheDocument();
 
     // O agregado é conferível: número e link para o Google.
-    expect(proof).toHaveTextContent("4.9 · 184 avaliações públicas no Google");
+    expect(proof).toHaveTextContent("4.9 · 203 avaliações públicas no Google");
     expect(proof.querySelector('a[href*="google"]')).not.toBeNull();
   });
 
@@ -703,7 +724,7 @@ describe("ad LP CRO — prova, loja e fecho da /lirios-apt", () => {
     expect(items).toHaveLength(4);
     expect([...items].map((item) => item.querySelector("h3")?.textContent)).toEqual([
       "Você escolhe",
-      "A gente monta",
+      "Montamos seu pedido",
       "Você aprova a foto",
       "Chega hoje",
     ]);
@@ -759,7 +780,7 @@ describe("ad LP CRO — prova, loja e fecho da /lirios-apt", () => {
     const values = [...container.querySelectorAll(".ad-lp-historia__stat-value")].map(
       (node) => node.textContent,
     );
-    expect(values).toEqual(["+3.000", "40 anos", "4.9 ★"]);
+    expect(values).toEqual(["+3.000", "40 anos", "4,9 ★"]);
   });
 
   it("closes with the copy of the redesign and leaves the other LPs alone", async () => {
@@ -767,7 +788,7 @@ describe("ad LP CRO — prova, loja e fecho da /lirios-apt", () => {
     await screen.findByTestId("ad-lp-cta-hero");
 
     expect(
-      screen.getByRole("heading", { name: "Manda o endereço e a data. A gente cuida do resto." }),
+      screen.getByRole("heading", { name: "Envie o endereço e a data. Cuidamos do restante." }),
     ).toBeInTheDocument();
     expect(screen.getByText("Leva menos de um minuto")).toBeInTheDocument();
     cleanup();
