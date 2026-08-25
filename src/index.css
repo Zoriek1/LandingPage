@@ -1,46 +1,8 @@
+@import "./styles/tokens.generated.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 40 33% 98%;
-    --foreground: 0 0% 18%;
-
-    --card: 40 33% 98%;
-    --card-foreground: 0 0% 18%;
-
-    --popover: 40 33% 98%;
-    --popover-foreground: 0 0% 18%;
-
-    --primary: 148 30% 15%;
-    --primary-foreground: 40 33% 98%;
-
-    --secondary: 40 20% 94%;
-    --secondary-foreground: 148 30% 15%;
-
-    --muted: 40 20% 94%;
-    --muted-foreground: 0 0% 40%;
-
-    --accent: 40 45% 56%;
-    --accent-foreground: 40 33% 98%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 40 20% 88%;
-    --input: 40 20% 88%;
-    --ring: 148 30% 15%;
-
-    --radius: 0.25rem;
-
-    --font-display: 'Playfair Display', Georgia, serif;
-    --font-body: 'Montserrat', system-ui, sans-serif;
-
-    --gold-gradient: linear-gradient(135deg, hsl(40 45% 56%), hsl(40 50% 45%));
-    --hero-overlay: linear-gradient(135deg, hsl(148 30% 15% / 0.85), hsl(148 30% 10% / 0.7));
-  }
-}
 
 @layer base {
   * {
@@ -54,5 +16,10 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+  }
+
+  .font-display {
+    font-optical-sizing: auto;
   }
 }

@@ -8,8 +8,8 @@
 @tailwind base;
 
 :root {
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body: "Montserrat", system-ui, sans-serif;
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-body: "Jost", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
 }
 
 @layer base {
@@ -24,6 +24,13 @@
   h5,
   h6 {
     font-family: var(--font-display);
+    font-optical-sizing: auto;
+    font-variation-settings: "WONK" 1;
+  }
+
+  .font-display {
+    font-optical-sizing: auto;
+    font-variation-settings: "WONK" 1;
   }
 }
 
@@ -1947,16 +1954,6 @@
 
 .ad-lp-theme[data-slug="lirios-apt"] {
 
-  /* --- Tipografia -----------------------------------------------------------
-     Fraunces no lugar de Playfair: aguenta corpo grande no mobile sem afinar,
-     e a irregularidade dela combina com loja de família. Instrument Sans no
-     lugar de Montserrat: ritmo melhor em português com acento, e mais estreita,
-     o que ganha linha no celular.
-     As duas variáveis são lidas pelo @layer base do theme.css (body e h1–h6),
-     que resolve o var() na posição do elemento — então redefinir aqui basta.  */
-  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
-  --font-body: "Instrument Sans", system-ui, -apple-system, sans-serif;
-
   /* --- Papel ----------------------------------------------------------------
      Praticamente os mesmos cremes do tema base, só um grau mais quentes.      */
   --ad-bg: #f7f2e8;
@@ -2628,10 +2625,10 @@
 
    --- /lirios-apt: a barra da marca não pode respirar ------------------------
    A pílula da nota tinha só `min-height`, então a caixa do texto mandava: com a
-   fonte de sistema ela nascia 11px mais alta e encolhia quando Instrument Sans
+   fonte de sistema ela nascia 11px mais alta e encolhia quando a webfont
    chegava. Como a barra é o primeiro elemento da página, esses 11px empurravam
    o `main` inteiro — 0,138 de CLS no celular, sozinho. Altura travada resolve;
-   escopado ao slug porque as outras LPs não carregam esta fonte. */
+   escopado ao slug para preservar o enquadramento específico desta página. */
 .ad-lp-theme[data-slug="lirios-apt"] .ad-lp-rating {
   height: 34px;
   padding-block: 0;

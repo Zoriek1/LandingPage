@@ -1,8 +1,5 @@
-/* Inline apenas em lirios-apt.html. Mantém fonte, paleta, cabeçalho e enquadramento do hero estáveis na primeira pintura. */
-@font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:700;src:url('../../assets/fonts/fraunces-latin-700-normal.woff2') format('woff2')}
-@font-face{font-family:'Instrument Sans';font-style:normal;font-display:swap;font-weight:400;src:url('../../assets/fonts/instrument-sans-latin-400-normal.woff2') format('woff2')}
-@font-face{font-family:'Instrument Sans';font-style:normal;font-display:swap;font-weight:600;src:url('../../assets/fonts/instrument-sans-latin-600-normal.woff2') format('woff2')}
-.ad-lp-theme[data-slug="lirios-apt"]{--font-display:"Fraunces",Georgia,"Times New Roman",serif;--font-body:"Instrument Sans",system-ui,-apple-system,sans-serif;--ad-bg:#f7f2e8;--ad-bg-warm:#efe7d8;--ad-surface:#fffcf6;--ad-text:#0e2419;--ad-brand:#1c3d2c;--ad-brand-deep:#0e2419;--ad-line:rgba(14,36,25,.12);--ad-muted:#58684e;--ad-accent:#988159;--ad-accent-deep:#817348;--ad-accent-luz:#e6dfcf;--ad-accent-chip:#e6dfcf;--ad-accent-soft:#e6dfcf;--ad-gold:#7b6c43;--ad-gold-deep:#7b6c43;--ad-gold-fio:#cfc4a8;--ad-whatsapp:#127538;--ad-whatsapp-deep:#0e5e2d;--ad-shadow:0 8px 22px rgba(14,36,25,.1)}
+/* Inline apenas em lirios-apt.html. Mantém paleta, cabeçalho e enquadramento do hero estáveis na primeira pintura. */
+.ad-lp-theme[data-slug="lirios-apt"]{--ad-bg:#f7f2e8;--ad-bg-warm:#efe7d8;--ad-surface:#fffcf6;--ad-text:#0e2419;--ad-brand:#1c3d2c;--ad-brand-deep:#0e2419;--ad-line:rgba(14,36,25,.12);--ad-muted:#58684e;--ad-accent:#988159;--ad-accent-deep:#817348;--ad-accent-luz:#e6dfcf;--ad-accent-chip:#e6dfcf;--ad-accent-soft:#e6dfcf;--ad-gold:#7b6c43;--ad-gold-deep:#7b6c43;--ad-gold-fio:#cfc4a8;--ad-whatsapp:#127538;--ad-whatsapp-deep:#0e5e2d;--ad-shadow:0 8px 22px rgba(14,36,25,.1)}
 .ad-lp-theme[data-slug="lirios-apt"] .ad-lp-cta{color:#fff;border-radius:10px}
 .ad-lp-theme[data-slug="lirios-apt"] .ad-lp-rating{height:34px;padding-block:0;line-height:1}
 .ad-lp-theme[data-slug="lirios-apt"] .ad-lp-logo{display:inline-flex;align-items:center;min-height:44px}

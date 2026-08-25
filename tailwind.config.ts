@@ -58,7 +58,11 @@ export default {
         accent: {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
+          "on-dark": "hsl(var(--accent-on-dark))",
+          "on-dark-hover": "hsl(var(--accent-on-dark-hover))",
         },
+        "accent-on-dark": "hsl(var(--accent-on-dark))",
+        "accent-on-dark-hover": "hsl(var(--accent-on-dark-hover))",
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

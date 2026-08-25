@@ -245,23 +245,17 @@ function adLandingStaticHtml(): Plugin {
         );
 
       const criticalCss = readCritical("critical.css", [
-        "montserrat-latin-400-normal",
-        "montserrat-latin-700-normal",
-        "playfair-display-latin-700-normal",
+        "jost-latin-variable",
+        "fraunces-latin-variable",
       ]);
 
       /**
        * CSS crítico específico de um slug, concatenado ao comum só no HTML
-       * daquele slug. A /lirios-apt tem tipografia e accent próprios: Fraunces
-       * e Instrument Sans não podem aparecer no <head> das outras 16 LPs nem
-       * no da home, e o rosa pintaria por cima do tema lily se vazasse.
+       * daquele slug. A /lirios-apt tem enquadramento e accent próprios; o
+       * bloco não pode pintar por cima dos demais temas.
        */
       const SLUG_CRITICAL_CSS: Record<string, string> = {
-        "lirios-apt": readCritical("critical-lirios-apt.css", [
-          "fraunces-latin-700-normal",
-          "instrument-sans-latin-400-normal",
-          "instrument-sans-latin-600-normal",
-        ]),
+        "lirios-apt": readCritical("critical-lirios-apt.css", []),
       };
 
       const written: string[] = [];

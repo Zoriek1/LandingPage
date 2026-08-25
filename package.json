@@ -25,8 +25,6 @@
     "prerender:ad-lps": "vite build --ssr src/features/ad-lps/entry-server.tsx --outDir dist-ssr && node ./scripts/prerender-ad-lps.mjs"
   },
   "dependencies": {
-    "@fontsource/montserrat": "^5.2.8",
-    "@fontsource/playfair-display": "^5.2.8",
     "@hookform/resolvers": "^3.10.0",
     "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.14",

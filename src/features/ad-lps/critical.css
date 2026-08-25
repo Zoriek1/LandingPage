@@ -1,9 +1,8 @@
-@font-face{font-family:'Montserrat';font-style:normal;font-display:swap;font-weight:400;src:url('@fontsource/montserrat/files/montserrat-latin-400-normal.woff2') format('woff2')}
-@font-face{font-family:'Montserrat';font-style:normal;font-display:swap;font-weight:700;src:url('@fontsource/montserrat/files/montserrat-latin-700-normal.woff2') format('woff2')}
-@font-face{font-family:'Playfair Display';font-style:normal;font-display:swap;font-weight:700;src:url('../../assets/fonts/playfair-display-latin-700-normal.woff2') format('woff2')}
+@font-face{font-family:'Jost';font-style:normal;font-display:swap;font-weight:400 800;src:url('../../assets/fonts/jost-latin-variable.woff2') format('woff2-variations')}
+@font-face{font-family:'Fraunces';font-style:normal;font-display:swap;font-weight:400 700;src:url('../../assets/fonts/fraunces-latin-variable.woff2') format('woff2-variations')}
 *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:currentColor}html{line-height:1.5;-webkit-text-size-adjust:100%}body{margin:0;font-family:inherit;line-height:inherit}
-:root{--font-display:"Playfair Display",Georgia,serif;--font-body:"Montserrat",system-ui,sans-serif}
-body{font-family:var(--font-body)}h1,h2,h3,h4,h5,h6{font-family:var(--font-display)}
+:root{--font-display:"Fraunces",Georgia,"Times New Roman",serif;--font-body:"Jost","Inter","Segoe UI",system-ui,-apple-system,sans-serif}
+body{font-family:var(--font-body)}h1,h2,h3,h4,h5,h6,.font-display{font-family:var(--font-display);font-optical-sizing:auto;font-variation-settings:"WONK" 1}
 .ad-lp-theme{--ad-bg:#f8f5ef;--ad-text:#173b2a;--ad-line:rgba(23,59,42,0.12);--ad-brand:#123725;--ad-brand-deep:#0c2a1c;--ad-gold:#c7a25a;--ad-whatsapp:#25d366;--ad-accent:var(--ad-gold);--ad-accent-chip:var(--ad-accent);--ad-gutter:clamp(1rem,4vw,2.4rem);min-height:100vh;background:var(--ad-bg);color:var(--ad-text);font-family:var(--font-body)}
 .ad-lp-theme[data-accent="rose"]{--ad-accent:#c7a25a}
 .ad-lp-theme[data-accent="lily"]{--ad-accent:#988159;--ad-accent-chip:#a48b60}
