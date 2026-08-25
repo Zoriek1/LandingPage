@@ -6,17 +6,27 @@ const STAR_SLOTS = [0, 1, 2, 3, 4];
 const REVIEWS_ENDPOINT = "/lpb/google-reviews.json";
 const MAX_REVIEWS = 6;
 
-type Review = {
+export type TestimonialItem = {
   reviewId: string;
   authorName: string;
   rating: number;
   comment: string;
-  relativeTime?: string;
   reviewCountLabel?: string;
 };
 
+export type TestimonialsSectionConfig = {
+  title: string;
+  description: string;
+  columns: 3 | 4;
+  items: readonly TestimonialItem[];
+};
+
+type TestimonialsSectionProps = {
+  config?: TestimonialsSectionConfig;
+};
+
 // Fallback estático: usado se o fetch das avaliações do Google falhar.
-const FALLBACK_REVIEWS: Review[] = [
+const FALLBACK_REVIEWS: TestimonialItem[] = [
   {
     reviewId: "camila-r",
     authorName: "Camila R.",
@@ -56,12 +66,12 @@ const getInitials = (name: string) =>
     .join("")
     .toUpperCase();
 
-const useGoogleReviews = () => {
-  const [reviews, setReviews] = useState<Review[]>(FALLBACK_REVIEWS);
+const useGoogleReviews = (enabled: boolean) => {
+  const [reviews, setReviews] = useState<TestimonialItem[]>(FALLBACK_REVIEWS);
   const [summary, setSummary] = useState({ rating: "4.9", count: "203" });
 
   useEffect(() => {
-    if (typeof fetch !== "function") return;
+    if (!enabled || typeof fetch !== "function") return;
 
     let alive = true;
     fetch(REVIEWS_ENDPOINT)
@@ -69,7 +79,7 @@ const useGoogleReviews = () => {
       .then((payload) => {
         if (!alive || !payload) return;
 
-        const list: Review[] = Array.isArray(payload.reviews) ? payload.reviews : [];
+        const list: TestimonialItem[] = Array.isArray(payload.reviews) ? payload.reviews : [];
         const featured = list
           .filter((review) => review.rating >= 5 && review.comment)
           .slice(0, MAX_REVIEWS);
@@ -87,16 +97,20 @@ const useGoogleReviews = () => {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [enabled]);
 
   return { reviews, summary };
 };
 
-const TestimonialsSection = () => {
-  const { reviews, summary } = useGoogleReviews();
+const TestimonialsSection = ({ config }: TestimonialsSectionProps) => {
+  const { reviews: googleReviews, summary } = useGoogleReviews(!config);
+  const reviews = config?.items ?? googleReviews;
+  const title = config?.title ?? "Quem comprou, indica";
+  const description = config?.description ?? "A satisfação de quem confia na Plante Uma Flor.";
+  const columns = config?.columns ?? 3;
 
   return (
-    <section id="depoimentos" className="bg-primary py-20 md:py-28">
+    <section id="depoimentos" className="bg-primary py-section-y">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -104,19 +118,23 @@ const TestimonialsSection = () => {
           viewport={{ once: true }}
           className="mb-14 text-center"
         >
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent/30 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
-            <Star size={14} className="fill-accent text-accent" />
-            Google {summary.rating} · {summary.count} avaliações
-          </span>
-          <h2 className="mb-4 font-display text-3xl font-semibold text-primary-foreground md:text-4xl">
-            Quem comprou, indica
+          {!config && (
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-accent-on-dark/30 bg-accent-on-dark/10 px-4 py-1.5 font-body text-eyebrow font-semibold uppercase text-accent-on-dark">
+              <Star size={14} className="fill-accent-on-dark text-accent-on-dark" />
+              Google {summary.rating} · {summary.count} avaliações
+            </span>
+          )}
+          <h2 className="mb-4 font-display text-h2 font-semibold text-primary-foreground">
+            {title}
           </h2>
           <p className="mx-auto max-w-md font-body text-primary-foreground/60">
-            A satisfação de quem confia na Plante Uma Flor.
+            {description}
           </p>
         </motion.div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div
+          className={`grid gap-6 sm:grid-cols-2 ${columns === 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}
+        >
           {reviews.map((review, i) => (
             <motion.figure
               key={review.reviewId}
@@ -129,7 +147,7 @@ const TestimonialsSection = () => {
               <div className="mb-4 flex gap-1" aria-label={`${review.rating} estrelas`}>
                 {STAR_SLOTS.map((j) =>
                   j < review.rating ? (
-                    <Star key={j} size={16} className="fill-accent text-accent" />
+                    <Star key={j} size={16} className="fill-accent-on-dark text-accent-on-dark" />
                   ) : null,
                 )}
               </div>
@@ -138,13 +156,13 @@ const TestimonialsSection = () => {
               </blockquote>
               <figcaption className="flex items-center gap-3">
                 <span
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-accent/20 font-body text-xs font-semibold text-accent"
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-accent-on-dark/20 font-body text-xs font-semibold text-accent-on-dark"
                   aria-hidden="true"
                 >
                   {getInitials(review.authorName)}
                 </span>
                 <span className="leading-tight">
-                  <span className="block font-body text-sm font-semibold text-accent">
+                  <span className="block font-body text-sm font-semibold text-accent-on-dark">
                     {review.authorName}
                   </span>
                   <span className="block font-body text-xs text-primary-foreground/50">
