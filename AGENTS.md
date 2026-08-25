@@ -142,6 +142,26 @@ continuam rodando e podem alimentar outra coisa — verificar antes).
 
 **Secrets do CI/CD (GitHub):** `FTP_SERVER`, `FTP_USERNAME`, `FTP_PASSWORD`
 
+## Design — regras rígidas
+
+- NUNCA escreva hex, `hsl` ou `rgb` literal em componente ou CSS. Use os tokens de
+  `src/styles/tokens.generated.css`.
+- O teste de regressão `src/test/theme.tokens.test.ts` varre todos os arquivos `.tsx` e `.css` de `src/`, permitindo exclusões apenas para:
+  1. `src/components/ui/` (primitivas shadcn/ui)
+  2. `src/styles/tokens.generated.css` (arquivo gerado pelo build do design system)
+  3. `src/features/ad-lps/**` (sistema de LPs de anúncio com namespace isolado `--ad-*`)
+  4. `src/test/**` (fixtures de teste de contraste)
+- NUNCA crie variante de seção copiando a pasta. Parametrize por config, como em
+  `features/ad-lps/data/configs.ts`.
+- Campanha nova = 1 `theme.css` + 1 entrada de config + 1 rota. Zero componente novo.
+- Tema novo nunca introduz cor: escolhe degrau na rampa do core.
+- `components/ui/` é shadcn. Composição, não reescrita. Não editar.
+- Tokens vêm de `~/Repos/plante-design-system`. Não edite
+  `tokens.generated.css`.
+- A origem dos tokens é o Plante Uma Flor Design System:
+  https://claude.ai/design/p/31782d62-865f-432e-9c72-fab6938a498f?via=share
+  Mudou lá? Re-puxe e rode o build. Nunca ajuste o valor no repo.
+
 ---
 
 ## IDs & Endpoints Hard-coded
