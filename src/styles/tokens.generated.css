@@ -1,0 +1,46 @@
+/* GERADO AUTOMATICAMENTE — não edite. Fonte: plante-design-system/ */
+/* Rodar: npm run build (na raiz de plante-design-system/) */
+
+@layer base {
+  :root {
+    --background: 60 9.1% 97.8%;
+    --foreground: 120 4.8% 8.2%;
+    --card: 0 0% 100%;
+    --card-foreground: 120 4.8% 8.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 120 4.8% 8.2%;
+    --primary: 157.5 33.3% 9.4%;
+    --primary-foreground: 120 9.1% 95.7%;
+    --secondary: 60 12% 95.1%;
+    --secondary-foreground: 157.5 33.3% 9.4%;
+    --muted: 60 12% 95.1%;
+    --muted-foreground: 128.6 3.1% 44.5%;
+    --accent: 36.6 41.8% 38.4%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 3.4 61.4% 39.6%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 60 7.9% 87.6%;
+    --input: 60 7.9% 87.6%;
+    --ring: 150 40% 19.6%;
+
+    --radius: 0.5rem;
+    --space-section-y: 6rem;
+    --space-section-x: 1.5rem;
+    --space-card-padding: 1rem;
+    --radius-card: 0.75rem;
+    --radius-chip: 0.25rem;
+
+    --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+    --font-body: 'Jost', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --text-h1-size: clamp(2.25rem, 1.79rem + 1.95vw, 3.125rem);
+    --text-h2-size: clamp(1.875rem, 1.63rem + 1.05vw, 2.375rem);
+    --text-h3-size: clamp(1.5rem, 1.36rem + 0.6vw, 1.8125rem);
+    --text-h4-size: clamp(1.25rem, 1.16rem + 0.38vw, 1.4375rem);
+    --text-h5-size: 1.125rem;
+    --text-h6-size: 0.9375rem;
+    --text-body-size: 1rem;
+    --text-eyebrow-size: 0.75rem;
+    --tracking-tighter: -0.022em;
+    --tracking-widest: 0.09em;
+  }
+}
