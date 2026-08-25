@@ -12,7 +12,4 @@
   --secondary: 18 35% 92%;
   --muted: 18 28% 90%;
   --muted-foreground: 348 18% 32%;
-
-  --gold-gradient: linear-gradient(135deg, hsl(18 78% 60%), hsl(348 55% 38%));
-  --hero-overlay: linear-gradient(135deg, hsl(348 55% 14% / 0.86), hsl(348 50% 10% / 0.56));
 }

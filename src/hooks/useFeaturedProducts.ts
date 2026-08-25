@@ -11,17 +11,32 @@ type UseFeaturedProductsResult = {
   isRefreshing: boolean;
 };
 
-export const useFeaturedProducts = (): UseFeaturedProductsResult => {
-  const [products, setProducts] = useState<FeaturedProduct[]>(FEATURED_PRODUCTS_SNAPSHOT);
+export type FeaturedProductsSource = {
+  endpoint: string;
+  snapshot: FeaturedProduct[];
+};
+
+const defaultSource: FeaturedProductsSource = {
+  endpoint: FEATURED_PRODUCTS_ENDPOINT,
+  snapshot: FEATURED_PRODUCTS_SNAPSHOT,
+};
+
+export const useFeaturedProducts = (
+  source: FeaturedProductsSource = defaultSource,
+): UseFeaturedProductsResult => {
+  const { endpoint, snapshot } = source;
+  const [products, setProducts] = useState<FeaturedProduct[]>(snapshot);
   const [isRefreshing, setIsRefreshing] = useState(true);
 
   useEffect(() => {
+    setProducts(snapshot);
+    setIsRefreshing(true);
     let isMounted = true;
     const controller = new AbortController();
 
     const syncProducts = async () => {
       try {
-        const response = await fetch(FEATURED_PRODUCTS_ENDPOINT, {
+        const response = await fetch(endpoint, {
           signal: controller.signal,
         });
 
@@ -40,7 +55,7 @@ export const useFeaturedProducts = (): UseFeaturedProductsResult => {
         }
       } catch {
         if (isMounted) {
-          setProducts(FEATURED_PRODUCTS_SNAPSHOT);
+          setProducts(snapshot);
         }
       } finally {
         if (isMounted) {
@@ -55,7 +70,7 @@ export const useFeaturedProducts = (): UseFeaturedProductsResult => {
       isMounted = false;
       controller.abort();
     };
-  }, []);
+  }, [endpoint, snapshot]);
 
   return { products, isRefreshing };
 };
