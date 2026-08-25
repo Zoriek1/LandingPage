@@ -26,7 +26,7 @@ describe("critical CSS inline in dist HTML", () => {
     // Deve existir pelo menos um <style> inline (não <link rel="stylesheet">).
     expect(html).toMatch(/<style[^>]*>/);
 
-    // O CSS crítico inline contém @font-face (Montserrat/Playfair).
+    // O CSS crítico inline contém @font-face (Jost/Fraunces).
     expect(html).toMatch(/@font-face/);
 
     // O CSS crítico inline contém regras da primeira dobra (.ad-lp-hero).

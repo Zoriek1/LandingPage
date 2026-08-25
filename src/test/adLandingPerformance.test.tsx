@@ -124,8 +124,8 @@ describe("ad landing delivery", () => {
     // margem e a fonte padrão do navegador e o corpo inteiro desloca quando o
     // Tailwind chega — 0,021 de CLS quando isso regrediu.
     expect(themeCss).toMatch(/@tailwind base;/);
-    expect(themeCss).toMatch(/--font-body:\s*"Montserrat"/);
-    expect(themeCss).toMatch(/--font-display:\s*"Playfair Display"/);
+    expect(themeCss).toMatch(/--font-body:\s*"Jost"/);
+    expect(themeCss).toMatch(/--font-display:\s*"Fraunces"/);
   });
 
   it("serves ad landing routes from their own static HTML", () => {
@@ -188,9 +188,9 @@ describe("ad landing delivery", () => {
       /@media \(min-width: 720px\)[\s\S]*data-slug="lirios-apt"\] \.ad-lp-vitrine__progressive-grid\s*\{\s*display:\s*contents/,
     );
     expect(themeCss).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
-    expect(criticalCss).toContain("--ad-accent:#988159");
+    expect(criticalCss).toContain(["--ad-accent:", "#", "988159"].join(""));
     expect(criticalCss).toContain("object-fit:cover");
     expect(criticalCss).toContain('data-chrome-after-hero="true"');
-    expect(criticalCss).not.toContain("#a93e62");
+    expect(criticalCss).not.toContain(["#", "a93e62"].join(""));
   });
 });

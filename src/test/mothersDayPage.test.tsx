@@ -6,47 +6,47 @@ vi.mock("@/components/seo/DocumentMeta", () => ({
   DocumentMeta: () => null,
 }));
 
-vi.mock("@/features/mothers-day/components/layout/Navbar", () => ({
+vi.mock("@/components/layout/Navbar", () => ({
   default: () => <div data-testid="navbar" />,
 }));
 
-vi.mock("@/features/mothers-day/components/layout/Footer", () => ({
+vi.mock("@/components/layout/Footer", () => ({
   default: () => <div data-testid="footer" />,
 }));
 
-vi.mock("@/features/mothers-day/components/floating/BackToTop", () => ({
+vi.mock("@/components/floating/BackToTop", () => ({
   default: () => null,
 }));
 
-vi.mock("@/features/mothers-day/components/floating/WhatsAppFAB", () => ({
+vi.mock("@/components/floating/WhatsAppFAB", () => ({
   default: () => null,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/HeroSection", () => ({
+vi.mock("@/components/sections/HeroSection", () => ({
   default: () => <section data-testid="hero-section">Hero</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/FeaturedProductsSection", () => ({
+vi.mock("@/components/sections/FeaturedProductsSection", () => ({
   default: () => <section data-testid="featured-products-section">Featured</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/BenefitsSection", () => ({
+vi.mock("@/components/sections/BenefitsSection", () => ({
   default: () => <section data-testid="benefits-section">Benefits</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/CategoriesSection", () => ({
+vi.mock("@/components/sections/CategoriesSection", () => ({
   default: () => <section data-testid="categories-section">Categories</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/TestimonialsSection", () => ({
+vi.mock("@/components/sections/TestimonialsSection", () => ({
   default: () => <section data-testid="testimonials-section">Testimonials</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/FAQSection", () => ({
+vi.mock("@/components/sections/FAQSection", () => ({
   default: () => <section data-testid="faq-section">Faq</section>,
 }));
 
-vi.mock("@/features/mothers-day/components/sections/FinalCTASection", () => ({
+vi.mock("@/components/sections/FinalCTASection", () => ({
   default: () => <section data-testid="final-cta-section">Final CTA</section>,
 }));
 

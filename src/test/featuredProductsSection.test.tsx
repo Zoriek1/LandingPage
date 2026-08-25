@@ -1,8 +1,11 @@
 import { createElement, type ReactNode } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import FeaturedProductsSection from "@/features/mothers-day/components/sections/FeaturedProductsSection";
+import FeaturedProductsSection from "@/components/sections/FeaturedProductsSection";
+import { MOTHERS_DAY_CONFIG } from "@/features/mothers-day/config";
+import { NAMORADOS_CONFIG } from "@/features/namorados/config";
 import snapshot from "@/features/mothers-day/data/featured-products.snapshot.json";
+import namoradosSnapshot from "@/features/namorados/data/featured-products.snapshot.json";
 
 const { openWhatsAppModal } = vi.hoisted(() => ({
   openWhatsAppModal: vi.fn(),
@@ -60,14 +63,14 @@ describe("FeaturedProductsSection", () => {
   });
 
   it("renders the curated fallback snapshot", async () => {
-    render(<FeaturedProductsSection />);
+    render(<FeaturedProductsSection config={MOTHERS_DAY_CONFIG.featuredProducts} />);
 
     expect(await screen.findByText(snapshot[0].title)).toBeInTheDocument();
     expect(screen.getByText(snapshot[0].priceLabel)).toBeInTheDocument();
   });
 
   it("opens WhatsApp with product context when a curated product is clicked", async () => {
-    render(<FeaturedProductsSection />);
+    render(<FeaturedProductsSection config={MOTHERS_DAY_CONFIG.featuredProducts} />);
 
     const productLink = await screen.findByRole("link", {
       name: new RegExp(snapshot[0].title, "i"),
@@ -88,6 +91,30 @@ describe("FeaturedProductsSection", () => {
       }),
       expect.stringContaining(snapshot[0].title + " - " + snapshot[0].priceLabel),
       "pagina=dia-das-maes",
+    );
+  });
+
+  it("uses the Namorados source and conversion context through config", async () => {
+    render(<FeaturedProductsSection config={NAMORADOS_CONFIG.featuredProducts} />);
+
+    const productLink = await screen.findByRole("link", {
+      name: new RegExp(namoradosSnapshot[0].title, "i"),
+    });
+    fireEvent.click(productLink);
+
+    expect(fetch).toHaveBeenCalledWith(
+      "/dia-dos-namorados/featured-products.json",
+      expect.objectContaining({ signal: expect.any(AbortSignal) }),
+    );
+    expect(openWhatsAppModal).toHaveBeenCalledWith(
+      "https://wa.me/+5562996503403",
+      expect.objectContaining({
+        lp_slug: "dia-dos-namorados",
+        product_id: namoradosSnapshot[0].slug,
+        delivery_intent: "entrega no dia combinado",
+      }),
+      expect.stringContaining(namoradosSnapshot[0].title),
+      "pagina=dia-dos-namorados",
     );
   });
 });
