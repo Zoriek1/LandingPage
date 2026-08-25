@@ -18,6 +18,21 @@ export default {
         display: ["var(--font-display)"],
         body: ["var(--font-body)"],
       },
+      fontSize: {
+        h1: ["var(--text-h1-size)", { letterSpacing: "var(--tracking-tighter)" }],
+        h2: ["var(--text-h2-size)", { letterSpacing: "var(--tracking-tighter)" }],
+        h3: "var(--text-h3-size)",
+        h4: "var(--text-h4-size)",
+        h5: "var(--text-h5-size)",
+        h6: "var(--text-h6-size)",
+        body: "var(--text-body-size)",
+        eyebrow: ["var(--text-eyebrow-size)", { letterSpacing: "var(--tracking-widest)" }],
+      },
+      spacing: {
+        "section-y": "var(--space-section-y)",
+        "section-x": "var(--space-section-x)",
+        "card-padding": "var(--space-card-padding)",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -57,6 +72,8 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        card: "var(--radius-card)",
+        chip: "var(--radius-chip)",
       },
       keyframes: {
         "fade-in-up": {
