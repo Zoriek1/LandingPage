@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import fachadaImg from "@/assets/fachada.jpg";
 
 const OurStorySection = () => (
-  <section id="nossa-historia" className="bg-secondary py-20 md:py-28">
+  <section id="nossa-historia" className="bg-secondary py-section-y">
     <div className="container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -10,10 +10,10 @@ const OurStorySection = () => (
         viewport={{ once: true }}
         className="mb-14 text-center md:mb-16"
       >
-        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-eyebrow font-semibold uppercase text-accent">
           Nossa História
         </span>
-        <h2 className="mb-4 font-display text-3xl font-semibold text-primary md:text-4xl">
+        <h2 className="mb-4 font-display text-h2 font-semibold text-primary">
           A paixão por trás de cada arranjo
         </h2>
         <p className="mx-auto max-w-md font-body text-muted-foreground">
@@ -38,7 +38,7 @@ const OurStorySection = () => (
           />
           <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-2 border-accent" />
           <div className="absolute bottom-4 left-4 max-w-[78%] rounded-xl bg-primary/85 px-4 py-3 text-primary-foreground shadow-xl backdrop-blur-sm">
-            <p className="font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-accent">
+            <p className="font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-on-dark">
               Loja fisica em Goiania
             </p>
             <p className="mt-1 font-body text-sm leading-5 text-primary-foreground/85">
@@ -53,7 +53,7 @@ const OurStorySection = () => (
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <h3 className="mb-6 font-display text-2xl font-semibold text-primary md:text-3xl">
+          <h3 className="mb-6 font-display text-h3 font-semibold text-primary">
             De um sonho florido à sua porta
           </h3>
 

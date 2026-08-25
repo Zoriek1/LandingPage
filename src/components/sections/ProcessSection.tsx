@@ -8,7 +8,7 @@ const steps = [
 ];
 
 const ProcessSection = () => (
-  <section className="bg-background py-20 md:py-28">
+  <section className="bg-background py-section-y">
     <div className="container">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -16,10 +16,10 @@ const ProcessSection = () => (
         viewport={{ once: true }}
         className="mb-14 text-center md:mb-16"
       >
-        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+        <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-eyebrow font-semibold uppercase text-accent">
           Como Funciona
         </span>
-        <h2 className="mb-4 font-display text-3xl font-semibold text-primary md:text-4xl">
+        <h2 className="mb-4 font-display text-h2 font-semibold text-primary">
           Três passos simples
         </h2>
         <p className="mx-auto max-w-md font-body text-muted-foreground">
@@ -41,7 +41,7 @@ const ProcessSection = () => (
             <div className="relative z-10 mx-auto -mt-10 mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-accent/10">
               <s.icon size={28} className="text-accent" />
             </div>
-            <h3 className="mb-2 font-display text-xl font-semibold text-primary">{s.title}</h3>
+            <h3 className="mb-2 font-display text-h4 font-semibold text-primary">{s.title}</h3>
             <p className="font-body text-sm leading-relaxed text-muted-foreground">{s.desc}</p>
           </motion.div>
         ))}

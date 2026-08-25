@@ -67,7 +67,7 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
               <button
                 type="button"
                 onClick={handleWhatsAppClick}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/75 transition-colors hover:bg-primary-foreground/20 hover:text-accent"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary-foreground/10 text-primary-foreground/75 transition-colors hover:bg-primary-foreground/20 hover:text-accent-on-dark"
                 aria-label="WhatsApp"
               >
                 <MessageCircle size={18} />
@@ -83,7 +83,7 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
                     destination_url: SITE_URL,
                   })
                 }
-                className="font-body text-sm font-semibold text-accent hover:underline"
+                className="font-body text-sm font-semibold text-accent-on-dark hover:underline"
               >
                 www.planteumaflor.com
               </a>
@@ -95,7 +95,7 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
               const Icon = item.icon;
               return (
                 <div key={item.label} className="flex gap-3 text-left">
-                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10 text-accent">
+                  <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-foreground/10 text-accent-on-dark">
                     <Icon size={15} />
                   </span>
                   <span>

@@ -12,7 +12,7 @@ const points = [
 ];
 
 const WhyChooseSection = () => (
-  <section id="sobre" className="bg-background py-20 md:py-28">
+  <section id="sobre" className="bg-background py-section-y">
     <div className="container">
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <motion.div
@@ -38,10 +38,10 @@ const WhyChooseSection = () => (
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-xs font-semibold uppercase tracking-[0.18em] text-accent">
+          <span className="mb-4 inline-flex items-center rounded-full border border-accent/20 bg-accent/10 px-4 py-1.5 font-body text-eyebrow font-semibold uppercase text-accent">
             Por que escolher
           </span>
-          <h2 className="mb-6 font-display text-3xl font-semibold text-primary md:text-4xl">
+          <h2 className="mb-6 font-display text-h2 font-semibold text-primary">
             Por que escolher a Plante Uma Flor?
           </h2>
           <p className="mb-8 font-body leading-relaxed text-muted-foreground">
