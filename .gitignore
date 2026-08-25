@@ -36,6 +36,9 @@ test-results/
 # Isolated agent worktrees
 .worktrees/
 
+# Graphify cache (gerado localmente, nunca versionar)
+graphify-out/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
