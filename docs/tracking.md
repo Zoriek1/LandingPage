@@ -31,12 +31,15 @@ Pixel+GTM, cada um em seu próprio documento HTML — nunca os dois juntos.)
 Arquivos principais: `index.html`, `src/main.tsx`, `src/lib/tracking.ts`,
 `src/lib/attribution.ts`, `src/lib/whatsappModal.ts`.
 
-## 3) Captura de atribuição (fbclid, gclid, UTMs)
+## 3) Captura de atribuição (fbclid, gclid/gbraid/wbraid, UTMs)
 
 Ao carregar o módulo `tracking.ts` (side effect no import, guardado por `typeof window`
 porque o mesmo módulo roda no SSR em Node):
 
-- `fbclid` e `gclid` da URL → `sessionStorage` (`fbclid`, `fbclid_ts`, `gclid`).
+- `fbclid` da URL → `sessionStorage` (`fbclid`, `fbclid_ts`).
+- `gclid`, `gbraid` e `wbraid` da URL → `sessionStorage`, via `captureClickIdsFromUrl()` em
+  `src/lib/attribution.ts`. Mesma regra das UTMs: qualquer click ID novo na URL limpa os três
+  antes de gravar, e valores vazios nunca são enviados.
 - UTMs da URL → `sessionStorage`, via `captureUtmsFromUrl()` em `src/lib/attribution.ts`.
 - `session_first_landing_url`, `session_referrer`, `session_start_ts` → gravados uma única
   vez, no primeiro hit da sessão (aba).
@@ -60,8 +63,8 @@ partir do `fbclid` + timestamp salvos no `sessionStorage`.
 1. `index.html` cria `window.__trackingIds.pageview` (ID único do pageview) e dispara
    `fbq("track", "PageView", ..., { eventID })`.
 2. `src/main.tsx` chama `trackPageView()`.
-3. `trackPageView()` (em `tracking.ts`) envia `lp_page_view` para o `dataLayer` com o mesmo
-   `event_id`, e `PageView` para o endpoint de leads.
+3. `trackPageView()` (em `tracking.ts`) envia `PageView` para o endpoint de leads com o mesmo
+   `event_id`. Não há push no `dataLayer`: o GA4 coleta `page_view` automaticamente.
 
 ### 4.2 Ao abrir o modal de WhatsApp
 
@@ -102,7 +105,7 @@ que a aba feche logo após o clique.
 
 | Evento app | Google (GTM/dataLayer) | Meta (fbq) | Endpoint leads |
 |---|---|---|---|
-| PageView inicial | `lp_page_view` | `PageView` | `PageView` |
+| PageView inicial | — (`page_view` automático do GA4) | `PageView` | `PageView` |
 | Modal WhatsApp aberto | `whatsapp_modal_open` | `trackCustom: WhatsAppModalOpen` | `whatsapp_modal_open` |
 | Clique WhatsApp (conversão) | `whatsapp_click` | `Lead` + `Contact` | `whatsapp_click` |
 | Clique site/catálogo (conversão) | `site_click` | `ViewContent` | `site_click` |
@@ -126,7 +129,7 @@ Comuns a todos os eventos (quando disponíveis):
 ```
 event, event_id, timestamp, url, referrer
 first_landing_url, session_referrer, session_start_ts
-fbclid, gclid, fbp, fbc
+fbclid, gclid, gbraid, wbraid, fbp, fbc
 utm_source, utm_medium, utm_campaign, utm_content, utm_term
 src, sck
 ```
@@ -202,7 +205,7 @@ GTM → Variável: {{DLV - cta_location}}
 ```
 
 **Origem de campanha** → `utm_source`/`utm_campaign` (Leads endpoint), `fbclid` presente =
-veio de anúncio Meta, `gclid` presente = veio de anúncio Google.
+veio de anúncio Meta, `gclid`/`gbraid`/`wbraid` presente = veio de anúncio Google.
 
 **Telefone digitado** → campo `phone`, só em `whatsapp_click` após o modal.
 
@@ -230,13 +233,13 @@ Data Layer Version: Version 2
 
 - Manter Google 100% via GTM — não reintroduzir `gtag()` hard-coded para os mesmos eventos.
 - Manter Meta no código nesta fase.
-- Em GA4, manter `lp_page_view` como evento analítico e marcar conversão apenas em
+- Em GA4, usar o `page_view` automático para pageviews e marcar conversão apenas em
   `whatsapp_click` e `site_click`.
 - Sempre validar no GTM Preview + GA4 DebugView + Meta Pixel Helper após qualquer mudança.
 
 Checklist rápido após mudança:
 
-- [ ] `lp_page_view` aparece 1x no GTM Preview ao carregar.
+- [ ] `page_view` do GA4 aparece 1x no DebugView ao carregar (sem `lp_page_view` no GTM Preview).
 - [ ] `whatsapp_modal_open` aparece ao abrir o modal.
 - [ ] `whatsapp_click` aparece 1x ao confirmar no modal (com `phone` preenchido).
 - [ ] `site_click` aparece ao clicar em catálogo.

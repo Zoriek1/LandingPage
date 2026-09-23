@@ -1,17 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
- * Garante que trackPageView() dispara lp_page_view exatamente 1× no
- * dataLayer. O entry-client.tsx chama trackPageView() uma única vez logo
- * após hydrateRoot — se houver duplicação (ex.: remount do React), o
- * dataLayer acumularia entradas extras e o GTM contaria pageviews a mais.
+ * trackPageView() não empurra mais `lp_page_view` para o dataLayer: não havia
+ * tag consumindo o evento no GTM e o GA4 já coleta `page_view` sozinho. O
+ * PageView segue indo só para o backend de leads.
  */
 
-describe("trackPageView: lp_page_view single-fire", () => {
+describe("trackPageView", () => {
   beforeEach(() => {
     window.dataLayer = [];
-    // jsdom não implementa navigator.sendBeacon — o tracking usa sendBeacon
-    // como caminho primário para enviar leads (fallback para fetch).
+    // jsdom não implementa navigator.sendBeacon — fallback do envio de leads.
     Object.defineProperty(navigator, "sendBeacon", {
       writable: true,
       value: () => true,
@@ -22,7 +20,7 @@ describe("trackPageView: lp_page_view single-fire", () => {
     vi.restoreAllMocks();
   });
 
-  it("pushes exactly one lp_page_view event to dataLayer", async () => {
+  it("não empurra lp_page_view para o dataLayer", async () => {
     window.__trackingIds = { pageview: "test-pageview-id" };
     const { trackPageView } = await import("@/lib/tracking");
 
@@ -31,19 +29,6 @@ describe("trackPageView: lp_page_view single-fire", () => {
     const pageViewEntries = window.dataLayer.filter(
       (entry: Record<string, unknown>) => entry.event === "lp_page_view",
     );
-
-    expect(pageViewEntries).toHaveLength(1);
-    expect(pageViewEntries[0]).toMatchObject({
-      event: "lp_page_view",
-      event_id: "test-pageview-id",
-    });
-  });
-
-  it("does not push lp_page_view before trackPageView is called", () => {
-    const pageViewEntries = window.dataLayer.filter(
-      (entry: Record<string, unknown>) => entry.event === "lp_page_view",
-    );
-
     expect(pageViewEntries).toHaveLength(0);
   });
 });

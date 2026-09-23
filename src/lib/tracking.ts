@@ -1,4 +1,10 @@
-import { captureUtmsFromUrl, getCampaign, getUtms } from "@/lib/attribution";
+import {
+  captureClickIdsFromUrl,
+  captureUtmsFromUrl,
+  getCampaign,
+  getClickIds,
+  getUtms,
+} from "@/lib/attribution";
 
 declare global {
   interface Window {
@@ -31,11 +37,8 @@ if (typeof window !== "undefined") {
     sessionStorage.setItem("fbclid_ts", Date.now().toString());
   }
 
-  // gclid
-  const _gclid = _params.get("gclid");
-  if (_gclid) {
-    sessionStorage.setItem("gclid", _gclid);
-  }
+  // gclid/gbraid/wbraid — mesma regra de atribuição das UTMs (attribution.ts).
+  captureClickIdsFromUrl(window.location.search);
 
   // UTMs — captura da URL para sessionStorage (fallback do clique na mesma aba).
   // URL vence na hora de montar o payload; ver src/lib/attribution.ts.
@@ -52,10 +55,6 @@ if (typeof window !== "undefined") {
 
 function getFbclid(): string | undefined {
   return sessionStorage.getItem("fbclid") ?? undefined;
-}
-
-function getGclid(): string | undefined {
-  return sessionStorage.getItem("gclid") ?? undefined;
 }
 
 function getSessionData(): Record<string, string> {
@@ -186,7 +185,7 @@ function sendLead(event: string, eventId?: string, extra: TrackingParams = {}) {
     url: window.location.href,
     referrer: document.referrer || undefined,
     fbclid: getFbclid(),
-    gclid: getGclid(),
+    ...getClickIds(),
     fbp,
     fbc: buildFbc(),
     ...utms,
@@ -275,6 +274,5 @@ export function trackVariantSeen(page: string, paramName: string, paramValue: st
 export function trackPageView() {
   const eventId = window.__trackingIds?.pageview;
 
-  pushDataLayerEvent("lp_page_view", { event_id: eventId });
   sendLead("PageView", eventId);
 }

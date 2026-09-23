@@ -68,3 +68,47 @@ export function getCampaign(): string {
   const params = new URLSearchParams(window.location.search);
   return params.get("utm_campaign") ?? safeSession()?.getItem("utm_campaign") ?? "";
 }
+
+// Click IDs do Google Ads. gbraid/wbraid substituem o gclid em tráfego iOS/app,
+// e o backend usa qualquer um deles na conversão offline de compra.
+export const CLICK_ID_KEYS = ["gclid", "gbraid", "wbraid"] as const;
+
+type ClickIdKey = (typeof CLICK_ID_KEYS)[number];
+
+/**
+ * Captura os click IDs presentes na URL para sessionStorage.
+ *
+ * Mesma regra das UTMs: se QUALQUER click ID novo chega, limpa os 3 antes de
+ * gravar — um gclid de campanha antiga nunca acompanha o wbraid do clique novo.
+ */
+export function captureClickIdsFromUrl(search: string = window.location.search): void {
+  const store = safeSession();
+  if (!store) return;
+
+  const params = new URLSearchParams(search);
+  if (!CLICK_ID_KEYS.some((key) => params.get(key))) return;
+
+  for (const key of CLICK_ID_KEYS) {
+    store.removeItem(key);
+    const val = params.get(key);
+    if (val) store.setItem(key, val);
+  }
+}
+
+/**
+ * Click IDs do clique: se a URL traz algum, ela vence por inteiro (sem misturar
+ * com o storage); senão cai no sessionStorage. Chaves vazias são omitidas.
+ */
+export function getClickIds(): Partial<Record<ClickIdKey, string>> {
+  const params = new URLSearchParams(window.location.search);
+  const urlHasClickId = CLICK_ID_KEYS.some((key) => params.get(key));
+  const store = safeSession();
+  const out: Partial<Record<ClickIdKey, string>> = {};
+
+  for (const key of CLICK_ID_KEYS) {
+    const val = urlHasClickId ? params.get(key) : store?.getItem(key);
+    if (val) out[key] = val;
+  }
+
+  return out;
+}
