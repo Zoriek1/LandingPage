@@ -50,17 +50,8 @@
     .hero-card { @apply m-0 px-12 py-11; max-width: 34rem; border-radius: 3.5rem 6rem 4.5rem 2.5rem / 3rem 4.5rem 5.5rem 3.5rem; box-shadow: 0 24px 48px -32px hsl(var(--color-text-heading) / 0.55); }
   }
   .category-section { background: hsl(var(--color-surface-alt)); }
-  .category-art { @apply flex aspect-square items-center justify-center overflow-hidden rounded-card p-3; background: hsl(var(--color-surface-page)); }
-  .category-art svg { @apply h-full w-full; }
+  .category-art { @apply aspect-square overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
   .category-art img { @apply h-full w-full object-cover; }
-  .category-art:has(img) { @apply p-0; }
-  .art-shadow { fill: hsl(var(--color-border-default)); }
-  .art-clay { fill: hsl(var(--color-brand-accent)); }
-  .art-pot { fill: hsl(var(--color-surface-sunken)); stroke: hsl(var(--color-brand-accent)); stroke-width: 1.5; }
-  .art-leaf { fill: hsl(var(--color-action-brand-primary)); }
-  .art-soil { fill: hsl(var(--color-text-body)); }
-  .art-line { fill: none; stroke: hsl(var(--color-text-on-dark)); stroke-width: 2; }
-  .art-stem { fill: none; stroke: hsl(var(--color-action-brand-primary)); stroke-width: 3; }
   .review { @apply m-0 border-l-2 pl-4; border-color: hsl(var(--color-brand-accent)); }
   .review blockquote { @apply m-0 leading-relaxed; }
   .review-lead blockquote { @apply font-display text-xl leading-snug md:text-h4; }
