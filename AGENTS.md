@@ -44,7 +44,7 @@
 
 | Arquivo | Responsabilidade |
 |---------|-----------------|
-| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, push no `dataLayer` (GTM) e POST à API de leads. Captura fbclid, gclid, `_fbp`, `_fbc`, UTMs. Não chama `gtag` diretamente. |
+| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, push no `dataLayer` (GTM) e POST à API de leads. Captura fbclid, gclid, `_fbp`, `_fbc`, UTMs. Não chama `gtag` diretamente, exceto `trackStoreAction()` (Google Ads da `/loja-fisica/`). |
 | `src/lib/attribution.ts` | Fonte única de UTM/campanha: URL do clique vence, `sessionStorage` é fallback só na mesma aba. |
 | `src/lib/whatsappModal.ts` | Registra e abre o modal de captura de telefone. Qualquer botão WhatsApp chama `openWhatsAppModal()` daqui. |
 | `index.html` | Meta Pixel init + Google Tag Manager (`GTM-KCRTLDV4`). |
@@ -176,12 +176,14 @@ continuam rodando e podem alimentar outra coisa — verificar antes).
 | Meta Pixel ID | `370300471997593` | `index.html` |
 | GTM Container | `GTM-KCRTLDV4` | `index.html`, `dia-das-maes/index.html`, `dia-dos-namorados/index.html` |
 | FB Domain Token | `neezjodfejjwka6crvfsxpfcwhq7gj` | `index.html` |
+| Google Ads (só loja física) | `AW-18285244155` | `loja-fisica/index.html`; rótulos de conversão em `STORE_ADS_SEND_TO` (`src/lib/tracking.ts`) |
 
 > **Google Ads e GA4 não estão no código-fonte.** O `index.html` carrega apenas Meta
 > Pixel e GTM; qualquer tag de GA4 (`GT-…`/`G-…`) ou de conversão do Google Ads (`AW-…`)
 > vive dentro do contêiner `GTM-KCRTLDV4` e é editada no painel do GTM, não aqui. O mesmo
 > vale para o CookieHub. Procurar esses IDs no repositório não retorna nada — não é sinal
 > de que sumiram. Detalhe completo em [`docs/tracking.md`](docs/tracking.md).
+> Única exceção: `/loja-fisica/` carrega a Google tag `AW-18285244155` direto no HTML.
 
 ---
 

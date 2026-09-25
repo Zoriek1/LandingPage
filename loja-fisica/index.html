@@ -7,6 +7,15 @@
     <meta name="description" content="Vasos, adubos, terras, substratos e plantas na Plante Uma Flor. Rua 132, 289, Setor Sul, Goiânia. Ligue para o balcão ou trace sua rota até a loja." />
     <link rel="canonical" href="https://lpb.planteumaflor.com/loja-fisica/" />
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-KCRTLDV4');</script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18285244155"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'AW-18285244155');
+    </script>
     <script type="module" src="/src/loja-fisica/main.ts"></script>
   </head>
   <body class="bg-background font-body text-foreground antialiased">
@@ -22,68 +31,96 @@
       <symbol id="chat" viewBox="0 0 24 24"><path d="M20 11.5a8.5 8.5 0 0 1-12.5 7.4L3 21l1.7-5A8.5 8.5 0 1 1 20 11.5Z"/><path d="m9 7 1.5 3L9 11c1 2 2 3 4 4l1-1.5 3 1.5"/></symbol>
     </svg>
 
-    <header class="border-b border-border">
-      <div class="container flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5 md:py-6">
-        <div class="flex items-center gap-3">
+    <header class="site-header">
+      <div class="container flex min-h-16 items-center justify-between gap-4 py-2">
+        <div class="flex items-center gap-2.5">
           <svg class="icon brand-mark" aria-hidden="true"><use href="#leaf"/></svg>
-          <div><p class="font-display text-2xl font-medium leading-tight">Plante Uma Flor<span class="sr-only"> — Garden &amp; Flora</span></p><p class="mt-1 text-sm text-muted-foreground">Setor Sul, Goiânia</p></div>
+          <p class="font-display text-xl font-medium leading-tight md:text-2xl">Plante Uma Flor<span class="sr-only">, Garden &amp; Flora, Setor Sul, Goiânia</span></p>
         </div>
-        <div class="order-last w-full text-sm lg:order-none lg:w-auto"><p id="store-status" class="store-status" role="status">Seg–sex: 08h–18h · Sáb: 08h–13h</p><p class="mt-1 text-xs text-muted-foreground">Horário regular. Feriados: confirme por telefone.</p></div>
         <a id="whatsapp-link" href="https://wa.me/5562996503403" class="flex min-h-12 items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:underline" aria-label="Tirar dúvida no WhatsApp, canal secundário">
-          <svg class="icon h-4 w-4" aria-hidden="true"><use href="#chat"/></svg><span>Tirar dúvida no WhatsApp</span>
+          <svg class="icon h-4 w-4" aria-hidden="true"><use href="#chat"/></svg><span>WhatsApp</span>
         </a>
       </div>
     </header>
 
     <main id="conteudo">
-      <section aria-labelledby="hero-title" class="container grid items-center gap-8 pb-10 pt-8 md:grid-cols-2 md:gap-12 md:py-16">
-        <div>
-          <p class="mb-5 flex items-start gap-2 text-sm"><span class="rating-star" aria-hidden="true">★</span><span><strong class="font-semibold">4.9 no Google</strong> · +200 avaliações<br/><span class="text-muted-foreground">Mais de 40 anos de tradição no Setor Sul</span></span></p>
-          <h1 id="hero-title" class="font-display text-h1 font-medium">Vasos, terras e adubos.<br/><span class="brand-text">Da nossa loja<br class="hidden lg:block"/> para suas plantas.</span></h1>
-          <p class="mt-5 max-w-lg text-lg leading-relaxed text-muted-foreground">Tudo para cuidar do seu verde, com retirada imediata no Setor Sul. Estacione na porta e conte com a orientação de quem entende de plantas.</p>
-          <div class="mt-7 flex flex-col gap-3 xl:flex-row">
-            <a class="action action-map" href="https://www.google.com/maps/dir/?api=1&amp;destination=Rua+132+289+Setor+Sul+Goiania+GO" data-store-action="directions" data-location="hero" data-provider="google_maps" target="_blank" rel="noopener noreferrer" aria-label="Traçar rota no GPS pelo Google Maps, abre em nova aba"><svg class="icon" aria-hidden="true"><use href="#pin"/></svg>Traçar Rota no GPS</a>
-            <a class="action action-call" href="tel:+556232819367" data-store-action="phone" data-location="hero"><svg class="icon" aria-hidden="true"><use href="#phone"/></svg>Ligar para o Balcão</a>
-          </div>
-          <p class="mt-3 text-sm text-muted-foreground">Quer um item específico? Confirme o estoque pelo telefone.</p>
-          <ul class="mt-7 grid gap-2 border-t border-border pt-5 text-sm sm:grid-cols-3 md:grid-cols-1 xl:grid-cols-3" aria-label="Facilidades na loja">
-            <li class="flex items-center gap-2"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Retirada imediata</li>
-            <li class="flex items-center gap-2"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Estacione na porta</li>
-            <li class="flex items-center gap-2"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Apoio técnico local</li>
-          </ul>
-        </div>
-        <figure class="storefront overflow-hidden rounded-card">
+      <section aria-labelledby="hero-title" class="hero">
+        <figure class="hero-photo">
           <picture>
-            <source type="image/avif" srcset="/src/assets/generated/fachada-480.avif 480w, /src/assets/generated/fachada-900.avif 900w" sizes="(min-width: 768px) 46vw, 100vw"/>
-            <source type="image/webp" srcset="/src/assets/generated/fachada-480.webp 480w, /src/assets/generated/fachada-900.webp 900w" sizes="(min-width: 768px) 46vw, 100vw"/>
-            <img src="/src/assets/fachada.jpg" alt="Fachada da Plante Uma Flor, com plantas na entrada da loja na Rua 132" width="900" height="900" class="aspect-square w-full object-cover" fetchpriority="high"/>
+            <source media="(min-width: 768px)" type="image/avif" srcset="/src/assets/generated/loja-fachada-desktop-1280.avif 1280w, /src/assets/generated/loja-fachada-desktop-1920.avif 1920w" sizes="100vw"/>
+            <source media="(min-width: 768px)" type="image/webp" srcset="/src/assets/generated/loja-fachada-desktop-1280.webp 1280w, /src/assets/generated/loja-fachada-desktop-1920.webp 1920w" sizes="100vw"/>
+            <source type="image/avif" srcset="/src/assets/generated/loja-fachada-mobile-480.avif 480w, /src/assets/generated/loja-fachada-mobile-900.avif 900w" sizes="100vw"/>
+            <source type="image/webp" srcset="/src/assets/generated/loja-fachada-mobile-480.webp 480w, /src/assets/generated/loja-fachada-mobile-900.webp 900w" sizes="100vw"/>
+            <img src="/src/assets/generated/loja-fachada-mobile-900.webp" alt="Entrada da Plante Uma Flor na Rua 132: portão aberto para o corredor de plantas, muro verde com o letreiro e vagas na frente" width="900" height="675" class="hero-img" fetchpriority="high"/>
           </picture>
-          <figcaption class="flex items-center gap-3 px-5 py-4 text-sm"><svg class="icon shrink-0" aria-hidden="true"><use href="#pin"/></svg><span><strong class="block font-medium">É aqui. Pode chegar.</strong>Rua 132, nº 289 · Setor Sul</span></figcaption>
+          <figcaption class="hero-plate"><svg class="icon h-4 w-4" aria-hidden="true"><use href="#pin"/></svg>Rua 132, nº 289 · Setor Sul</figcaption>
         </figure>
+        <div class="hero-shell">
+          <div class="hero-card">
+            <p id="store-status" class="store-status text-sm font-medium" role="status">Seg a sex: 08h às 18h · Sáb: 08h às 13h</p>
+            <h1 id="hero-title" class="mt-3 font-display text-h1 font-medium">Vasos, terra e adubo <span class="brand-text">para levar na hora.</span></h1>
+            <p class="mt-3 leading-relaxed text-muted-foreground md:text-lg">Estacione na porta e venha cuidar da sua plantinha com a gente.</p>
+            <p class="mt-4 flex items-start gap-2 text-sm"><span class="rating-star" aria-hidden="true">★</span><span><strong class="font-semibold">4,8 no Google</strong> · mais de 200 avaliações<br/><span class="text-muted-foreground">Há mais de 40 anos no Setor Sul</span></span></p>
+            <div id="hero-actions" class="mt-5 grid grid-cols-2 gap-3">
+              <a class="action action-call" href="tel:+556232819367" data-store-action="phone" data-location="hero" aria-label="Ligar para o balcão, (62) 3281-9367"><svg class="icon" aria-hidden="true"><use href="#phone"/></svg><span>Ligar<span class="hidden sm:inline"> para o balcão</span></span></a>
+              <a class="action action-route" href="https://www.google.com/maps/dir/?api=1&amp;destination=Rua+132+289+Setor+Sul+Goiania+GO" data-store-action="directions" data-location="hero" data-provider="google_maps" target="_blank" rel="noopener noreferrer" aria-label="Como chegar pelo Google Maps, abre em nova aba"><svg class="icon" aria-hidden="true"><use href="#pin"/></svg>Como chegar</a>
+            </div>
+            <p class="mt-3 text-sm text-muted-foreground">Quer um item específico? Confirme o estoque pelo telefone.</p>
+            <ul class="mt-6 flex flex-wrap gap-x-5 gap-y-2 border-t border-border pt-4 text-sm" aria-label="Facilidades na loja">
+              <li class="flex items-center gap-1.5"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Retirada na hora</li>
+              <li class="flex items-center gap-1.5"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Estacione na porta</li>
+              <li class="flex items-center gap-1.5"><svg class="icon checkpoint" aria-hidden="true"><use href="#check"/></svg>Dicas no balcão</li>
+            </ul>
+          </div>
+        </div>
       </section>
 
       <section aria-labelledby="categories-title" class="category-section border-y border-border py-12 md:py-16">
         <div class="container">
-          <div class="mb-8 flex flex-col justify-between gap-3 md:flex-row md:items-end"><h2 id="categories-title" class="font-display text-h2 font-medium">Seu próximo cuidado<br/>começa na loja.</h2><p class="max-w-sm">Do vaso certo ao substrato ideal.<br/>Escolha de perto, leve na hora.</p></div>
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="mb-8 flex flex-col justify-between gap-3 md:flex-row md:items-end"><h2 id="categories-title" class="font-display text-h2 font-medium">Seu próximo cuidado<br/>começa na loja.</h2><p class="max-w-sm">Aqui você vê o vaso de perto, compara os tamanhos e leva a dica de cuidado junto.</p></div>
+          <div class="grid grid-cols-2 gap-x-4 gap-y-7 lg:grid-cols-4 lg:gap-x-6">
             <article class="category-card">
-              <div class="category-art" aria-hidden="true"><svg viewBox="0 0 260 150"><ellipse cx="128" cy="127" rx="83" ry="7" class="art-shadow"/><path d="M44 58h75l-12 65H56Z" class="art-clay"/><path d="M40 49h83v13H40Z" class="art-clay"/><path d="M139 76h78l-8 47h-63Z" class="art-pot"/><ellipse cx="178" cy="76" rx="39" ry="8" class="art-pot"/><path d="M77 60v60m91-36v33m14-33v33m14-33v33" class="art-line"/></svg></div>
-              <h3 class="mt-5 font-display text-h4 font-medium">Vasos e Cachepôs</h3><p class="mt-2 leading-relaxed">Cerâmica, polietileno reforçado, barro e pratos de contenção.</p>
+              <div class="category-art"><picture><source type="image/avif" srcset="/src/assets/generated/loja-cat-vasos-320.avif 320w, /src/assets/generated/loja-cat-vasos-640.avif 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><source type="image/webp" srcset="/src/assets/generated/loja-cat-vasos-320.webp 320w, /src/assets/generated/loja-cat-vasos-640.webp 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><img src="/src/assets/generated/loja-cat-vasos-640.webp" alt="" width="640" height="640" loading="lazy" decoding="async"/></picture></div>
+              <h3 class="mt-3 font-display text-lg font-medium leading-snug md:text-h4">Vasos e Cachepôs</h3><p class="mt-1 text-sm leading-relaxed">Barro, cerâmica e polietileno</p>
             </article>
             <article class="category-card">
-              <div class="category-art" aria-hidden="true"><svg viewBox="0 0 260 150"><ellipse cx="130" cy="127" rx="80" ry="7" class="art-shadow"/><path d="M55 33h72l7 89H48Z" class="art-pot"/><path d="M56 32h70v11H56Z" class="art-clay"/><path d="M162 48h32v13l10 12v49h-53V73l11-12Z" class="art-leaf"/><path d="M163 38h29v13h-29Z" class="art-pot"/><path d="M76 95V63l30 32V63m56 24h30m-30 11h30" class="art-line"/></svg></div>
-              <h3 class="mt-5 font-display text-h4 font-medium">Adubos e Nutrientes</h3><p class="mt-2 leading-relaxed">NPK, torta de mamona, farinha de osso e fertilizantes foliares.</p>
+              <div class="category-art"><picture><source type="image/avif" srcset="/src/assets/generated/loja-cat-adubos-320.avif 320w, /src/assets/generated/loja-cat-adubos-640.avif 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><source type="image/webp" srcset="/src/assets/generated/loja-cat-adubos-320.webp 320w, /src/assets/generated/loja-cat-adubos-640.webp 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><img src="/src/assets/generated/loja-cat-adubos-640.webp" alt="" width="640" height="640" loading="lazy" decoding="async"/></picture></div>
+              <h3 class="mt-3 font-display text-lg font-medium leading-snug md:text-h4">Adubos e Nutrientes</h3><p class="mt-1 text-sm leading-relaxed">NPK, torta de mamona, farinha de osso</p>
             </article>
             <article class="category-card">
-              <div class="category-art" aria-hidden="true"><svg viewBox="0 0 260 150"><ellipse cx="130" cy="127" rx="83" ry="7" class="art-shadow"/><path d="m70 28 73 7-5 85H57Z" class="art-clay"/><path d="m71 28 72 7-4 13-70-6Z" class="art-pot"/><path d="M150 62h51l10 60h-68Z" class="art-pot"/><path d="m149 62 52 0m-52 10h55M77 60l47 4m-47 9 46 4" class="art-line"/><circle cx="97" cy="97" r="3" class="art-soil"/><circle cx="110" cy="103" r="3" class="art-soil"/><circle cx="89" cy="106" r="3" class="art-soil"/></svg></div>
-              <h3 class="mt-5 font-display text-h4 font-medium">Terras e Substratos</h3><p class="mt-2 leading-relaxed">Terra preta vegetal, perlita, casca de pinus e argila expandida. Sacos de 2 a 20 kg.</p>
+              <div class="category-art"><picture><source type="image/avif" srcset="/src/assets/generated/loja-cat-terras-320.avif 320w, /src/assets/generated/loja-cat-terras-640.avif 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><source type="image/webp" srcset="/src/assets/generated/loja-cat-terras-320.webp 320w, /src/assets/generated/loja-cat-terras-640.webp 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><img src="/src/assets/generated/loja-cat-terras-640.webp" alt="" width="640" height="640" loading="lazy" decoding="async"/></picture></div>
+              <h3 class="mt-3 font-display text-lg font-medium leading-snug md:text-h4">Terras e Substratos</h3><p class="mt-1 text-sm leading-relaxed">Terra preta, perlita, pinus e argila</p>
             </article>
             <article class="category-card">
-              <div class="category-art" aria-hidden="true"><svg viewBox="0 0 260 150"><ellipse cx="130" cy="127" rx="69" ry="7" class="art-shadow"/><path d="M127 100V33m0 45L98 50m30 15 30-29" class="art-stem"/><path d="M126 54c-24-2-32-19-27-34 21 0 33 16 27 34Zm4 9c-3-24 17-38 37-34 0 20-14 35-37 34ZM118 80c-26 2-44-14-42-35 26-1 44 12 42 35Z" class="art-leaf"/><path d="M96 94h65l-9 31h-47Z" class="art-clay"/><path d="M94 90h70v9H94Z" class="art-clay"/></svg></div>
-              <h3 class="mt-5 font-display text-h4 font-medium">Plantas e Folhagens</h3><p class="mt-2 leading-relaxed">Espécies verdes ornamentais para ambientes internos e apartamentos.</p>
+              <div class="category-art"><picture><source type="image/avif" srcset="/src/assets/generated/loja-cat-plantas-320.avif 320w, /src/assets/generated/loja-cat-plantas-640.avif 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><source type="image/webp" srcset="/src/assets/generated/loja-cat-plantas-320.webp 320w, /src/assets/generated/loja-cat-plantas-640.webp 640w" sizes="(min-width: 1024px) 22vw, 45vw"/><img src="/src/assets/generated/loja-cat-plantas-640.webp" alt="" width="640" height="640" loading="lazy" decoding="async"/></picture></div>
+              <h3 class="mt-3 font-display text-lg font-medium leading-snug md:text-h4">Plantas e Folhagens</h3><p class="mt-1 text-sm leading-relaxed">Folhagens para casa e apartamento</p>
             </article>
           </div>
-          <p class="mt-7 text-sm">Disponibilidade e tamanhos variam. O balcão ajuda você a escolher e confirma o estoque antes da visita.</p>
+          <p class="mt-8 max-w-xl leading-relaxed"><strong class="font-semibold">Folha amarelando ou vaso apertado?</strong> Traga a dúvida (ou uma foto da planta) para o balcão.</p>
+          <p class="mt-2 text-sm">Disponibilidade e tamanhos variam. Ligue e confirme o estoque antes da visita.</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="reviews-title" class="container py-12 md:py-16">
+        <div class="md:grid md:grid-cols-[1fr_2fr] md:gap-12">
+          <div>
+            <h2 id="reviews-title" class="font-display text-h2 font-medium">Quem já passou por aqui</h2>
+            <p class="mt-3 flex items-center gap-2 text-sm"><span class="rating-star" aria-hidden="true">★</span><span><strong class="font-semibold">4,8 no Google</strong> · mais de 200 avaliações</span></p>
+          </div>
+          <div class="mt-7 grid gap-6 md:mt-0">
+            <figure class="review review-lead">
+              <blockquote><p>“Atendimento excelente. Entrei para comprar um adubo e sai com dicas maravilhosas para as minhas orquídeas.”</p></blockquote>
+              <figcaption>Thatiany G. · avaliação no Google</figcaption>
+            </figure>
+            <figure class="review">
+              <blockquote><p>“Muita variedade, opções para decoração de jardins e ótimo atendimento. Adorei...”</p></blockquote>
+              <figcaption>Márcia S. · avaliação no Google</figcaption>
+            </figure>
+            <figure class="review">
+              <blockquote><p>“Minha experiência foi ótima com o local, o atendimento foi muito atencioso e me ajudou na melhor escolha!”</p></blockquote>
+              <figcaption>Calmon X. · avaliação no Google</figcaption>
+            </figure>
+          </div>
         </div>
       </section>
 
@@ -122,9 +159,9 @@
       <div class="container flex flex-col justify-between gap-4 md:flex-row"><p>FLORICULTURA PLANTE UMA FLOR LTDA<br/>CNPJ 65.625.103/0001-92</p><p>Rua 132, nº 289 · Setor Sul, Goiânia – GO<br/>CEP 74093-210</p><p>Garden &amp; Flora<br/>Mais de 40 anos cultivando histórias.</p></div>
     </footer>
 
-    <nav class="mobile-actions fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 border-t border-border md:hidden" aria-label="Contato e rota para a loja">
-      <a class="action action-call rounded-none" href="tel:+556232819367" data-store-action="phone" data-location="sticky"><svg class="icon" aria-hidden="true"><use href="#phone"/></svg>Ligar Agora</a>
-      <a class="action action-map rounded-none" href="https://www.google.com/maps/dir/?api=1&amp;destination=Rua+132+289+Setor+Sul+Goiania+GO" data-store-action="directions" data-location="sticky" data-provider="google_maps" target="_blank" rel="noopener noreferrer" aria-label="Como chegar pelo Google Maps, nova aba"><svg class="icon" aria-hidden="true"><use href="#pin"/></svg>Como Chegar</a>
+    <nav id="mobile-actions" class="mobile-actions md:hidden" aria-label="Contato e rota para a loja">
+      <a class="bar-action bar-call" href="tel:+556232819367" data-store-action="phone" data-location="sticky" aria-label="Ligar para o balcão, (62) 3281-9367"><svg class="icon" aria-hidden="true"><use href="#phone"/></svg><span class="bar-text"><span class="bar-label">Ligar</span><span id="sticky-status" class="bar-detail">Seg a sex, 08h às 18h</span></span></a>
+      <a class="bar-action bar-route" href="https://www.google.com/maps/dir/?api=1&amp;destination=Rua+132+289+Setor+Sul+Goiania+GO" data-store-action="directions" data-location="sticky" data-provider="google_maps" target="_blank" rel="noopener noreferrer" aria-label="Como chegar pelo Google Maps, nova aba"><svg class="icon" aria-hidden="true"><use href="#pin"/></svg><span class="bar-text"><span class="bar-label">Como chegar</span><span class="bar-detail">Rua 132, nº 289</span></span></a>
     </nav>
   </body>
 </html>

@@ -12,6 +12,11 @@
  *   src/assets/logo.png             -> logo-240.webp
  *   assets-src/heros/<slug>.<ext>   -> hero-<slug>-{480,900}.{avif,webp}
  *                                      public/lpb/heros/<slug>.jpg  (og:image)
+ *   assets-src/loja-fisica/fachada-rua.jpg
+ *                                   -> loja-fachada-mobile-{480,900} e
+ *                                      loja-fachada-desktop-{1280,1920}.{avif,webp}
+ *   assets-src/loja-fisica/categorias/<nome>.<ext>
+ *                                   -> loja-cat-<nome>-{320,640}.{avif,webp}
  *
  * Um slug sem foto em assets-src/heros/ simplesmente não gera nada; a LP
  * correspondente continua caindo na fachada (ver HERO_IMAGES em
@@ -42,6 +47,18 @@ const AVIF = { quality: 42, effort: 6 };
 const WEBP = { quality: 65, effort: 6 };
 
 const SOURCE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp"];
+
+const STORE_SOURCE_DIR = join(root, "assets-src/loja-fisica");
+
+/**
+ * Recortes da foto da rua para o hero de /loja-fisica/, em frações da foto.
+ * O mobile fecha no portão aberto e no letreiro e deixa a fiação de fora.
+ */
+const STORE_FACADE_CROPS = [
+  { name: "mobile", area: { left: 0.37, top: 0.3, width: 0.52, height: 0.69 }, widths: [480, 900] },
+  { name: "desktop", area: { left: 0, top: 0.222, width: 1, height: 0.778 }, widths: [1280, 1920] },
+];
+const STORE_CATEGORY_WIDTHS = [320, 640];
 
 function ensureDir(dir) {
   mkdirSync(dir, { recursive: true });
@@ -90,6 +107,58 @@ function readAdLpSlugs() {
   return [...block[1].matchAll(/"([a-z0-9-]+)"/g)].map((match) => match[1]);
 }
 
+/** Emite AVIF/WebP de uma área da foto (frações) nas larguras pedidas. */
+async function emitCroppedVariants(sourcePath, area, widths, outputPrefix) {
+  const { width, height } = await sharp(sourcePath).metadata();
+  const region = {
+    left: Math.round(area.left * width),
+    top: Math.round(area.top * height),
+    width: Math.round(area.width * width),
+    height: Math.round(area.height * height),
+  };
+  const written = [];
+
+  for (const target of widths) {
+    const resized = sharp(sourcePath).extract(region).resize(target);
+    const avifPath = join(GENERATED_DIR, `${outputPrefix}-${target}.avif`);
+    const webpPath = join(GENERATED_DIR, `${outputPrefix}-${target}.webp`);
+    await resized.clone().avif(AVIF).toFile(avifPath);
+    await resized.clone().webp(WEBP).toFile(webpPath);
+    written.push(avifPath, webpPath);
+  }
+
+  return written;
+}
+
+/** Hero e categorias da loja física; pasta ausente não gera nada. */
+async function emitStoreVariants() {
+  const written = [];
+  const facade = join(STORE_SOURCE_DIR, "fachada-rua.jpg");
+  if (existsSync(facade)) {
+    for (const crop of STORE_FACADE_CROPS) {
+      written.push(...(await emitCroppedVariants(facade, crop.area, crop.widths, `loja-fachada-${crop.name}`)));
+    }
+  }
+
+  const categoryDir = join(STORE_SOURCE_DIR, "categorias");
+  if (existsSync(categoryDir)) {
+    for (const file of readdirSync(categoryDir)) {
+      if (!SOURCE_EXTENSIONS.includes(extname(file).toLowerCase())) continue;
+      const square = { left: 0, top: 0, width: 1, height: 1 };
+      const source = join(categoryDir, file);
+      const { width, height } = await sharp(source).metadata();
+      const side = Math.min(width, height);
+      square.left = (width - side) / 2 / width;
+      square.top = (height - side) / 2 / height;
+      square.width = side / width;
+      square.height = side / height;
+      written.push(...(await emitCroppedVariants(source, square, STORE_CATEGORY_WIDTHS, `loja-cat-${basename(file, extname(file))}`)));
+    }
+  }
+
+  return written;
+}
+
 function findHeroSources() {
   if (!existsSync(HERO_SOURCE_DIR)) return [];
 
@@ -121,6 +190,8 @@ async function main() {
     written.push(...(await emitResponsiveVariants(hero.path, `hero-${hero.slug}`)));
     written.push(await emitOgImage(hero.path, hero.slug));
   }
+
+  written.push(...(await emitStoreVariants()));
 
   for (const path of written) {
     process.stdout.write(`  ${path.slice(root.length + 1).replace(/\\/g, "/")}  ${kib(path)}\n`);

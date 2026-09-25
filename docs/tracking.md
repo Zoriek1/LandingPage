@@ -11,7 +11,8 @@ Fonte única de verdade sobre rastreamento de conversão. Substitui `TRACKING_FL
   GA4 e Google Ads **não estão no código-fonte**: qualquer tag `G-…`/`GT-…`/`AW-…` vive
   dentro do contêiner do GTM e é editada no painel do GTM, não aqui. O mesmo vale para o
   CookieHub. Não procure esses IDs no repositório — não é sinal de que sumiram, é assim
-  desde a migração para GTM.
+  desde a migração para GTM. **Exceção:** `/loja-fisica/` também carrega a Google tag
+  `AW-18285244155` direto no HTML (ver "Loja física" no fim deste documento).
 - **Meta** — `fbq` disparado direto no frontend (Pixel ID `370300471997593`).
 - **Leads internos** — `POST` para `https://planteumaflor.gestaoonline.app.br/api/leads/`
   (`LEADS_ENDPOINT` em `src/lib/tracking.ts:145`).
@@ -232,6 +233,7 @@ Data Layer Version: Version 2
 ## 10) Regras operacionais e checklist
 
 - Manter Google 100% via GTM — não reintroduzir `gtag()` hard-coded para os mesmos eventos.
+  Única exceção: Google Ads `AW-18285244155` na `/loja-fisica/`, pedido do cliente em 2026-09-25.
 - Manter Meta no código nesta fase.
 - Em GA4, usar o `page_view` automático para pageviews e marcar conversão apenas em
   `whatsapp_click` e `site_click`.
@@ -263,3 +265,14 @@ A entrada independente `/loja-fisica/` usa o contêiner existente `GTM-KCRTLDV4`
 - Coordenadas autorizadas ficam somente em memória até a navegação. Os `href`s permanecem genéricos, sem origem; um clique comum abre a URL personalizada diretamente, sem inseri-la no DOM. Cliques modificados mantêm a navegação nativa genérica. Não enviar latitude, longitude, URL personalizada ou localização aos eventos. No GTM, usar os dois eventos customizados e seus campos permitidos; auditar tags existentes antes de publicar. Não foi publicada nenhuma tag nesta implementação.
 - WhatsApp existe apenas no header, usando `openWhatsAppModal`, que atualmente rastreia e navega diretamente. Continua como canal secundário; não deve virar conversão principal desta campanha.
 - Validar no Preview do GTM os eventos e o bloqueio de captura genérica de URLs antes de ativar geolocalização em produção. Configurar conversões Google Ads/GA4 no contêiner é etapa operacional separada.
+
+## Loja física: Google Ads direto (AW-18285244155)
+
+A pedido do cliente (2026-09-25), `loja-fisica/index.html` carrega a Google tag `AW-18285244155` (`gtag.js`) no `<head>`, ao lado do GTM. A tag só registra a visita e grava o clique do anúncio (`gclid`) em cookie próprio; ela não conta ligação nem rota sozinha.
+
+- Conversões: `trackStoreAction` chama `gtag("event", "conversion", { send_to, transaction_id: event_id })` usando `STORE_ADS_SEND_TO` em `src/lib/tracking.ts`. Ações criadas em 2026-09-25: "Ligação loja física" (`AW-18285244155/ZFBZCN3-voQdEPvdio9E`) e "Rota loja física" (`AW-18285244155/5YVACOD-voQdEPvdio9E`), contagem "Uma", sem valor. Valor vazio desativa o envio. Não colar o snippet de evento (`gtag_report_conversion`) na página: ele troca a navegação dos links.
+- Ligação conta no clique do `tel:`, não na chamada atendida. Rota conta no clique do Google Maps ou do Waze, não na visita. Os links `backup-phone` e `visit` também contam.
+- `transaction_id` é o mesmo `event_id` do `dataLayer`. Se alguém criar no GTM uma tag de conversão para a mesma ação, usar `{{DLV - event_id}}` como ID da transação para o Google Ads descartar a duplicata. Melhor ainda: manter essas conversões em um lugar só.
+- Conferido pelo painel em 2026-09-25: o `GTM-KCRTLDV4` só tem a Google tag do GA4 (`G-RZRVEXS4CP`, `GT-TBWHBQB4`), sem `AW-…`, então a tag direta não duplica. Se alguém adicionar `AW-18285244155` a esse contêiner, manter apenas uma das duas.
+- `AW-18285244155` é a mesma conta do Google Ads usada no contêiner do e-commerce (`GTM-T647TN6C`). Ligação e rota devem ser metas da campanha da loja física (metas no nível da campanha), para as campanhas do e-commerce não otimizarem para esses cliques.
+- Consentimento: o CookieHub vive no GTM. A tag direta pode processar o `config` antes do consentimento padrão do GTM. Validar no Tag Assistant como a página se comporta sem aceite de cookies.

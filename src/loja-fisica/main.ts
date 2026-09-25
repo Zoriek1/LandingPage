@@ -9,15 +9,27 @@ let authorizedOrigin: Coordinates | undefined;
 void tracking.then((module) => { track = module?.trackStoreAction; });
 
 function refreshHours() {
-  const badge = document.querySelector<HTMLElement>("#store-status");
-  if (!badge) return;
   const status = getStoreStatus();
-  badge.textContent = status.label;
-  badge.dataset.open = String(status.open);
+  const badge = document.querySelector<HTMLElement>("#store-status");
+  if (badge) {
+    badge.textContent = status.label;
+    badge.dataset.open = String(status.open);
+  }
+  const sticky = document.querySelector<HTMLElement>("#sticky-status");
+  if (sticky) sticky.textContent = status.short;
 }
 refreshHours();
 window.setInterval(refreshHours, 60_000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshHours(); });
+
+// Sem JavaScript a barra fica sempre visível; com ele, só depois que os botões do hero saem da tela.
+const mobileBar = document.querySelector<HTMLElement>("#mobile-actions");
+const heroActions = document.querySelector("#hero-actions");
+if (mobileBar && heroActions && "IntersectionObserver" in window) {
+  new IntersectionObserver(([entry]) => {
+    mobileBar.dataset.hidden = String(entry.isIntersecting || entry.boundingClientRect.top > 0);
+  }).observe(heroActions);
+}
 
 document.querySelectorAll<HTMLAnchorElement>("[data-store-action]").forEach((anchor) => {
   anchor.addEventListener("click", (event) => {

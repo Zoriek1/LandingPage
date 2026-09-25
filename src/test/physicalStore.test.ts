@@ -16,6 +16,7 @@ describe("horário da loja em Goiânia", () => {
     const status = getStoreStatus(new Date(date));
     expect(status.open).toBe(open);
     expect(status.label).toContain(label);
+    expect(status.short).toContain(label);
   });
 });
 

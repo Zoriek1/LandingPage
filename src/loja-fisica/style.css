@@ -24,25 +24,63 @@
   .action { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-5 py-3 text-center text-sm font-medium; }
   .action-map { background: hsl(var(--color-action-brand-primary)); color: hsl(var(--color-text-on-dark)); }
   .action-map:hover { background: hsl(var(--color-action-brand-primary-hover)); }
-  .action-call { background: hsl(var(--color-action-primary)); color: hsl(var(--color-text-on-dark)); }
-  .action-call:hover { background: hsl(var(--color-action-primary-hover)); }
+  .action-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
+  .action-call:hover { background: hsl(var(--color-brand-green-hover)); }
+  .action-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
+  .action-route:hover { background: hsl(var(--color-surface-alt)); }
+  .action { transition: background-color 0.2s ease, transform 0.15s ease; }
+  .action:active { transform: scale(0.98); }
   .action-outline { @apply border border-border; }
   .action-outline:hover { background: hsl(var(--color-surface-alt)); }
   .checkpoint { @apply h-4 w-4; color: hsl(var(--color-action-brand-primary)); }
-  .storefront { background: hsl(var(--color-surface-inverse)); color: hsl(var(--color-text-on-dark)); }
+  .site-header { @apply border-b border-border; }
+
+  /* Hero: foto da rua ao fundo e bloco de texto com contorno orgânico por cima. */
+  .hero { @apply relative; }
+  .hero-photo { @apply relative m-0 overflow-hidden; aspect-ratio: 4 / 3; background: hsl(var(--color-surface-inverse)); }
+  .hero-img { @apply block h-full w-full object-cover; }
+  .hero-plate { @apply absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-chip px-3 py-2 text-xs font-medium; background: hsl(var(--color-surface-inverse)); color: hsl(var(--color-text-on-dark)); }
+  .hero-card { @apply relative px-6 pb-9 pt-7; margin-top: -2.5rem; background: hsl(var(--color-surface-page)); border-radius: 2.75rem 4.5rem 0 0 / 2.25rem 3.25rem 0 0; }
+  @media (min-width: 768px) {
+    .hero { @apply flex items-center; min-height: 40rem; }
+    .hero-photo { @apply absolute inset-0; aspect-ratio: auto; }
+    .hero-img { object-position: 72% 70%; }
+    .hero-plate { @apply left-auto top-auto; right: 1.5rem; bottom: 1.5rem; }
+    .hero-shell { @apply relative mx-auto w-full px-6 py-16; max-width: theme(screens.2xl); }
+    .hero-card { @apply m-0 px-12 py-11; max-width: 34rem; border-radius: 3.5rem 6rem 4.5rem 2.5rem / 3rem 4.5rem 5.5rem 3.5rem; box-shadow: 0 24px 48px -32px hsl(var(--color-text-heading) / 0.55); }
+  }
   .category-section { background: hsl(var(--color-surface-alt)); }
-  .category-art { @apply flex aspect-[13/7] items-center justify-center overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
-  .category-art svg { @apply h-full w-full; }
-  .art-shadow { fill: hsl(var(--color-border-default)); }
-  .art-clay { fill: hsl(var(--color-brand-accent)); }
-  .art-pot { fill: hsl(var(--color-surface-sunken)); stroke: hsl(var(--color-brand-accent)); stroke-width: 1.5; }
-  .art-leaf { fill: hsl(var(--color-action-brand-primary)); }
-  .art-soil { fill: hsl(var(--color-text-body)); }
-  .art-line { fill: none; stroke: hsl(var(--color-text-on-dark)); stroke-width: 2; }
-  .art-stem { fill: none; stroke: hsl(var(--color-action-brand-primary)); stroke-width: 3; }
+  .category-art { @apply aspect-square overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
+  .category-art img { @apply h-full w-full object-cover; }
+  .review { @apply m-0 border-l-2 pl-4; border-color: hsl(var(--color-brand-accent)); }
+  .review blockquote { @apply m-0 leading-relaxed; }
+  .review-lead blockquote { @apply font-display text-xl leading-snug md:text-h4; }
+  .review figcaption { @apply mt-2 text-sm text-muted-foreground; }
   .map-frame { background: hsl(var(--color-surface-alt)); }
-  .mobile-actions { padding-bottom: env(safe-area-inset-bottom); background: hsl(var(--color-action-brand-primary)); }
-  .mobile-actions .action { @apply min-h-16 rounded-none; }
+  /* Barra mobile: bandeja creme; aparece quando os botões do hero saem da tela. */
+  .mobile-actions {
+    @apply fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 gap-2 px-3 pt-2.5;
+    padding-bottom: calc(theme(spacing[2.5]) + env(safe-area-inset-bottom));
+    background: hsl(var(--color-brand-accent-soft));
+    border-radius: 1.25rem 1.25rem 0 0;
+    box-shadow: 0 -10px 28px -20px hsl(var(--color-text-heading) / 0.5);
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+  }
+  .mobile-actions[data-hidden="true"] { visibility: hidden; transform: translateY(calc(100% + 1rem)); transition: transform 0.26s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.26s; }
+  .bar-action { @apply flex min-h-[3.25rem] items-center justify-center gap-2.5 rounded-xl px-3 py-2 text-left; transition: background-color 0.2s ease, transform 0.15s ease; }
+  .bar-action:active { transform: scale(0.97); }
+  .bar-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
+  .bar-call:hover { background: hsl(var(--color-brand-green-hover)); }
+  .bar-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
+  .bar-route:hover { background: hsl(var(--color-surface-page)); }
+  .bar-text { @apply flex flex-col leading-tight; }
+  .bar-label { @apply text-[0.95rem] font-semibold; }
+  .bar-detail { @apply text-xs; }
+  .bar-call .bar-detail { color: hsl(var(--color-brand-accent-on-dark)); }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-actions, .mobile-actions[data-hidden="true"], .action, .bar-action { transition: none; }
+    .action:active, .bar-action:active { transform: none; }
+  }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-card px-5 py-3 text-foreground; }
   .skip-link:focus { @apply translate-y-0; }
   button:disabled { @apply cursor-wait opacity-60; }
