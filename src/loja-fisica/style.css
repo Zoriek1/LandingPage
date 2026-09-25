@@ -15,7 +15,6 @@
 @layer components {
   .icon-library { @apply absolute h-0 w-0 overflow-hidden; }
   .icon { @apply h-5 w-5 shrink-0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  .brand-mark { @apply h-9 w-9; color: hsl(var(--color-action-brand-primary)); }
   .brand-text { color: hsl(var(--color-action-brand-primary)); }
   .rating-star { color: hsl(var(--color-brand-accent)); }
   .store-status { @apply flex items-center gap-2; }
@@ -34,17 +33,23 @@
   .action-outline:hover { background: hsl(var(--color-surface-alt)); }
   .checkpoint { @apply h-4 w-4; color: hsl(var(--color-action-brand-primary)); }
   .site-header { @apply border-b border-border; }
+  /* WhatsApp é canal secundário: só o ícone, verde da marca, sem competir com Ligar. */
+  .header-whatsapp { @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full; color: hsl(var(--color-brand-green)); background: hsl(var(--color-brand-green) / 0.12); transition: background-color 0.2s ease; }
+  .header-whatsapp:hover { background: hsl(var(--color-brand-green) / 0.2); }
 
   /* Hero: foto da rua ao fundo e bloco de texto com contorno orgânico por cima. */
   .hero { @apply relative; }
   .hero-photo { @apply relative m-0 overflow-hidden; aspect-ratio: 4 / 3; background: hsl(var(--color-surface-inverse)); }
   .hero-img { @apply block h-full w-full object-cover; }
-  .hero-plate { @apply absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-chip px-3 py-2 text-xs font-medium; background: hsl(var(--color-surface-inverse)); color: hsl(var(--color-text-on-dark)); }
+  /* Véu verde leve, bem mais suave que o das LPs de anúncio: a fachada continua legível. */
+  .hero-photo::after { content: ""; @apply pointer-events-none absolute inset-0; background: linear-gradient(0deg, hsl(var(--color-brand-green) / 0.46), hsl(var(--color-brand-green) / 0.2) 55%, hsl(var(--color-brand-green) / 0.14)); }
+  .hero-plate { @apply absolute z-10 left-4 top-4 inline-flex items-center gap-1.5 rounded-chip px-3 py-2 text-xs font-medium; background: hsl(var(--color-surface-inverse)); color: hsl(var(--color-text-on-dark)); }
   .hero-card { @apply relative px-6 pb-9 pt-7; margin-top: -2.5rem; background: hsl(var(--color-surface-page)); border-radius: 2.75rem 4.5rem 0 0 / 2.25rem 3.25rem 0 0; }
   @media (min-width: 768px) {
     .hero { @apply flex items-center; min-height: 40rem; }
     .hero-photo { @apply absolute inset-0; aspect-ratio: auto; }
     .hero-img { object-position: 72% 70%; }
+    .hero-photo::after { background: linear-gradient(90deg, hsl(var(--color-brand-green) / 0.42), hsl(var(--color-brand-green) / 0.2) 45%, hsl(var(--color-brand-green) / 0.12)), linear-gradient(0deg, hsl(var(--color-brand-green) / 0.22), transparent 50%); }
     .hero-plate { @apply left-auto top-auto; right: 1.5rem; bottom: 1.5rem; }
     .hero-shell { @apply relative mx-auto w-full px-6 py-16; max-width: theme(screens.2xl); }
     .hero-card { @apply m-0 px-12 py-11; max-width: 34rem; border-radius: 3.5rem 6rem 4.5rem 2.5rem / 3rem 4.5rem 5.5rem 3.5rem; box-shadow: 0 24px 48px -32px hsl(var(--color-text-heading) / 0.55); }

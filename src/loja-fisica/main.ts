@@ -55,7 +55,14 @@ whatsapp?.addEventListener("click", async (event) => {
   event.preventDefault();
   try {
     const { openWhatsAppModal } = await import("../lib/whatsappModal");
-    await openWhatsAppModal(whatsapp.href, { lp_slug: "loja-fisica", cta_location: "header", campaign: "loja-fisica" }, "Olá! Quero tirar uma dúvida sobre produtos disponíveis na loja do Setor Sul.");
+    // O código de atendimento vai na mensagem e no lead (com gclid/gbraid/wbraid);
+    // é ele que liga uma venda fechada no WhatsApp ao clique do anúncio no Google Ads.
+    await openWhatsAppModal(
+      whatsapp.href,
+      { lp_slug: "loja-fisica", cta_location: "header", cta_label: "icone_whatsapp", campaign: "loja-fisica" },
+      "Olá! Quero tirar uma dúvida sobre produtos disponíveis na loja do Setor Sul.",
+      "pagina=loja-fisica",
+    );
   } catch { window.location.assign(whatsapp.href); }
 });
 
