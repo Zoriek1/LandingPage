@@ -1,14 +1,24 @@
 import { afterEach, expect, it, vi } from "vitest";
 import { STORE_ADS_SEND_TO, trackStoreAction } from "../lib/tracking";
 
+const configured = { ...STORE_ADS_SEND_TO };
+
 afterEach(() => {
   vi.unstubAllGlobals();
-  STORE_ADS_SEND_TO.phone = "";
-  STORE_ADS_SEND_TO.directions = "";
+  Object.assign(STORE_ADS_SEND_TO, configured);
   delete window.gtag;
 });
 
+it("usa as conversões de ligação e rota da conta AW-18285244155", () => {
+  expect(STORE_ADS_SEND_TO).toEqual({
+    phone: "AW-18285244155/ZFBZCN3-voQdEPvdio9E",
+    directions: "AW-18285244155/5YVACOD-voQdEPvdio9E",
+  });
+});
+
 it("emite somente eventos dataLayer, sem coordenadas, CRM ou Meta", () => {
+  STORE_ADS_SEND_TO.phone = "";
+  STORE_ADS_SEND_TO.directions = "";
   const request = vi.fn();
   vi.stubGlobal("fetch", request);
   window.fbq = vi.fn();

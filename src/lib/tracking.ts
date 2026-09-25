@@ -156,8 +156,8 @@ export type StoreAction = {
  * Metas > Conversões, ex.: "AW-18285244155/AbC1dEf2GhI3". Vazio = não envia.
  */
 export const STORE_ADS_SEND_TO: Record<StoreAction["action"], string> = {
-  phone: "",
-  directions: "",
+  phone: "AW-18285244155/ZFBZCN3-voQdEPvdio9E",
+  directions: "AW-18285244155/5YVACOD-voQdEPvdio9E",
 };
 
 /** Local-store conversions: dataLayer (GTM) + Google Ads direto; no CRM lead or Meta Contact. */
