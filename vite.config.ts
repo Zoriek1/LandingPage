@@ -379,6 +379,7 @@ export default defineConfig(({ isSsrBuild }) => ({
           input: {
             main: path.resolve(__dirname, "index.html"),
             mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
+            lojaFisica: path.resolve(__dirname, "loja-fisica/index.html"),
             namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
             entryClient: path.resolve(
               __dirname,

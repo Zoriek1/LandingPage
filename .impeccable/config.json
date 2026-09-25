@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "loja-fisica/index.html"
+        ],
+        "createdAt": "2026-09-25T02:23:02.168Z",
+        "reason": "Agent: false positive; detector reports every heading as 16px but Tailwind maps text-h1/text-h2/text-h4 to generated tokens of 36-50px, 30-38px and 20-23px respectively; body is 16px. Existing responsive screenshots confirm the hierarchy."
+      }
+    ]
+  }
+}

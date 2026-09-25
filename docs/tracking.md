@@ -254,3 +254,12 @@ Checklist rápido após mudança:
   (`AGENTS.md`, `.claude/data-flow-anuncio.md`, agora removidos/corrigidos) ainda
   descreviam UTMify + `gtag.js` direto — isso não reflete o código desde a migração para
   GTM.
+# Loja física: eventos de ligação e rota
+
+A entrada independente `/loja-fisica/` usa o contêiner existente `GTM-KCRTLDV4`, sem inicialização própria de Meta Pixel. Seus dois eventos principais são `store_phone_click` e `store_directions_click`, emitidos por `trackStoreAction` em `src/lib/tracking.ts`.
+
+- Payload permitido: `event_id`, `lp_slug: loja-fisica`, `cta_location`, `map_provider` (somente rota), UTMs e click IDs existentes.
+- Ligações e rotas **não** chamam `/api/leads/`, `trackSiteClick`, Meta `Contact` nem `Lead`. Um clique em telefone não comprova chamada atendida; um clique de rota não comprova visita.
+- Coordenadas autorizadas ficam somente em memória até a navegação. Os `href`s permanecem genéricos, sem origem; um clique comum abre a URL personalizada diretamente, sem inseri-la no DOM. Cliques modificados mantêm a navegação nativa genérica. Não enviar latitude, longitude, URL personalizada ou localização aos eventos. No GTM, usar os dois eventos customizados e seus campos permitidos; auditar tags existentes antes de publicar. Não foi publicada nenhuma tag nesta implementação.
+- WhatsApp existe apenas no header, usando `openWhatsAppModal`, que atualmente rastreia e navega diretamente. Continua como canal secundário; não deve virar conversão principal desta campanha.
+- Validar no Preview do GTM os eventos e o bloqueio de captura genérica de URLs antes de ativar geolocalização em produção. Configurar conversões Google Ads/GA4 no contêiner é etapa operacional separada.

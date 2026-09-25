@@ -142,6 +142,24 @@ function pushDataLayerEvent(event: string, payload: TrackingParams = {}, options
 }
 
 const LEADS_ENDPOINT = "https://planteumaflor.gestaoonline.app.br/api/leads/";
+
+export type StoreAction = {
+  action: "phone" | "directions";
+  location: string;
+  provider?: "google_maps" | "waze";
+};
+
+/** Local-store conversions are GTM-only: no CRM lead or Meta Contact. */
+export function trackStoreAction({ action, location, provider }: StoreAction) {
+  pushDataLayerEvent(action === "phone" ? "store_phone_click" : "store_directions_click", {
+    event_id: generateEventId(),
+    lp_slug: "loja-fisica",
+    cta_location: location,
+    map_provider: provider,
+    ...getUtms(),
+    ...getClickIds(),
+  });
+}
 const LEAD_CONFIRMATION_TIMEOUT_MS = 1500;
 
 async function postLead(payload: Record<string, string | undefined>): Promise<boolean> {

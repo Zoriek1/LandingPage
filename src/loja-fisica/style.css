@@ -1,0 +1,49 @@
+@import "../styles/tokens.generated.css";
+@import "../routes/home-fonts.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { color-scheme: light; }
+  body { padding-bottom: calc(theme(spacing.20) + env(safe-area-inset-bottom)); }
+  :focus-visible { outline: 3px solid hsl(var(--color-focus-ring)); outline-offset: 4px; }
+  [hidden] { display: none !important; }
+  @media (min-width: 768px) { body { padding-bottom: 0; } }
+}
+
+@layer components {
+  .icon-library { @apply absolute h-0 w-0 overflow-hidden; }
+  .icon { @apply h-5 w-5 shrink-0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .brand-mark { @apply h-9 w-9; color: hsl(var(--color-action-brand-primary)); }
+  .brand-text { color: hsl(var(--color-action-brand-primary)); }
+  .rating-star { color: hsl(var(--color-brand-accent)); }
+  .store-status { @apply flex items-center gap-2; }
+  .store-status::before { content: ""; @apply h-2 w-2 rounded-full bg-muted-foreground; }
+  .store-status[data-open="true"]::before { background: hsl(var(--color-state-success)); }
+  .action { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-5 py-3 text-center text-sm font-medium; }
+  .action-map { background: hsl(var(--color-action-brand-primary)); color: hsl(var(--color-text-on-dark)); }
+  .action-map:hover { background: hsl(var(--color-action-brand-primary-hover)); }
+  .action-call { background: hsl(var(--color-action-primary)); color: hsl(var(--color-text-on-dark)); }
+  .action-call:hover { background: hsl(var(--color-action-primary-hover)); }
+  .action-outline { @apply border border-border; }
+  .action-outline:hover { background: hsl(var(--color-surface-alt)); }
+  .checkpoint { @apply h-4 w-4; color: hsl(var(--color-action-brand-primary)); }
+  .storefront { background: hsl(var(--color-surface-inverse)); color: hsl(var(--color-text-on-dark)); }
+  .category-section { background: hsl(var(--color-surface-alt)); }
+  .category-art { @apply flex aspect-[13/7] items-center justify-center overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
+  .category-art svg { @apply h-full w-full; }
+  .art-shadow { fill: hsl(var(--color-border-default)); }
+  .art-clay { fill: hsl(var(--color-brand-accent)); }
+  .art-pot { fill: hsl(var(--color-surface-sunken)); stroke: hsl(var(--color-brand-accent)); stroke-width: 1.5; }
+  .art-leaf { fill: hsl(var(--color-action-brand-primary)); }
+  .art-soil { fill: hsl(var(--color-text-body)); }
+  .art-line { fill: none; stroke: hsl(var(--color-text-on-dark)); stroke-width: 2; }
+  .art-stem { fill: none; stroke: hsl(var(--color-action-brand-primary)); stroke-width: 3; }
+  .map-frame { background: hsl(var(--color-surface-alt)); }
+  .mobile-actions { padding-bottom: env(safe-area-inset-bottom); background: hsl(var(--color-action-brand-primary)); }
+  .mobile-actions .action { @apply min-h-16 rounded-none; }
+  .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-card px-5 py-3 text-foreground; }
+  .skip-link:focus { @apply translate-y-0; }
+  button:disabled { @apply cursor-wait opacity-60; }
+}
