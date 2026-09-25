@@ -26,3 +26,11 @@ Revisão visual das capturas em `.impeccable/review/desktop.png`, `tablet.png`, 
 Confirmação final por leitura do código e das capturas: corrigidas a exposição de coordenadas em hrefs, a combinação de contraste das categorias e as etiquetas decorativas. A coordenação informou sucesso da rodada de navegador com links genéricos, abertura personalizada simulada, eventos limpos e ausência de chamadas ao CRM. Esta revisão não repetiu testes nem build.
 
 Disposição visual/frontend: ship, condicionada à conclusão dos gates de integração e publicação. Sem novos problemas materiais identificados na confirmação. Não julgados nesta revisão: configuração efetiva do GTM, Redis de produção, consulta paga ao Google, precisão da rota real, deploy e auditoria completa de acessibilidade.
+
+## Redesign mobile de 25/09/2026
+
+- Hero no conceito "Chegada": foto real da entrada (`assets-src/loja-fisica/fachada-rua.jpg`, recortes gerados por `npm run images`) ao fundo, bloco de texto com contorno orgânico, status real da loja, nota do Google e Ligar antes de Como chegar. No iPhone SE os dois botões ficam na primeira tela.
+- Nota do Google: 4,8 e 210 avaliações, conferidas no perfil em 25/09/2026. A página mostra "mais de 200 avaliações" para não envelhecer a cada nova avaliação. Conferir a nota antes de cada publicação.
+- Avaliações da seção "Quem já passou por aqui": texto literal do Google (inclusive "sai" sem acento), sem data e sem link externo. Nenhuma avaliação acessada fala de estacionamento, então esse ponto continua só como fato operacional, nunca atribuído a clientes.
+- Categorias em grade 2x2; fotos de banco de imagem pendentes (a rede do ambiente de desenvolvimento bloqueou os bancos). Colocar os arquivos em `assets-src/loja-fisica/categorias/` e rodar `npm run images`.
+- Barra mobile em bandeja creme: Ligar em verde com o status curto, Como chegar em contorno com o endereço. Aparece só depois que os botões do hero saem da tela; sem JavaScript fica sempre visível; sem animação com redução de movimento.

@@ -61,6 +61,10 @@
   .art-soil { fill: hsl(var(--color-text-body)); }
   .art-line { fill: none; stroke: hsl(var(--color-text-on-dark)); stroke-width: 2; }
   .art-stem { fill: none; stroke: hsl(var(--color-action-brand-primary)); stroke-width: 3; }
+  .review { @apply m-0 border-l-2 pl-4; border-color: hsl(var(--color-brand-accent)); }
+  .review blockquote { @apply m-0 leading-relaxed; }
+  .review-lead blockquote { @apply font-display text-xl leading-snug md:text-h4; }
+  .review figcaption { @apply mt-2 text-sm text-muted-foreground; }
   .map-frame { background: hsl(var(--color-surface-alt)); }
   /* Barra mobile: bandeja creme; aparece quando os botões do hero saem da tela. */
   .mobile-actions {
