@@ -12,7 +12,8 @@ export function googleDirections(origin?: Coordinates): string {
   return url.href;
 }
 
-export function getStoreStatus(now = new Date()): { open: boolean; label: string } {
+/** `label` para o hero; `short` cabe no botão da barra mobile. */
+export function getStoreStatus(now = new Date()): { open: boolean; label: string; short: string } {
   const parts = new Intl.DateTimeFormat("en-US", {
     timeZone: "America/Sao_Paulo", weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
   }).formatToParts(now);
@@ -21,10 +22,10 @@ export function getStoreStatus(now = new Date()): { open: boolean; label: string
   const minutes = Number(part("hour")) * 60 + Number(part("minute"));
   const closing = day === "Sat" ? 13 : 18;
   const open = day !== "Sun" && minutes >= 8 * 60 && minutes < closing * 60;
-  if (open) return { open, label: `Loja aberta hoje até ${closing}h` };
-  if (day !== "Sun" && minutes < 8 * 60) return { open, label: "Loja fechada · abre hoje às 08h" };
+  if (open) return { open, label: `Loja aberta hoje até ${closing}h`, short: `Aberta até ${closing}h` };
+  if (day !== "Sun" && minutes < 8 * 60) return { open, label: "Loja fechada · abre hoje às 08h", short: "Abre hoje às 08h" };
   const next = day === "Fri" ? "sábado" : day === "Sat" || day === "Sun" ? "segunda" : "amanhã";
-  return { open, label: `Loja fechada · abre ${next} às 08h` };
+  return { open, label: `Loja fechada · abre ${next} às 08h`, short: `Abre ${next} às 08h` };
 }
 
 export async function calculateDrivingDistance(origin: Coordinates): Promise<{ distance: number; duration?: number }> {
