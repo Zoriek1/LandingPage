@@ -9,6 +9,7 @@ import {
 declare global {
   interface Window {
     fbq?: (...args: unknown[]) => void;
+    gtag?: (...args: unknown[]) => void;
     dataLayer?: Array<Record<string, unknown>>;
     __trackingIds?: { pageview: string };
   }
@@ -149,16 +150,32 @@ export type StoreAction = {
   provider?: "google_maps" | "waze";
 };
 
-/** Local-store conversions are GTM-only: no CRM lead or Meta Contact. */
+/**
+ * Google Ads da /loja-fisica/ (Google tag AW-18285244155 em loja-fisica/index.html).
+ * Cada valor é o `send_to` do snippet de evento da ação criada em Google Ads >
+ * Metas > Conversões, ex.: "AW-18285244155/AbC1dEf2GhI3". Vazio = não envia.
+ */
+export const STORE_ADS_SEND_TO: Record<StoreAction["action"], string> = {
+  phone: "",
+  directions: "",
+};
+
+/** Local-store conversions: dataLayer (GTM) + Google Ads direto; no CRM lead or Meta Contact. */
 export function trackStoreAction({ action, location, provider }: StoreAction) {
+  const eventId = generateEventId();
   pushDataLayerEvent(action === "phone" ? "store_phone_click" : "store_directions_click", {
-    event_id: generateEventId(),
+    event_id: eventId,
     lp_slug: "loja-fisica",
     cta_location: location,
     map_provider: provider,
     ...getUtms(),
     ...getClickIds(),
   });
+
+  // transaction_id = event_id: o Google Ads descarta a mesma conversão recebida duas
+  // vezes, inclusive de uma tag do GTM que envie {{DLV - event_id}} para a mesma ação.
+  const sendTo = STORE_ADS_SEND_TO[action];
+  if (sendTo) window.gtag?.("event", "conversion", { send_to: sendTo, transaction_id: eventId });
 }
 const LEAD_CONFIRMATION_TIMEOUT_MS = 1500;
 
