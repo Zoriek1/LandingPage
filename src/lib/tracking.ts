@@ -3,6 +3,7 @@ import {
   captureUtmsFromUrl,
   getCampaign,
   getClickIds,
+  getGaIds,
   getUtms,
 } from "@/lib/attribution";
 
@@ -276,6 +277,9 @@ export async function trackWhatsAppClick(
       meta_event_id_contact: eventId,
       lead_stage: "whatsapp_click",
       ...payload,
+      // IDs do GA4 lidos na hora do clique. Só o whatsapp_click os leva: o Gestor
+      // usa-os nos eventos GA4 server-side, e eles entram no dedup_key do lead.
+      ...getGaIds(),
       ...capiDedupPayload,
     });
     if (confirmed) markContactSent();

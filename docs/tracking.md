@@ -12,7 +12,9 @@ Fonte única de verdade sobre rastreamento de conversão. Substitui `TRACKING_FL
   dentro do contêiner do GTM e é editada no painel do GTM, não aqui. O mesmo vale para o
   CookieHub. Não procure esses IDs no repositório — não é sinal de que sumiram, é assim
   desde a migração para GTM. **Exceção:** `/loja-fisica/` também carrega a Google tag
-  `AW-18285244155` direto no HTML (ver "Loja física" no fim deste documento).
+  `AW-18285244155` direto no HTML (ver "Loja física" no fim deste documento). O ID do GA4
+  (`G-RZRVEXS4CP`) aparece em `src/lib/attribution.ts` só para achar o cookie de sessão
+  (ver seção 3); ele não carrega tag.
 - **Meta** — `fbq` disparado direto no frontend (Pixel ID `370300471997593`).
 - **Leads internos** — `POST` para `https://planteumaflor.gestaoonline.app.br/api/leads/`
   (`LEADS_ENDPOINT` em `src/lib/tracking.ts:145`).
@@ -56,6 +58,13 @@ misturar `utm_content`/`utm_term` de uma campanha antiga com a campanha nova.
 
 `fbp`/`fbc` vêm dos cookies `_fbp`/`_fbc`; se o cookie `_fbc` não existir, é reconstruído a
 partir do `fbclid` + timestamp salvos no `sessionStorage`.
+
+IDs do GA4: no clique do WhatsApp, `getGaIds()` (`src/lib/attribution.ts`) lê o cookie `_ga`
+(`GA1.1.<n>.<ts>` vira `ga_client_id = <n>.<ts>`) e o cookie de sessão `_ga_RZRVEXS4CP`
+(formatos GS2 e GS1; vira `ga_session_id` e `ga_session_started_at`). O nome do cookie vem de
+`GA4_MEASUREMENT_ID` (`G-RZRVEXS4CP`, a tag GA4 do `GTM-KCRTLDV4`); cookies `_ga_*` de outras
+propriedades, como a do e-commerce, são ignorados. Nada é gravado em storage: os cookies são
+lidos na hora do clique, e sem consentimento de analytics o `_ga` não existe e nada é enviado.
 
 ## 4) Fluxo de envio de dados (fim a fim)
 
@@ -145,6 +154,17 @@ Eventos de clique adicionam:
 cta_location, cta_label, destination_url
 phone            → só após o modal (whatsapp_click)
 ```
+
+O `whatsapp_click` também leva os IDs do GA4, quando os cookies existem:
+
+```
+ga_client_id, ga_session_id, ga_session_started_at
+```
+
+O Gestor usa esses IDs para o evento server-side `whatsapp_message_sent` (Measurement
+Protocol) entrar na mesma sessão do anúncio no GA4. Eles não vão para o `dataLayer`, para o
+Pixel nem para `PageView`/`site_click`, porque `ga_client_id` e `ga_session_id` entram no
+`dedup_key` do lead no backend.
 
 Campos exclusivos das LPs de anúncio (`ad-lps`) no `whatsapp_click`:
 
