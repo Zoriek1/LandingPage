@@ -44,8 +44,8 @@
 
 | Arquivo | Responsabilidade |
 |---------|-----------------|
-| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, push no `dataLayer` (GTM) e POST à API de leads. Captura fbclid, gclid, `_fbp`, `_fbc`, UTMs. Não chama `gtag` diretamente, exceto `trackStoreAction()` (Google Ads da `/loja-fisica/`). |
-| `src/lib/attribution.ts` | Fonte única de UTM/campanha: URL do clique vence, `sessionStorage` é fallback só na mesma aba. |
+| `src/lib/tracking.ts` | **Centro de rastreamento.** `trackWhatsAppClick()` e `trackSiteClick()` — disparam Meta Pixel, push no `dataLayer` (GTM) e POST à API de leads. Captura fbclid, gclid, `_fbp`, `_fbc`, UTMs. Só o `whatsapp_click` leva ao lead os IDs do GA4 (`ga_client_id`, `ga_session_id`, `ga_session_started_at`). Não chama `gtag` diretamente, exceto `trackStoreAction()` (Google Ads da `/loja-fisica/`). |
+| `src/lib/attribution.ts` | Fonte única de UTM/campanha e click IDs: URL do clique vence, `sessionStorage` é fallback só na mesma aba. `getGaIds()` lê os cookies `_ga` e `_ga_RZRVEXS4CP` no clique. |
 | `src/lib/whatsappModal.ts` | Registra e abre o modal de captura de telefone. Qualquer botão WhatsApp chama `openWhatsAppModal()` daqui. |
 | `index.html` | Meta Pixel init + Google Tag Manager (`GTM-KCRTLDV4`). |
 
@@ -176,6 +176,7 @@ continuam rodando e podem alimentar outra coisa — verificar antes).
 | Meta Pixel ID | `370300471997593` | `index.html` |
 | GTM Container | `GTM-KCRTLDV4` | `index.html`, `dia-das-maes/index.html`, `dia-dos-namorados/index.html` |
 | FB Domain Token | `neezjodfejjwka6crvfsxpfcwhq7gj` | `index.html` |
+| GA4 Measurement ID (só nome do cookie) | `G-RZRVEXS4CP` | `GA4_MEASUREMENT_ID` em `src/lib/attribution.ts`; acha o cookie `_ga_RZRVEXS4CP`, não carrega tag. Precisa ser o mesmo do Gestor |
 | Google Ads (só loja física) | `AW-18285244155` | `loja-fisica/index.html`; rótulos de conversão em `STORE_ADS_SEND_TO` (`src/lib/tracking.ts`) |
 
 > **Google Ads e GA4 não estão no código-fonte.** O `index.html` carrega apenas Meta
@@ -184,6 +185,8 @@ continuam rodando e podem alimentar outra coisa — verificar antes).
 > vale para o CookieHub. Procurar esses IDs no repositório não retorna nada — não é sinal
 > de que sumiram. Detalhe completo em [`docs/tracking.md`](docs/tracking.md).
 > Única exceção: `/loja-fisica/` carrega a Google tag `AW-18285244155` direto no HTML.
+> O `G-RZRVEXS4CP` aparece em `src/lib/attribution.ts` só como nome do cookie de sessão do
+> GA4 (`GA4_MEASUREMENT_ID`); ele não carrega nenhuma tag.
 
 ---
 
