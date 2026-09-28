@@ -66,7 +66,13 @@ const Navbar = ({ config = defaultConfig }: NavbarProps) => {
     >
       <div className="container flex items-center justify-between h-16 md:h-20">
         <a href="#" className="flex items-center">
-          <img src={logo} alt="Plante Uma Flor" className="h-12 md:h-14 w-auto" />
+          <img
+            src={logo}
+            alt="Plante Uma Flor"
+            className="h-12 md:h-14 w-auto"
+            width={240}
+            height={160}
+          />
         </a>
 
         <div className="hidden md:flex items-center gap-8">

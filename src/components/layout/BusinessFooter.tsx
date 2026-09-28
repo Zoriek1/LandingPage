@@ -58,7 +58,13 @@ const BusinessFooter = ({ tagline, onWhatsAppClick }: BusinessFooterProps) => {
       <div className="container">
         <div className="grid gap-8 lg:grid-cols-[1fr_1.7fr] lg:items-start">
           <div>
-            <img src={logo} alt="Plante Uma Flor" className="mb-3 h-12 w-auto" />
+            <img
+              src={logo}
+              alt="Plante Uma Flor"
+              className="mb-3 h-12 w-auto"
+              width={240}
+              height={160}
+            />
             <p className="font-body text-sm text-primary-foreground/60">{tagline}</p>
             <p className="mt-3 font-body text-xs uppercase tracking-[0.16em] text-primary-foreground/40">
               {BUSINESS_INFO.legalName}

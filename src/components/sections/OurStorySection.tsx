@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 import fachadaImg from "@/assets/fachada.jpg";
+import fachadaAvif480 from "@/assets/generated/fachada-480.avif";
+import fachadaAvif900 from "@/assets/generated/fachada-900.avif";
+import fachadaWebp480 from "@/assets/generated/fachada-480.webp";
+import fachadaWebp900 from "@/assets/generated/fachada-900.webp";
 
 const OurStorySection = () => (
   <section id="nossa-historia" className="bg-secondary py-section-y">
@@ -29,13 +33,27 @@ const OurStorySection = () => (
           transition={{ duration: 0.7 }}
           className="relative"
         >
-          <img
-            src={fachadaImg}
-            alt="Fachada da Plante Uma Flor em Goiânia"
-            className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl"
-            loading="lazy"
-            decoding="async"
-          />
+          <picture>
+            <source
+              type="image/avif"
+              srcSet={`${fachadaAvif480} 480w, ${fachadaAvif900} 900w`}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
+            <source
+              type="image/webp"
+              srcSet={`${fachadaWebp480} 480w, ${fachadaWebp900} 900w`}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+            />
+            <img
+              src={fachadaImg}
+              alt="Fachada da Plante Uma Flor em Goiânia"
+              className="aspect-[4/3] w-full rounded-2xl object-cover shadow-2xl"
+              loading="lazy"
+              decoding="async"
+              width={900}
+              height={675}
+            />
+          </picture>
           <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-2 border-accent" />
           <div className="absolute bottom-4 left-4 max-w-[78%] rounded-xl bg-primary/85 px-4 py-3 text-primary-foreground shadow-xl backdrop-blur-sm">
             <p className="font-body text-[10px] font-semibold uppercase tracking-[0.18em] text-accent-on-dark">
