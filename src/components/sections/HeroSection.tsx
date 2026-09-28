@@ -94,6 +94,8 @@ const HeroSection = ({ config = defaultConfig }: HeroSectionProps) => {
           loading="eager"
           fetchPriority="high"
           decoding="async"
+          width={1024}
+          height={1024}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/45 to-primary/70 md:bg-gradient-to-r md:from-primary/85 md:via-primary/45 md:to-primary/10" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_87%_28%_at_50%_43%,hsl(var(--primary)_/_0.9)_0%,hsl(var(--primary)_/_0.55)_50%,transparent_100%)] md:bg-[radial-gradient(ellipse_45%_35%_at_28%_50%,hsl(var(--primary)_/_0.9)_0%,hsl(var(--primary)_/_0.5)_50%,transparent_100%)]" />

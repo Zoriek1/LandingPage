@@ -28,6 +28,8 @@ const WhyChooseSection = () => (
             className="w-full rounded-2xl shadow-2xl"
             loading="lazy"
             decoding="async"
+            width={900}
+            height={900}
           />
           <div className="absolute -bottom-4 -right-4 h-24 w-24 rounded-br-2xl border-2 border-accent" />
         </motion.div>
