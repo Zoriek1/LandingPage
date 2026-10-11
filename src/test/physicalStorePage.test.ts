@@ -71,9 +71,16 @@ describe("conteúdo estático da loja física", () => {
       ["hero", "botao_whatsapp"],
       ["mudas", "botao_whatsapp"],
       ["visit", "link_whatsapp"],
+      ["sticky", "botao_whatsapp"],
     ]);
     for (const link of links) expect(link.getAttribute("href")).toBe("https://wa.me/5562996503403");
     expect(page.querySelectorAll('a[href*="wa.me"]:not([data-whatsapp])')).toHaveLength(0);
+  });
+
+  it("põe Ligar, WhatsApp e Como chegar na barra fixa do celular", () => {
+    const bar = [...page.querySelectorAll<HTMLAnchorElement>("#mobile-actions a")];
+    expect(bar.map((a) => a.querySelector(".bar-label")!.firstChild!.textContent)).toEqual(["Ligar", "WhatsApp", "Como chegar"]);
+    expect(bar.map((a) => a.dataset.location)).toEqual(["sticky", "sticky", "sticky"]);
   });
 
   it("preserva os links de ligação e rota rastreados", () => {

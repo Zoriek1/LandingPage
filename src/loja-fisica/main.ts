@@ -16,8 +16,6 @@ function refreshHours() {
     if (badge.textContent !== status.label) badge.textContent = status.label;
     badge.dataset.open = String(status.open);
   }
-  const sticky = document.querySelector<HTMLElement>("#sticky-status");
-  if (sticky && sticky.textContent !== status.short) sticky.textContent = status.short;
 }
 refreshHours();
 window.setInterval(refreshHours, 60_000);
