@@ -11,24 +11,30 @@ void tracking.then((module) => { track = module?.trackStoreAction; });
 function refreshHours() {
   const status = getStoreStatus();
   const badge = document.querySelector<HTMLElement>("#store-status");
+  // Só reescreve quando muda: #store-status é role=status e o leitor de tela repetiria o anúncio.
   if (badge) {
-    badge.textContent = status.label;
+    if (badge.textContent !== status.label) badge.textContent = status.label;
     badge.dataset.open = String(status.open);
   }
   const sticky = document.querySelector<HTMLElement>("#sticky-status");
-  if (sticky) sticky.textContent = status.short;
+  if (sticky && sticky.textContent !== status.short) sticky.textContent = status.short;
 }
 refreshHours();
 window.setInterval(refreshHours, 60_000);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshHours(); });
 
 // Sem JavaScript a barra fica sempre visível; com ele, só depois que os botões do hero saem da tela.
+// A foto também é observada: com texto ampliado os botões podem começar abaixo da dobra e, sem um
+// segundo alvo, voltar ao topo não dispararia o observer (os dois estados ficam "fora da tela").
 const mobileBar = document.querySelector<HTMLElement>("#mobile-actions");
 const heroActions = document.querySelector("#hero-actions");
 if (mobileBar && heroActions && "IntersectionObserver" in window) {
-  new IntersectionObserver(([entry]) => {
-    mobileBar.dataset.hidden = String(entry.isIntersecting || entry.boundingClientRect.top > 0);
-  }).observe(heroActions);
+  const observer = new IntersectionObserver(() => {
+    mobileBar.dataset.hidden = String(heroActions.getBoundingClientRect().bottom > 0);
+  });
+  observer.observe(heroActions);
+  const heroPhoto = document.querySelector(".hero-photo");
+  if (heroPhoto) observer.observe(heroPhoto);
 }
 
 document.querySelectorAll<HTMLAnchorElement>("[data-store-action]").forEach((anchor) => {

@@ -4,6 +4,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fonte reserva com a largura da Jost (96% da Arial): a troca de fonte quase não mexe no layout. */
+@font-face { font-family: "Jost Fallback"; src: local("Arial"), local("Helvetica"), local("Liberation Sans"); size-adjust: 96%; }
+:root { --font-body: "Jost", "Jost Fallback", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif; }
+
 /*
  * /loja-fisica/ (tema marketing do DS). Valores só de tokens: cor, raio, tipo e ritmo.
  * Motion do DS: 130 ms com a curva padrão para hover; 240 ms com a curva de saída para a barra entrar.
@@ -13,6 +17,7 @@
   html { color-scheme: light; }
   :focus-visible { outline: 3px solid hsl(var(--color-focus-ring)); outline-offset: 4px; }
   [hidden] { display: none !important; }
+  @media (max-width: 767px) { html { scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); } }
   h1, h2, h3 { text-wrap: balance; }
   p, dd, figcaption { text-wrap: pretty; }
 }
@@ -78,7 +83,6 @@
     .site-header-inner { min-height: 6rem; padding-block: 1rem; }
     .site-header .brand-logo { width: 6rem; height: 4rem; background-color: hsl(var(--color-brand-green)); }
   }
-  @media (forced-colors: active) { .brand-logo { forced-color-adjust: none; background-color: CanvasText; } }
 
   /* Topo: a fachada se dissolve no creme por uma camada de degradê na cor do fundo (sem caixa e sem véu). */
   .hero { @apply relative; }
@@ -104,7 +108,7 @@
   .store-status::before { content: ""; @apply h-2 w-2 shrink-0 rounded-full; background: hsl(var(--color-text-muted)); }
   .store-status[data-open="true"]::before { background: hsl(var(--color-state-success)); }
   .hero h1 { margin-top: 0.75rem; }
-  .hero-accent { color: hsl(var(--color-brand-green)); }
+  .hero-accent { display: block; color: hsl(var(--color-brand-green)); }
   .hero-lead { margin-top: 0.75rem; line-height: 1.6; color: hsl(var(--color-text-body)); }
   .hero-proof { @apply flex items-start gap-2; margin-top: 1rem; font-size: var(--text-h6-size); line-height: 1.5; }
   .hero-proof .icon { width: 1rem; height: 1rem; margin-top: 0.15rem; fill: currentColor; stroke: none; color: hsl(var(--color-brand-accent)); }
@@ -118,6 +122,20 @@
     .hero-copy { max-width: 36rem; }
     .hero-actions .action { @apply flex-row gap-2; padding: 0.75rem; }
   }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .hero-photo::after {
+      background:
+        linear-gradient(to bottom,
+          hsl(var(--color-surface-page) / 0) 50%,
+          hsl(var(--color-surface-page) / 0.08) 58%,
+          hsl(var(--color-surface-page) / 0.25) 66%,
+          hsl(var(--color-surface-page) / 0.5) 74%,
+          hsl(var(--color-surface-page) / 0.76) 81%,
+          hsl(var(--color-surface-page) / 0.93) 87%,
+          hsl(var(--color-surface-page)) 92%),
+        linear-gradient(to bottom, hsl(var(--color-surface-inverse) / 0.6), hsl(var(--color-surface-inverse) / 0) 34%);
+    }
+  }
   /* Desktop: texto na borda do .container, foto até a borda direita dissolvendo para a esquerda e para baixo. */
   @media (min-width: 1024px) {
     .hero {
@@ -128,7 +146,7 @@
       padding-top: 6rem;
     }
     .hero-photo { @apply absolute bottom-0 right-0 top-0; left: calc(var(--hero-gutter) + var(--hero-copy) + 1.5rem); aspect-ratio: auto; }
-    .hero-img { object-position: 30% 100%; }
+    .hero-img { object-position: 50% 100%; transform-origin: 50% 62%; }
     .hero-photo::after {
       background:
         linear-gradient(to right,
@@ -150,7 +168,7 @@
     }
     .hero-body { @apply w-full; margin-top: 0; padding-block: 2rem 3rem; }
     .hero-copy { max-width: var(--hero-copy); }
-    .hero-lead { font-size: var(--text-h5-size); }
+    .hero-lead { margin-top: 1.25rem; font-size: var(--text-h5-size); }
     .hero-actions { @apply flex; margin-top: 2rem; }
     .hero-actions .action { padding-inline: 1.25rem; }
   }
@@ -184,7 +202,8 @@
   .category-entry:first-child { border-top: 0; padding-top: 0; }
   .category-art { @apply overflow-hidden; aspect-ratio: 4 / 5; border-radius: var(--radius); background: hsl(var(--color-surface-alt)); }
   .category-art img { @apply h-full w-full object-cover; }
-  .category-art--low img { object-position: 50% 65%; }
+  .category-art--low img { transform: scale(1.4); transform-origin: 50% 66%; }
+  #terras .category-art img { object-position: 60% 0%; }
   .category-entry--text .category-text { grid-column: 2; }
   .category-title { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
   .category-text p { margin-top: 0.375rem; line-height: 1.6; }
@@ -199,13 +218,15 @@
     .category-art { aspect-ratio: 4 / 3; }
     .category-entry .category-text { margin-top: 1rem; }
     .category-entry--text { grid-column: 1 / -1; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
-    .category-entry--text .category-text { @apply grid; margin-top: 0; grid-template-columns: minmax(0, 3fr) minmax(0, 9fr); column-gap: 1.5rem; }
+    .category-entry--text .category-text { @apply grid grid-cols-4 items-baseline; margin-top: 0; column-gap: 1.5rem; }
+    .category-entry--text .category-text p { grid-column: 2 / -1; }
     .category-entry--text .category-text p { margin-top: 0; max-width: 36rem; }
   }
 
   /* Plantas e mudas: o "cardápio" do garden center, com sumário no celular e três colunas no desktop. */
   .plant-index { margin-top: 2rem; }
   .plant-index ul { @apply m-0 grid grid-cols-2 p-0; column-gap: 1rem; list-style: none; }
+  .plant-index li { @apply grid; }
   .plant-index a {
     @apply flex items-center no-underline;
     min-height: 3rem;
@@ -250,7 +271,7 @@
   .reviews-body { margin-top: 2rem; }
   .review { @apply m-0; }
   .review blockquote { @apply m-0; }
-  .review blockquote p { font-family: var(--font-display); font-weight: 400; }
+  .review blockquote p { font-family: var(--font-display); font-weight: 400; text-wrap: balance; }
   .quote-mark { margin-left: -0.42em; color: hsl(var(--color-brand-accent-hover)); }
   .review-lead blockquote p { font-size: var(--text-h3-size); line-height: 1.2; max-width: 30ch; }
   .review figcaption { margin-top: 0.75rem; font-size: var(--text-h6-size); color: hsl(var(--color-text-body)); }
@@ -299,9 +320,8 @@
     .visit-intro { grid-area: intro; }
     .visit-actions { grid-area: actions; }
     .visit-info { grid-area: info; }
-    .visit-map { grid-area: map; @apply flex flex-col; margin-top: 0; }
-    .map-frame { @apply flex-1; }
-    .map-frame iframe { height: 100%; min-height: 28rem; aspect-ratio: auto; }
+    .visit-map { grid-area: map; @apply sticky self-start; top: 1.5rem; margin-top: 0; }
+    .hours { max-width: none; }
   }
 
   /* Rodapé: a marca fecha a página, logo branco sobre o verde-escuro. */
@@ -360,6 +380,7 @@
   }
   .bar-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
   .bar-call:hover { background: hsl(var(--color-brand-green-hover)); }
+  .bar-call:hover .bar-detail { color: hsl(var(--color-text-on-dark)); }
   .bar-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
   .bar-route:hover { background: hsl(var(--color-brand-green) / 0.08); }
   .bar-text { @apply flex flex-col leading-tight; }
@@ -372,5 +393,24 @@
   }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-card px-5 py-3 text-foreground; }
   .skip-link:focus { @apply translate-y-0; }
+  .skip-link:focus-visible { outline-offset: -4px; }
+
+  /* Texto ampliado pelo usuário (media query em em cresce com a fonte): tudo em uma coluna, nada vaza. */
+  @media (max-width: 19.5em) {
+    .hero-actions { grid-template-columns: minmax(0, 1fr); }
+    .hero-actions .action { @apply flex-row gap-2; min-height: 3rem; }
+    .category-entry { grid-template-columns: minmax(0, 1fr); row-gap: 1rem; }
+    .category-art { width: 6rem; }
+    .category-entry--text .category-text { grid-column: auto; }
+    .plant-index ul, .mudas-actions, .route-actions { grid-template-columns: minmax(0, 1fr); }
+    .bar-detail { display: none; }
+  }
+
+  /* Cores forçadas: o logo vira CanvasText e os botões ganham borda (fundo e box-shadow somem nesse modo). */
+  @media (forced-colors: active) {
+    .site-header { background-color: Canvas; }
+    .brand-logo, .site-header .brand-logo, .site-footer .brand-logo { forced-color-adjust: none; background-color: CanvasText; }
+    .action, .bar-action { border: 1px solid; }
+  }
   button:disabled { @apply cursor-wait opacity-60; }
 }

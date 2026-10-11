@@ -37,10 +37,21 @@ describe("conteúdo estático da loja física", () => {
 
   it("mantém as âncoras antigas e cria as dos anúncios com scroll-margin", () => {
     for (const id of ["visite", "categories-title", "reviews-title"]) expect(page.getElementById(id)).not.toBeNull();
-    for (const id of ["mudas", "plantas", "vasos", "terras", "jardim"]) {
+    for (const id of ["mudas", "plantas", "vasos", "terras", "jardim", "frutiferas", "arvores", "palmeiras", "floriferas", "suculentas", "horta"]) {
       expect(page.getElementById(id)?.classList.contains("anchor-target")).toBe(true);
     }
     expect(page.querySelector('a[href="#mudas"]')).not.toBeNull();
+    // Links internos (sumário de mudas, "Ver a lista") só rolam a página: nunca contam como conversão.
+    for (const a of page.querySelectorAll<HTMLAnchorElement>('main a[href^="#"]')) {
+      expect(page.getElementById(a.getAttribute("href")!.slice(1))).not.toBeNull();
+      expect(a.matches("[data-store-action],[data-whatsapp]")).toBe(false);
+    }
+  });
+
+  it("mostra o logo da marca no cabeçalho, com o nome para leitor de tela", () => {
+    const brand = page.querySelector(".site-header .brand")!;
+    expect(brand.querySelector(".brand-logo")?.getAttribute("aria-hidden")).toBe("true");
+    expect(brand.querySelector(".sr-only")?.textContent).toContain("Plante Uma Flor");
   });
 
   it("põe Ligar, WhatsApp e Como chegar lado a lado no topo", () => {
