@@ -4,88 +4,411 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Fonte reserva com a largura da Jost (96% da Arial): a troca de fonte quase não mexe no layout. */
+@font-face { font-family: "Jost Fallback"; src: local("Arial"), local("Helvetica"), local("Liberation Sans"); size-adjust: 96%; }
+:root { --font-body: "Jost", "Jost Fallback", "Inter", "Segoe UI", system-ui, -apple-system, sans-serif; }
+
+/*
+ * /loja-fisica/ (tema marketing do DS). Valores só de tokens: cor, raio, tipo e ritmo.
+ * Motion do DS: 130 ms com a curva padrão para hover; 240 ms com a curva de saída para a barra entrar.
+ */
+
 @layer base {
   html { color-scheme: light; }
-  body { padding-bottom: calc(theme(spacing.20) + env(safe-area-inset-bottom)); }
   :focus-visible { outline: 3px solid hsl(var(--color-focus-ring)); outline-offset: 4px; }
   [hidden] { display: none !important; }
-  @media (min-width: 768px) { body { padding-bottom: 0; } }
+  @media (max-width: 767px) { html { scroll-padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); } }
+  h1, h2, h3 { text-wrap: balance; }
+  p, dd, figcaption { text-wrap: pretty; }
 }
 
 @layer components {
   .icon-library { @apply absolute h-0 w-0 overflow-hidden; }
   .icon { @apply h-5 w-5 shrink-0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-  .brand-text { color: hsl(var(--color-action-brand-primary)); }
-  .rating-star { color: hsl(var(--color-brand-accent)); }
-  .store-status { @apply flex items-center gap-2; }
-  .store-status::before { content: ""; @apply h-2 w-2 rounded-full bg-muted-foreground; }
-  .store-status[data-open="true"]::before { background: hsl(var(--color-state-success)); }
-  .action { @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-lg px-5 py-3 text-center text-sm font-medium; }
-  .action-map { background: hsl(var(--color-action-brand-primary)); color: hsl(var(--color-text-on-dark)); }
-  .action-map:hover { background: hsl(var(--color-action-brand-primary-hover)); }
-  .action-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
-  .action-call:hover { background: hsl(var(--color-brand-green-hover)); }
-  .action-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
-  .action-route:hover { background: hsl(var(--color-surface-alt)); }
-  .action { transition: background-color 0.2s ease, transform 0.15s ease; }
-  .action:active { transform: scale(0.98); }
-  .action-outline { @apply border border-border; }
-  .action-outline:hover { background: hsl(var(--color-surface-alt)); }
-  .checkpoint { @apply h-4 w-4; color: hsl(var(--color-action-brand-primary)); }
-  .site-header { @apply border-b border-border; }
-  /* WhatsApp é canal secundário: só o ícone, verde da marca, sem competir com Ligar. */
-  .header-whatsapp { @apply inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full; color: hsl(var(--color-brand-green)); background: hsl(var(--color-brand-green) / 0.12); transition: background-color 0.2s ease; }
-  .header-whatsapp:hover { background: hsl(var(--color-brand-green) / 0.2); }
+  .icon-solid { fill: currentColor; stroke: none; }
+  /* Títulos em Fraunces: display-h1-marketing e display-h2 do DS (600, entrelinha 1,06). */
+  h1.font-display, h2.font-display { font-weight: 600; line-height: 1.06; letter-spacing: var(--tracking-tighter); }
+  /* Âncoras dos anúncios (#mudas, #plantas, #vasos, #terras, #jardim e os grupos): folga acima do alvo. */
+  .anchor-target { scroll-margin-top: theme(spacing.6); }
 
-  /* Hero: foto da rua ao fundo e bloco de texto com contorno orgânico por cima. */
+  /* Ações: um primário cheio e um secundário em contorno, 48 px e raio de 8 px em toda a página. */
+  .action {
+    @apply inline-flex items-center justify-center gap-2 text-center;
+    min-height: 3rem;
+    padding-inline: 1.25rem;
+    border-radius: var(--radius);
+    font-size: var(--text-h6-size);
+    font-weight: 500;
+    line-height: 1.2;
+    transition: background-color 130ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .action-primary { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
+  .action-primary:hover { background: hsl(var(--color-brand-green-hover)); }
+  .action-secondary { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
+  .action-secondary:hover { background: hsl(var(--color-brand-green) / 0.08); }
+  .text-link {
+    @apply inline-flex items-center gap-2 text-left font-medium underline;
+    min-height: 3rem;
+    color: hsl(var(--color-brand-green));
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+  .text-link:hover { text-decoration-thickness: 2px; }
+
+  /* Cabeçalho sem faixa: o logo da marca fica sobre a foto (branco) e, no desktop, sobre o creme (verde). */
+  .site-header { @apply absolute inset-x-0 top-0 z-20; }
+  .site-header-inner { @apply flex items-center justify-between; min-height: 4.5rem; padding-block: 0.75rem; }
+  .site-header :focus-visible { outline-color: hsl(var(--color-text-on-dark)); }
+  .brand { @apply m-0; }
+  /* logo-240.webp é branco sobre transparente: vira máscara e ganha a cor do token por background-color. */
+  .brand-logo {
+    display: block;
+    width: 3.75rem;
+    height: 2.5rem;
+    background-color: hsl(var(--color-text-on-dark));
+    mask: url("../assets/generated/logo-240.webp") center / contain no-repeat;
+  }
+  .header-whatsapp {
+    @apply inline-flex shrink-0 items-center justify-center rounded-full;
+    width: 3rem;
+    height: 3rem;
+    margin-inline-end: -0.75rem;
+    color: hsl(var(--color-text-on-dark));
+    transition: background-color 130ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .header-whatsapp .icon { width: 1.5rem; height: 1.5rem; }
+  .header-whatsapp:hover { background: hsl(var(--color-surface-inverse) / 0.35); }
+  @media (min-width: 640px) { .brand-logo { width: 4.5rem; height: 3rem; } }
+  @media (min-width: 1024px) {
+    .site-header-inner { min-height: 6rem; padding-block: 1rem; }
+    .site-header .brand-logo { width: 6rem; height: 4rem; background-color: hsl(var(--color-brand-green)); }
+  }
+
+  /* Topo: a fachada se dissolve no creme por uma camada de degradê na cor do fundo (sem caixa e sem véu). */
   .hero { @apply relative; }
   .hero-photo { @apply relative m-0 overflow-hidden; aspect-ratio: 4 / 3; background: hsl(var(--color-surface-inverse)); }
   .hero-img { @apply block h-full w-full object-cover; }
-  /* Véu verde leve, bem mais suave que o das LPs de anúncio: a fachada continua legível. */
-  .hero-photo::after { content: ""; @apply pointer-events-none absolute inset-0; background: linear-gradient(0deg, hsl(var(--color-brand-green) / 0.62), hsl(var(--color-brand-green) / 0.34) 55%, hsl(var(--color-brand-green) / 0.26)); }
-  .hero-card { @apply relative px-6 pb-9 pt-7; margin-top: -2.5rem; background: hsl(var(--color-surface-page)); border-radius: 2.75rem 4.5rem 0 0 / 2.25rem 3.25rem 0 0; }
-  @media (min-width: 768px) {
-    .hero { @apply flex items-center; min-height: 40rem; }
-    .hero-photo { @apply absolute inset-0; aspect-ratio: auto; }
-    .hero-img { object-position: 72% 70%; }
-    .hero-photo::after { background: linear-gradient(90deg, hsl(var(--color-brand-green) / 0.42), hsl(var(--color-brand-green) / 0.2) 45%, hsl(var(--color-brand-green) / 0.12)), linear-gradient(0deg, hsl(var(--color-brand-green) / 0.22), transparent 50%); }
-    .hero-shell { @apply relative mx-auto w-full px-6 py-16; max-width: theme(screens.2xl); }
-    .hero-card { @apply m-0 px-12 py-11; max-width: 34rem; border-radius: 3.5rem 6rem 4.5rem 2.5rem / 3rem 4.5rem 5.5rem 3.5rem; box-shadow: 0 24px 48px -32px hsl(var(--color-text-heading) / 0.55); }
+  .hero-photo::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0;
+    background:
+      linear-gradient(to bottom,
+        hsl(var(--color-surface-page) / 0) 50%,
+        hsl(var(--color-surface-page) / 0.08) 58%,
+        hsl(var(--color-surface-page) / 0.25) 66%,
+        hsl(var(--color-surface-page) / 0.5) 74%,
+        hsl(var(--color-surface-page) / 0.76) 81%,
+        hsl(var(--color-surface-page) / 0.93) 87%,
+        hsl(var(--color-surface-page)) 92%),
+      linear-gradient(to bottom, hsl(var(--color-surface-inverse) / 0.5), hsl(var(--color-surface-inverse) / 0) 34%);
   }
-  .category-section { background: hsl(var(--color-surface-alt)); }
-  .category-art { @apply aspect-square overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
+  /* O status ao vivo abre o texto exatamente na emenda entre a foto e o creme. */
+  .hero-body { @apply relative z-[1]; margin-top: -1.75rem; padding-bottom: 2.5rem; }
+  .store-status { @apply flex items-center gap-2; font-size: var(--text-h6-size); font-weight: 500; }
+  .store-status::before { content: ""; @apply h-2 w-2 shrink-0 rounded-full; background: hsl(var(--color-text-muted)); }
+  .store-status[data-open="true"]::before { background: hsl(var(--color-state-success)); }
+  .hero h1 { margin-top: 0.75rem; }
+  .hero-accent { display: block; color: hsl(var(--color-brand-green)); }
+  .hero-lead { margin-top: 0.75rem; line-height: 1.6; color: hsl(var(--color-text-body)); }
+  .hero-proof { @apply flex items-start gap-2; margin-top: 1rem; font-size: var(--text-h6-size); line-height: 1.5; }
+  .hero-proof .icon { width: 1rem; height: 1rem; margin-top: 0.15rem; fill: currentColor; stroke: none; color: hsl(var(--color-brand-accent)); }
+  .hero-actions { @apply grid grid-cols-3 gap-2; margin-top: 1.5rem; }
+  /* Três ações do mesmo nível: no celular, ícone sobre o rótulo para caberem lado a lado. */
+  .hero-actions .action { @apply flex-col gap-1; min-height: 3.5rem; padding: 0.5rem; }
+  @media (max-width: 379px) { .hero-actions .action { padding-inline: 0.25rem; } }
+  @media (min-width: 640px) {
+    .hero-photo { aspect-ratio: 16 / 9; }
+    .hero-img { object-position: 30% 70%; }
+    .hero-copy { max-width: 36rem; }
+    .hero-actions .action { @apply flex-row gap-2; padding: 0.75rem; }
+  }
+  @media (min-width: 640px) and (max-width: 1023px) {
+    .hero-photo::after {
+      background:
+        linear-gradient(to bottom,
+          hsl(var(--color-surface-page) / 0) 50%,
+          hsl(var(--color-surface-page) / 0.08) 58%,
+          hsl(var(--color-surface-page) / 0.25) 66%,
+          hsl(var(--color-surface-page) / 0.5) 74%,
+          hsl(var(--color-surface-page) / 0.76) 81%,
+          hsl(var(--color-surface-page) / 0.93) 87%,
+          hsl(var(--color-surface-page)) 92%),
+        linear-gradient(to bottom, hsl(var(--color-surface-inverse) / 0.6), hsl(var(--color-surface-inverse) / 0) 34%);
+    }
+  }
+  /* Desktop: texto na borda do .container, foto até a borda direita dissolvendo para a esquerda e para baixo. */
+  @media (min-width: 1024px) {
+    .hero {
+      --hero-gutter: max(1.5rem, (100% - 80rem) / 2 + 1.5rem);
+      --hero-copy: min(30rem, 44vw);
+      @apply flex items-center;
+      min-height: 40rem;
+      padding-top: 6rem;
+    }
+    .hero-photo { @apply absolute bottom-0 right-0 top-0; left: calc(var(--hero-gutter) + var(--hero-copy) + 1.5rem); aspect-ratio: auto; }
+    .hero-img { object-position: 50% 100%; transform-origin: 50% 62%; }
+    .hero-photo::after {
+      background:
+        linear-gradient(to right,
+          hsl(var(--color-surface-page)) 0%,
+          hsl(var(--color-surface-page) / 0.97) 4%,
+          hsl(var(--color-surface-page) / 0.9) 8%,
+          hsl(var(--color-surface-page) / 0.78) 12%,
+          hsl(var(--color-surface-page) / 0.6) 16%,
+          hsl(var(--color-surface-page) / 0.4) 20%,
+          hsl(var(--color-surface-page) / 0.22) 24%,
+          hsl(var(--color-surface-page) / 0.09) 28%,
+          hsl(var(--color-surface-page) / 0) 32%),
+        linear-gradient(to bottom,
+          hsl(var(--color-surface-page) / 0) 80%,
+          hsl(var(--color-surface-page) / 0.25) 87%,
+          hsl(var(--color-surface-page) / 0.65) 93%,
+          hsl(var(--color-surface-page)) 100%),
+        linear-gradient(to bottom, hsl(var(--color-surface-inverse) / 0.45), hsl(var(--color-surface-inverse) / 0) 20%);
+    }
+    .hero-body { @apply w-full; margin-top: 0; padding-block: 2rem 3rem; }
+    .hero-copy { max-width: var(--hero-copy); }
+    .hero-lead { margin-top: 1.25rem; font-size: var(--text-h5-size); }
+    .hero-actions { @apply flex; margin-top: 2rem; }
+    .hero-actions .action { padding-inline: 1.25rem; }
+  }
+  /* Aproximação: a fachada cresce 6% enquanto o topo sai da tela. Só transform, parte de scale(1). */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: scroll()) {
+      .hero-img { transform-origin: 30% 62%; animation: chegada auto linear both; animation-timeline: scroll(root); animation-range: 0 70vh; }
+    }
+  }
+  @keyframes chegada { to { transform: scale(1.06); } }
+
+  /* Na loja: os três fatos que antes eram checklist com ícones, cada um com a frase que já existia. */
+  .store-facts { padding-bottom: 1rem; }
+  .facts { @apply m-0 grid gap-6; padding-top: 1.5rem; border-top: 1px solid hsl(var(--color-border-default)); }
+  .fact dt { font-family: var(--font-display); font-size: var(--text-h5-size); font-weight: 500; line-height: 1.22; }
+  .fact dd { @apply m-0; margin-top: 0.25rem; line-height: 1.6; }
+  @media (min-width: 768px) { .facts { @apply grid-cols-3; column-gap: 2rem; } }
+
+  /* Seções: espaço separa os capítulos (64 px no celular, 96 px no desktop), sem faixas nem fios entre eles. */
+  .section { padding-block: 4rem; }
+  .section-intro { margin-top: 1rem; max-width: 36rem; line-height: 1.6; }
+  .section-note { margin-top: 2rem; font-size: var(--text-h6-size); color: hsl(var(--color-text-muted)); }
+  @media (min-width: 1024px) {
+    .section { padding-block: var(--space-section-y); }
+    .section-intro { font-size: var(--text-h5-size); }
+  }
+
+  /* Categorias: lista com miniatura no celular, quatro colunas no desktop; "Para o jardim" só em texto. */
+  .category-list { @apply m-0 p-0; margin-top: 2rem; list-style: none; }
+  .category-entry { @apply grid; grid-template-columns: 6rem minmax(0, 1fr); column-gap: 1rem; padding-block: 1.5rem; border-top: 1px solid hsl(var(--color-border-subtle)); }
+  .category-entry:first-child { border-top: 0; padding-top: 0; }
+  .category-art { @apply overflow-hidden; aspect-ratio: 4 / 5; border-radius: var(--radius); background: hsl(var(--color-surface-alt)); }
   .category-art img { @apply h-full w-full object-cover; }
-  .review { @apply m-0 border-l-2 pl-4; border-color: hsl(var(--color-brand-accent)); }
-  .review blockquote { @apply m-0 leading-relaxed; }
-  .review-lead blockquote { @apply font-display text-xl leading-snug md:text-h4; }
-  .review figcaption { @apply mt-2 text-sm text-muted-foreground; }
-  .map-frame { background: hsl(var(--color-surface-alt)); }
-  /* Barra mobile: bandeja creme; aparece quando os botões do hero saem da tela. */
-  .mobile-actions {
-    @apply fixed inset-x-0 bottom-0 z-50 grid grid-cols-2 gap-2 px-3 pt-2.5;
-    padding-bottom: calc(theme(spacing[2.5]) + env(safe-area-inset-bottom));
-    background: hsl(var(--color-brand-accent-soft));
-    border-radius: 1.25rem 1.25rem 0 0;
-    box-shadow: 0 -10px 28px -20px hsl(var(--color-text-heading) / 0.5);
-    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s;
+  .category-art--low img { transform: scale(1.4); transform-origin: 50% 66%; }
+  #terras .category-art img { object-position: 60% 0%; }
+  .category-entry--text .category-text { grid-column: 2; }
+  .category-title { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
+  .category-text p { margin-top: 0.375rem; line-height: 1.6; }
+  .category-text .text-link { margin-top: 0.25rem; }
+  @media (min-width: 768px) {
+    .category-list { @apply grid grid-cols-2; column-gap: 2rem; }
+    .category-entry:nth-child(2) { border-top: 0; padding-top: 0; }
   }
-  .mobile-actions[data-hidden="true"] { visibility: hidden; transform: translateY(calc(100% + 1rem)); transition: transform 0.26s cubic-bezier(0.4, 0, 1, 1), visibility 0s linear 0.26s; }
-  .bar-action { @apply flex min-h-[3.25rem] items-center justify-center gap-2.5 rounded-xl px-3 py-2 text-left; transition: background-color 0.2s ease, transform 0.15s ease; }
-  .bar-action:active { transform: scale(0.97); }
+  @media (min-width: 1024px) {
+    .category-list { @apply grid-cols-4; column-gap: 1.5rem; margin-top: 3rem; }
+    .category-entry { @apply block; border: 0; padding: 0; }
+    .category-art { aspect-ratio: 4 / 3; }
+    .category-entry .category-text { margin-top: 1rem; }
+    .category-entry--text { grid-column: 1 / -1; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
+    .category-entry--text .category-text { @apply grid grid-cols-4 items-baseline; margin-top: 0; column-gap: 1.5rem; }
+    .category-entry--text .category-text p { grid-column: 2 / -1; }
+    .category-entry--text .category-text p { margin-top: 0; max-width: 36rem; }
+  }
+
+  /* Plantas e mudas: o "cardápio" do garden center, com sumário no celular e três colunas no desktop. */
+  .plant-index { margin-top: 2rem; }
+  .plant-index ul { @apply m-0 grid grid-cols-2 p-0; column-gap: 1rem; list-style: none; }
+  .plant-index li { @apply grid; }
+  .plant-index a {
+    @apply flex items-center no-underline;
+    min-height: 3rem;
+    padding-block: 0.5rem;
+    border-bottom: 1px solid hsl(var(--color-border-subtle));
+    font-family: var(--font-display);
+    font-size: var(--text-h6-size);
+    font-weight: 500;
+    line-height: 1.22;
+    color: hsl(var(--color-text-heading));
+  }
+  .plant-index a:hover { color: hsl(var(--color-brand-green)); text-decoration: underline; text-underline-offset: 4px; }
+  .plant-groups { margin-top: 2rem; }
+  .plant-group { padding-block: 1.5rem; border-top: 1px solid hsl(var(--color-border-subtle)); }
+  .plant-group:first-child { border-top: 0; padding-top: 0; }
+  .plant-group h3 { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
+  .plant-have { margin-top: 0.5rem; line-height: 1.6; }
+  .plant-seasonal { margin-top: 0.75rem; font-size: var(--text-h6-size); line-height: 1.6; }
+  /* O dourado da marca passa a significar "sob consulta" em toda a lista. */
+  .seasonal-label { @apply block; font-weight: 500; color: hsl(var(--color-brand-accent-hover)); }
+  .mudas-cta { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
+  .mudas-cta p { max-width: 36rem; line-height: 1.6; }
+  .mudas-actions { @apply grid grid-cols-2 gap-2; margin-top: 1rem; }
+  @media (min-width: 768px) {
+    .plant-groups { columns: 2; column-gap: 3rem; }
+    .plant-group { break-inside: avoid; border-top: 0; padding: 0; margin-bottom: 2.5rem; }
+    .mudas-cta { @apply flex items-center justify-between; gap: 3rem; margin-top: 0.5rem; }
+    .mudas-actions { @apply flex shrink-0; margin-top: 0; }
+  }
+  @media (min-width: 1024px) {
+    .plant-index { display: none; }
+    .plant-groups { margin-top: 3rem; }
+  }
+  @media (min-width: 1280px) { .plant-groups { columns: 3; } }
+
+  /* Avaliações: a única faixa tonal da página (creme da marca), nota grande e citações em Fraunces. */
+  .reviews { background: hsl(var(--color-surface-sunken)); }
+  .rating { @apply flex flex-wrap items-baseline; column-gap: 0.75rem; row-gap: 0.25rem; margin-top: 1rem; }
+  .rating-score { font-family: var(--font-display); font-size: var(--text-h1-size); font-weight: 500; line-height: 1; }
+  .rating-meta { @apply inline-flex items-center gap-1.5; font-size: var(--text-h6-size); }
+  .rating-meta .icon { width: 1rem; height: 1rem; fill: currentColor; stroke: none; color: hsl(var(--color-brand-accent-hover)); }
+  .reviews-body { margin-top: 2rem; }
+  .review { @apply m-0; }
+  .review blockquote { @apply m-0; }
+  .review blockquote p { font-family: var(--font-display); font-weight: 400; text-wrap: balance; }
+  .quote-mark { margin-left: -0.42em; color: hsl(var(--color-brand-accent-hover)); }
+  .review-lead blockquote p { font-size: var(--text-h3-size); line-height: 1.2; max-width: 30ch; }
+  .review figcaption { margin-top: 0.75rem; font-size: var(--text-h6-size); color: hsl(var(--color-text-body)); }
+  .reviews-more { @apply grid gap-8; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-strong)); }
+  .reviews-more blockquote p { font-size: var(--text-h5-size); line-height: 1.45; max-width: 40ch; }
+  @media (min-width: 1024px) {
+    .reviews-grid { @apply grid grid-cols-12; column-gap: 2rem; }
+    .reviews-head { grid-column: 1 / span 4; }
+    .reviews-body { grid-column: 5 / span 8; margin-top: 0; }
+    .reviews-more { @apply grid-cols-2; column-gap: 2rem; }
+  }
+
+  /* Visita: endereço e rota primeiro, depois mapa, horários e telefones num só padrão. */
+  .visit-address { margin-top: 1.5rem; font-style: normal; font-size: var(--text-h5-size); line-height: 1.5; }
+  .visit-street { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; }
+  .visit-cep { font-size: var(--text-h6-size); color: hsl(var(--color-text-muted)); }
+  .visit-route { margin-top: 1rem; max-width: 30rem; line-height: 1.6; }
+  .visit-actions { margin-top: 1.5rem; }
+  .route-actions { @apply grid grid-cols-2 gap-2; }
+  .location-tools { margin-top: 0.75rem; }
+  .location-note { margin-top: 0.25rem; font-size: var(--text-eyebrow-size); line-height: 1.5; color: hsl(var(--color-text-muted)); }
+  .location-result { margin-top: 0.75rem; font-size: var(--text-h6-size); line-height: 1.5; }
+  .location-result:empty { display: none; }
+  .visit-map { margin-top: 1.5rem; }
+  .map-frame { @apply overflow-hidden; border-radius: var(--radius); border: 1px solid hsl(var(--color-border-subtle)); background: hsl(var(--color-surface-alt)); }
+  .map-frame iframe { @apply block w-full border-0; aspect-ratio: 4 / 3; }
+  .visit-info { margin-top: 2rem; }
+  .hours { @apply m-0 grid; grid-template-columns: 1fr auto; max-width: 22rem; font-variant-numeric: tabular-nums lining-nums; }
+  .hours dt, .hours dd { @apply m-0; padding-block: 0.75rem; border-bottom: 1px solid hsl(var(--color-border-subtle)); }
+  .hours dd { font-weight: 500; text-align: right; }
+  .hours .hours-closed { font-weight: 400; color: hsl(var(--color-text-muted)); }
+  .hours-note { margin-top: 0.75rem; font-size: var(--text-h6-size); color: hsl(var(--color-text-muted)); }
+  .contacts { @apply grid; margin-top: 1.5rem; }
+  .contact { @apply flex flex-col justify-center no-underline; min-height: 3.5rem; font-variant-numeric: tabular-nums lining-nums; }
+  .contact-label { font-size: var(--text-h6-size); color: hsl(var(--color-text-muted)); }
+  .contact-number { @apply underline; font-size: var(--text-h5-size); font-weight: 500; color: hsl(var(--color-brand-green)); text-underline-offset: 4px; text-decoration-thickness: 1px; }
+  .contact:hover .contact-number { text-decoration-thickness: 2px; }
+  @media (min-width: 1024px) {
+    .visit-grid {
+      @apply grid;
+      grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+      grid-template-areas: "intro map" "actions map" "info map";
+      grid-template-rows: auto auto 1fr;
+      column-gap: 4rem;
+    }
+    .visit-intro { grid-area: intro; }
+    .visit-actions { grid-area: actions; }
+    .visit-info { grid-area: info; }
+    .visit-map { grid-area: map; @apply sticky self-start; top: 1.5rem; margin-top: 0; }
+    .hours { max-width: none; }
+  }
+
+  /* Rodapé: a marca fecha a página, logo branco sobre o verde-escuro. */
+  .site-footer {
+    background: hsl(var(--color-surface-inverse));
+    color: hsl(var(--color-text-on-dark-muted));
+    padding-top: 3rem;
+    /* Folga da barra fixa do celular: o verde continua por baixo dela. */
+    padding-bottom: calc(3rem + 4.5rem + env(safe-area-inset-bottom));
+    font-size: var(--text-h6-size);
+    line-height: 1.6;
+  }
+  .footer-top { @apply grid gap-8; }
+  .site-footer .brand-logo { width: 4.5rem; height: 3rem; background-color: hsl(var(--color-text-on-dark)); }
+  .footer-signature { margin-top: 1rem; font-family: var(--font-display); font-size: var(--text-h5-size); line-height: 1.4; color: hsl(var(--color-text-on-dark)); }
+  .footer-legal {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid hsl(var(--color-text-on-dark) / 0.15);
+    font-size: var(--text-eyebrow-size);
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+  }
+  .footer-sep { display: none; }
+  @media (min-width: 768px) {
+    .site-footer { padding-bottom: 3rem; }
+    .footer-top { @apply flex items-end justify-between; }
+    .footer-address { text-align: right; }
+    .footer-sep { display: inline; }
+    .footer-break { display: none; }
+  }
+  @media (min-width: 1024px) {
+    .site-footer { padding-block: 4rem; }
+    .site-footer .brand-logo { width: 6rem; height: 4rem; }
+  }
+
+  /* Barra fixa do celular: plana, de borda a borda; aparece quando os botões do topo saem da tela.
+     Ligar, WhatsApp e Como chegar como no topo: ícone sobre o rótulo para os três caberem. */
+  .mobile-actions {
+    @apply fixed inset-x-0 bottom-0 z-50 grid grid-cols-3 gap-2;
+    padding: 0.5rem 0.75rem calc(0.5rem + env(safe-area-inset-bottom));
+    background: hsl(var(--color-surface-page));
+    border-top: 1px solid hsl(var(--color-border-default));
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1), visibility 0s;
+  }
+  .mobile-actions[data-hidden="true"],
+  .js-bar .mobile-actions:not([data-hidden="false"]) {
+    visibility: hidden;
+    transform: translateY(100%);
+    transition: transform 130ms cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 130ms;
+  }
+  .bar-action {
+    @apply flex flex-col items-center justify-center gap-1 text-center;
+    min-height: 3.5rem;
+    padding: 0.375rem 0.25rem;
+    border-radius: var(--radius);
+    transition: background-color 130ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
   .bar-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
   .bar-call:hover { background: hsl(var(--color-brand-green-hover)); }
-  .bar-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
-  .bar-route:hover { background: hsl(var(--color-surface-page)); }
-  .bar-text { @apply flex flex-col leading-tight; }
-  .bar-label { @apply text-[0.95rem] font-semibold; }
-  .bar-detail { @apply text-xs; }
-  .bar-call .bar-detail { color: hsl(var(--color-brand-accent-on-dark)); }
+  .bar-whatsapp, .bar-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
+  .bar-whatsapp:hover, .bar-route:hover { background: hsl(var(--color-brand-green) / 0.08); }
+  .bar-label { font-size: var(--text-h6-size); font-weight: 500; line-height: 1.2; }
+
   @media (prefers-reduced-motion: reduce) {
-    .mobile-actions, .mobile-actions[data-hidden="true"], .action, .bar-action { transition: none; }
-    .action:active, .bar-action:active { transform: none; }
+    .mobile-actions, .mobile-actions[data-hidden="true"], .js-bar .mobile-actions:not([data-hidden="false"]), .action, .bar-action, .header-whatsapp { transition: none; }
   }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-card px-5 py-3 text-foreground; }
   .skip-link:focus { @apply translate-y-0; }
+  .skip-link:focus-visible { outline-offset: -4px; }
+
+  /* Texto ampliado pelo usuário (media query em em cresce com a fonte): tudo em uma coluna, nada vaza. */
+  @media (max-width: 19.5em) {
+    .hero-actions { grid-template-columns: minmax(0, 1fr); }
+    .hero-actions .action { @apply flex-row gap-2; min-height: 3rem; }
+    .category-entry { grid-template-columns: minmax(0, 1fr); row-gap: 1rem; }
+    .category-art { width: 6rem; }
+    .category-entry--text .category-text { grid-column: auto; }
+    .plant-index ul, .mudas-actions, .route-actions { grid-template-columns: minmax(0, 1fr); }
+    .bar-action .bar-label { @apply sr-only; }
+  }
+
+  /* Cores forçadas: o logo vira CanvasText e os botões ganham borda (fundo e box-shadow somem nesse modo). */
+  @media (forced-colors: active) {
+    .site-header { background-color: Canvas; }
+    .brand-logo, .site-header .brand-logo, .site-footer .brand-logo { forced-color-adjust: none; background-color: CanvasText; }
+    .action, .bar-action { border: 1px solid; }
+  }
   button:disabled { @apply cursor-wait opacity-60; }
 }
-
