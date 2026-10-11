@@ -12,7 +12,7 @@ Pessoas procurando produtos da Plante Uma Flor em Goiânia. A página de loja f�
 
 ## Product Purpose
 
-Apresentar a loja e facilitar contato e visita. As campanhas existentes mantêm seus fluxos; `/loja-fisica/` prioriza ligação e rota GPS, com WhatsApp secundário apenas no header.
+Apresentar a loja e facilitar contato e visita. As campanhas existentes mantêm seus fluxos; `/loja-fisica/` prioriza ligação, WhatsApp e rota GPS, lado a lado no topo; ligação e rota continuam sendo as conversões do Google Ads.
 
 ## Capabilities and Constraints
 
