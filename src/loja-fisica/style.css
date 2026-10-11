@@ -15,6 +15,12 @@
 @layer components {
   .icon-library { @apply absolute h-0 w-0 overflow-hidden; }
   .icon { @apply h-5 w-5 shrink-0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .icon-solid { fill: currentColor; stroke: none; }
+  .icon-whatsapp { color: hsl(var(--color-whatsapp-base)); }
+  /* Entrelinha dos títulos em Fraunces: display-h1-marketing e display-h2 do DS (1,06). */
+  h1.font-display, h2.font-display { line-height: 1.06; }
+  /* Âncoras dos anúncios (#mudas, #plantas, #vasos, #terras, #jardim): folga acima do alvo. */
+  .anchor-target { scroll-margin-top: theme(spacing.6); }
   .brand-text { color: hsl(var(--color-action-brand-primary)); }
   .rating-star { color: hsl(var(--color-brand-accent)); }
   .store-status { @apply flex items-center gap-2; }
@@ -25,8 +31,12 @@
   .action-map:hover { background: hsl(var(--color-action-brand-primary-hover)); }
   .action-call { background: hsl(var(--color-brand-green)); color: hsl(var(--color-text-on-dark)); }
   .action-call:hover { background: hsl(var(--color-brand-green-hover)); }
-  .action-route { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
-  .action-route:hover { background: hsl(var(--color-surface-alt)); }
+  .action-route, .action-whatsapp { color: hsl(var(--color-brand-green)); box-shadow: inset 0 0 0 1.5px hsl(var(--color-brand-green)); }
+  .action-route:hover, .action-whatsapp:hover { background: hsl(var(--color-surface-alt)); }
+  .action-whatsapp .icon { color: hsl(var(--color-whatsapp-base)); }
+  /* Três ações do mesmo nível no topo: no celular, ícone sobre o rótulo para caberem lado a lado. */
+  .hero-actions .action { @apply flex-col gap-1 px-2 py-2; }
+  @media (min-width: 640px) { .hero-actions .action { @apply flex-row gap-2 px-3 py-3; } }
   .action { transition: background-color 0.2s ease, transform 0.15s ease; }
   .action:active { transform: scale(0.98); }
   .action-outline { @apply border border-border; }
@@ -39,7 +49,8 @@
 
   /* Hero: foto da rua ao fundo e bloco de texto com contorno orgânico por cima. */
   .hero { @apply relative; }
-  .hero-photo { @apply relative m-0 overflow-hidden; aspect-ratio: 4 / 3; background: hsl(var(--color-surface-inverse)); }
+  /* 3:2 no celular deixa Ligar, WhatsApp e Como chegar na primeira tela (390 x 664). */
+  .hero-photo { @apply relative m-0 overflow-hidden; aspect-ratio: 3 / 2; background: hsl(var(--color-surface-inverse)); }
   .hero-img { @apply block h-full w-full object-cover; }
   /* Véu verde leve, bem mais suave que o das LPs de anúncio: a fachada continua legível. */
   .hero-photo::after { content: ""; @apply pointer-events-none absolute inset-0; background: linear-gradient(0deg, hsl(var(--color-brand-green) / 0.62), hsl(var(--color-brand-green) / 0.34) 55%, hsl(var(--color-brand-green) / 0.26)); }
@@ -55,6 +66,9 @@
   .category-section { background: hsl(var(--color-surface-alt)); }
   .category-art { @apply aspect-square overflow-hidden rounded-card; background: hsl(var(--color-surface-page)); }
   .category-art img { @apply h-full w-full object-cover; }
+  /* Colunas de texto (e não grade) para os blocos de alturas diferentes encaixarem sem vãos. */
+  .plant-groups { @apply grid gap-8 md:block md:columns-2 md:gap-12 lg:columns-3; }
+  .plant-group { @apply border-t border-border pt-4 md:mb-8 md:break-inside-avoid; }
   .review { @apply m-0 border-l-2 pl-4; border-color: hsl(var(--color-brand-accent)); }
   .review blockquote { @apply m-0 leading-relaxed; }
   .review-lead blockquote { @apply font-display text-xl leading-snug md:text-h4; }

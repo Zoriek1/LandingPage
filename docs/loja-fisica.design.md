@@ -35,3 +35,17 @@ Disposição visual/frontend: ship, condicionada à conclusão dos gates de inte
 - Categorias em grade 2x2 com fotos do Unsplash (créditos em `assets-src/loja-fisica/README.md`). Não são produtos da loja; trocar por fotos próprias quando houver, mantendo os nomes dos arquivos, e rodar `npm run images`.
 - Barra mobile em bandeja creme: Ligar em verde com o status curto, Como chegar em contorno com o endereço. Aparece só depois que os botões do hero saem da tela; sem JavaScript fica sempre visível; sem animação com redução de movimento.
 - Ajustes de 25/09/2026: véu verde na foto do hero (mais forte no celular, ainda mais leve que o das LPs de anúncio), sem a plaquinha do endereço sobre a foto (o endereço fica numa linha discreta no fim do bloco do hero, na seção de visita e no rodapé), folha vetorial do cabeçalho removida (usar o logo real quando houver um arquivo próprio para fundo claro) e WhatsApp do cabeçalho só como ícone verde, sem texto.
+
+## Plantas e mudas de 11/10/2026
+
+Motivo: experiência na página de destino "Abaixo da média" em 12 de 13 palavras-chave da campanha "PESQUISA | IR PARA LOJA". "loja de plantas" é 60% do gasto e boa parte das buscas procura muda, frutífera ou uma planta específica, termos que a página não citava.
+
+- Topo: H1 "Plantas, mudas, vasos e adubo para levar na hora." e subtítulo com "loja de plantas" e "jardinagem". Ligar, WhatsApp e Como chegar em três colunas iguais; no celular o ícone fica sobre o rótulo para caberem lado a lado. Ligar segue cheio em verde; WhatsApp e Como chegar em contorno, com o ícone do WhatsApp no verde próprio do DS (`--color-whatsapp-base`).
+- Primeira tela no celular: a foto do topo passou de 4:3 para 3:2 abaixo de 768 px e os títulos em Fraunces usam a entrelinha do DS (1,06, `display-h1-marketing`/`display-h2`). Em 390 x 664 os três botões terminam em 656 px. Antes, em 390 x 664, Ligar e Como chegar já ficavam cortados.
+- Categorias: textos de vasos, adubos e terras explicam para que serve cada item; o card de plantas vira "Plantas e Mudas" e leva à seção nova. Bloco "Para o jardim" (pedras e seixos, jardineiras, musgo vivo) sem foto, porque não há foto própria.
+- Seção `#mudas`: sete blocos de texto (frutíferas, árvores e nativas, palmeiras e coníferas, interior e folhagens, floríferas, suculentas/cactos/bonsai, horta e temperos) com o que a loja tem e uma linha "Conforme a época, sob consulta". Lista confirmada pelo Caio em 11/10/2026. Não citar grama, sementes, pau-brasil, barbatimão, tagete, bulbos, peônia, flor de corte nem buquê (o teste `physicalStorePage.test.ts` barra esses termos). Sem fotos: o repositório não tem foto própria de mudas e a regra é não usar banco de imagem. Trocar por fotos da loja quando houver.
+- No desktop os blocos ficam em colunas de texto (`columns`), não em grade, para os blocos de alturas diferentes encaixarem sem vãos. No fim, aviso de estoque com WhatsApp e Ligar.
+- Âncoras dos anúncios: `#mudas` (seção), `#plantas` (bloco de interior e folhagens, onde estão bambu da sorte, zamioculca e afins), `#vasos`, `#terras` e `#jardim`, todas com `scroll-margin-top` pela classe `anchor-target`. `#visite`, `#categories-title` e `#reviews-title` não mudaram.
+- Visita: link "WhatsApp: (62) 99650-3403" logo abaixo do telefone do balcão, no mesmo estilo.
+- A barra fixa do celular continua com Ligar e Como chegar.
+- Lighthouse mobile local (`scripts/perf/lighthouse-run.mjs`, mediana de 5): 88 antes e 88 depois; LCP 2,49 s e 2,45 s; CLS 0,052 e 0,053.

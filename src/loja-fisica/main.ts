@@ -49,21 +49,24 @@ document.querySelectorAll<HTMLAnchorElement>("[data-store-action]").forEach((anc
   });
 });
 
-const whatsapp = document.querySelector<HTMLAnchorElement>("#whatsapp-link");
-whatsapp?.addEventListener("click", async (event) => {
-  if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-  event.preventDefault();
-  try {
-    const { openWhatsAppModal } = await import("../lib/whatsappModal");
-    // O código de atendimento vai na mensagem e no lead (com gclid/gbraid/wbraid);
-    // é ele que liga uma venda fechada no WhatsApp ao clique do anúncio no Google Ads.
-    await openWhatsAppModal(
-      whatsapp.href,
-      { lp_slug: "loja-fisica", cta_location: "header", cta_label: "icone_whatsapp", campaign: "loja-fisica" },
-      "Olá! Quero tirar uma dúvida sobre produtos disponíveis na loja do Setor Sul.",
-      "pagina=loja-fisica",
-    );
-  } catch { window.location.assign(whatsapp.href); }
+// Todos os links de WhatsApp (cabeçalho, topo, mudas e visita) usam o mesmo helper;
+// data-location e data-label viram cta_location e cta_label do whatsapp_click.
+document.querySelectorAll<HTMLAnchorElement>("[data-whatsapp]").forEach((whatsapp) => {
+  whatsapp.addEventListener("click", async (event) => {
+    if (event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    event.preventDefault();
+    try {
+      const { openWhatsAppModal } = await import("../lib/whatsappModal");
+      // O código de atendimento vai na mensagem e no lead (com gclid/gbraid/wbraid);
+      // é ele que liga uma venda fechada no WhatsApp ao clique do anúncio no Google Ads.
+      await openWhatsAppModal(
+        whatsapp.href,
+        { lp_slug: "loja-fisica", cta_location: whatsapp.dataset.location || "unknown", cta_label: whatsapp.dataset.label || "botao_whatsapp", campaign: "loja-fisica" },
+        "Olá! Quero tirar uma dúvida sobre produtos disponíveis na loja do Setor Sul.",
+        "pagina=loja-fisica",
+      );
+    } catch { window.location.assign(whatsapp.href); }
+  });
 });
 
 const locate = document.querySelector<HTMLButtonElement>("#locate-me")!;
