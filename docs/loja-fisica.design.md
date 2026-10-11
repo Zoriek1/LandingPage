@@ -49,3 +49,22 @@ Motivo: experiência na página de destino "Abaixo da média" em 12 de 13 palavr
 - Visita: link "WhatsApp: (62) 99650-3403" logo abaixo do telefone do balcão, no mesmo estilo.
 - A barra fixa do celular continua com Ligar e Como chegar.
 - Lighthouse mobile local (`scripts/perf/lighthouse-run.mjs`, mediana de 5): 88 antes e 88 depois; LCP 2,49 s e 2,45 s; CLS 0,052 e 0,053.
+
+## Repaginação de 11/10/2026
+
+Pedido do dono depois da rodada de plantas e mudas: tirar o "round corner" do topo (o card creme de cantos orgânicos), fazer um degradê da foto para o texto, nada de caixa abaulada no desktop, logo real da empresa no lugar do texto "Plante Uma Flor" e seções mais organizadas. Plano escolhido entre três direções (pesquisa no 21st, Aceternity, Magic UI e React Bits; tudo portado para HTML e CSS, sem React).
+
+- Topo sem caixa nem véu verde. A fachada se dissolve no creme por uma camada `::after` com degradê na cor do fundo (`--color-surface-page`) em várias paradas, para não deixar faixa leitosa. No celular a foto fica em cima (4:3) e dissolve para baixo; o status ao vivo da loja abre o texto exatamente na emenda. A partir de 1024 px o texto fica na borda do `.container` e a foto ocupa o resto até a borda direita, dissolvendo para a esquerda e para baixo. Um escurecimento curto no alto da foto segura o logo e o ícone do WhatsApp brancos.
+- Recorte novo da fachada para 640 px ou mais: `loja-fachada-lado-{960,1360}` (portão, corredor e letreiro), no lugar de `loja-fachada-desktop-*`. 1360 é a largura real da área na foto.
+- Logo real: `logo-240.webp` (branco sobre transparente) usado como máscara CSS e colorido por token. Branco sobre a foto e no rodapé; verde da marca sobre o creme no cabeçalho do desktop, com 64 px de altura como nas LPs de anúncio. Em alto contraste do Windows vira `CanvasText`. O cabeçalho é absoluto sobre o topo, sem faixa e sem fio, e não é fixo.
+- Faixa "Na loja" logo abaixo do topo: o checklist com ícones de check virou três fatos só tipográficos, cada um com uma frase que já existia (aviso de estoque, endereço e a dica do balcão).
+- Ritmo: 64 px entre seções no celular e 96 px (`--space-section-y`) no desktop, sem faixa cinza e sem fios entre seções. Uma única faixa tonal, nas avaliações (`--color-surface-sunken`). Rodapé em `--color-surface-inverse` com o logo branco.
+- Tipos: H1 e H2 em Fraunces 600 (valor do DS) com `text-wrap: balance`; leitura em 16 px; metadados em 15 px (`--text-h6-size`); 12 px só em notas legais. "para levar na hora." em `--color-brand-green` (a cor anterior media 1,08:1 contra o texto e não aparecia).
+- Botões: um sistema só, primário cheio (`action-primary`) e secundário em contorno (`action-secondary`), 48 px, raio de 8 px, hover visível e motion do DS (130 ms). Google Maps deixou de ser o verde quase preto e o Waze deixou a borda cinza.
+- Categorias: lista com miniatura no celular e quatro colunas no desktop; "Para o jardim" entrou como quinto item, só em texto.
+- Plantas e mudas: o texto das listas não mudou. Ganhou sumário dos sete grupos no celular e no tablet e âncoras novas por grupo: `#frutiferas`, `#arvores`, `#palmeiras`, `#floriferas`, `#suculentas`, `#horta` (o `#plantas` continua no grupo de interior). No desktop, três colunas sem fios. "Conforme a época, sob consulta:" em dourado (`--color-brand-accent-hover`).
+- Avaliações: nota "4,8" grande, estrela em SVG (o "★" de texto caía na fonte do sistema), citações em Fraunces com aspa pendurada e sem a faixa dourada lateral. Texto literal do Google.
+- Visita: rota (Google Maps e Waze lado a lado, mesma largura) logo depois do endereço, mapa, horários com números tabulares e telefones num padrão único. "Goiânia – GO" virou "Goiânia, GO".
+- Barra fixa do celular plana, sem bandeja arredondada nem sombra. Um script inline no `<head>` marca `js-bar` para ela já nascer escondida (sem deslocamento no primeiro quadro); sem JavaScript, ou se o `main.ts` não carregar em 3 s depois do `load`, ela volta a aparecer.
+- Movimento: só a "aproximação" da fachada (cresce 6% enquanto o topo sai da tela), em CSS com `animation-timeline: scroll()`, partindo de `scale(1)`. Desligada com redução de movimento e parada em navegadores sem suporte.
+- Rastreio sem mudança: mesmos `data-*`, ids e hrefs, e a mesma ordem de links fixada em `physicalStorePage.test.ts`.

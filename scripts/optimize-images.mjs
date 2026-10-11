@@ -14,7 +14,7 @@
  *                                      public/lpb/heros/<slug>.jpg  (og:image)
  *   assets-src/loja-fisica/fachada-rua.jpg
  *                                   -> loja-fachada-mobile-{480,900} e
- *                                      loja-fachada-desktop-{1280,1920}.{avif,webp}
+ *                                      loja-fachada-lado-{960,1360}.{avif,webp}
  *   assets-src/loja-fisica/categorias/<nome>.<ext>
  *                                   -> loja-cat-<nome>-{320,640}.{avif,webp}
  *
@@ -53,10 +53,13 @@ const STORE_SOURCE_DIR = join(root, "assets-src/loja-fisica");
 /**
  * Recortes da foto da rua para o hero de /loja-fisica/, em frações da foto.
  * O mobile fecha no portão aberto e no letreiro e deixa a fiação de fora.
+ * O "lado" é a foto da metade direita do topo a partir de 640 px: portão,
+ * corredor e letreiro, com a cerca da esquerda caindo na zona que dissolve
+ * no creme. 1360 é a largura real da área na foto, então nada é ampliado.
  */
 const STORE_FACADE_CROPS = [
   { name: "mobile", area: { left: 0.37, top: 0.3, width: 0.52, height: 0.69 }, widths: [480, 900] },
-  { name: "desktop", area: { left: 0, top: 0.222, width: 1, height: 0.778 }, widths: [1280, 1920] },
+  { name: "lado", area: { left: 0.22, top: 0.25, width: 0.68, height: 0.75 }, widths: [960, 1360] },
 ];
 const STORE_CATEGORY_WIDTHS = [320, 640];
 
