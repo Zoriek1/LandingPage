@@ -1,3 +1,5 @@
+import { recordAnalytics } from "@/analytics";
+import { safeDimension } from "../../shared/analytics-contract";
 import {
   captureClickIdsFromUrl,
   captureUtmsFromUrl,
@@ -163,6 +165,24 @@ export const STORE_ADS_SEND_TO: Record<StoreAction["action"], string> = {
 
 /** Local-store conversions: dataLayer (GTM) + Google Ads direto; no CRM lead or Meta Contact. */
 export function trackStoreAction({ action, location, provider }: StoreAction) {
+  const ctaLocation = asDimension(location);
+  const ctaId = asDimension(`${action}_${location}`);
+  if (ctaLocation && ctaId) {
+    if (action === "phone") {
+      recordSafely("store_phone_click", {
+        cta_id: ctaId,
+        cta_location: ctaLocation,
+        phone_role: location === "backup-phone" ? "backup" : "store",
+      });
+    } else if (provider) {
+      recordSafely("store_directions_click", {
+        cta_id: ctaId,
+        cta_location: ctaLocation,
+        map_provider: provider,
+      });
+    }
+  }
+
   const eventId = generateEventId();
   pushDataLayerEvent(action === "phone" ? "store_phone_click" : "store_directions_click", {
     event_id: eventId,
@@ -178,6 +198,49 @@ export function trackStoreAction({ action, location, provider }: StoreAction) {
   const sendTo = STORE_ADS_SEND_TO[action];
   if (sendTo) window.gtag?.("event", "conversion", { send_to: sendTo, transaction_id: eventId });
 }
+// --- Analytics próprio (coletor first-party) -------------------------------
+// Só tokens seguros e campos do contrato: nunca href, telefone, mensagem, token
+// de rastreio, IDs do GA ou click IDs. Falha do coletor não afeta a conversão.
+export function asDimension(value: unknown): string | undefined {
+  const candidate = typeof value === "number" ? String(value) : value;
+  return safeDimension(candidate) ? candidate : undefined;
+}
+
+function pickDimensions(source: Record<string, unknown>, keys: string[]) {
+  const picked: Record<string, string | number> = {};
+  for (const key of keys) {
+    const value = key === "position" ? source[key] : asDimension(source[key]);
+    if (key === "position" ? Number.isInteger(value) && Number(value) >= 0 : value) {
+      picked[key] = value as string | number;
+    }
+  }
+  return picked;
+}
+
+function recordSafely(eventType: Parameters<typeof recordAnalytics>[0], props: Record<string, unknown>) {
+  try {
+    recordAnalytics(eventType, props as never);
+  } catch {
+    /* Conversão não depende de analytics. */
+  }
+}
+
+const hasDimensions = (props: Record<string, unknown>, keys: string[]) =>
+  keys.every((key) => props[key] !== undefined);
+
+function recordCtaEvent(
+  eventType: "whatsapp_click" | "catalog_click",
+  payload: TrackingParams,
+  extra: Record<string, unknown>,
+) {
+  const props = {
+    cta_id: asDimension(payload.cta_label),
+    ...pickDimensions(payload, ["cta_location", "position", "product_id"]),
+    ...extra,
+  };
+  if (hasDimensions(props, ["cta_id", "cta_location"])) recordSafely(eventType, props);
+}
+
 const LEAD_CONFIRMATION_TIMEOUT_MS = 1500;
 
 async function postLead(payload: Record<string, string | undefined>): Promise<boolean> {
@@ -255,6 +318,10 @@ export async function trackWhatsAppClick(
   payload: TrackingParams = {},
   options: TrackingOptions = {},
 ): Promise<void> {
+  // Uma intenção = um evento próprio, antes da supressão comercial de 4h e sem esperar rede.
+  // O validador do contrato só exige cta_id/cta_location; o resto é opcional na prática.
+  recordCtaEvent("whatsapp_click", payload, pickDimensions(payload, ["price_range_key", "intent_key"]));
+
   const eventId = generateEventId();
   const capiDedupPayload: TrackingParams = {
     meta_event_id_contact: eventId,
@@ -288,6 +355,8 @@ export async function trackWhatsAppClick(
 
 // site_click = click para catalogo/site externo
 export function trackSiteClick(payload: TrackingParams = {}) {
+  recordCtaEvent("catalog_click", payload, { destination: "catalog" });
+
   const eventId = generateEventId();
   const eventPayload: TrackingParams = {
     event_id: eventId,

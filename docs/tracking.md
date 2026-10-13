@@ -76,29 +76,28 @@ lidos na hora do clique, e sem consentimento de analytics o `_ga` não existe e 
 3. `trackPageView()` (em `tracking.ts`) envia `PageView` para o endpoint de leads com o mesmo
    `event_id`. Não há push no `dataLayer`: o GA4 coleta `page_view` automaticamente.
 
-### 4.2 Ao abrir o modal de WhatsApp
+### 4.2 Ao clicar em um CTA de WhatsApp
 
-1. CTA chama `openWhatsAppModal(url, context)` (`whatsappModal.ts`).
-2. O modal abre e dispara `trackWhatsAppModalOpen(...)`:
-   - `whatsapp_modal_open` → `dataLayer`.
-   - `fbq("trackCustom", "WhatsAppModalOpen")`.
-   - `whatsapp_modal_open` → endpoint de leads.
+Não existe modal de captura de telefone no código atual (sem `WhatsAppLeadModal`,
+`trackWhatsAppModalOpen`, `whatsapp_modal_open` nem `lead_phone`). `openWhatsAppModal(url,
+context, messageText, extraRef)` em `whatsappModal.ts` é um helper: gera/reutiliza o
+`token_rastreio`, anexa o "Código de atendimento" à mensagem, chama `trackWhatsAppClick` e abre
+o WhatsApp. Não recriar o modal ao mexer nele. O seletor de faixa de preço das LPs de
+anúncio usa `openPriceRangeWhatsApp`, com o mesmo fluxo.
 
-### 4.3 Ao clicar para continuar no WhatsApp
+### 4.3 Fluxo do clique no WhatsApp
 
-1. Usuário preenche telefone no modal → salvo em `sessionStorage` (`lead_phone`).
-2. `trackWhatsAppClick(payload)` roda:
-   - `whatsapp_click` → `dataLayer`, com `event_id`, `cta_location`, `cta_label`,
+1. `trackWhatsAppClick(payload)` roda:
+   - `whatsapp_click` → `dataLayer`, sempre, com `event_id`, `cta_location`, `cta_label`,
      `destination_url` (trigger GTM: Custom Event `whatsapp_click`).
-   - Meta `Lead` + `Contact`, mesmo `eventID`. `Contact` é **suprimido** por 4h por
-     campanha (`localStorage: contact_dedup_ts` + `contact_dedup_campaign`), para não
-     inflar o Pixel em recliques.
-   - `whatsapp_click` → endpoint de leads.
-3. Navegação para o WhatsApp **no mesmo tick do clique** (`openWhatsAppDestination` em
-   `whatsappModal.ts`): tenta `window.open(url, "_blank")`; se o browser bloquear popup,
-   cai para `window.location.assign(url)` na mesma aba.
-4. Se o modal React ainda não estiver registrado (caso raro), `openWhatsAppModal` dispara
-   o mesmo par `trackWhatsAppClick` + `openWhatsAppDestination` direto.
+   - Se não houver `Contact` nas últimas 4h na mesma campanha (`localStorage:
+     contact_dedup_ts` + `contact_dedup_campaign`): Meta `Contact` (mesmo `eventID`) e
+     `whatsapp_click` → endpoint de leads. Dentro dessa janela, Pixel e endpoint de leads
+     ficam suprimidos; o `dataLayer` não. O código não chama `fbq("track", "Lead")`.
+2. Navegação para o WhatsApp após o tracking: `openWhatsAppDestination` usa
+   `window.location.assign(url)` (mesma aba).
+3. A home e as LPs chegam a `openWhatsAppModal` por seus CTAs; `/loja-fisica/` usa o mesmo
+   helper (com fallback para `location.assign(href)` se o import falhar).
 
 ### 4.4 Ao clicar para ir ao catálogo/site externo
 
@@ -116,8 +115,7 @@ que a aba feche logo após o clique.
 | Evento app | Google (GTM/dataLayer) | Meta (fbq) | Endpoint leads |
 |---|---|---|---|
 | PageView inicial | — (`page_view` automático do GA4) | `PageView` | `PageView` |
-| Modal WhatsApp aberto | `whatsapp_modal_open` | `trackCustom: WhatsAppModalOpen` | `whatsapp_modal_open` |
-| Clique WhatsApp (conversão) | `whatsapp_click` | `Lead` + `Contact` | `whatsapp_click` |
+| Clique WhatsApp (conversão) | `whatsapp_click` | `Contact` | `whatsapp_click` (suprimido por 4h/campanha) |
 | Clique site/catálogo (conversão) | `site_click` | `ViewContent` | `site_click` |
 
 **Não existe evento `purchase` disparado pela LP.** O funil dela termina em
@@ -152,7 +150,6 @@ Eventos de clique adicionam:
 
 ```
 cta_location, cta_label, destination_url
-phone            → só após o modal (whatsapp_click)
 ```
 
 O `whatsapp_click` também leva os IDs do GA4, quando os cookies existem:
@@ -181,15 +178,14 @@ token_rastreio, status ("pendente_whatsapp")
 **Landing principal (home)**
 
 CTAs de WhatsApp: Hero (`falar_no_whatsapp`) · Navbar mobile (`falar_no_whatsapp`) ·
-Footer ícone WhatsApp (`icone_whatsapp`) · WhatsApp FAB (`floating_button`) · dentro do
-modal (`continuar_no_whatsapp`).
+Footer ícone WhatsApp (`icone_whatsapp`) · WhatsApp FAB (`floating_button`).
 
 CTAs de site/catálogo: Hero (`ver_catalogo`) · Navbar desktop/mobile (`ver_catalogo`) ·
 Categorias (`ver_no_site`) · Why Choose (`conheca_nosso_catalogo`) · Final CTA
 (`acessar_o_site`) · Footer (`link_site`).
 
 `cta_location` possíveis: `hero`, `navbar_desktop`, `navbar_mobile`, `categorias`,
-`why_choose`, `final_cta`, `footer`, `whatsapp_fab`, `whatsapp_modal`.
+`why_choose`, `final_cta`, `footer`, `whatsapp_fab`.
 
 **LPs de anúncio (`ad-lps`)**
 
@@ -211,8 +207,6 @@ GTM → Trigger: Custom Event = whatsapp_click
 GTM → Variável: {{DLV - destination_url}}
 ```
 
-**Só quem abriu o modal (ainda não clicou)** → evento `whatsapp_modal_open`.
-
 **Cliques para o site/catálogo** → evento `site_click` (Meta: `ViewContent`, já automático).
 
 **Qual botão específico foi clicado** → `cta_label` (ver seção 7).
@@ -227,8 +221,6 @@ GTM → Variável: {{DLV - cta_location}}
 
 **Origem de campanha** → `utm_source`/`utm_campaign` (Leads endpoint), `fbclid` presente =
 veio de anúncio Meta, `gclid`/`gbraid`/`wbraid` presente = veio de anúncio Google.
-
-**Telefone digitado** → campo `phone`, só em `whatsapp_click` após o modal.
 
 **Primeira URL de entrada do usuário** → `first_landing_url` (fixo desde a primeira visita
 da sessão, não muda com a navegação).
@@ -262,10 +254,9 @@ Data Layer Version: Version 2
 Checklist rápido após mudança:
 
 - [ ] `page_view` do GA4 aparece 1x no DebugView ao carregar (sem `lp_page_view` no GTM Preview).
-- [ ] `whatsapp_modal_open` aparece ao abrir o modal.
-- [ ] `whatsapp_click` aparece 1x ao confirmar no modal (com `phone` preenchido).
+- [ ] `whatsapp_click` aparece 1x por clique no CTA de WhatsApp.
 - [ ] `site_click` aparece ao clicar em catálogo.
-- [ ] Meta Pixel Helper mostra `PageView`, `Lead`, `Contact`, `ViewContent`.
+- [ ] Meta Pixel Helper mostra `PageView`, `Contact`, `ViewContent`.
 - [ ] Network tab mostra `POST` para `planteumaflor.gestaoonline.app.br/api/leads/` com o
       payload e o `event` corretos.
 
@@ -297,3 +288,11 @@ A pedido do cliente (2026-09-25), `loja-fisica/index.html` carrega a Google tag 
 - Conferido pelo painel em 2026-09-25: o `GTM-KCRTLDV4` só tem a Google tag do GA4 (`G-RZRVEXS4CP`, `GT-TBWHBQB4`), sem `AW-…`, então a tag direta não duplica. Se alguém adicionar `AW-18285244155` a esse contêiner, manter apenas uma das duas.
 - `AW-18285244155` é a mesma conta do Google Ads usada no contêiner do e-commerce (`GTM-T647TN6C`). Ligação e rota devem ser metas da campanha da loja física (metas no nível da campanha), para as campanhas do e-commerce não otimizarem para esses cliques.
 - Consentimento: o CookieHub vive no GTM. A tag direta pode processar o `config` antes do consentimento padrão do GTM. Validar no Tag Assistant como a página se comporta sem aceite de cookies.
+
+## Analytics próprio (dashboard em tempo real) — local, desligado por padrão
+
+Coletor próprio separado deste fluxo comercial: sem GA4/`dataLayer`, só com consentimento, eventos
+em `/collect` e painel autenticado. Em desenvolvimento local e **off por padrão**; nada é
+publicado (VPS, DNS, TLS, admin real e a API do CookieHub não foram acessados). Não altera
+`dataLayer`, Pixel nem `/api/leads/`. Registro, contrato e pendências:
+[`cro/dashboard-tempo-real/execucao-marco-a.md`](cro/dashboard-tempo-real/execucao-marco-a.md).

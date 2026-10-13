@@ -6,6 +6,7 @@ const AD_ENTRY_SOURCE = "src/features/ad-lps/AdLandingPage.tsx";
 const ENTRY_CLIENT_SOURCE = "src/features/ad-lps/entry-client.tsx";
 
 const FORBIDDEN_GRAPH_MATCHES = [
+  { label: "admin dashboard", pattern: /src[\\/]dashboard|admin[\\/]marketing|recharts/i },
   {
     label: "Framer Motion",
     pattern: /framer-motion|(?:^|[\\/_.-])motion(?:[\\/_.-]|$)/i,
@@ -21,6 +22,7 @@ const FORBIDDEN_GRAPH_MATCHES = [
 ];
 
 const FORBIDDEN_CHUNK_CONTENT = [
+  { label: "admin dashboard", pattern: /\/admin\/(?:overview|events|stream)|recharts/ },
   { label: "Framer Motion", pattern: /framer-motion/ },
   {
     label: "home provider",
@@ -127,6 +129,28 @@ export function inspectAdPreload({ distDir = "dist", adChunkFile }) {
   return { htmlPath, adChunkFile };
 }
 
+export function inspectAdminIsolation({ distDir = "dist" } = {}) {
+  const root = resolve(distDir);
+  const html = readFileSync(join(root, "admin/marketing/index.html"), "utf8");
+  const manifest = JSON.parse(readFileSync(join(root, ".vite/manifest.json"), "utf8"));
+  const pending = ["admin/marketing/index.html"];
+  const visited = new Set();
+  const trackers = /googletagmanager|connect\.facebook|\bfbq\s*\(|\/api\/leads\/|\/collect\b/;
+  if (trackers.test(html)) throw new Error("Admin HTML loads marketing trackers");
+  while (pending.length) {
+    const key = pending.pop();
+    if (visited.has(key)) continue;
+    visited.add(key);
+    const chunk = manifest[key];
+    if (!chunk) throw new Error(`Admin manifest dependency missing: ${key}`);
+    if (chunk.file && trackers.test(readFileSync(join(root, chunk.file), "utf8"))) {
+      throw new Error(`Admin imports marketing collection: ${chunk.file}`);
+    }
+    pending.push(...(chunk.imports ?? []), ...(chunk.dynamicImports ?? []));
+  }
+  return { files: visited.size };
+}
+
 /**
  * Segunda rede de segurança, independente das asserções já embutidas em
  * scripts/prerender-ad-lps.mjs: relê os HTMLs finais do dist/ (depois de tudo
@@ -188,6 +212,9 @@ if (currentFile === invokedFile) {
   process.stdout.write(
     `PASS prerendered content present: ${prerendered.files.length} slug HTML(s) checked\n`,
   );
+
+  const admin = inspectAdminIsolation({ distDir });
+  process.stdout.write(`PASS admin isolation: ${admin.files} chunks without marketing trackers\n`);
 
   if (cleanupManifest) {
     const manifestDir = join(resolve(distDir), ".vite");

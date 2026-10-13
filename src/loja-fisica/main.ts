@@ -1,6 +1,9 @@
 import "./style.css";
 import { calculateDrivingDistance, getStoreStatus, googleDirections, type Coordinates } from "./store";
+import { initAnalytics } from "../analytics";
 import type { StoreAction } from "../lib/tracking";
+
+initAnalytics();
 
 // Keep navigation and location controls operational if analytics/storage is blocked.
 const tracking = import("../lib/tracking").catch(() => undefined);

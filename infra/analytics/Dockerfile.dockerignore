@@ -1,0 +1,11 @@
+# Lido pelo BuildKit junto com infra/analytics/Dockerfile (contexto = raiz do repo).
+# Lista de permissão: nada entra no contexto além do que o Dockerfile copia.
+*
+!package.json
+!package-lock.json
+!server
+!shared
+**/node_modules
+**/*.test.ts
+**/.env
+**/.env.*

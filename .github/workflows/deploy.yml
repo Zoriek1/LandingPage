@@ -7,6 +7,17 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    services:
+      analytics-db:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: analytics
+          POSTGRES_PASSWORD: ci-only
+          POSTGRES_DB: analytics_test
+        ports: [5432:5432]
+        options: >-
+          --health-cmd "pg_isready -U analytics -d analytics_test"
+          --health-interval 5s --health-timeout 5s --health-retries 12
 
     steps:
       - uses: actions/checkout@v4
@@ -14,11 +25,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
           cache: 'npm'
 
       - name: Install dependencies
         run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test analytics with isolated PostgreSQL
+        run: npm run analytics:test
+        env:
+          ANALYTICS_TEST_DATABASE_URL: postgres://analytics:ci-only@127.0.0.1:5432/analytics_test
 
       - name: Test
         run: npm run test
@@ -28,6 +47,9 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          # Habilitar somente após CMP real, backend/readiness e release coordenada (A12).
+          VITE_ANALYTICS_ENABLED: 'false'
 
       - name: Deploy via FTP
         uses: SamKirkland/FTP-Deploy-Action@4.3.3

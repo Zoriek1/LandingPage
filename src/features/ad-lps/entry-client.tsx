@@ -1,5 +1,6 @@
 import { hydrateRoot } from "react-dom/client";
 import AdLandingPage from "./AdLandingPage";
+import { initAnalytics } from "@/analytics";
 import { trackPageView } from "@/lib/tracking";
 
 /**
@@ -24,5 +25,6 @@ if (import.meta.env.PROD) {
 // já chega limpa (/lirios-apt), sem a extensão.
 const slug = location.pathname.replace(/^\/|\/$/g, "").replace(/\.html$/, "");
 
+initAnalytics();
 hydrateRoot(document.getElementById("root")!, <AdLandingPage slug={slug} />);
 trackPageView();
