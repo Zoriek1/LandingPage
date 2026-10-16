@@ -1,4 +1,5 @@
 import "./style.css";
+import { initCountUp } from "./count-up";
 import { calculateDrivingDistance, getStoreStatus, googleDirections, type Coordinates } from "./store";
 import type { StoreAction } from "../lib/tracking";
 
@@ -115,3 +116,35 @@ locate.addEventListener("click", () => {
       : "Não conseguimos localizar você a tempo. Tente novamente ou abra Google Maps ou Waze acima.";
   }, { timeout: 10_000, maximumAge: 60_000, enableHighAccuracy: false });
 });
+
+// Melhorias progressivas que nunca podem atrapalhar a conversão: o HTML estático já mostra tudo
+// (primeira foto de cada categoria, números finais), então qualquer falha aqui só deixa a página como veio.
+
+// Carrosséis das categorias (ilha React). O chunk só é baixado quando a seção chega a ~600 px da tela.
+// Sem IntersectionObserver (navegador antigo), carrega quando o navegador está ocioso.
+function loadCategoryCarousels() {
+  import("./carousels").then((module) => module.initCategoryCarousels()).catch(() => { /* fica a primeira foto estática */ });
+}
+try {
+  const categories = document.querySelector("[data-carousel]")?.closest("section");
+  if (categories) {
+    const hasObserver = "IntersectionObserver" in window;
+    if (hasObserver) {
+      const observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        loadCategoryCarousels();
+      }, { rootMargin: "600px 0px" });
+      observer.observe(categories);
+    } else if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(loadCategoryCarousels, { timeout: 4000 });
+    } else {
+      window.setTimeout(loadCategoryCarousels, 2000);
+    }
+  }
+} catch { /* sem carrossel, a foto estática continua */ }
+
+// Números das avaliações: o valor final já está no HTML; o script só conta ao entrar na tela.
+try {
+  if (document.querySelector("[data-count-up]")) initCountUp();
+} catch { /* o número do HTML continua valendo */ }

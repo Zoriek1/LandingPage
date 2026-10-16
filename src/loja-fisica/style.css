@@ -28,7 +28,7 @@
   .icon-solid { fill: currentColor; stroke: none; }
   /* Títulos em Fraunces: display-h1-marketing e display-h2 do DS (600, entrelinha 1,06). */
   h1.font-display, h2.font-display { font-weight: 600; line-height: 1.06; letter-spacing: var(--tracking-tighter); }
-  /* Âncoras dos anúncios (#mudas, #plantas, #vasos, #terras, #jardim e os grupos): folga acima do alvo. */
+  /* Âncoras dos anúncios (#mudas, #plantas, #vasos, #terras, #jardim e as faixas): folga acima do alvo. */
   .anchor-target { scroll-margin-top: theme(spacing.6); }
 
   /* Ações: um primário cheio e um secundário em contorno, 48 px e raio de 8 px em toda a página. */
@@ -196,78 +196,170 @@
     .section-intro { font-size: var(--text-h5-size); }
   }
 
-  /* Categorias: lista com miniatura no celular, quatro colunas no desktop; "Para o jardim" só em texto. */
+  /* Categorias: carrossel de fotos em largura total no celular, duas colunas no tablet e quatro no desktop;
+     "Para o jardim" fica só em texto. */
   .category-list { @apply m-0 p-0; margin-top: 2rem; list-style: none; }
-  .category-entry { @apply grid; grid-template-columns: 6rem minmax(0, 1fr); column-gap: 1rem; padding-block: 1.5rem; border-top: 1px solid hsl(var(--color-border-subtle)); }
+  .category-entry { @apply grid; min-width: 0; align-content: start; row-gap: 0.75rem; padding-block: 2.5rem; border-top: 1px solid hsl(var(--color-border-subtle)); }
   .category-entry:first-child { border-top: 0; padding-top: 0; }
-  .category-art { @apply overflow-hidden; aspect-ratio: 4 / 5; border-radius: var(--radius); background: hsl(var(--color-surface-alt)); }
-  .category-art img { @apply h-full w-full object-cover; }
-  .category-art--low img { transform: scale(1.4); transform-origin: 50% 66%; }
-  #terras .category-art img { object-position: 60% 0%; }
-  .category-entry--text .category-text { grid-column: 2; }
   .category-title { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
   .category-text p { margin-top: 0.375rem; line-height: 1.6; }
   .category-text .text-link { margin-top: 0.25rem; }
-  @media (min-width: 768px) {
+  @media (min-width: 640px) {
     .category-list { @apply grid grid-cols-2; column-gap: 2rem; }
     .category-entry:nth-child(2) { border-top: 0; padding-top: 0; }
+    .category-entry--text { grid-column: 1 / -1; }
   }
   @media (min-width: 1024px) {
     .category-list { @apply grid-cols-4; column-gap: 1.5rem; margin-top: 3rem; }
-    .category-entry { @apply block; border: 0; padding: 0; }
-    .category-art { aspect-ratio: 4 / 3; }
-    .category-entry .category-text { margin-top: 1rem; }
-    .category-entry--text { grid-column: 1 / -1; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
+    .category-entry { border: 0; padding: 0; row-gap: 1rem; }
+    .category-entry--text { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
     .category-entry--text .category-text { @apply grid grid-cols-4 items-baseline; margin-top: 0; column-gap: 1.5rem; }
-    .category-entry--text .category-text p { grid-column: 2 / -1; }
-    .category-entry--text .category-text p { margin-top: 0; max-width: 36rem; }
+    .category-entry--text .category-text p { grid-column: 2 / -1; margin-top: 0; max-width: 36rem; }
   }
 
-  /* Plantas e mudas: o "cardápio" do garden center, com sumário no celular e três colunas no desktop. */
-  .plant-index { margin-top: 2rem; }
-  .plant-index ul { @apply m-0 grid grid-cols-2 p-0; column-gap: 1rem; list-style: none; }
-  .plant-index li { @apply grid; }
-  .plant-index a {
-    @apply flex items-center no-underline;
-    min-height: 3rem;
-    padding-block: 0.5rem;
-    border-bottom: 1px solid hsl(var(--color-border-subtle));
-    font-family: var(--font-display);
-    font-size: var(--text-h6-size);
-    font-weight: 500;
-    line-height: 1.22;
-    color: hsl(var(--color-text-heading));
-  }
-  .plant-index a:hover { color: hsl(var(--color-brand-green)); text-decoration: underline; text-underline-offset: 4px; }
-  .plant-groups { margin-top: 2rem; }
-  .plant-group { padding-block: 1.5rem; border-top: 1px solid hsl(var(--color-border-subtle)); }
-  .plant-group:first-child { border-top: 0; padding-top: 0; }
-  .plant-group h3 { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
-  .plant-have { margin-top: 0.5rem; line-height: 1.6; }
-  .plant-seasonal { margin-top: 0.75rem; font-size: var(--text-h6-size); line-height: 1.6; }
-  /* O dourado da marca passa a significar "sob consulta" em toda a lista. */
-  .seasonal-label { @apply block; font-weight: 500; color: hsl(var(--color-brand-accent-hover)); }
+  /* Carrossel de cada categoria (a ilha React troca o HTML estático e monta os cartões).
+     Sem JS aparece só a primeira foto, na mesma caixa do cartão montado, e a altura dos controles já está reservada.
+     O cartão ocupa 76% do palco e o palco tem proporção 100 / 95, então a foto sai em 4:5.
+     Se mudar o inset do cartão, ajuste PEEK_X em category-carousel.tsx e a proporção do palco juntos. */
+  .category-carousel { position: relative; min-width: 0; overflow-x: clip; }
+  .category-carousel-list { margin: 0; padding: 0; list-style: none; aspect-ratio: 100 / 95; }
+  .category-carousel-slide { display: none; }
+  .category-carousel-slide:first-child,
+  .category-carousel-card { box-sizing: border-box; overflow: hidden; border: 0.375rem solid hsl(var(--color-surface-card)); border-radius: var(--radius); background: hsl(var(--color-surface-alt)); }
+  .category-carousel-slide:first-child { display: block; width: 76%; height: 100%; margin-inline: auto; }
+  .category-carousel-slide picture,
+  .category-carousel-picture,
+  .category-carousel-img { display: block; width: 100%; height: 100%; }
+  .category-carousel-slide img,
+  .category-carousel-img { object-fit: cover; }
+  .category-carousel:not([data-carousel-ready])::after { content: ""; display: block; height: 6rem; }
+  .category-carousel-stage { position: relative; aspect-ratio: 100 / 95; cursor: grab; }
+  .category-carousel-stage:active { cursor: grabbing; }
+  .category-carousel-card { position: absolute; inset: 0 12%; }
+  .category-carousel-img { user-select: none; -webkit-user-drag: none; }
+  /* Controles em duas linhas de 3 rem (alvo de 48 px): pausa e indicadores, depois anterior, legenda e próximo. */
+  .category-carousel-progress,
+  .category-carousel-nav { display: flex; align-items: center; height: 3rem; }
+  .category-carousel-btn { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 3rem; height: 3rem; border-radius: var(--radius); color: hsl(var(--color-brand-green)); transition: background-color 130ms cubic-bezier(0.4, 0, 0.2, 1); }
+  .category-carousel-btn:hover { background: hsl(var(--color-brand-green) / 0.08); }
+  .category-carousel-btn:focus-visible,
+  .category-carousel-dot:focus-visible { outline-offset: -3px; }
+  .category-carousel-icon { width: 1.25rem; height: 1.25rem; }
+  .category-carousel-dots { display: flex; flex: 1; gap: 0.25rem; min-width: 0; }
+  .category-carousel-dot { position: relative; flex: 1; height: 1.5rem; }
+  .category-carousel-dot::before { content: ""; position: absolute; inset-inline: 0; top: 50%; height: 2px; margin-top: -1px; border-radius: 9999px; background: hsl(var(--color-text-muted)); }
+  .category-carousel-dot[aria-current="true"]::before { height: 4px; margin-top: -2px; background: hsl(var(--color-brand-green)); }
+  /* Duas linhas de altura fixa: a legenda trocar de foto não mexe na página. */
+  .category-carousel-caption { flex: 1; min-width: 0; margin: 0; padding-inline: 0.25rem; text-align: center; font-size: var(--text-h6-size); line-height: 1.35; color: hsl(var(--color-text-muted)); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+  /* Plantas: "Aqui você encontra" em verde e "Aqui você não encontra" mais discreto, os dois em lista tipográfica. */
+  .stock { @apply grid; gap: 3rem; margin-top: 2rem; }
+  .stock-title { font-family: var(--font-display); font-size: var(--text-h4-size); font-weight: 500; line-height: 1.22; }
+  .stock-have .stock-title { color: hsl(var(--color-brand-green)); }
+  .stock-lack .stock-title { color: hsl(var(--color-text-muted)); }
+  .stock-list { @apply m-0 grid p-0; margin-top: 1rem; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr)); column-gap: 1rem; list-style: none; }
+  .stock-list li { padding-block: 0.625rem; border-bottom: 1px solid hsl(var(--color-border-subtle)); font-family: var(--font-display); font-size: var(--text-h5-size); font-weight: 500; line-height: 1.3; color: hsl(var(--color-text-heading)); }
+  .stock-lack .stock-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stock-lack .stock-list li { font-family: var(--font-body); font-size: var(--text-h6-size); font-weight: 400; color: hsl(var(--color-text-muted)); }
+  .stock-joke { margin-top: 1.5rem; max-width: 22rem; font-family: var(--font-display); font-size: var(--text-h5-size); line-height: 1.4; }
+  .stock-joke-end { font-weight: 500; color: hsl(var(--color-brand-green)); }
   .mudas-cta { margin-top: 2.5rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-default)); }
   .mudas-cta p { max-width: 36rem; line-height: 1.6; }
   .mudas-actions { @apply grid grid-cols-2 gap-2; margin-top: 1rem; }
   @media (min-width: 768px) {
-    .plant-groups { columns: 2; column-gap: 3rem; }
-    .plant-group { break-inside: avoid; border-top: 0; padding: 0; margin-bottom: 2.5rem; }
-    .mudas-cta { @apply flex items-center justify-between; gap: 3rem; margin-top: 0.5rem; }
+    .stock { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: 4rem; }
+    .mudas-cta { @apply flex items-center justify-between; gap: 3rem; margin-top: 3rem; }
     .mudas-actions { @apply flex shrink-0; margin-top: 0; }
   }
-  @media (min-width: 1024px) {
-    .plant-index { display: none; }
-    .plant-groups { margin-top: 3rem; }
-  }
-  @media (min-width: 1280px) { .plant-groups { columns: 3; } }
+  @media (min-width: 1024px) { .stock { margin-top: 3rem; } }
 
-  /* Avaliações: a única faixa tonal da página (creme da marca), nota grande e citações em Fraunces. */
+  /* Faixas entre as plantas e as avaliações, cada uma num formato: mosaico, fila que rola de lado e texto com fotos.
+     Sem caixas e sem moldura: a foto leva o raio do token e o espaço faz a separação. Faixas seguidas dividem o espaço
+     de uma seção só (o respiro de cima é o de baixo da faixa anterior). */
+  .strip + .strip { padding-top: 0; }
+  .photo { @apply m-0 overflow-hidden; border-radius: var(--radius); background: hsl(var(--color-surface-alt)); }
+  .photo picture,
+  .photo img { display: block; width: 100%; height: 100%; }
+  .photo img { object-fit: cover; }
+  .photo-3x2 { aspect-ratio: 3 / 2; }
+  .photo-4x3 { aspect-ratio: 4 / 3; }
+  .photo-4x5 { aspect-ratio: 4 / 5; }
+
+  /* Ornamentais: uma foto horizontal grande e duas verticais. No celular a horizontal ocupa a linha e as duas
+     verticais ficam lado a lado; no desktop viram um mosaico de 12 colunas com a segunda vertical descida. */
+  .mosaic { @apply grid grid-cols-2 items-start; gap: 0.75rem; margin-top: 2rem; }
+  .mosaic-lead { grid-column: 1 / -1; }
+  @media (min-width: 640px) { .mosaic { gap: 1rem; } }
+  @media (min-width: 1024px) {
+    .strip-head--split { @apply grid grid-cols-12 items-end; column-gap: 1.5rem; }
+    .strip-head--split h2 { grid-column: 1 / span 6; }
+    .strip-head--split .section-intro { grid-column: 8 / span 5; margin-top: 0; }
+    .mosaic { @apply grid-cols-12; column-gap: 1.5rem; margin-top: 3rem; }
+    .mosaic-lead { grid-column: 1 / span 6; }
+    .mosaic-a { grid-column: 7 / span 3; align-self: end; }
+    .mosaic-b { grid-column: 10 / span 3; }
+  }
+
+  /* Vasos: fila de fotos que rola de lado com snap, só em CSS. A região rolável vai de borda a borda e o primeiro cartão
+     parte do alinhamento do .container (mesma conta do hero). No celular o seguinte aparece pela metade, mostrando que rola;
+     a partir de 1280 px as cinco fotos cabem na largura do container e não há o que rolar. */
+  .strip-scroller {
+    --strip-gutter: max(1.5rem, (100% - 80rem) / 2 + 1.5rem);
+    margin-top: 2rem;
+    padding: 0 var(--strip-gutter) 0.5rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--strip-gutter);
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--color-border-strong)) transparent;
+  }
+  .strip-scroller:focus-visible { outline-offset: -3px; }
+  .strip-track { @apply m-0 flex p-0; width: max-content; gap: 1rem; list-style: none; }
+  .strip-item { flex: none; width: min(15rem, 68vw); scroll-snap-align: start; }
+  .strip-figure { @apply m-0; }
+  .strip-figure figcaption { margin-top: 0.625rem; font-size: var(--text-h6-size); line-height: 1.4; color: hsl(var(--color-text-muted)); }
+  @media (min-width: 640px) { .strip-item { width: 15rem; } }
+  @media (min-width: 1280px) {
+    .strip-track { @apply grid; width: auto; grid-auto-flow: column; grid-auto-columns: calc((100% - 4 * 1.5rem) / 5); column-gap: 1.5rem; }
+    .strip-item { width: auto; min-width: 0; }
+  }
+
+  /* Nossa História: o título abre, a foto da entrada fica grande e o texto curto vai ao lado, com duas fotos verticais na base.
+     No celular a ordem é título, foto, texto e as duas fotos. */
+  .history { @apply grid; gap: 1.5rem; }
+  .history-copy { max-width: 32rem; line-height: 1.6; }
+  .history-copy p + p { margin-top: 1rem; }
+  .history-pair { @apply grid grid-cols-2 items-start; gap: 0.75rem; max-width: 32rem; }
+  @media (min-width: 640px) { .history-pair { gap: 1rem; } }
+  /* 64em = 1024 px no tamanho padrão; com o texto ampliado a coluna do texto ficaria estreita demais, então segue empilhado. */
+  @media (min-width: 64em) {
+    .history {
+      grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+      grid-template-rows: auto auto 1fr;
+      grid-template-areas: "lead title" "lead copy" "lead pair";
+      column-gap: 4rem;
+      align-items: start;
+    }
+    .history-title { grid-area: title; }
+    /* A foto desce até a base das duas verticais: o título sobe sozinho, sem sobra de espaço sob a foto. */
+    .history-lead { grid-area: lead; align-self: end; }
+    .history-copy { grid-area: copy; }
+    .history-pair { grid-area: pair; align-self: end; max-width: none; }
+  }
+
+  /* Números que contam ao entrar na tela (count-up.ts): algarismos de largura fixa para a largura não oscilar. */
+  [data-count-up] { font-variant-numeric: tabular-nums lining-nums; }
+
+  /* Avaliações: a única faixa tonal da página (creme da marca), foto da loja, números e citações em Fraunces. */
   .reviews { background: hsl(var(--color-surface-sunken)); }
-  .rating { @apply flex flex-wrap items-baseline; column-gap: 0.75rem; row-gap: 0.25rem; margin-top: 1rem; }
-  .rating-score { font-family: var(--font-display); font-size: var(--text-h1-size); font-weight: 500; line-height: 1; }
-  .rating-meta { @apply inline-flex items-center gap-1.5; font-size: var(--text-h6-size); }
-  .rating-meta .icon { width: 1rem; height: 1rem; fill: currentColor; stroke: none; color: hsl(var(--color-brand-accent-hover)); }
+  .review-figures { @apply m-0 grid grid-cols-3; margin-top: 1.5rem; column-gap: 1rem; padding-top: 1.25rem; border-top: 1px solid hsl(var(--color-border-strong)); }
+  /* O rótulo vem antes no HTML (dt) e o número aparece em cima: a ordem de leitura é "nota no Google, 4,8". */
+  .review-figure { @apply flex flex-col-reverse justify-end; min-width: 0; gap: 0.375rem; }
+  .review-figure dd { @apply m-0; font-family: var(--font-display); font-size: var(--text-h2-size); font-weight: 500; line-height: 1; }
+  .review-figure dt { font-size: var(--text-h6-size); line-height: 1.35; overflow-wrap: anywhere; text-wrap: balance; }
+  .review-figure dt .icon { display: inline-block; width: 1rem; height: 1rem; margin-inline-end: 0.25rem; vertical-align: -0.15em; fill: currentColor; stroke: none; color: hsl(var(--color-brand-accent-hover)); }
+  .reviews-photo { margin-top: 2rem; }
   .reviews-body { margin-top: 2rem; }
   .review { @apply m-0; }
   .review blockquote { @apply m-0; }
@@ -277,11 +369,21 @@
   .review figcaption { margin-top: 0.75rem; font-size: var(--text-h6-size); color: hsl(var(--color-text-body)); }
   .reviews-more { @apply grid gap-8; margin-top: 2rem; padding-top: 2rem; border-top: 1px solid hsl(var(--color-border-strong)); }
   .reviews-more blockquote p { font-size: var(--text-h5-size); line-height: 1.45; max-width: 40ch; }
-  @media (min-width: 1024px) {
+  /* Tablet e desktop: foto à esquerda e título com números à direita; embaixo, as citações.
+     No desktop a citação em destaque e as outras duas dividem a linha. Os pontos de quebra são em em (48em e 64em
+     valem 768 px e 1024 px no tamanho padrão): com o texto ampliado o número grande não cabe em 3 colunas estreitas. */
+  @media (min-width: 48em) {
     .reviews-grid { @apply grid grid-cols-12; column-gap: 2rem; }
-    .reviews-head { grid-column: 1 / span 4; }
-    .reviews-body { grid-column: 5 / span 8; margin-top: 0; }
-    .reviews-more { @apply grid-cols-2; column-gap: 2rem; }
+    .reviews-photo { grid-column: 1 / span 5; grid-row: 1; margin-top: 0; }
+    .reviews-head { grid-column: 7 / span 6; grid-row: 1; align-self: center; }
+    .review-figures { margin-top: 2rem; }
+    .reviews-body { grid-column: 1 / -1; grid-row: 2; margin-top: 3rem; }
+  }
+  @media (min-width: 64em) {
+    .review-figure dd { font-size: var(--text-h1-size); }
+    .reviews-body { @apply grid grid-cols-12; column-gap: 2rem; margin-top: 4rem; padding-top: 3rem; border-top: 1px solid hsl(var(--color-border-strong)); }
+    .review-lead { grid-column: 1 / span 6; }
+    .reviews-more { grid-column: 7 / span 6; margin-top: 0; padding-top: 0; border-top: 0; }
   }
 
   /* Visita: endereço e rota primeiro, depois mapa, horários e telefones num só padrão. */
@@ -387,7 +489,9 @@
   .bar-label { font-size: var(--text-h6-size); font-weight: 500; line-height: 1.2; }
 
   @media (prefers-reduced-motion: reduce) {
-    .mobile-actions, .mobile-actions[data-hidden="true"], .js-bar .mobile-actions:not([data-hidden="false"]), .action, .bar-action, .header-whatsapp { transition: none; }
+    .mobile-actions, .mobile-actions[data-hidden="true"], .js-bar .mobile-actions:not([data-hidden="false"]), .action, .bar-action, .header-whatsapp, .category-carousel-btn { transition: none; }
+    /* A fila de vasos rola sem suavização (o snap continua, só não anima). */
+    .strip-scroller { scroll-behavior: auto; }
   }
   .skip-link { @apply fixed left-4 top-4 z-[60] -translate-y-24 rounded-lg bg-card px-5 py-3 text-foreground; }
   .skip-link:focus { @apply translate-y-0; }
@@ -397,10 +501,8 @@
   @media (max-width: 19.5em) {
     .hero-actions { grid-template-columns: minmax(0, 1fr); }
     .hero-actions .action { @apply flex-row gap-2; min-height: 3rem; }
-    .category-entry { grid-template-columns: minmax(0, 1fr); row-gap: 1rem; }
-    .category-art { width: 6rem; }
-    .category-entry--text .category-text { grid-column: auto; }
-    .plant-index ul, .mudas-actions, .route-actions { grid-template-columns: minmax(0, 1fr); }
+    .stock-list, .stock-lack .stock-list, .mudas-actions, .route-actions, .mosaic, .history-pair, .review-figures { grid-template-columns: minmax(0, 1fr); }
+    .mosaic-lead { grid-column: auto; }
     .bar-action .bar-label { @apply sr-only; }
   }
 
@@ -408,7 +510,13 @@
   @media (forced-colors: active) {
     .site-header { background-color: Canvas; }
     .brand-logo, .site-header .brand-logo, .site-footer .brand-logo { forced-color-adjust: none; background-color: CanvasText; }
-    .action, .bar-action { border: 1px solid; }
+    .action, .bar-action, .category-carousel-btn { border: 1px solid; }
+    /* Os traços dos indicadores são fundo, que esse modo apaga: viram cor de sistema. */
+    .category-carousel-dot::before { forced-color-adjust: none; background: CanvasText; }
+    .category-carousel-dot[aria-current="true"]::before { background: Highlight; }
+    /* A fila de vasos é focável por teclado: foco em cor de sistema e barra de rolagem do navegador. */
+    .strip-scroller { scrollbar-color: auto; }
+    .strip-scroller:focus-visible { outline-color: Highlight; }
   }
   button:disabled { @apply cursor-wait opacity-60; }
 }
