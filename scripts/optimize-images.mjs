@@ -15,8 +15,20 @@
  *   assets-src/loja-fisica/fachada-rua.jpg
  *                                   -> loja-fachada-mobile-{480,900} e
  *                                      loja-fachada-lado-{960,1360}.{avif,webp}
- *   assets-src/loja-fisica/categorias/<nome>.<ext>
- *                                   -> loja-cat-<nome>-{320,640}.{avif,webp}
+ *   assets-src/loja-fisica/categorias/<cat>-<n>.<ext>
+ *                                   cat em vasos, adubos, terras, plantas; n = 1..N
+ *                                   -> loja-cat-<cat>-<n>-{480,960}.{avif,webp}
+ *                                      recorte cover 4:5 retrato (centralizado)
+ *   assets-src/loja-fisica/faixas/<faixa>-<n>.<ext>
+ *                                   faixa em ornamentais, vasos, historia, avaliacoes
+ *                                   -> loja-faixa-<faixa>-<n>-{640,1200}.{avif,webp}
+ *                                      recorte cover na proporção da tabela
+ *                                      STORE_STRIP_RATIOS (uma por foto)
+ *
+ * As fotos da loja são lidas já orientadas pelo EXIF (foto de celular em pé
+ * não sai deitada) e saem sem metadados. Nome fora do padrão, categoria ou
+ * faixa desconhecida, foto sem proporção na tabela e numeração com buraco
+ * aparecem no fim do log, porque a página referencia os nomes à mão.
  *
  * Um slug sem foto em assets-src/heros/ simplesmente não gera nada; a LP
  * correspondente continua caindo na fachada (ver HERO_IMAGES em
@@ -61,7 +73,32 @@ const STORE_FACADE_CROPS = [
   { name: "mobile", area: { left: 0.37, top: 0.3, width: 0.52, height: 0.69 }, widths: [480, 900] },
   { name: "lado", area: { left: 0.22, top: 0.25, width: 0.68, height: 0.75 }, widths: [960, 1360] },
 ];
-const STORE_CATEGORY_WIDTHS = [320, 640];
+
+/** Carrosséis das categorias: retrato 4:5, 480 px no celular e 960 px no desktop/retina. */
+const STORE_CATEGORIES = ["vasos", "adubos", "terras", "plantas"];
+const STORE_CATEGORY_WIDTHS = [480, 960];
+const STORE_CATEGORY_RATIO = [4, 5];
+
+/**
+ * Faixas da loja: a proporção é por foto (largura:altura), porque cada faixa
+ * mistura retrato e paisagem de propósito. Foto nova de faixa entra aqui antes
+ * de entrar em assets-src/loja-fisica/faixas/.
+ */
+const STORE_STRIP_WIDTHS = [640, 1200];
+const STORE_STRIP_RATIOS = {
+  "ornamentais-1": [3, 2],
+  "ornamentais-2": [4, 5],
+  "ornamentais-3": [4, 5],
+  "vasos-1": [4, 5],
+  "vasos-2": [4, 5],
+  "vasos-3": [4, 5],
+  "vasos-4": [4, 5],
+  "vasos-5": [4, 5],
+  "historia-1": [4, 3],
+  "historia-2": [4, 5],
+  "historia-3": [4, 5],
+  "avaliacoes-1": [4, 3],
+};
 
 function ensureDir(dir) {
   mkdirSync(dir, { recursive: true });
@@ -133,9 +170,65 @@ async function emitCroppedVariants(sourcePath, area, widths, outputPrefix) {
   return written;
 }
 
-/** Hero e categorias da loja física; pasta ausente não gera nada. */
+/** Emite AVIF/WebP em recorte cover (centralizado) na proporção [largura, altura]. */
+async function emitCoverVariants(sourcePath, ratio, widths, outputPrefix) {
+  const written = [];
+
+  for (const width of widths) {
+    const height = Math.round((width * ratio[1]) / ratio[0]);
+    // rotate() sem ângulo aplica a orientação do EXIF antes do recorte.
+    const resized = sharp(sourcePath).rotate().resize(width, height, { fit: "cover" });
+    const avifPath = join(GENERATED_DIR, `${outputPrefix}-${width}.avif`);
+    const webpPath = join(GENERATED_DIR, `${outputPrefix}-${width}.webp`);
+    await resized.clone().avif(AVIF).toFile(avifPath);
+    await resized.clone().webp(WEBP).toFile(webpPath);
+    written.push(avifPath, webpPath);
+  }
+
+  return written;
+}
+
+/**
+ * Lê <pasta>/<grupo>-<n>.<ext>. A página referencia esses nomes à mão, então
+ * o que foge do padrão vai para `issues` em vez de sumir em silêncio.
+ * `problemWith(grupo, nome)` devolve o motivo de recusa ou null.
+ */
+function listNumberedPhotos(folder, problemWith, issues) {
+  const dir = join(STORE_SOURCE_DIR, folder);
+  if (!existsSync(dir)) return [];
+
+  const photos = [];
+  for (const file of readdirSync(dir).sort()) {
+    if (!SOURCE_EXTENSIONS.includes(extname(file).toLowerCase())) continue;
+
+    const key = basename(file, extname(file));
+    const match = key.match(/^([a-z]+)-(\d+)$/);
+    const problem = match ? problemWith(match[1], key) : "nome fora do padrão <grupo>-<n>";
+    if (problem) {
+      issues.push(`${folder}/${file}: ${problem}`);
+      continue;
+    }
+
+    photos.push({ key, group: match[1], n: Number(match[2]), path: join(dir, file) });
+  }
+
+  const numbersByGroup = new Map();
+  for (const { group, n } of photos) numbersByGroup.set(group, [...(numbersByGroup.get(group) ?? []), n]);
+  for (const [group, numbers] of numbersByGroup) {
+    numbers.sort((a, b) => a - b);
+    if (numbers.some((n, index) => n !== index + 1)) {
+      issues.push(`${folder}/${group}: numeração com buraco ou repetida (${numbers.join(", ")}), esperado 1..${numbers.length}`);
+    }
+  }
+
+  return photos;
+}
+
+/** Hero, categorias e faixas da loja física; pasta ausente não gera nada. */
 async function emitStoreVariants() {
   const written = [];
+  const issues = [];
+
   const facade = join(STORE_SOURCE_DIR, "fachada-rua.jpg");
   if (existsSync(facade)) {
     for (const crop of STORE_FACADE_CROPS) {
@@ -143,23 +236,32 @@ async function emitStoreVariants() {
     }
   }
 
-  const categoryDir = join(STORE_SOURCE_DIR, "categorias");
-  if (existsSync(categoryDir)) {
-    for (const file of readdirSync(categoryDir)) {
-      if (!SOURCE_EXTENSIONS.includes(extname(file).toLowerCase())) continue;
-      const square = { left: 0, top: 0, width: 1, height: 1 };
-      const source = join(categoryDir, file);
-      const { width, height } = await sharp(source).metadata();
-      const side = Math.min(width, height);
-      square.left = (width - side) / 2 / width;
-      square.top = (height - side) / 2 / height;
-      square.width = side / width;
-      square.height = side / height;
-      written.push(...(await emitCroppedVariants(source, square, STORE_CATEGORY_WIDTHS, `loja-cat-${basename(file, extname(file))}`)));
-    }
+  const categoryPhotos = listNumberedPhotos(
+    "categorias",
+    (group) => (STORE_CATEGORIES.includes(group) ? null : `categoria desconhecida (use ${STORE_CATEGORIES.join(", ")})`),
+    issues,
+  );
+  for (const photo of categoryPhotos) {
+    written.push(...(await emitCoverVariants(photo.path, STORE_CATEGORY_RATIO, STORE_CATEGORY_WIDTHS, `loja-cat-${photo.key}`)));
   }
 
-  return written;
+  const stripPhotos = listNumberedPhotos(
+    "faixas",
+    (group, key) => (Object.hasOwn(STORE_STRIP_RATIOS, key) ? null : "sem proporção em STORE_STRIP_RATIOS"),
+    issues,
+  );
+  for (const photo of stripPhotos) {
+    written.push(...(await emitCoverVariants(photo.path, STORE_STRIP_RATIOS[photo.key], STORE_STRIP_WIDTHS, `loja-faixa-${photo.key}`)));
+  }
+
+  const countBy = (photos, groups) =>
+    groups.map((group) => `${group} ${photos.filter((photo) => photo.group === group).length}`).join(", ");
+  const stripGroups = [...new Set(Object.keys(STORE_STRIP_RATIOS).map((key) => key.replace(/-\d+$/, "")))];
+  const summary =
+    `Loja física, categorias: ${countBy(categoryPhotos, STORE_CATEGORIES)}.\n` +
+    `Loja física, faixas: ${countBy(stripPhotos, stripGroups)}.`;
+
+  return { written, issues, summary };
 }
 
 function findHeroSources() {
@@ -194,10 +296,20 @@ async function main() {
     written.push(await emitOgImage(hero.path, hero.slug));
   }
 
-  written.push(...(await emitStoreVariants()));
+  const store = await emitStoreVariants();
+  written.push(...store.written);
 
   for (const path of written) {
     process.stdout.write(`  ${path.slice(root.length + 1).replace(/\\/g, "/")}  ${kib(path)}\n`);
+  }
+
+  process.stdout.write(`\n${store.summary}\n`);
+
+  if (store.issues.length) {
+    process.stdout.write(
+      `\nFotos da loja ignoradas ou com problema (assets-src/loja-fisica/):\n` +
+        store.issues.map((issue) => `  ${issue}\n`).join(""),
+    );
   }
 
   // Sem esta lista fica-se às cegas: uma LP sem foto não quebra nada, ela
