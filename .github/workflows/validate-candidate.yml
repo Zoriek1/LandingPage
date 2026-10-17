@@ -38,6 +38,9 @@ jobs:
       - run: npm run check:build
         env:
           VITE_ANALYTICS_ENABLED: 'false'
+      # These tests skip before dist exists; run them after the candidate build.
+      - name: Test built route matrix
+        run: npx vitest run src/test/adLandingRouting.test.ts
       - run: npm run analytics:test
         env:
           ANALYTICS_TEST_DATABASE_URL: postgres://analytics:ci-only@127.0.0.1:5432/analytics_test
