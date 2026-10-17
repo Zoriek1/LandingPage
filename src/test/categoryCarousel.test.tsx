@@ -25,13 +25,22 @@ function carouselHtml(count = 5, withCaption = true) {
   return `<div class="category-carousel" data-carousel data-carousel-label="${LABEL}"><ul class="category-carousel-list" role="list">${items}</ul></div>`;
 }
 
-function mount(html = carouselHtml()) {
+/** O jsdom não baixa imagem: o teste diz se a foto do HTML estático já tinha carregado. */
+function markLoaded(img: Element | null, loaded = true) {
+  if (!img) return;
+  Object.defineProperty(img, "complete", { configurable: true, value: loaded });
+  Object.defineProperty(img, "naturalWidth", { configurable: true, value: loaded ? 960 : 0 });
+}
+
+function mount(html = carouselHtml(), firstLoaded = true) {
   document.body.innerHTML = html;
+  markLoaded(document.querySelector("[data-carousel] img"), firstLoaded);
   act(() => initCategoryCarousels());
   return document.querySelector<HTMLElement>("[data-carousel]")!;
 }
 
 const caption = () => document.querySelector(".category-carousel-caption")!;
+const status = () => document.querySelector(".category-carousel-status")!;
 const nextButton = () => document.querySelector<HTMLButtonElement>(".category-carousel-next")!;
 const prevButton = () => document.querySelector<HTMLButtonElement>(".category-carousel-prev")!;
 const pauseButton = () => document.querySelector<HTMLButtonElement>(".category-carousel-pause");
@@ -106,6 +115,17 @@ describe("readCarouselSlides", () => {
     expect(slides[1].sources[0].sizes).toBe("(min-width: 1024px) 22vw, 80vw");
   });
 
+  it("diz se a foto do HTML estático já carregou", () => {
+    document.body.innerHTML = carouselHtml(3);
+    const images = document.querySelectorAll("img");
+    markLoaded(images[0]);
+    markLoaded(images[1], false);
+
+    const slides = readCarouselSlides(document.querySelector("[data-carousel]")!);
+
+    expect(slides.map((slide) => slide.loaded)).toEqual([true, false, false]);
+  });
+
   it("usa o alt como legenda quando falta data-caption e ignora <li> sem imagem", () => {
     document.body.innerHTML = carouselHtml(2, false).replace("</ul>", "<li>sem foto</li></ul>");
     const slides = readCarouselSlides(document.querySelector("[data-carousel]")!);
@@ -145,6 +165,14 @@ describe("initCategoryCarousels: montagem", () => {
 
     const others = Array.from(document.querySelectorAll("img")).filter((img) => img !== first);
     expect(others.every((img) => img.getAttribute("loading") === "lazy")).toBe(true);
+  });
+
+  it("só deixa a 1ª foto eager se a do HTML estático já tinha carregado (senão baixaria fora da tela)", () => {
+    mount(carouselHtml(), false);
+
+    const first = activeCard().querySelector("img")!;
+    expect(first).toHaveAttribute("loading", "lazy");
+    expect(first).toHaveAttribute("decoding", "async");
   });
 
   it("marca o cartão ativo e esconde os demais dos leitores de tela", () => {
@@ -430,16 +458,48 @@ describe("autoplay", () => {
     expect(caption()).toHaveTextContent("Barro, 2 de 5");
   });
 
-  it("anuncia a legenda só quando a pessoa está no controle (aria-live off enquanto gira)", () => {
+  it("anuncia a legenda só depois de uma ação da pessoa, e nunca durante o autoplay", () => {
     mount();
-    expect(caption()).toHaveAttribute("aria-live", "off");
+    expect(status()).toHaveAttribute("role", "status");
+    expect(status()).toHaveAttribute("aria-atomic", "true");
+    // A legenda visível não é lida duas vezes: quem anuncia é a região de status.
+    expect(caption()).toHaveAttribute("aria-hidden", "true");
+    expect(status()).toBeEmptyDOMElement();
+
+    tick();
+    expect(caption()).toHaveTextContent("Barro, 2 de 5");
+    expect(status()).toBeEmptyDOMElement();
+
+    fireEvent.click(nextButton());
+    expect(status()).toHaveTextContent("Cachepô, 3 de 5");
+
+    // O autoplay volta a trocar a foto: a região esvazia em vez de anunciar.
+    tick();
+    expect(caption()).toHaveTextContent("Polietileno, 4 de 5");
+    expect(status()).toBeEmptyDOMElement();
+  });
+
+  it("anuncia no toque, quando nada pausa o autoplay (hover e foco visível não acontecem)", () => {
+    mount();
+    // Toque ou leitor de tela ativando o botão: nem pointerenter de mouse nem :focus-visible. O autoplay segue ligado.
+    fireEvent.click(nextButton());
+    expect(status()).toHaveTextContent("Barro, 2 de 5");
+    fireEvent.click(prevButton());
+    expect(status()).toHaveTextContent("Cerâmica, 1 de 5");
+  });
+
+  it("anuncia a troca feita por indicador, pelo teclado e pela pausa não anuncia nada sozinha", () => {
+    mount();
+
+    fireEvent.click(dots()[3]);
+    expect(status()).toHaveTextContent("Polietileno, 4 de 5");
+    fireEvent.keyDown(nextButton(), { key: "ArrowLeft" });
+    expect(status()).toHaveTextContent("Cachepô, 3 de 5");
 
     fireEvent.click(pauseButton()!);
-    expect(caption()).toHaveAttribute("aria-live", "polite");
-    expect(caption()).toHaveAttribute("aria-atomic", "true");
-
-    fireEvent.click(pauseButton()!);
-    expect(caption()).toHaveAttribute("aria-live", "off");
+    expect(status()).toHaveTextContent("Cachepô, 3 de 5");
+    tick(20000);
+    expect(status()).toHaveTextContent("Cachepô, 3 de 5");
   });
 
   it("para de girar e limpa o timer quando o carrossel é desmontado", () => {
@@ -453,14 +513,17 @@ describe("autoplay", () => {
 describe("prefers-reduced-motion", () => {
   beforeEach(() => setReducedMotion(true));
 
-  it("não tem autoplay, não mostra o botão de pausa e a legenda já é anunciada", () => {
+  it("não tem autoplay, não mostra o botão de pausa e anuncia a legenda a cada ação da pessoa", () => {
     mount();
 
     tick(60000);
     expect(caption()).toHaveTextContent("Cerâmica, 1 de 5");
     expect(vi.getTimerCount()).toBe(0);
     expect(pauseButton()).toBeNull();
-    expect(caption()).toHaveAttribute("aria-live", "polite");
+    expect(status()).toBeEmptyDOMElement();
+
+    fireEvent.click(nextButton());
+    expect(status()).toHaveTextContent("Barro, 2 de 5");
   });
 
   it("segue navegável por setas, indicadores e teclado", () => {
@@ -481,5 +544,59 @@ describe("prefers-reduced-motion", () => {
     tick();
     expect(caption()).toHaveTextContent("Barro, 2 de 5");
     expect(pauseButton()).not.toBeNull();
+  });
+});
+
+describe("foto que não carrega", () => {
+  const photo = (n: number) => document.querySelector<HTMLImageElement>(`img[alt="Vaso ${n} da loja"]`);
+
+  it("sai do giro: o cartão some, o indicador também e as posições são recontadas", () => {
+    mount();
+    expect(dots()).toHaveLength(5);
+
+    fireEvent.error(photo(2)!);
+
+    expect(photo(2)).toBeNull();
+    expect(dots()).toHaveLength(4);
+    expect(document.querySelector(".category-carousel-card[data-status='next']")!).toHaveAttribute("aria-label", "2 de 4");
+    expect(caption()).toHaveTextContent("Cerâmica, 1 de 4");
+    expect(dots()[1]).toHaveAccessibleName("Ir para a foto 2 de 4");
+
+    fireEvent.click(nextButton());
+    expect(caption()).toHaveTextContent("Cachepô, 2 de 4");
+    fireEvent.click(prevButton());
+    expect(caption()).toHaveTextContent("Cerâmica, 1 de 4");
+    fireEvent.click(prevButton());
+    expect(caption()).toHaveTextContent("Vaso grande, 4 de 4");
+  });
+
+  it("se a foto da vez quebra, segue para a próxima que carregou", () => {
+    mount();
+    fireEvent.click(nextButton());
+    expect(caption()).toHaveTextContent("Barro, 2 de 5");
+
+    fireEvent.error(photo(2)!);
+
+    expect(caption()).toHaveTextContent("Cachepô, 2 de 4");
+    expect(activeCard().querySelector("img")).toHaveAttribute("alt", "Vaso 3 da loja");
+    expect(dots().findIndex((dot) => dot.getAttribute("aria-current") === "true")).toBe(1);
+  });
+
+  it("o autoplay também pula a foto quebrada", () => {
+    mount();
+    fireEvent.error(photo(2)!);
+
+    tick();
+    expect(caption()).toHaveTextContent("Cachepô, 2 de 4");
+    tick();
+    expect(caption()).toHaveTextContent("Polietileno, 3 de 4");
+  });
+
+  it("a foto estática que falhou antes da ilha montar também é tratada", () => {
+    mount();
+    fireEvent.error(photo(1)!);
+
+    expect(caption()).toHaveTextContent("Barro, 1 de 4");
+    expect(dots()).toHaveLength(4);
   });
 });

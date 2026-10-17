@@ -40,8 +40,12 @@ describe("falha do carrossel", () => {
       expect(() => initCategoryCarousels()).not.toThrow();
     });
 
+    const container = document.querySelector("[data-carousel]")!;
+    expect(container).not.toHaveAttribute("data-carousel-ready");
+    // A marca de falha libera o espaço que o CSS reservava para os controles; o resto do HTML é o estático.
+    expect(container).toHaveAttribute("data-carousel-failed");
+    container.removeAttribute("data-carousel-failed");
     expect(document.body.innerHTML).toBe(staticHtml);
-    expect(document.querySelector("[data-carousel]")).not.toHaveAttribute("data-carousel-ready");
     expect(document.querySelectorAll("img")).toHaveLength(2);
   });
 
@@ -53,6 +57,7 @@ describe("falha do carrossel", () => {
     await act(async () => initCategoryCarousels());
 
     expect(render.calls).toBe(attempts);
+    document.querySelector("[data-carousel]")!.removeAttribute("data-carousel-failed");
     expect(document.body.innerHTML).toBe(staticHtml);
   });
 });

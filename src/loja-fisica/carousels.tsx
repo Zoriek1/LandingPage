@@ -16,6 +16,8 @@ import type { CarouselSlide, CarouselSource } from "./category-carousel";
 
 const CAROUSEL_SELECTOR = "[data-carousel]";
 const READY_ATTRIBUTE = "data-carousel-ready";
+/** Marca o carrossel que não montou: o CSS deixa de reservar o espaço dos controles. */
+const FAILED_ATTRIBUTE = "data-carousel-failed";
 const DEFAULT_LABEL = "Fotos da categoria";
 
 interface Mounted {
@@ -62,6 +64,8 @@ export function readCarouselSlides(container: Element): CarouselSlide[] {
       width: dimension(img, "width"),
       height: dimension(img, "height"),
       sources,
+      // Só a foto que já baixou vira "eager" na ilha; a que ainda espera o lazy continua esperando.
+      loaded: img.complete && img.naturalWidth > 0,
     });
   });
   return slides;
@@ -111,6 +115,7 @@ function mountCarousel(element: HTMLElement): void {
   const fallback = () => {
     failed.add(element);
     teardown(element, true);
+    element.setAttribute(FAILED_ATTRIBUTE, "");
   };
 
   try {

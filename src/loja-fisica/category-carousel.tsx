@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { FocusEvent, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { motion } from "framer-motion";
 import type { PanInfo } from "framer-motion";
@@ -35,6 +35,8 @@ export interface CarouselSlide {
   width?: number;
   height?: number;
   sources: CarouselSource[];
+  /** A foto do HTML estático já terminou de carregar quando a ilha montou. */
+  loaded?: boolean;
 }
 
 export interface CategoryCarouselProps {
@@ -72,6 +74,14 @@ function shortestDiff(index: number, current: number, len: number): number {
   if (diff > len / 2) diff -= len;
   if (diff < -len / 2) diff += len;
   return diff;
+}
+
+/** Quanto andar para chegar à próxima foto que carregou, no sentido `direction` (0 se não há outra). */
+function stepToUsable(from: number, direction: 1 | -1, len: number, broken: ReadonlySet<number>): number {
+  for (let distance = 1; distance < len; distance += 1) {
+    if (!broken.has(mod(from + direction * distance, len))) return direction * distance;
+  }
+  return 0;
 }
 
 function getCardStatus(index: number, current: number, len: number): CardStatus {
@@ -148,7 +158,7 @@ function Icon({ children }: { children: ReactNode }) {
   );
 }
 
-function CarouselPicture({ slide, eager }: { slide: CarouselSlide; eager: boolean }) {
+function CarouselPicture({ slide, eager, onBroken }: { slide: CarouselSlide; eager: boolean; onBroken: () => void }) {
   return (
     <picture className="category-carousel-picture">
       {slide.sources.map((source, index) => (
@@ -166,6 +176,7 @@ function CarouselPicture({ slide, eager }: { slide: CarouselSlide; eager: boolea
         // A 1ª foto troca a do HTML estático: decodificação síncrona evita um quadro em branco.
         decoding={eager ? "sync" : "async"}
         draggable={false}
+        onError={onBroken}
       />
     </picture>
   );
@@ -183,6 +194,10 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
   const [focused, setFocused] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [inView, setInView] = useState(true);
+  // A última troca veio de um controle da pessoa (e não do autoplay): só então a legenda é anunciada.
+  const [userDriven, setUserDriven] = useState(false);
+  // Fotos que não carregaram: saem do giro e dos indicadores em vez de ficarem como imagem quebrada.
+  const [broken, setBroken] = useState<ReadonlySet<number>>(() => new Set());
   // Fotos que já ficaram perto do centro: só elas montam <picture>. As demais
   // esperam a vez para não baixar todas as imagens de uma vez.
   const [seen, setSeen] = useState<ReadonlySet<number>>(() => new Set([0]));
@@ -194,10 +209,30 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
   const current = mod(step, total);
   const playing = !reduced && !userPaused && !hovered && !focused && !dragging && inView;
 
-  const go = useCallback((delta: number) => setStep((value) => value + delta), []);
+  // Posição de cada foto entre as que carregaram (0 nas quebradas) e quantas são.
+  const order = useMemo(() => {
+    let position = 0;
+    return Array.from({ length: total }, (_unused, index) => (broken.has(index) ? 0 : ++position));
+  }, [total, broken]);
+  const usableCount = total - broken.size;
+
+  const go = useCallback(
+    (direction: 1 | -1) => {
+      setUserDriven(true);
+      setStep((value) => value + stepToUsable(mod(value, total), direction, total, broken));
+    },
+    [total, broken],
+  );
   const goTo = useCallback(
-    (index: number) => setStep((value) => value + shortestDiff(index, mod(value, total), total)),
+    (index: number) => {
+      setUserDriven(true);
+      setStep((value) => value + shortestDiff(index, mod(value, total), total));
+    },
     [total],
+  );
+  const markBroken = useCallback(
+    (index: number) => setBroken((previous) => (previous.has(index) ? previous : new Set(previous).add(index))),
+    [],
   );
 
   useEffect(() => {
@@ -218,9 +253,21 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
   // manual, reinicia a contagem e a pessoa nunca perde a foto no meio do gesto.
   useEffect(() => {
     if (!playing) return;
-    const id = window.setTimeout(() => setStep((value) => value + 1), autoPlayMs);
+    const id = window.setTimeout(() => {
+      setUserDriven(false);
+      setStep((value) => value + stepToUsable(mod(value, total), 1, total, broken));
+    }, autoPlayMs);
     return () => window.clearTimeout(id);
-  }, [playing, step, autoPlayMs]);
+  }, [playing, step, autoPlayMs, total, broken]);
+
+  // A foto da vez não carregou: segue para a próxima que carregou.
+  useEffect(() => {
+    if (!broken.has(current)) return;
+    setStep((value) => {
+      const from = mod(value, total);
+      return broken.has(from) ? value + stepToUsable(from, 1, total, broken) : value;
+    });
+  }, [broken, current, total]);
 
   useEffect(() => {
     setSeen((previous) => {
@@ -257,7 +304,7 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
   };
 
   const slide = slides[current];
-  const position = `${current + 1} de ${total}`;
+  const position = `${order[current]} de ${usableCount}`;
   const caption = slide.caption ? `${slide.caption}, ${position}` : position;
 
   return (
@@ -288,7 +335,9 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
         }}
       >
         {slides.map((item, index) => {
-          const status = getCardStatus(index, current, total);
+          const status: CardStatus = broken.has(index)
+            ? "hidden"
+            : getCardStatus(order[index] - 1, order[current] - 1, usableCount);
           const isActive = status === "active";
           return (
             <motion.div
@@ -297,14 +346,16 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
               data-status={status}
               role="group"
               aria-roledescription="slide"
-              aria-label={`${index + 1} de ${total}`}
+              aria-label={`${order[index]} de ${usableCount}`}
               aria-hidden={isActive ? undefined : true}
               initial={false}
               animate={CARD_POSE[status]}
               transition={reduced ? INSTANT : SPRING}
               style={{ zIndex: isActive ? 2 : status === "hidden" ? 0 : 1, pointerEvents: isActive ? "auto" : "none" }}
             >
-              {(status !== "hidden" || seen.has(index)) && <CarouselPicture slide={item} eager={index === 0} />}
+              {!broken.has(index) && (status !== "hidden" || seen.has(index)) && (
+                <CarouselPicture slide={item} eager={index === 0 && item.loaded === true} onBroken={() => markBroken(index)} />
+              )}
             </motion.div>
           );
         })}
@@ -324,21 +375,24 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
             </button>
           )}
           <div className="category-carousel-dots" role="group" aria-label={`Escolher a foto: ${label}`}>
-            {slides.map((_item, index) => (
-              <button
-                key={index}
-                type="button"
-                className="category-carousel-dot"
-                aria-label={`Ir para a foto ${index + 1} de ${total}`}
-                aria-current={index === current ? "true" : undefined}
-                // Só o indicador ativo entra na ordem do Tab: o teclado troca de foto pelas setas.
-                tabIndex={index === current ? 0 : -1}
-                ref={(node) => {
-                  dotRefs.current[index] = node;
-                }}
-                onClick={() => goTo(index)}
-              />
-            ))}
+            {slides.map((_item, index) => {
+              if (broken.has(index)) return null;
+              return (
+                <button
+                  key={index}
+                  type="button"
+                  className="category-carousel-dot"
+                  aria-label={`Ir para a foto ${order[index]} de ${usableCount}`}
+                  aria-current={index === current ? "true" : undefined}
+                  // Só o indicador ativo entra na ordem do Tab: o teclado troca de foto pelas setas.
+                  tabIndex={index === current ? 0 : -1}
+                  ref={(node) => {
+                    dotRefs.current[index] = node;
+                  }}
+                  onClick={() => goTo(index)}
+                />
+              );
+            })}
           </div>
         </div>
 
@@ -353,7 +407,7 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
               <path d="M15 5l-7 7 7 7" />
             </Icon>
           </button>
-          <p className="category-carousel-caption" aria-live={playing ? "off" : "polite"} aria-atomic="true">
+          <p className="category-carousel-caption" aria-hidden="true">
             {caption}
           </p>
           <button
@@ -368,6 +422,11 @@ function CarouselStack({ label, slides, autoPlayMs = CAROUSEL_AUTOPLAY_MS }: Cat
           </button>
         </div>
       </div>
+      {/* Região viva presente desde a montagem e vazia: só recebe texto depois de uma ação da pessoa
+          (toque, mouse, teclado ou leitor de tela), então a troca é anunciada nesses casos e nunca no autoplay. */}
+      <p className="category-carousel-status" role="status" aria-atomic="true">
+        {userDriven ? caption : ""}
+      </p>
     </div>
   );
 }

@@ -31,6 +31,7 @@ Proporção de cada foto de faixa, definida em `STORE_STRIP_RATIOS` no `scripts/
 
 1. Salve a foto nova com o mesmo nome (por exemplo `categorias/vasos-2.jpg`), em JPG, PNG ou WebP.
 2. Rode `npm run images` e confira o enquadramento: o recorte é centralizado, então deixe o assunto no meio da foto.
+   Depois reescreva o `alt` e o `data-caption` (ou a `figcaption`) da foto em `loja-fisica/index.html`: eles descrevem o recorte atual, não a foto nova.
 3. Foto de celular em pé vale. A orientação do EXIF é respeitada e os metadados (inclusive localização) não vão para a imagem gerada.
 4. Número a mais ou foto de faixa nova pede ajuste: em categorias, o HTML ganha um `<li>`; em faixas, a proporção entra em `STORE_STRIP_RATIOS` antes da foto. Nome fora do padrão, numeração com buraco e foto sem proporção aparecem no fim do log do script.
 

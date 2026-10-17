@@ -38,6 +38,20 @@ class RecordingObserver {
   takeRecords = () => [];
 }
 
+// ResizeObserver que registra quem observa o quê, para disparar a medida à mão (o jsdom não tem layout).
+type ResizeRecord = { callback: ResizeObserverCallback; targets: Element[] };
+const resizeObservers: ResizeRecord[] = [];
+class RecordingResizeObserver {
+  readonly record: ResizeRecord;
+  constructor(callback: ResizeObserverCallback) {
+    this.record = { callback, targets: [] };
+    resizeObservers.push(this.record);
+  }
+  observe = (target: Element) => { this.record.targets.push(target); };
+  unobserve = () => {};
+  disconnect = () => {};
+}
+
 describe("conteúdo estático da loja física", () => {
   it("fala de plantas e mudas no title, na description e no H1", () => {
     expect(page.title).toBe("Plantas, mudas e vasos no Setor Sul | Plante Uma Flor");
@@ -69,9 +83,12 @@ describe("conteúdo estático da loja física", () => {
     for (const term of ["grama", "semente"]) expect(textOutsideLack.toLowerCase()).not.toContain(term);
   });
 
-  it("não fala mais de frutíferas, árvores nem estoque sob consulta", () => {
-    for (const term of ["frutífera", "jabuticaba", "ipê", "palmeira", "pomar", "sob consulta", "cajuzinho", "pequi"]) {
-      expect(text.toLowerCase()).not.toContain(term);
+  it("não fala mais de frutíferas, árvores nem estoque sob consulta, nem no corpo nem no title e na description", () => {
+    // O snippet do Google e o robô do Ads leem o <head>: ele não pode prometer o que o corpo não mostra.
+    const head = `${page.title} ${page.querySelector('meta[name="description"]')!.getAttribute("content")}`;
+    for (const term of ["frutífera", "árvore", "jabuticaba", "ipê", "palmeira", "pomar", "sob consulta", "cajuzinho", "pequi"]) {
+      expect(text.toLowerCase(), `corpo: ${term}`).not.toContain(term);
+      expect(head.toLowerCase(), `head: ${term}`).not.toContain(term);
     }
   });
 
@@ -201,7 +218,24 @@ describe("carrosséis das categorias (HTML estático)", () => {
     }
     expect(css).toMatch(/\.category-carousel-slide\s*\{\s*display:\s*none;?\s*\}/);
     expect(css).toMatch(/\.category-carousel-slide:first-child\s*\{[^}]*display:\s*block/);
-    expect(css).toMatch(/\.category-carousel:not\(\[data-carousel-ready\]\)::after\s*\{[^}]*height:\s*6rem/);
+    // A reserva sai quando a ilha monta ou quando ela falha (chunk bloqueado, montagem desfeita).
+    expect(css).toMatch(/\.category-carousel:not\(\[data-carousel-ready\]\):not\(\[data-carousel-failed\]\)::after\s*\{[^}]*height:\s*6rem/);
+  });
+
+  it("a legenda do carrossel mostra o texto inteiro e quebra para a linha de baixo na coluna estreita", () => {
+    expect(css).not.toMatch(/-webkit-line-clamp/);
+    expect(css).toMatch(/\.category-carousel-nav\s*\{[^}]*min-height:\s*3rem/);
+    expect(css).not.toMatch(/\.category-carousel-nav\s*\{[^}]*[^-]height:\s*3rem/);
+    expect(css).toMatch(/\.category-carousel\s*\{[^}]*container-type:\s*inline-size/);
+    expect(css).toMatch(/@container \(max-width: 18rem\)\s*\{[\s\S]*?\.category-carousel-nav\s*\{\s*flex-wrap:\s*wrap[\s\S]*?\.category-carousel-caption\s*\{[^}]*flex:\s*1 1 100%/);
+    // A reserva da altura acompanha a legenda em linha própria.
+    expect(css).toMatch(/@container \(max-width: 18rem\)[\s\S]*?::after\s*\{\s*height:\s*calc\(6rem \+ 2\.7 \* var\(--text-h6-size\)\)/);
+  });
+
+  it("as colunas das categorias mudam em em (40em e 64em), para o texto ampliado não espremer o carrossel", () => {
+    expect(css).toMatch(/@media \(min-width: 40em\)\s*\{\s*\.category-list/);
+    expect(css).toMatch(/@media \(min-width: 64em\)\s*\{\s*\.category-list/);
+    expect(css).not.toMatch(/@media \(min-width: (640|1024)px\)\s*\{\s*\.category-list/);
   });
 
   it("o CSS do carrossel respeita movimento reduzido, cores forçadas e texto ampliado", () => {
@@ -335,6 +369,8 @@ describe("faixas entre as plantas e as avaliações (HTML estático)", () => {
     expect(scroller.getAttribute("role")).toBe("region");
     expect(scroller.getAttribute("tabindex")).toBe("0");
     expect(normalize(scroller.getAttribute("aria-label")).length).toBeGreaterThan(0);
+    // O nome não dá instrução: a partir de 1280 px não há o que rolar (o main.ts tira a região do Tab).
+    expect(scroller.getAttribute("aria-label")).not.toMatch(/role/i);
     const items = [...scroller.querySelectorAll("li.strip-item")];
     expect(items).toHaveLength(5);
     expect(scroller.querySelector("ul")!.getAttribute("role")).toBe("list");
@@ -434,7 +470,7 @@ describe("avaliações com foto da loja e números que sobem (HTML estático)", 
     expect(follows(photo, body)).toBe(true);
   });
 
-  it("o CSS usa algarismos tabulares nos números e mantém .reviews como a faixa tonal da página", () => {
+  it("o CSS pede algarismos tabulares nos números e mantém .reviews como a faixa tonal da página", () => {
     expect(css).toMatch(/\[data-count-up\]\s*\{[^}]*tabular-nums/);
     expect(css).toMatch(/\.reviews\s*\{\s*background:\s*hsl\(var\(--color-surface-sunken\)\)/);
     expect(page.querySelectorAll("section.reviews")).toHaveLength(1);
@@ -448,12 +484,14 @@ describe("cliques na página", () => {
   const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
 
   const originalObserver = window.IntersectionObserver;
+  const originalResizeObserver = globalThis.ResizeObserver;
   const setObserver = (value: typeof IntersectionObserver) => { window.IntersectionObserver = value; globalThis.IntersectionObserver = value; };
 
   beforeAll(async () => {
     document.body.innerHTML = page.body.innerHTML;
     document.addEventListener("click", blockNavigation);
     setObserver(RecordingObserver as unknown as typeof IntersectionObserver);
+    globalThis.ResizeObserver = RecordingResizeObserver as unknown as typeof ResizeObserver;
     await import("../loja-fisica/main");
     await vi.waitFor(() => {
       document.querySelector<HTMLAnchorElement>('#hero-actions [data-store-action="phone"]')!.click();
@@ -464,6 +502,7 @@ describe("cliques na página", () => {
 
   afterAll(() => {
     setObserver(originalObserver);
+    globalThis.ResizeObserver = originalResizeObserver;
     document.removeEventListener("click", blockNavigation);
     consoleError.mockRestore();
   });
@@ -492,14 +531,16 @@ describe("cliques na página", () => {
     expect(trackStoreAction).toHaveBeenCalledWith({ action: "phone", location: "mudas", provider: undefined });
   });
 
-  it("carrega os carrosséis só quando a seção das categorias chega a 600 px da tela", async () => {
-    const section = document.querySelector("#categories-title")!.closest("section")!;
-    const record = observers.find((item) => item.targets.includes(section))!;
+  it("carrega os carrosséis só quando o primeiro carrossel chega a 200 px da tela", async () => {
+    // Observar a seção inteira não adiantava: no celular ela já começa a menos de 600 px da dobra.
+    const first = document.querySelector("[data-carousel]")!;
+    const record = observers.find((item) => item.targets.includes(first))!;
     expect(record).toBeDefined();
-    expect(record.options?.rootMargin).toBe("600px 0px");
+    expect(observers.some((item) => item.targets.includes(first.closest("section")!))).toBe(false);
+    expect(record.options?.rootMargin).toBe("0px 0px 200px 0px");
     expect(initCategoryCarousels).not.toHaveBeenCalled();
 
-    const entry = (isIntersecting: boolean) => [{ isIntersecting, target: section }] as unknown as IntersectionObserverEntry[];
+    const entry = (isIntersecting: boolean) => [{ isIntersecting, target: first }] as unknown as IntersectionObserverEntry[];
     record.callback(entry(false), {} as IntersectionObserver);
     await new Promise((resolve) => setTimeout(resolve, 20));
     expect(initCategoryCarousels).not.toHaveBeenCalled();
@@ -507,6 +548,30 @@ describe("cliques na página", () => {
     record.callback(entry(true), {} as IntersectionObserver);
     await vi.waitFor(() => expect(initCategoryCarousels).toHaveBeenCalledTimes(1));
     expect(record.disconnected).toBe(true);
+  });
+
+  it("liga o count-up aos três números das avaliações", () => {
+    const counters = [...document.querySelectorAll("[data-count-up]")];
+    expect(counters).toHaveLength(3);
+    const record = observers.find((item) => counters.every((counter) => item.targets.includes(counter)));
+    expect(record, "nenhum IntersectionObserver observa os números").toBeDefined();
+  });
+
+  it("a fila de Vasos só é parada de Tab enquanto há o que rolar", () => {
+    const scroller = document.querySelector<HTMLElement>(".strip-scroller")!;
+    const record = resizeObservers.find((item) => item.targets.includes(scroller))!;
+    expect(record).toBeDefined();
+    const measure = (scrollWidth: number, clientWidth: number) => {
+      Object.defineProperty(scroller, "scrollWidth", { configurable: true, value: scrollWidth });
+      Object.defineProperty(scroller, "clientWidth", { configurable: true, value: clientWidth });
+      record.callback([], {} as ResizeObserver);
+    };
+    measure(1312, 375);
+    expect(scroller.tabIndex).toBe(0);
+    measure(1280, 1280);
+    expect(scroller.tabIndex).toBe(-1);
+    measure(1313, 1280);
+    expect(scroller.tabIndex).toBe(0);
   });
 
   it("os controles do carrossel não ganham tratamento de conversão do main.ts", () => {

@@ -389,6 +389,9 @@ export default defineConfig(({ isSsrBuild }) => ({
           output: {
             codeSplitting: {
               groups: [
+                // O helper de import() dinâmico (__vitePreload) é usado por toda entrada. Sem grupo próprio ele cai
+                // no react-vendor, e a /loja-fisica/ (vanilla) baixaria e executaria o React inteiro antes do main.ts.
+                { name: "preload-helper", test: /vite[\\/]preload-helper/ },
                 {
                   name: "react-vendor",
                   test: /node_modules\/(react|react-dom|react-router|react-router-dom)\//,

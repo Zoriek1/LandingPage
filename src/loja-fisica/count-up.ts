@@ -15,10 +15,13 @@
  *    menos a largura pularia no meio da animação e o CLS sairia de zero.
  * 3. `prefers-reduced-motion` desliga tudo: fica o valor final, parado.
  *
- * Largura: o CSS da página deve dar `font-variant-numeric: tabular-nums` aos
- * elementos `[data-count-up]` (ou ao contêiner). O script só garante a mesma
- * quantidade de dígitos; com algarismos tabulares isso significa a mesma
- * largura em todos os quadros. Esse estilo não é aplicado aqui.
+ * Largura: o script garante a mesma quantidade de dígitos em todos os quadros,
+ * mas não a mesma largura. O CSS da página pede `font-variant-numeric:
+ * tabular-nums` aos elementos `[data-count-up]`, e isso só iguala as larguras
+ * se a fonte tiver algarismos tabulares: a Fraunces do subset da página não
+ * tem, então o número e o sufixo ("+", ",") andam de lado durante a contagem.
+ * Não há deslocamento de layout, porque o número fica sozinho na linha. Esse
+ * estilo não é aplicado aqui.
  *
  * Leitor de tela: enquanto conta, o elemento animado recebe `aria-hidden` e
  * ganha um irmão visualmente oculto com o valor final, então ninguém ouve
