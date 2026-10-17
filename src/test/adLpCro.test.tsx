@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
 import { PRODUCTS } from "@/features/ad-lps/data/configs";
 import { DELIVERY_FEE_GUIDANCE, DELIVERY_FEES } from "@/lib/business-info";
@@ -11,6 +11,12 @@ const { openWhatsAppModal } = vi.hoisted(() => ({
 vi.mock("@/lib/whatsappModal", () => ({
   openWhatsAppModal,
 }));
+
+// Keep cold Vite chunk transformation in setup rather than the first UI assertion.
+// App still loads the real module through React.lazy.
+beforeAll(async () => {
+  await import("@/features/ad-lps/AdLandingPage");
+});
 
 function renderAt(path: string) {
   window.history.pushState({}, "", path);
