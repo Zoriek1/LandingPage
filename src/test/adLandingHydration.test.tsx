@@ -1,6 +1,6 @@
-import { hydrateRoot } from "react-dom/client";
+import { hydrateRoot, type Root } from "react-dom/client";
 import { renderToString } from "react-dom/server";
-import { waitFor } from "@testing-library/react";
+import { act, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import AdLandingPage from "@/features/ad-lps/AdLandingPage";
 
@@ -19,23 +19,26 @@ vi.mock("@/components/conversion/PriceRangeSelector", () => ({
   PriceRangeSelector: MockPriceRangeSelector,
 }));
 
-const containers: HTMLElement[] = [];
+const mounted: { root: Root; container: HTMLElement }[] = [];
 
 function hydrateSlug(slug: string) {
   const html = renderToString(<AdLandingPage slug={slug} />);
   const container = document.createElement("div");
   container.innerHTML = html;
   document.body.appendChild(container);
-  containers.push(container);
 
-  hydrateRoot(container, <AdLandingPage slug={slug} />);
+  const root = hydrateRoot(container, <AdLandingPage slug={slug} />);
+  mounted.push({ root, container });
   return container;
 }
 
-afterEach(() => {
-  while (containers.length) {
-    containers.pop()?.remove();
-  }
+afterEach(async () => {
+  // Desmonta dentro de act e só então remove o DOM, para o trabalho passivo
+  // do React não rodar depois do teardown do jsdom.
+  await act(async () => {
+    while (mounted.length) mounted.pop()?.root.unmount();
+  });
+  document.body.replaceChildren();
   vi.restoreAllMocks();
 });
 
@@ -102,13 +105,14 @@ describe("AdLandingPage: SSR markup hydrates cleanly", () => {
     expect(cta).toBeInstanceOf(HTMLButtonElement);
   });
 
-  it("hydrates every prerendered slug without throwing", async () => {
-    const slugs = ["urgencia", "presente-hoje", "rosas-apt", "aniversario"];
-    for (const slug of slugs) {
+  // Um it por slug: cada um ganha o próprio timeout e o afterEach desmonta o root dele.
+  it.each(["urgencia", "presente-hoje", "rosas-apt", "aniversario"])(
+    "hydrates prerendered slug %s without throwing",
+    async (slug) => {
       const container = hydrateSlug(slug);
       await waitFor(() => {
         expect(container.querySelectorAll("h1")).toHaveLength(1);
       });
-    }
-  });
+    },
+  );
 });

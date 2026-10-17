@@ -150,6 +150,8 @@ const FeaturedProductsSection = ({ config = defaultConfig }: FeaturedProductsSec
                         alt={product.title}
                         className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                         loading="lazy"
+                        width={400}
+                        height={500}
                       />
                       <div className="absolute left-5 top-5 rounded-full border border-primary-foreground/20 bg-primary/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-primary-foreground backdrop-blur-sm">
                         Mais pedido

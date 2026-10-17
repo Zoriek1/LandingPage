@@ -6,7 +6,7 @@ import test from "node:test";
 
 const inspectorPath = new URL("./inspect-ad-bundle.mjs", import.meta.url);
 assert.ok(existsSync(inspectorPath), "bundle inspector module should exist");
-const { inspectAdBundle, inspectAdPreload, inspectPrerenderedContent } = await import(
+const { inspectAdBundle, inspectAdPreload, inspectPrerenderedContent, inspectAdminIsolation } = await import(
   inspectorPath.href
 );
 
@@ -182,6 +182,32 @@ function writeSlugHtml(distDir, fileName, { rootInner = "", hasHeadline = true, 
     `<!doctype html><html><body><div id="root">${rootInner || `${h1}${hero}`}</div></body></html>`,
   );
 }
+
+test("admin isolation traverses imports and rejects marketing collection", () => {
+  const distDir = makeDist({
+    "admin/marketing/index.html": { file: "assets/admin.js", imports: ["_shared.js"] },
+    "_shared.js": { file: "assets/shared.js" },
+  });
+  try {
+    mkdirSync(join(distDir, "admin/marketing"), { recursive: true });
+    writeFileSync(join(distDir, "admin/marketing/index.html"), "<html><body></body></html>");
+    assert.equal(inspectAdminIsolation({ distDir }).files, 2);
+    writeFileSync(join(distDir, "assets/shared.js"), 'fetch("/collect");');
+    assert.throws(() => inspectAdminIsolation({ distDir }), /Admin imports marketing collection/);
+  } finally {
+    rmSync(distDir, { recursive: true, force: true });
+  }
+});
+
+test("public bundle rejects dashboard queries", () => {
+  const distDir = makeDist(validManifest);
+  try {
+    writeFileSync(join(distDir, "assets/AdLandingPage-good.js"), 'fetch("/admin/overview");');
+    assert.throws(() => inspectAdBundle({ distDir }), /admin dashboard/);
+  } finally {
+    rmSync(distDir, { recursive: true, force: true });
+  }
+});
 
 test("accepts prerendered HTML with hero content in the root div", () => {
   const distDir = mkdtempSync(join(tmpdir(), "ad-bundle-inspector-"));

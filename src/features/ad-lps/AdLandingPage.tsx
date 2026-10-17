@@ -52,7 +52,8 @@ import {
   type GoogleReview,
 } from "@/features/ad-lps/lib/reviews";
 import { formatBrl, formatInstallments, parsePriceBrl } from "@/features/ad-lps/lib/pricing";
-import { useResolvedConfig } from "@/features/ad-lps/lib/useQueryVariant";
+import { recordAnalytics } from "@/analytics";
+import { useOfferVariantSeen, useResolvedConfig } from "@/features/ad-lps/lib/useQueryVariant";
 import { useIsPastCutoff } from "@/features/ad-lps/lib/useCutoffCopy";
 import { HeroReviewCard, ReviewCard } from "@/features/ad-lps/components/ReviewCard";
 import { DifferentialCard } from "@/features/ad-lps/components/DifferentialCard";
@@ -66,7 +67,7 @@ import { CountUpValue } from "@/features/ad-lps/components/CountUpValue";
 import {
   buildAdLpWhatsAppUrl,
   openAdLpGuidedWhatsApp,
-  openAdLpWhatsApp,
+  openAdLpWhatsApp as openAdLpWhatsAppBase,
 } from "@/features/ad-lps/lib/whatsapp";
 import {
   resolveDeliveryTiming,
@@ -79,7 +80,7 @@ import {
   type PictureSources,
 } from "@/features/ad-lps/lib/hero-images";
 import { BUSINESS_INFO } from "@/lib/business-info";
-import { trackVariantSeen } from "@/lib/tracking";
+import { asDimension, trackVariantSeen } from "@/lib/tracking";
 import { WhatsAppIcon } from "@/components/icons/WhatsAppIcon";
 import "./fonts.css";
 import "./theme.css";
@@ -1577,10 +1578,28 @@ function PageSection({
   }
 }
 
+/** Sem produto o clique só abre o seletor de faixa: ação própria, não é um whatsapp_click. */
+function openAdLpWhatsApp(args: Parameters<typeof openAdLpWhatsAppBase>[0]) {
+  const ctaLocation = asDimension(args.origin);
+  if (!args.product && ctaLocation) {
+    try {
+      recordAnalytics("cta_click", {
+        cta_id: `${ctaLocation}_whatsapp`,
+        cta_location: ctaLocation,
+        action: "open_selector",
+      });
+    } catch {
+      /* Analytics nunca bloqueia a conversão. */
+    }
+  }
+  openAdLpWhatsAppBase(args);
+}
+
 export default function AdLandingPage({ slug }: AdLandingPageProps) {
   const config = LP_CONFIGS[slug];
   const canonicalUrl = config.canonicalUrl ?? `https://${BRAND_DOMAIN}/${config.slug}`;
   const resolvedConfig = useResolvedConfig(config);
+  useOfferVariantSeen(config);
 
   useEffect(() => {
     if (resolvedConfig === config) return;

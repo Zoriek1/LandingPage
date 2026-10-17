@@ -1,0 +1,94 @@
+# EXEMPLO de proxy para a API de analytics. Template: NÃO validado com `nginx -t`, NÃO aplicado em nenhuma VPS.
+# Hostnames/caminhos de certificado são marcadores de posição (doc 02 §2.1 propõe analytics-api.planteumaflor.com).
+# Antes de usar: inventário da VPS (doc 02 §2.2). Não substituir proxy/serviços existentes — adaptar.
+# Incluir dentro do contexto `http {}`.
+
+# Zonas de rate limit de borda (complementam, não substituem, os limites da aplicação — doc 02 §3.3).
+limit_req_zone $binary_remote_addr zone=analytics_collect:10m rate=60r/m;
+limit_req_zone $binary_remote_addr zone=analytics_admin:10m   rate=30r/m;
+
+upstream analytics_api {
+    server 127.0.0.1:8787;   # ANALYTICS_HOST=127.0.0.1 no host, ou porta publicada pelo container em loopback
+    keepalive 16;
+}
+
+# HTTP -> HTTPS (também serve desafio ACME se for o método escolhido).
+server {
+    listen 80;
+    listen [::]:80;
+    server_name analytics-api.example.invalid;
+    location /.well-known/acme-challenge/ { root /var/www/acme; }
+    location / { return 301 https://$host$request_uri; }
+}
+
+server {
+    listen 443 ssl;
+    listen [::]:443 ssl;
+    http2 on;
+    server_name analytics-api.example.invalid;
+
+    # --- TLS: documental. Caminhos dependem do emissor escolhido (ex.: certbot/Let's Encrypt). ---
+    ssl_certificate     /etc/ssl/analytics/fullchain.pem;
+    ssl_certificate_key /etc/ssl/analytics/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:analytics_tls:10m;
+    ssl_session_tickets off;
+    # HSTS só depois de confirmar HTTPS estável; não adicionar includeSubDomains/preload sem decisão.
+    add_header Strict-Transport-Security "max-age=31536000" always;
+
+    # Não faça o proxy duplicar CORS: CORS exato (Allow-Origin/Credentials/Vary) é responsabilidade da aplicação.
+    # Não ative gzip para /collect nem /admin/stream (doc 02 §3.3, §7.3).
+    gzip off;
+
+    # Cabeçalhos repassados. A aplicação só deve confiar em X-Forwarded-* vindo deste proxy (confirmar o
+    # mecanismo de trust proxy no backend — ver ambiguidades).
+    proxy_http_version 1.1;
+    proxy_set_header Connection "";
+    proxy_set_header Host              $host;
+    proxy_set_header X-Real-IP         $remote_addr;
+    proxy_set_header X-Forwarded-For   $remote_addr;   # sobrescreve: não propaga valor do cliente
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Coleta pública: corpo <= 32 KiB (doc 02 §3.3); margem pequena para o proxy.
+    location = /collect {
+        client_max_body_size 32k;
+        client_body_timeout 10s;
+        limit_req zone=analytics_collect burst=20 nodelay;
+        limit_req_status 429;
+        proxy_read_timeout 10s;
+        proxy_pass http://analytics_api;
+    }
+
+    # SSE: sem buffering/cache/compressão; timeout > keepalive de 15–25 s (doc 02 §7.3).
+    location = /admin/stream {
+        proxy_buffering off;
+        proxy_cache off;
+        proxy_read_timeout 1h;
+        proxy_send_timeout 1h;
+        add_header X-Accel-Buffering no always;
+        proxy_pass http://analytics_api;
+    }
+
+    location /admin/ {
+        client_max_body_size 64k;
+        limit_req zone=analytics_admin burst=30 nodelay;
+        limit_req_status 429;
+        proxy_read_timeout 30s;
+        proxy_pass http://analytics_api;
+    }
+
+    # Liveness público é suficiente; readiness expõe estado do banco -> restrito.
+    location = /health {
+        proxy_pass http://analytics_api;
+    }
+    location = /health/ready {
+        allow 127.0.0.1;
+        allow ::1;
+        # allow <IP do monitor>;
+        deny all;
+        proxy_pass http://analytics_api;
+    }
+
+    location / { return 404; }
+}

@@ -68,6 +68,28 @@ describe("click IDs do Google Ads", () => {
     expect(payload).not.toHaveProperty("wbraid");
   });
 
+  it("WhatsApp da loja física leva gclid e código de atendimento ao lead", async () => {
+    await loadTracking("/loja-fisica/?gclid=G-LOJA");
+    const { openWhatsAppModal } = await import("@/lib/whatsappModal");
+
+    try {
+      await openWhatsAppModal(
+        "https://wa.me/5562996503403",
+        { lp_slug: "loja-fisica", cta_location: "header", cta_label: "icone_whatsapp" },
+        "Olá! Quero tirar uma dúvida.",
+        "pagina=loja-fisica",
+      );
+    } catch {
+      // JSDOM may throw on navigation.
+    }
+
+    const payload = postedPayload(fetchMock);
+    expect(payload).toMatchObject({ event: "whatsapp_click", gclid: "G-LOJA", lp_slug: "loja-fisica", cta_label: "icone_whatsapp" });
+    expect(new URL(payload.destination_url).searchParams.get("text")).toContain(
+      `Código de atendimento: ${payload.token_rastreio} · pagina=loja-fisica`,
+    );
+  });
+
   it("inclui os IDs no POST do lead", async () => {
     const { trackPageView } = await loadTracking("/?gclid=G-1&gbraid=GB-1&wbraid=WB-1");
 

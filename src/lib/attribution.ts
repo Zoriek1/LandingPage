@@ -112,3 +112,56 @@ export function getClickIds(): Partial<Record<ClickIdKey, string>> {
 
   return out;
 }
+
+// GA4 do contêiner GTM-KCRTLDV4. Serve só para achar o cookie de sessão
+// (_ga_<ID sem "G-">) e precisa ser o mesmo GA4_MEASUREMENT_ID configurado no
+// Gestor. Não chame gtag() com ele: o GA4 continua 100% via GTM.
+export const GA4_MEASUREMENT_ID = "G-RZRVEXS4CP";
+
+type GaIdKey = "ga_client_id" | "ga_session_id" | "ga_session_started_at";
+
+function readCookie(name: string): string | undefined {
+  const prefix = `${name}=`;
+  for (const part of document.cookie.split(";")) {
+    const cookie = part.trim();
+    if (cookie.startsWith(prefix)) return cookie.slice(prefix.length);
+  }
+  return undefined;
+}
+
+/**
+ * IDs do GA4 lidos dos cookies do navegador, para o Gestor enviar eventos
+ * server-side (Measurement Protocol) na mesma sessão do anúncio.
+ *
+ * - `ga_client_id`: `_ga` (`GA1.1.<n>.<ts>`) vira `<n>.<ts>`.
+ * - `ga_session_id`: início da sessão (epoch em segundos) do cookie
+ *   `_ga_RZRVEXS4CP`, formato GS2 (`GS2.1.s<id>$...`) ou GS1 (`GS1.1.<id>.`).
+ *   Cookies `_ga_*` de outras propriedades (ex.: o e-commerce) são ignorados.
+ * - `ga_session_started_at`: o mesmo início em milissegundos (contrato do tema
+ *   Nuvemshop).
+ *
+ * Sem consentimento de analytics o `_ga` não existe e nada é enviado.
+ * Chaves inválidas são omitidas; SSR ou erro devolvem `{}`.
+ */
+export function getGaIds(): Partial<Record<GaIdKey, string>> {
+  if (typeof document === "undefined") return {};
+
+  try {
+    const out: Partial<Record<GaIdKey, string>> = {};
+
+    const clientId = readCookie("_ga")?.split(".").slice(-2).join(".");
+    if (clientId && /^\d+\.\d+$/.test(clientId)) out.ga_client_id = clientId;
+
+    const sessionCookie = readCookie(`_ga_${GA4_MEASUREMENT_ID.replace(/^G-/, "")}`) ?? "";
+    const sessionId =
+      sessionCookie.match(/^GS2\.\d+\.s(\d+)/)?.[1] ?? sessionCookie.match(/^GS1\.\d+\.(\d+)\./)?.[1];
+    if (sessionId) {
+      out.ga_session_id = sessionId;
+      out.ga_session_started_at = String(Number(sessionId) * 1000);
+    }
+
+    return out;
+  } catch {
+    return {};
+  }
+}

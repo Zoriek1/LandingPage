@@ -1,6 +1,7 @@
 import { defineConfig, type HtmlTagDescriptor, type Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import fs from "node:fs";
+import { execFileSync } from "node:child_process";
 import path from "path";
 import { AD_LP_SLUGS } from "./src/routes/routeManifest";
 
@@ -348,9 +349,23 @@ function promoteAdLandingStylesheets(html: string) {
 }
 
 export default defineConfig(({ isSsrBuild }) => ({
+  define: {
+    "import.meta.env.VITE_RELEASE_SHA": JSON.stringify(
+      process.env.RELEASE_SHA || process.env.GITHUB_SHA || execFileSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+    ),
+  },
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      "/collect": "http://127.0.0.1:8787",
+      "/admin/login": "http://127.0.0.1:8787",
+      "/admin/session": "http://127.0.0.1:8787",
+      "/admin/logout": "http://127.0.0.1:8787",
+      "/admin/overview": "http://127.0.0.1:8787",
+      "/admin/events": "http://127.0.0.1:8787",
+      "/admin/stream": "http://127.0.0.1:8787",
+    },
     hmr: {
       overlay: false,
     },
@@ -379,7 +394,9 @@ export default defineConfig(({ isSsrBuild }) => ({
           input: {
             main: path.resolve(__dirname, "index.html"),
             mothersDay: path.resolve(__dirname, "dia-das-maes/index.html"),
+            lojaFisica: path.resolve(__dirname, "loja-fisica/index.html"),
             namorados: path.resolve(__dirname, "dia-dos-namorados/index.html"),
+            marketing: path.resolve(__dirname, "admin/marketing/index.html"),
             entryClient: path.resolve(
               __dirname,
               "src/features/ad-lps/entry-client.tsx",

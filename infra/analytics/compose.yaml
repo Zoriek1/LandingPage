@@ -1,0 +1,111 @@
+# Stack LOCAL de desenvolvimento/validação do backend de analytics.
+# NÃO é o compose de produção (VPS ainda não inventariada; ver docs/cro/dashboard-tempo-real/operacao-local.md).
+#
+# Isolamento: projeto, rede e volumes próprios ("landing-analytics-dev"). Não toca nos serviços/volumes do
+# Gestor (portas 5000/5432) nem no container landing-analytics-local (127.0.0.1:55432).
+# Sem defaults de produção: toda variável obrigatória usa ${VAR:?} e o compose falha se faltar.
+#
+#   cp infra/analytics/.env.example infra/analytics/.env.local   # e preencher
+#   docker compose --env-file infra/analytics/.env.local -f infra/analytics/compose.yaml up -d --build --wait
+name: landing-analytics-dev
+
+x-pg-env: &pg-env
+  POSTGRES_USER: ${ANALYTICS_POSTGRES_USER:?defina ANALYTICS_POSTGRES_USER}
+  POSTGRES_PASSWORD: ${ANALYTICS_POSTGRES_PASSWORD:?defina ANALYTICS_POSTGRES_PASSWORD}
+
+x-app-env: &app-env
+  NODE_ENV: ${NODE_ENV:?defina NODE_ENV}
+  RELEASE_SHA: ${RELEASE_SHA:?defina RELEASE_SHA}
+  ANALYTICS_PORT: "8787"
+  ANALYTICS_HOST: "0.0.0.0" # dentro do container; a publicação no host é só em 127.0.0.1
+  ANALYTICS_PUBLIC_ORIGINS: ${ANALYTICS_PUBLIC_ORIGINS:?defina ANALYTICS_PUBLIC_ORIGINS}
+  ANALYTICS_ADMIN_ORIGIN: ${ANALYTICS_ADMIN_ORIGIN:?defina ANALYTICS_ADMIN_ORIGIN}
+  ANALYTICS_SECURE_COOKIE: ${ANALYTICS_SECURE_COOKIE:?defina ANALYTICS_SECURE_COOKIE}
+  DATABASE_URL: postgres://${ANALYTICS_POSTGRES_USER:?}:${ANALYTICS_POSTGRES_PASSWORD:?}@postgres:5432/${ANALYTICS_POSTGRES_DB:?defina ANALYTICS_POSTGRES_DB}
+
+x-app: &app
+  image: landing-analytics-api:${RELEASE_SHA:?defina RELEASE_SHA}
+  build:
+    context: ../..
+    dockerfile: infra/analytics/Dockerfile
+    args:
+      RELEASE_SHA: ${RELEASE_SHA:?}
+  environment: *app-env
+  networks: [backend]
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      <<: *pg-env
+      POSTGRES_DB: ${ANALYTICS_POSTGRES_DB:?defina ANALYTICS_POSTGRES_DB}
+    volumes:
+      - analytics_pgdata:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${ANALYTICS_PG_HOST_PORT:-55433}:5432"
+    networks: [backend]
+    shm_size: 128mb
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+  # Migrações: job único, sob demanda (profile "tools"). Não sobe com `up`.
+  #   docker compose ... run --rm migrate
+  migrate:
+    <<: *app
+    profiles: [tools]
+    command: ["node", "server/analytics/migrate.ts"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # CLI administrativa (create/reset). Sob demanda; ver runbook. TTY interativo para senha.
+  #   docker compose ... run --rm admin create ...
+  admin:
+    <<: *app
+    profiles: [tools]
+    entrypoint: ["node", "server/analytics/admin.ts"]
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # API. Só sobe com o banco saudável. Healthcheck da imagem consulta /health/ready.
+  api:
+    <<: *app
+    ports:
+      - "127.0.0.1:${ANALYTICS_HOST_PORT:-8788}:8787"
+    restart: unless-stopped
+    stop_grace_period: 30s
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  # Instância SEPARADA para exercício de restauração (profile "restore"): volume e porta próprios.
+  postgres-restore:
+    image: postgres:16-alpine
+    profiles: [restore]
+    environment: *pg-env
+    volumes:
+      - analytics_pgdata_restore:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${ANALYTICS_PG_RESTORE_HOST_PORT:-55434}:5432"
+    networks: [backend]
+    shm_size: 128mb
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+
+networks:
+  backend: {}
+
+volumes:
+  analytics_pgdata: {}
+  analytics_pgdata_restore: {}
