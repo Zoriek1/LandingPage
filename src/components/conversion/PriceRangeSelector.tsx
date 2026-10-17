@@ -5,6 +5,8 @@ import { WHATSAPP_URL } from "@/lib/config";
 import {
   PRICE_RANGE_CONFIGS,
   PRICE_RANGE_SELECTOR_EVENT,
+  LILY_BENEFITS,
+  getLilyPriceRangeVariant,
   type IntentOption,
   type PriceRange,
   type PriceRangeRoute,
@@ -19,24 +21,30 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
   const openerRef = useRef<HTMLElement | null>(null);
   const selectingRef = useRef(false);
   const config = PRICE_RANGE_CONFIGS[route];
+  const lilyVariant = route === "/lirios-apt" ? getLilyPriceRangeVariant() : undefined;
 
   useEffect(() => {
     const handleOpen = (event: Event) => {
       openerRef.current = document.activeElement as HTMLElement | null;
       selectingRef.current = false;
-      setRequest((event as CustomEvent<PriceRangeSelectorRequest>).detail);
+      const detail = (event as CustomEvent<PriceRangeSelectorRequest>).detail;
+      if (route === "/lirios-apt") (window.dataLayer ??= []).push({ event: "price_selector_open", ...detail, lp_slug: "lirios-apt", faixas_variant: lilyVariant });
+      setRequest(detail);
     };
 
     window.addEventListener(PRICE_RANGE_SELECTOR_EVENT, handleOpen);
     return () => window.removeEventListener(PRICE_RANGE_SELECTOR_EVENT, handleOpen);
-  }, []);
+  }, [route, lilyVariant]);
 
   const choices: readonly (PriceRange | IntentOption)[] = config.intents ?? config.ranges;
 
   const handleSelection = (choice: PriceRange | IntentOption) => {
     if (!request || selectingRef.current) return;
     selectingRef.current = true;
-    const tracking = request;
+    const tracking = { ...request, ...(route === "/lirios-apt" ? { faixas_variant: lilyVariant, price_range_key: choice.key, lp_slug: "lirios-apt" } : {}) } as PriceRangeSelectorRequest;
+    if (route === "/lirios-apt") {
+      (window.dataLayer ??= []).push({ event: "price_range_selected", ...tracking });
+    }
     setRequest(null);
 
     const productId = "productId" in choice ? choice.productId : undefined;
@@ -73,6 +81,7 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
     <Dialog.Root
       open={request !== null}
       onOpenChange={(open) => {
+        if (!open && request && !selectingRef.current && route === "/lirios-apt") (window.dataLayer ??= []).push({ event: "price_selector_closed_without_selection", ...request, lp_slug: "lirios-apt", faixas_variant: lilyVariant });
         if (!open) setRequest(null);
       }}
     >
@@ -122,14 +131,14 @@ export function PriceRangeSelector({ route }: { route: PriceRangeRoute }) {
                 type="button"
                 onClick={() => handleSelection(choice)}
                 className="group grid min-h-[5.25rem] grid-cols-[1fr_auto] items-center gap-4 rounded-2xl border border-primary/15 bg-card px-5 py-4 text-left shadow-[0_8px_24px_hsl(var(--primary)_/_0.06)] transition-transform hover:-translate-y-0.5 hover:border-accent hover:shadow-[0_12px_30px_hsl(var(--primary)_/_0.11)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-background active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none"
-                aria-label={`${choice.label}. ${choice.outcome}`}
+                 aria-label={`${choice.label}. ${lilyVariant === "beneficios" && route === "/lirios-apt" ? LILY_BENEFITS[choice.key] : choice.outcome}`}
               >
                 <span>
                   <strong className="block font-display text-xl font-semibold text-primary">
                     {choice.label}
                   </strong>
                   <span className="mt-1 block font-body text-xs leading-5 text-muted-foreground sm:text-sm">
-                    {choice.outcome}
+                     {lilyVariant === "beneficios" && route === "/lirios-apt" ? LILY_BENEFITS[choice.key] : choice.outcome}
                   </span>
                 </span>
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary text-primary-foreground group-hover:bg-accent group-hover:text-accent-foreground" aria-hidden="true">

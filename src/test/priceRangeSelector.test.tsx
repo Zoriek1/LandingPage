@@ -1,27 +1,36 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import App from "@/App";
 import {
   PRICE_RANGE_CONFIGS,
+  LILY_BENEFITS,
   buildPriceRangeWhatsAppMessage,
+  getLilyPriceRangeVariant,
   openPriceRangeSelector,
 } from "@/lib/price-ranges";
 import { PriceRangeSelector } from "@/components/conversion/PriceRangeSelector";
-import { appendTrackingBlock } from "@/lib/whatsappModal";
+import { appendTrackingBlock, openPriceRangeWhatsApp } from "@/lib/whatsappModal";
 import { LP_CONFIGS, PRODUCTS } from "@/features/ad-lps/data/configs";
 import HOME_PRODUCTS from "@/data/featured-products.snapshot.json";
 
-const { openPriceRangeWhatsApp, openWhatsAppModal } = vi.hoisted(() => ({
-  openPriceRangeWhatsApp: vi.fn(),
+const { openWhatsAppModal, openWhatsAppDestination, trackWhatsAppClick } = vi.hoisted(() => ({
   openWhatsAppModal: vi.fn(),
+  openWhatsAppDestination: vi.fn(),
+  trackWhatsAppClick: vi.fn(),
 }));
 
 // Só as aberturas de WhatsApp são espionadas; a montagem da mensagem é o que
 // este arquivo valida, então appendTrackingBlock precisa ser o real.
+vi.mock("@/lib/tracking", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/tracking")>()),
+  trackWhatsAppClick,
+}));
+
 vi.mock("@/lib/whatsappModal", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/whatsappModal")>()),
-  openPriceRangeWhatsApp,
   openWhatsAppModal,
+  openWhatsAppDestination,
+  openPriceRangeWhatsApp: vi.fn(),
 }));
 
 const EXPECTED_RANGES = {
@@ -34,7 +43,7 @@ const EXPECTED_RANGES = {
   "/lirios-apt": [
     "R$ 159,90 a R$ 229,90",
     "R$ 289,90 a R$ 389,90",
-    "Acima de R$ 389,90",
+    "R$ 424,90 · Buquê G",
   ],
   "/carro-low": ["R$ 65,00 a R$ 100", "R$ 100 a R$ 150", "Acima de R$ 150"],
   "/carro-high": ["R$ 199,90 a R$ 300", "R$ 300 a R$ 500", "Acima de R$ 500"],
@@ -88,8 +97,10 @@ function SelectorHarness() {
 
 describe("price-range conversion selector", () => {
   beforeEach(() => {
-    openPriceRangeWhatsApp.mockClear();
+    vi.mocked(openPriceRangeWhatsApp).mockClear();
+    trackWhatsAppClick.mockClear();
     openWhatsAppModal.mockClear();
+    openWhatsAppDestination.mockClear();
     window.history.replaceState({}, "", "/");
   });
 
@@ -104,6 +115,21 @@ describe("price-range conversion selector", () => {
       expect(config.ranges.map((range) => range.label)).toEqual(expectedLabels);
       expect(config.ranges.map((range) => range.key)).toEqual(["low", "mid", "high"]);
     }
+  });
+
+  it("defaults unknown and absent faixas values to the control copy", () => {
+    expect(getLilyPriceRangeVariant("")).toBe("controle");
+    expect(getLilyPriceRangeVariant("?faixas=unknown")).toBe("controle");
+    expect(getLilyPriceRangeVariant("?faixas=beneficios")).toBe("beneficios");
+  });
+
+  it("changes only lilies option descriptions in the benefits variant", async () => {
+    window.history.replaceState({}, "", "/lirios-apt?faixas=beneficios");
+    render(<PriceRangeSelector route="/lirios-apt" />);
+    act(() => openPriceRangeSelector({ cta_location: "hero" }));
+    await screen.findByRole("dialog");
+    for (const benefit of Object.values(LILY_BENEFITS)) expect(screen.getByText(benefit)).toBeInTheDocument();
+    for (const range of PRICE_RANGE_CONFIGS["/lirios-apt"].ranges) expect(screen.getByText(range.label)).toBeInTheDocument();
   });
 
   it("anchors every low range on the real vitrine floor advertised by the page", () => {
@@ -121,6 +147,46 @@ describe("price-range conversion selector", () => {
         floor * 1.25,
       );
     }
+  });
+
+  it("tracks opening, closing without a choice, and a selected WhatsApp exit for lirios", async () => {
+    window.history.replaceState({}, "", "/lirios-apt?faixas=beneficios");
+    window.dataLayer = [];
+    render(<PriceRangeSelector route="/lirios-apt" />);
+    act(() => openPriceRangeSelector({ cta_location: "hero" }));
+    expect(window.dataLayer).toContainEqual(expect.objectContaining({ event: "price_selector_open", lp_slug: "lirios-apt", cta_location: "hero", faixas_variant: "beneficios" }));
+    expect(trackWhatsAppClick).not.toHaveBeenCalled();
+    await screen.findByRole("dialog");
+    fireEvent.click(screen.getByRole("button", { name: "Fechar seletor de faixa de preço" }));
+    await waitFor(() => expect(window.dataLayer).toContainEqual(expect.objectContaining({ event: "price_selector_closed_without_selection", faixas_variant: "beneficios" })));
+    act(() => openPriceRangeSelector({ cta_location: "hero" }));
+    fireEvent.click(await screen.findByRole("button", { name: /R\$ 159,90 a R\$ 229,90/ }));
+    expect(window.dataLayer).toContainEqual(expect.objectContaining({ event: "price_range_selected", price_range_key: "low", faixas_variant: "beneficios", cta_location: "hero" }));
+    expect(window.dataLayer?.filter((entry) => entry.event === "price_selector_closed_without_selection")).toHaveLength(1);
+    await waitFor(() => expect(openPriceRangeWhatsApp).toHaveBeenCalledWith(expect.any(String), expect.objectContaining({ lp_slug: "lirios-apt", cta_location: "hero", price_range_key: "low", faixas_variant: "beneficios" }), expect.any(String), expect.any(String)));
+    // A função canônica gera o token e registra whatsapp_click; aqui verificamos
+    // que o seletor entrega o contexto correto sem registrar um clique extra.
+    expect(trackWhatsAppClick).not.toHaveBeenCalled();
+  });
+
+  it("queues the opening event before the dataLayer has been initialized", async () => {
+    window.history.replaceState({}, "", "/lirios-apt?faixas=controle");
+    window.dataLayer = undefined;
+    render(<PriceRangeSelector route="/lirios-apt" />);
+    act(() => openPriceRangeSelector({ cta_location: "hero" }));
+    expect(window.dataLayer).toContainEqual(expect.objectContaining({ event: "price_selector_open", lp_slug: "lirios-apt", faixas_variant: "controle" }));
+  });
+
+  it("does not emit lirios microevents for other LP routes", async () => {
+    window.history.replaceState({}, "", "/?faixas=beneficios");
+    window.dataLayer = [];
+    render(<PriceRangeSelector route="/urgencia" />);
+    act(() => openPriceRangeSelector({ cta_location: "hero" }));
+    await screen.findByRole("dialog");
+    expect(window.dataLayer).not.toEqual(expect.arrayContaining([expect.objectContaining({ event: expect.stringMatching(/^price_selector_|^price_range_selected/) })]));
+    fireEvent.click(screen.getByRole("button", { name: "Fechar seletor de faixa de preço" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(window.dataLayer).not.toContainEqual(expect.objectContaining({ event: "price_selector_closed_without_selection" }));
   });
 
   it("builds the selected-range message with the tracking code in its own labelled block", () => {
@@ -155,6 +221,7 @@ describe("price-range conversion selector", () => {
     expect(choices).toHaveLength(3);
     expect(choices[0]).toHaveFocus();
     expect(openPriceRangeWhatsApp).not.toHaveBeenCalled();
+    expect(trackWhatsAppClick).not.toHaveBeenCalled();
 
     choices[2].focus();
     fireEvent.keyDown(choices[2], { key: "Tab" });
@@ -164,6 +231,7 @@ describe("price-range conversion selector", () => {
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(trigger).toHaveFocus();
     expect(openPriceRangeWhatsApp).not.toHaveBeenCalled();
+    expect(trackWhatsAppClick).not.toHaveBeenCalled();
 
     fireEvent.click(trigger);
     const backdrop = await screen.findByTestId("price-range-backdrop");

@@ -31,6 +31,12 @@ Pixel+GTM, cada um em seu próprio documento HTML — nunca os dois juntos.)
 Arquivos principais: `index.html`, `src/main.tsx`, `src/lib/tracking.ts`,
 `src/lib/attribution.ts`, `src/lib/whatsappModal.ts`.
 
+## Seletor de preço `/lirios-apt`
+
+O seletor de faixa é distinto do antigo modal de telefone. O parâmetro `?faixas=controle|beneficios` seleciona a variante (ausente/desconhecido = `controle`); somente descrições das opções mudam, mantendo botão, fluxo e texto WhatsApp idênticos. Eventos dataLayer: `price_selector_open` ao abrir; `price_range_selected` após escolha; `price_selector_closed_without_selection` ao fechar sem escolher. Cada evento inclui `lp_slug`, `cta_location`, `faixas_variant`; seleção inclui `price_range_key`. São microeventos Google/GTM, não eventos Contact Meta. O clique final dispara o `whatsapp_click` existente como tentativa de saída, incluindo variante/faixa; não comprova envio da mensagem.
+
+`WhatsAppMessageSent` não foi encontrado no código da landing. Sua origem/semântica precisa ser conferida no painel GTM/Meta; não é possível confirmar externamente por este repositório.
+
 ## 3) Captura de atribuição (fbclid, gclid/gbraid/wbraid, UTMs)
 
 Ao carregar o módulo `tracking.ts` (side effect no import, guardado por `typeof window`

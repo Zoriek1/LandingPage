@@ -156,6 +156,36 @@ describe("whatsappModal", () => {
     );
   });
 
+  it("includes the lilies experiment variant in the single WhatsApp exit event", async () => {
+    const { openPriceRangeWhatsApp } = await import("@/lib/whatsappModal");
+
+    try {
+      await openPriceRangeWhatsApp(
+        "https://wa.me/5562996503403",
+        {
+          lp_slug: "lirios-apt",
+          cta_location: "hero",
+          price_range_key: "low",
+          faixas_variant: "beneficios",
+        },
+        "arranjos de lírios —",
+        "R$ 159,90 a R$ 229,90",
+      );
+    } catch {
+      // JSDOM may reject external navigation after recording the event.
+    }
+
+    expect(trackWhatsAppClick).toHaveBeenCalledTimes(1);
+    expect(trackWhatsAppClick).toHaveBeenCalledWith(expect.objectContaining({
+      lp_slug: "lirios-apt",
+      cta_location: "hero",
+      price_range_key: "low",
+      faixas_variant: "beneficios",
+      status: "pendente_whatsapp",
+      destination_url: expect.any(String),
+    }));
+  });
+
   it("reuses the same token when the campaign has not changed", async () => {
     const { openWhatsAppModal } = await import("@/lib/whatsappModal");
 

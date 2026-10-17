@@ -5,6 +5,17 @@ const lilyPrice = (id: string) => LILY_PRODUCTS_BY_ID[id].priceBrl;
 const lilyFloor = lilyPrice("arranjo-mao-lirios-p");
 
 export type PriceRangeKey = "low" | "mid" | "high";
+export type LilyPriceRangeVariant = "controle" | "beneficios";
+
+export const LILY_BENEFITS: Record<PriceRangeKey, string> = {
+  low: "Um mimo delicado para presentear. Arranjos de mão P e M, com cartão escrito à mão.",
+  mid: "Para marcar uma ocasião especial. Arranjo G ou buquês P e M, com mais volume e acabamento.",
+  high: "O maior buquê de lírios da seleção. Papel artesanal e fita de cetim.",
+};
+
+export function getLilyPriceRangeVariant(search = typeof window !== "undefined" ? window.location.search : ""): LilyPriceRangeVariant {
+  return new URLSearchParams(search).get("faixas") === "beneficios" ? "beneficios" : "controle";
+}
 
 export type PriceRange = {
   key: PriceRangeKey;
@@ -153,7 +164,7 @@ const BASE_PRICE_RANGE_CONFIGS: Partial<Record<PriceRangeRoute, PriceRangeConfig
       },
       {
         key: "high",
-        label: `Acima de ${lilyPrice("buque-lirios-m")}`,
+        label: `${lilyPrice("buque-lirios-g")} · Buquê G`,
         outcome: HIGH_OUTCOME,
       },
     ],
