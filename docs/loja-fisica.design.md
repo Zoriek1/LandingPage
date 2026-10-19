@@ -120,7 +120,7 @@ Pedido do dono, a partir de um wireframe: falar com o morador de casa e apartame
 
 ### Fotos
 
-- Fotos reais do dono, nunca geradas por IA. Hoje todas as 29 fotos de categorias e faixas são PLACEHOLDER: recortes diferentes de cinco fotos que já estavam no repositório (quatro de banco de imagem e a fachada da rua). Não mostram produtos da loja e não devem ir a campanha paga sem aprovação do dono.
+- Fotos reais do dono, nunca geradas por IA. Desde 19/10/2026 todas as fotos de categorias e faixas são da loja (detalhes na seção "Fotos próprias de 19/10/2026").
 - Os recortes pequenos (os mais fechados) saem mais macios que uma foto real de 1400 px. É esperado e some quando a foto real entrar.
 - `alt` e legendas foram escritos para o que cada recorte mostra hoje; ao trocar a foto, reescrever os dois. Origem, recorte e a tabela de fotos pendentes: `assets-src/loja-fisica/README.md` e `docs/loja-fisica.md`.
 
@@ -130,3 +130,11 @@ Pedido do dono, a partir de um wireframe: falar com o morador de casa e apartame
 - Não consta aqui captura de tela do redesenho. Antes de publicar, rodar `scripts/qa-loja-fisica.cjs` (Playwright, porta 4179) em 375, 768 e 1280 px e conferir: sem rolagem horizontal; carrossel girando e parando com hover, foco e pausa; setas, teclado e arrasto; sem autoplay com movimento reduzido; página sem JavaScript com a primeira foto de cada categoria, as listas, as faixas e os valores finais das avaliações; `dataLayer` com os mesmos `store_phone_click`, `store_directions_click` e `whatsapp_click` de antes e nenhum evento vindo dos controles do carrossel. Registrar o resultado neste arquivo.
 - Lighthouse mobile do redesenho não foi medido. O de 11/10 (nota 85, LCP 2,42 s, CLS 0,002) é a referência para comparar: o LCP do hero, o CLS e o JavaScript inicial não devem piorar.
 - Contraste, auditoria completa de acessibilidade e as pendências do dono (fotos, lista de plantas, frase final, história, fonte da nota) continuam abertos.
+
+## Fotos próprias de 19/10/2026
+
+- Treze fotos de celular do dono substituem todos os placeholders: vasos de cerâmica, saquinho de adubo NPK, sacos de substrato, terra ensacada, o pátio do garden center, uma folhagem em vaso e o letreiro no muro verde. Cada foto foi recortada na proporção final (4:5, 3:2 ou 4:3) antes do `npm run images`.
+- Os recortes deixam de fora as etiquetas de preço, porque a página não mostra preço, e os riscos vermelhos que vieram em algumas fotos.
+- Legendas da faixa Vasos começam pelo material real da foto: duas de cerâmica, uma de barro e duas de polietileno (antes eram todas "Barro").
+- O carrossel de terras se chama "Terras e substratos", porque as fotos mostram sacos de 30 L e pacotes menores, não o saco de 40 L do rótulo antigo. O texto da categoria ("Substrato em saco de 40 L") não mudou.
+- Pontos fracos conhecidos: o carrossel de adubos usa três recortes do mesmo saquinho; vasos tem só duas fotos de vaso de verdade e repete enquadramentos na faixa; recortes de 400 a 520 px saem macios em tela grande. Fotos novas desses assuntos resolvem sem mexer no layout.

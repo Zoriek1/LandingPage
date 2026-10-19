@@ -37,73 +37,56 @@ Proporção de cada foto de faixa, definida em `STORE_STRIP_RATIOS` no `scripts/
 
 ## Origem de cada foto
 
-Nenhuma foto foi gerada por IA. Enquanto as fotos reais não chegam, os arquivos marcados PLACEHOLDER são recortes diferentes (zoom e região) das poucas fotos que já existiam no repositório. Eles não mostram produtos da loja, e as fotos de origem das categorias são de banco de imagem. Não publicar PLACEHOLDER sem aprovação da loja; a meta é trocar todos por foto própria.
+Todas as fotos são próprias, feitas pela equipe na loja. Nenhuma é de banco de imagem nem gerada por IA. As de 19/10/2026 vieram do celular (1500x2000) e foram recortadas na proporção final antes do `npm run images`, então o recorte centralizado do script não corta mais nada. Os recortes deixam de fora as etiquetas de preço (a página não mostra preço) e os riscos vermelhos que vieram em algumas fotos. Posição em pixels da foto do celular: esquerda,topo largura x altura.
 
-Os recortes foram extraídos sem reamostrar (JPEG qualidade 88) e o `npm run images` amplia até a largura de saída. Os mais fechados saem mais macios que uma foto real de 1400 px. Posição dos recortes em pixels da foto de origem: esquerda,topo largura x altura.
-
-Fotos de origem:
-
-- `fachada-rua.jpg`: foto da entrada da loja (Rua 132), feita pela equipe. Foto própria. 2000x1125.
-- `categorias/*-1.jpg`: fotos do Unsplash (licença Unsplash: uso comercial livre, sem atribuição obrigatória), 1400x1400, usadas inteiras. Não são produtos da loja.
-  - `vasos-1.jpg`: Nathalie Klippert, https://unsplash.com/photos/brown-clay-pots-with-green-plants-9II6ibogNLk
-  - `terras-1.jpg`: Alicia Christin Gerald, https://unsplash.com/photos/bQ9y93kdk4c
-  - `adubos-1.jpg`: Zemos, https://unsplash.com/photos/pile-of-small-light-brown-granular-material-on-black-5-LBYIucVGM
-  - `plantas-1.jpg`: Sehajpal Singh, https://unsplash.com/photos/a-bunch-of-plants-that-are-on-a-shelf-BjvKS274fk8
+Fotos do celular usadas (19/10/2026): vaso de cerâmica oliva, vaso de cerâmica azul na embalagem, saquinho de adubo NPK 04-14-08, sacos de substrato (Jeronima 30 L, Terral orquídeas, Terral samambaia, Terral suculentas), terra ensacada, pátio com figueira-lira, folhagem em vaso preto, letreiro no muro verde (duas fotos).
 
 ### Carrosséis das categorias (`categorias/`)
 
-| Arquivo | Status | Origem e recorte |
-|---|---|---|
-| `vasos-1.jpg` | PLACEHOLDER | Unsplash (Nathalie Klippert), foto inteira |
-| `vasos-2.jpg` | PLACEHOLDER | `vasos-1.jpg`, 650,110 700x875: vaso canelado sobre vaso bege |
-| `vasos-3.jpg` | PLACEHOLDER | `vasos-1.jpg`, 120,575 660x825: vaso virado com furo e base do vaso grande |
-| `vasos-4.jpg` | PLACEHOLDER | `vasos-1.jpg`, 760,600 640x800: pratos empilhados |
-| `adubos-1.jpg` | PLACEHOLDER | Unsplash (Zemos), foto inteira |
-| `adubos-2.jpg` | PLACEHOLDER | `adubos-1.jpg`, 380,560 640x800: monte de grãos mais de perto |
-| `adubos-3.jpg` | PLACEHOLDER | `adubos-1.jpg`, 100,600 620x775: lado esquerdo do monte |
-| `adubos-4.jpg` | PLACEHOLDER | `adubos-1.jpg`, 760,600 620x775: lado direito do monte |
-| `terras-1.jpg` | PLACEHOLDER | Unsplash (Alicia Christin Gerald), foto inteira |
-| `terras-2.jpg` | PLACEHOLDER | `terras-1.jpg`, 420,450 680x850: substrato na mão |
-| `terras-3.jpg` | PLACEHOLDER | `terras-1.jpg`, 380,0 640x800: dedos e topo do substrato |
-| `terras-4.jpg` | PLACEHOLDER | `terras-1.jpg`, 600,500 500x625: textura do substrato bem de perto (a região mais nítida da foto) |
-| `plantas-1.jpg` | PLACEHOLDER | Unsplash (Sehajpal Singh), foto inteira |
-| `plantas-2.jpg` | PLACEHOLDER | `plantas-1.jpg`, 680,500 720x900: bancada com vasos pretos e poste |
-| `plantas-3.jpg` | PLACEHOLDER | `plantas-1.jpg`, 420,380 720x900: miolo da bancada |
-| `plantas-4.jpg` | PLACEHOLDER | `plantas-1.jpg`, 180,20 720x900: plantas pendentes e fundo desfocado |
-| `plantas-5.jpg` | PLACEHOLDER | `plantas-1.jpg`, 0,330 720x900: lado esquerdo da bancada |
+| Arquivo | Origem e recorte |
+|---|---|
+| `vasos-1.jpg` | vaso de cerâmica oliva na mão, 260,420 1120x1400 |
+| `vasos-2.jpg` | vaso de cerâmica azul na embalagem, 180,480 1200x1500 |
+| `vasos-3.jpg` | pátio, prateleira de arame com vasos pretos e begônias, 0,850 400x500 |
+| `adubos-1.jpg` | saquinho de adubo 04-14-08 na mão, parte de baixo (sem a etiqueta de preço), 330,830 620x775 |
+| `adubos-2.jpg` | mesmo saquinho, grânulos do lado esquerdo, 160,880 440x550 |
+| `adubos-3.jpg` | mesmo saquinho, grânulos do lado direito, 880,900 440x550 |
+| `terras-1.jpg` | saco Jeronima de 30 L, 230,560 1120x1400 |
+| `terras-2.jpg` | pacote Terral orquídeas, 150,260 1150x1437 |
+| `terras-3.jpg` | pacote Terral samambaia (sem a etiqueta de preço), 330,600 820x1025 |
+| `terras-4.jpg` | pacote Terral Suculentas Pro (sem a etiqueta de preço), 330,430 780x975 |
+| `terras-5.jpg` | terra ensacada no muro de pedra, 230,330 1060x1325 |
+| `plantas-1.jpg` | folhagem em vaso preto, 220,420 1000x1250 |
+| `plantas-2.jpg` | pátio, figueira-lira, 450,140 720x900 |
+| `plantas-3.jpg` | pátio, palmeira de folha em leque, 120,120 520x650 |
+| `plantas-4.jpg` | pátio, aglaonemas em vasos verdes, 740,1110 420x525 |
+| `plantas-5.jpg` | pátio, begônias e espadas-de-são-jorge, 0,1170 470x587 |
 
 ### Faixas (`faixas/`)
 
-| Arquivo | Status | Origem e recorte |
-|---|---|---|
-| `ornamentais-1.jpg` | PLACEHOLDER | `categorias/plantas-1.jpg`, 100,600 1100x733 (3:2): bancada de folhagem |
-| `ornamentais-2.jpg` | PLACEHOLDER | `categorias/plantas-1.jpg`, 150,700 560x700: folhas grandes de perto |
-| `ornamentais-3.jpg` | PLACEHOLDER | `categorias/plantas-1.jpg`, 760,0 640x800: plantas pendentes e poste |
-| `vasos-1.jpg` | PLACEHOLDER | `categorias/vasos-1.jpg`, 0,0 600x750: vaso grande com flores |
-| `vasos-2.jpg` | PLACEHOLDER | `categorias/vasos-1.jpg`, 700,130 540x675: vaso canelado |
-| `vasos-3.jpg` | PLACEHOLDER | `categorias/vasos-1.jpg`, 690,520 620x775: vaso bege com pratos |
-| `vasos-4.jpg` | PLACEHOLDER | `categorias/vasos-1.jpg`, 150,725 540x675: vaso virado com furo |
-| `vasos-5.jpg` | PLACEHOLDER | `categorias/vasos-1.jpg`, 0,380 520x650: bordas dos vasos empilhados |
-| `historia-1.jpg` | PLACEHOLDER | `fachada-rua.jpg`, 250,150 1300x975 (4:3): entrada inteira com portão e letreiro |
-| `historia-2.jpg` | PLACEHOLDER | `fachada-rua.jpg`, 0,0 900x1125: árvore, cobertura e portão |
-| `historia-3.jpg` | PLACEHOLDER | `fachada-rua.jpg`, 1000,0 900x1125: letreiro e canteiro |
-| `avaliacoes-1.jpg` | PLACEHOLDER | `fachada-rua.jpg`, 540,560 750x563 (4:3): portão aberto e corredor de entrada |
+| Arquivo | Origem e recorte |
+|---|---|
+| `ornamentais-1.jpg` | pátio inteiro, 0,560 1500x1000 (3:2) |
+| `ornamentais-2.jpg` | pátio, samambaias pendentes, 980,620 520x650 |
+| `ornamentais-3.jpg` | folhagem de folha recortada ao lado do vaso preto, 1030,640 470x587 |
+| `vasos-1.jpg` | vaso de cerâmica oliva com a prateleira atrás, 0,200 1300x1625 |
+| `vasos-2.jpg` | vaso de cerâmica azul com a prateleira atrás, 0,300 1340x1675 |
+| `vasos-3.jpg` | pátio, prateleira com vasos de barro e alecrim, 0,520 520x650 |
+| `vasos-4.jpg` | pátio, vaso cor de barro da figueira-lira, 340,1440 400x500 |
+| `vasos-5.jpg` | vaso preto da folhagem, 470,1040 680x850 |
+| `historia-1.jpg` | `fachada-rua.jpg`, 250,150 1300x975 (4:3): entrada inteira com portão e letreiro |
+| `historia-2.jpg` | letreiro no muro verde, foto em pé (1440x2560), 0,0 1440x1800 |
+| `historia-3.jpg` | pátio inteiro em pé, 150,100 1200x1500 |
+| `avaliacoes-1.jpg` | letreiro no muro verde visto de lado, 0,220 1500x1125 (4:3) |
 
-As três fotos de `historia-*` e a de `avaliacoes-1` saem da foto da rua feita pela equipe, mas ainda não mostram equipe, balcão nem corredor interno.
+Os recortes menores (vasos-3, adubos-2 e 3, plantas-3 a 5, ornamentais-2 e 3, vasos-3 e 4 das faixas) têm de 400 a 520 px de largura e saem um pouco macios na versão de 960 ou 1200. Uma foto feita só daquele assunto, de perto, resolve.
 
-## O que precisa ser enviado
+## O que ainda vale fotografar
 
-Ideal: paisagem ou retrato natural, luz do dia, fundo limpo, sem logotipo de terceiros, mínimo de 1400 px no lado maior e enquadramento 4:5 nos carrosséis. São 29 fotos: 17 de categorias e 12 de faixas.
+- Adubo: hoje são três recortes do mesmo saquinho. Fotos de outros adubos (torta de mamona, farinha de osso, NPK de outras fórmulas) deixam o carrossel mais variado.
+- Vasos: só há duas fotos de vaso de cerâmica. Vasos de barro e cachepôs fotografados de perto entram no carrossel e na faixa.
+- Nossa História: equipe e balcão. A foto da entrada (`historia-1`) ainda é um recorte da foto da rua usada no topo.
 
-| Uso | Arquivos | Quantidade | Conteúdo |
-|---|---|---|---|
-| Carrossel Vasos | `categorias/vasos-1` a `vasos-4` | 4 | vasos de alto padrão, cerâmica, barro e cachepô |
-| Carrossel Adubos | `categorias/adubos-1` a `adubos-4` | 4 | adubo ensacado em sacolinhas pequenas (bancada, mão segurando) |
-| Carrossel Terras | `categorias/terras-1` a `terras-4` | 4 | substrato de 40 L (saco, terra aberta) |
-| Carrossel Plantas Ornamentais | `categorias/plantas-1` a `plantas-5` | 5 | ficus, monstera, samambaia e plantas de maior valor |
-| Faixa Ornamentais | `faixas/ornamentais-1` (horizontal 3:2), `ornamentais-2` e `ornamentais-3` (verticais 4:5) | 3 | uma foto horizontal e duas verticais |
-| Faixa Vasos | `faixas/vasos-1` a `vasos-5` (verticais 4:5) | 5 | vasos em ambiente |
-| Faixa Nossa História | `faixas/historia-1` (horizontal 4:3), `historia-2` e `historia-3` (verticais 4:5) | 3 | fachada, equipe, balcão |
-| Avaliações | `faixas/avaliacoes-1` (horizontal 4:3) | 1 | corredor ou fachada lateral da loja |
+Ideal: luz do dia, fundo limpo, sem etiqueta de preço, mínimo de 1400 px no lado maior e o assunto no meio da foto.
 
 Depois de trocar qualquer arquivo, rode `npm run images`.

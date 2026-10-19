@@ -139,26 +139,26 @@ A página diz 4,8 e "mais de 200 avaliações" (conferido no perfil em 25/09/202
 ### Fotos: política e como trocar
 
 - Fotos reais, enviadas pelo dono. Nunca foto gerada por IA. Nada de banco de imagem em produção sem aprovação dele.
-- Enquanto as fotos reais não chegam, os 29 arquivos de `assets-src/loja-fisica/categorias/` e `faixas/` são PLACEHOLDER: recortes diferentes (zoom e região) das cinco fotos que já existiam no repositório (quatro de categoria do Unsplash e a fachada da rua). Eles não mostram produtos da loja. O HTML tem comentários `TODO foto real` antes das categorias e antes das faixas, e `assets-src/loja-fisica/README.md` lista a origem e o recorte de cada arquivo.
+- Desde 19/10/2026 as 28 fotos de `assets-src/loja-fisica/categorias/` e `faixas/` são próprias, feitas na loja e enviadas pelo dono (13 fotos de celular, recortadas na proporção final). Saíram as quatro fotos do Unsplash e os comentários `TODO foto real` do HTML. Origem e recorte de cada arquivo: `assets-src/loja-fisica/README.md`.
 - Para trocar uma foto: salvar o arquivo novo com o mesmo nome (por exemplo `assets-src/loja-fisica/categorias/vasos-2.jpg`), rodar `npm run images`, conferir o enquadramento (o recorte é centralizado), revisar o `alt` e o `data-caption` (ou a `figcaption`) do HTML, rodar `npm run check` e, como a mudança toca imagens, `npm run check:build`. Trocar mantendo o nome não exige mexer em HTML além de `alt` e legenda.
 - Foto a mais: nas categorias, o HTML ganha um `<li>`; nas faixas, a proporção entra em `STORE_STRIP_RATIOS` (`scripts/optimize-images.mjs`) antes da foto. O script avisa no fim do log nome fora do padrão, numeração com buraco e foto sem proporção.
 - Variantes geradas em `src/assets/generated/`: `loja-cat-<cat>-<n>-{480,960}.{avif,webp}` (4:5) e `loja-faixa-<faixa>-<n>-{640,1200}.{avif,webp}` (proporção por foto). A fachada (`loja-fachada-*`) segue como estava.
 - Ideal para as fotos novas: luz do dia, fundo limpo, sem logotipo de terceiros, mínimo de 1400 px no lado maior e retrato 4:5 nos carrosséis. Foto de celular em pé vale (a orientação do EXIF é respeitada e os metadados, inclusive localização, não vão para a imagem).
 
-Fotos pendentes (todas hoje PLACEHOLDER):
+Fotos de 19/10/2026: quantidade por lugar
 
-| Uso | Arquivos | Qtd. | Conteúdo pedido |
+| Uso | Arquivos | Qtd. | O que mostra |
 |---|---|---|---|
-| Carrossel Vasos | `categorias/vasos-1` a `vasos-4` | 4 | Vasos de alto padrão, cerâmica, barro e cachepô |
-| Carrossel Adubos | `categorias/adubos-1` a `adubos-4` | 4 | Adubo ensacado em sacolinhas pequenas (bancada, mão segurando) |
-| Carrossel Terras | `categorias/terras-1` a `terras-4` | 4 | Substrato de 40 L (saco, terra aberta) |
-| Carrossel Plantas Ornamentais | `categorias/plantas-1` a `plantas-5` | 5 | Ficus, monstera, samambaia e plantas de maior valor |
-| Faixa Ornamentais | `faixas/ornamentais-1` (3:2), `ornamentais-2` e `-3` (4:5) | 3 | Uma horizontal e duas verticais |
-| Faixa Vasos | `faixas/vasos-1` a `vasos-5` (4:5) | 5 | Vasos em ambiente |
-| Nossa História | `faixas/historia-1` (4:3), `historia-2` e `-3` (4:5) | 3 | Fachada, equipe e balcão |
-| Avaliações | `faixas/avaliacoes-1` (4:3) | 1 | Corredor ou fachada lateral da loja |
+| Carrossel Vasos | `categorias/vasos-1` a `vasos-3` | 3 | Dois vasos de cerâmica esmaltada e a prateleira de vasos de polietileno |
+| Carrossel Adubos | `categorias/adubos-1` a `adubos-3` | 3 | Saquinho de NPK 04-14-08 fechado na loja (três recortes do mesmo saquinho) |
+| Carrossel Terras | `categorias/terras-1` a `terras-5` | 5 | Jeronima 30 L, Terral orquídeas, samambaia e suculentas, terra ensacada |
+| Carrossel Plantas Ornamentais | `categorias/plantas-1` a `plantas-5` | 5 | Folhagem em vaso, figueira-lira, palmeira-leque, aglaonemas, begônias e espadas-de-são-jorge |
+| Faixa Ornamentais | `faixas/ornamentais-1` (3:2), `ornamentais-2` e `-3` (4:5) | 3 | Pátio inteiro, samambaias, folhagem de folha recortada |
+| Faixa Vasos | `faixas/vasos-1` a `vasos-5` (4:5) | 5 | Duas cerâmicas, barro na prateleira, dois vasos de polietileno |
+| Nossa História | `faixas/historia-1` (4:3), `historia-2` e `-3` (4:5) | 3 | Entrada (recorte da foto da rua), letreiro, pátio |
+| Avaliações | `faixas/avaliacoes-1` (4:3) | 1 | Letreiro no muro verde, visto de lado |
 
-As três fotos de `historia-*` e a de `avaliacoes-1` saem da foto da rua feita pela equipe, mas ainda não mostram equipe, balcão nem corredor interno.
+Vasos e adubos passaram de 4 para 3 fotos, porque só havia duas fotos de vaso e uma de adubo; o mínimo do carrossel continua 3. Terras passou de 4 para 5. Algumas fotos de vaso aparecem no carrossel e na faixa com enquadramentos diferentes.
 
 ### Tracking
 
@@ -166,7 +166,7 @@ Nada mudou: nenhum evento, `cta_label`, `cta_location` (`header`, `hero`, `mudas
 
 ### Pendências do dono
 
-1. Enviar as fotos reais (tabela acima) e confirmar que o enquadramento ficou bom.
+1. Conferir o enquadramento das fotos de 19/10/2026 e, quando der, mandar mais fotos de adubo, vasos de barro e cachepô, equipe e balcão (lista em `assets-src/loja-fisica/README.md`).
 2. Confirmar a lista final de "Aqui você encontra".
 3. Escolher a frase final de "Aqui você não encontra" (o texto atual é provisório; propor 2 a 3 variações sem travessão nem clichê).
 4. Enviar texto e fatos de "Nossa História".
