@@ -123,7 +123,7 @@ Contrato de marcação:
 Texto só com fatos que a página já afirma, sem preço, entrega, forma de pagamento nem número novo (o teste confere). Sem Cards aninhados e sem ícones decorativos.
 
 - **Ornamentais** (`#faixa-ornamentais`): título e linha de apoio; mosaico com uma foto horizontal 3:2 e duas verticais 4:5. No celular a horizontal ocupa a linha e as duas verticais ficam lado a lado; no desktop vira grade de 12 colunas.
-- **Vasos** (`#faixa-vasos`): cinco fotos 4:5 numa fila que rola de lado com `scroll-snap`, só em CSS, de borda a borda no celular, cada uma com legenda de material (hoje todas "Barro", porque os placeholders vêm de uma foto de vasos de barro). A região rolável tem `tabindex="0"` e `role="region"`; o `main.ts` tira o `tabindex` quando não há o que rolar (a partir de 1280 px as cinco cabem).
+- **Vasos** (`#faixa-vasos`): cinco fotos 4:5 numa fila que rola de lado com `scroll-snap`, só em CSS, de borda a borda no celular, cada uma com legenda que começa pelo material (Barro, Cerâmica ou Polietileno). A região rolável tem `tabindex="0"` e `role="region"`; o `main.ts` tira o `tabindex` quando não há o que rolar (a partir de 1280 px as cinco cabem).
 - **Nossa História** (`#nossa-historia`): título "Mais de 40 anos no Setor Sul.", foto 4:3 da entrada, três parágrafos curtos (nome e endereço, balcão que orienta o cuidado, estacionamento na porta) e duas fotos verticais. No desktop a foto da entrada fica à esquerda, alta, e título, texto e as duas fotos verticais ficam na coluna da direita. O texto atual usa só o que o site já afirma; o dono ainda vai enviar fatos de história (pendência).
 
 ### Avaliações com foto e números que sobem
@@ -138,27 +138,28 @@ A página diz 4,8 e "mais de 200 avaliações" (conferido no perfil em 25/09/202
 
 ### Fotos: política e como trocar
 
-- Fotos reais, enviadas pelo dono. Nunca foto gerada por IA. Nada de banco de imagem em produção sem aprovação dele.
-- Desde 19/10/2026 as 28 fotos de `assets-src/loja-fisica/categorias/` e `faixas/` são próprias, feitas na loja e enviadas pelo dono (13 fotos de celular, recortadas na proporção final). Saíram as quatro fotos do Unsplash e os comentários `TODO foto real` do HTML. Origem e recorte de cada arquivo: `assets-src/loja-fisica/README.md`.
+- Fotos reais. Nunca foto gerada por IA. Foto própria da loja primeiro; onde ainda não há, foto do Pexels (aprovado pelo dono em 19/10/2026).
+- Enquadramento aberto: a foto entra quase inteira, só com o corte mínimo para a proporção. Não recortar um detalhe de uma foto e ampliar (o dono reprovou: o zoom ficava forte e a mesma foto virava várias).
+- Origem de cada arquivo (própria ou número do Pexels): `assets-src/loja-fisica/README.md`.
 - Para trocar uma foto: salvar o arquivo novo com o mesmo nome (por exemplo `assets-src/loja-fisica/categorias/vasos-2.jpg`), rodar `npm run images`, conferir o enquadramento (o recorte é centralizado), revisar o `alt` e o `data-caption` (ou a `figcaption`) do HTML, rodar `npm run check` e, como a mudança toca imagens, `npm run check:build`. Trocar mantendo o nome não exige mexer em HTML além de `alt` e legenda.
 - Foto a mais: nas categorias, o HTML ganha um `<li>`; nas faixas, a proporção entra em `STORE_STRIP_RATIOS` (`scripts/optimize-images.mjs`) antes da foto. O script avisa no fim do log nome fora do padrão, numeração com buraco e foto sem proporção.
 - Variantes geradas em `src/assets/generated/`: `loja-cat-<cat>-<n>-{480,960}.{avif,webp}` (4:5) e `loja-faixa-<faixa>-<n>-{640,1200}.{avif,webp}` (proporção por foto). A fachada (`loja-fachada-*`) segue como estava.
 - Ideal para as fotos novas: luz do dia, fundo limpo, sem logotipo de terceiros, mínimo de 1400 px no lado maior e retrato 4:5 nos carrosséis. Foto de celular em pé vale (a orientação do EXIF é respeitada e os metadados, inclusive localização, não vão para a imagem).
 
-Fotos de 19/10/2026: quantidade por lugar
+Fotos por lugar (revisão de 19/10/2026)
 
 | Uso | Arquivos | Qtd. | O que mostra |
 |---|---|---|---|
-| Carrossel Vasos | `categorias/vasos-1` a `vasos-3` | 3 | Dois vasos de cerâmica esmaltada e a prateleira de vasos de polietileno |
-| Carrossel Adubos | `categorias/adubos-1` a `adubos-3` | 3 | Saquinho de NPK 04-14-08 fechado na loja (três recortes do mesmo saquinho) |
-| Carrossel Terras | `categorias/terras-1` a `terras-5` | 5 | Jeronima 30 L, Terral orquídeas, samambaia e suculentas, terra ensacada |
-| Carrossel Plantas Ornamentais | `categorias/plantas-1` a `plantas-5` | 5 | Folhagem em vaso, figueira-lira, palmeira-leque, aglaonemas, begônias e espadas-de-são-jorge |
-| Faixa Ornamentais | `faixas/ornamentais-1` (3:2), `ornamentais-2` e `-3` (4:5) | 3 | Pátio inteiro, samambaias, folhagem de folha recortada |
-| Faixa Vasos | `faixas/vasos-1` a `vasos-5` (4:5) | 5 | Duas cerâmicas, barro na prateleira, dois vasos de polietileno |
-| Nossa História | `faixas/historia-1` (4:3), `historia-2` e `-3` (4:5) | 3 | Entrada (recorte da foto da rua), letreiro, pátio |
-| Avaliações | `faixas/avaliacoes-1` (4:3) | 1 | Letreiro no muro verde, visto de lado |
+| Carrossel Vasos | `categorias/vasos-1` a `vasos-3` | 3 | Dois vasos de cerâmica esmaltada da loja e vasos de cerâmica coloridos (Pexels) |
+| Carrossel Adubos | `categorias/adubos-1` a `adubos-3` | 3 | Saquinho de NPK 04-14-08 da loja, adubo granulado e composto orgânico (Pexels) |
+| Carrossel Terras | `categorias/terras-1` a `terras-5` | 5 | Jeronima 30 L, Terral orquídeas, samambaia e suculentas, terra ensacada (todas da loja) |
+| Carrossel Plantas Ornamentais | `categorias/plantas-1` a `plantas-5` | 5 | Pacová e Ficus lyrata da loja; costela-de-adão, zamioculca e lírio-da-paz (Pexels) |
+| Faixa Ornamentais | `faixas/ornamentais-1` (3:2), `ornamentais-2` e `-3` (4:5) | 3 | Pátio da loja; calatéia e antúrios (Pexels) |
+| Faixa Vasos | `faixas/vasos-1` a `vasos-5` (4:5) | 5 | Duas cerâmicas da loja; barro, cerâmica rasa e polietileno preto (Pexels) |
+| Nossa História | `faixas/historia-1` (4:3), `historia-2` e `-3` (4:5) | 3 | Entrada (recorte da foto da rua), letreiro, pacová no pátio |
+| Avaliações | `src/assets/fachada.jpg` (4:3) | 1 | A mesma fachada das outras landing pages (`fachada-{480,900}`) |
 
-Vasos e adubos passaram de 4 para 3 fotos, porque só havia duas fotos de vaso e uma de adubo; o mínimo do carrossel continua 3. Terras passou de 4 para 5. Algumas fotos de vaso aparecem no carrossel e na faixa com enquadramentos diferentes.
+As fotos próprias de vaso, do pátio e da pacová aparecem duas vezes cada (carrossel e faixa). Cada foto própria nova substitui uma do Pexels sem mexer no layout.
 
 ### Tracking
 
@@ -166,7 +167,7 @@ Nada mudou: nenhum evento, `cta_label`, `cta_location` (`header`, `hero`, `mudas
 
 ### Pendências do dono
 
-1. Conferir o enquadramento das fotos de 19/10/2026 e, quando der, mandar mais fotos de adubo, vasos de barro e cachepô, equipe e balcão (lista em `assets-src/loja-fisica/README.md`).
+1. Quando der, mandar fotos próprias para trocar as do Pexels: plantas (costela-de-adão, zamioculca, lírio-da-paz, calatéia, antúrio), vasos de barro, cachepô e polietileno, adubos, equipe e balcão (lista em `assets-src/loja-fisica/README.md`).
 2. Confirmar a lista final de "Aqui você encontra".
 3. Escolher a frase final de "Aqui você não encontra" (o texto atual é provisório; propor 2 a 3 variações sem travessão nem clichê).
 4. Enviar texto e fatos de "Nossa História".

@@ -256,7 +256,6 @@ const STRIP_RATIOS: Record<string, number> = {
   "ornamentais-1": 3 / 2, "ornamentais-2": 4 / 5, "ornamentais-3": 4 / 5,
   "vasos-1": 4 / 5, "vasos-2": 4 / 5, "vasos-3": 4 / 5, "vasos-4": 4 / 5, "vasos-5": 4 / 5,
   "historia-1": 4 / 3, "historia-2": 4 / 5, "historia-3": 4 / 5,
-  "avaliacoes-1": 4 / 3,
 };
 const PHOTO_CLASS_RATIOS: Record<string, number> = { "photo-3x2": 3 / 2, "photo-4x3": 4 / 3, "photo-4x5": 4 / 5 };
 const photoName = (img: Element) => /loja-faixa-([a-z]+-\d+)-1200\.webp$/.exec(img.getAttribute("src") ?? "")?.[1] ?? "";
@@ -453,15 +452,14 @@ describe("avaliações com foto da loja e números que sobem (HTML estático)", 
     expect(quotes.every((quote) => normalize(quote.querySelector("blockquote")!.textContent).length > 40)).toBe(true);
   });
 
-  it("a foto da loja tem alt descritivo, dimensões e arquivos que existem, e fica antes das citações", () => {
+  it("a foto da loja é a mesma fachada das outras landing pages, com alt descritivo, e fica antes das citações", () => {
     const photo = reviews.querySelector(".reviews-photo")!;
     const img = photo.querySelector("img")!;
-    expect(photoName(img)).toBe("avaliacoes-1");
     expect(normalize(img.getAttribute("alt")).length).toBeGreaterThanOrEqual(20);
-    expect(Number(img.getAttribute("width")) / Number(img.getAttribute("height"))).toBeCloseTo(STRIP_RATIOS["avaliacoes-1"], 5);
+    expect(Number(img.getAttribute("width")) / Number(img.getAttribute("height"))).toBeCloseTo(4 / 3, 5);
     expect(img.getAttribute("loading")).toBe("lazy");
     for (const file of [img.getAttribute("src")!, ...srcsetFiles(photo)]) {
-      expect(file).toMatch(/^\/src\/assets\/generated\/loja-faixa-avaliacoes-1-(640|1200)\.(avif|webp)$/);
+      expect(file).toMatch(/^\/src\/assets\/generated\/fachada-(480|900)\.(avif|webp)$/);
       expect(existsSync(path.join(process.cwd(), file)), file).toBe(true);
     }
     const head = reviews.querySelector(".reviews-head")!;

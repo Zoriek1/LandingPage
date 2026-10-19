@@ -20,7 +20,7 @@
  *                                   -> loja-cat-<cat>-<n>-{480,960}.{avif,webp}
  *                                      recorte cover 4:5 retrato (centralizado)
  *   assets-src/loja-fisica/faixas/<faixa>-<n>.<ext>
- *                                   faixa em ornamentais, vasos, historia, avaliacoes
+ *                                   faixa em ornamentais, vasos, historia
  *                                   -> loja-faixa-<faixa>-<n>-{640,1200}.{avif,webp}
  *                                      recorte cover na proporção da tabela
  *                                      STORE_STRIP_RATIOS (uma por foto)
@@ -97,7 +97,6 @@ const STORE_STRIP_RATIOS = {
   "historia-1": [4, 3],
   "historia-2": [4, 5],
   "historia-3": [4, 5],
-  "avaliacoes-1": [4, 3],
 };
 
 function ensureDir(dir) {
