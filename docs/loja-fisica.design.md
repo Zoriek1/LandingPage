@@ -120,8 +120,7 @@ Pedido do dono, a partir de um wireframe: falar com o morador de casa e apartame
 
 ### Fotos
 
-- Fotos reais do dono, nunca geradas por IA. Desde 19/10/2026 todas as fotos de categorias e faixas são da loja (detalhes na seção "Fotos próprias de 19/10/2026").
-- Os recortes pequenos (os mais fechados) saem mais macios que uma foto real de 1400 px. É esperado e some quando a foto real entrar.
+- Fotos reais, nunca geradas por IA: próprias da loja e, onde ainda não há, do Pexels (detalhes na seção "Fotos próprias de 19/10/2026").
 - `alt` e legendas foram escritos para o que cada recorte mostra hoje; ao trocar a foto, reescrever os dois. Origem, recorte e a tabela de fotos pendentes: `assets-src/loja-fisica/README.md` e `docs/loja-fisica.md`.
 
 ### Evidência e limites
@@ -133,8 +132,9 @@ Pedido do dono, a partir de um wireframe: falar com o morador de casa e apartame
 
 ## Fotos próprias de 19/10/2026
 
-- Treze fotos de celular do dono substituem todos os placeholders: vasos de cerâmica, saquinho de adubo NPK, sacos de substrato, terra ensacada, o pátio do garden center, uma folhagem em vaso e o letreiro no muro verde. Cada foto foi recortada na proporção final (4:5, 3:2 ou 4:3) antes do `npm run images`.
-- Os recortes deixam de fora as etiquetas de preço, porque a página não mostra preço, e os riscos vermelhos que vieram em algumas fotos.
-- Legendas da faixa Vasos começam pelo material real da foto: duas de cerâmica, uma de barro e duas de polietileno (antes eram todas "Barro").
-- O carrossel de terras se chama "Terras e substratos", porque as fotos mostram sacos de 30 L e pacotes menores, não o saco de 40 L do rótulo antigo. O texto da categoria ("Substrato em saco de 40 L") não mudou.
-- Pontos fracos conhecidos: o carrossel de adubos usa três recortes do mesmo saquinho; vasos tem só duas fotos de vaso de verdade e repete enquadramentos na faixa; recortes de 400 a 520 px saem macios em tela grande. Fotos novas desses assuntos resolvem sem mexer no layout.
+- Treze fotos de celular do dono: vasos de cerâmica, saquinho de adubo NPK, sacos de substrato, terra ensacada, o pátio do garden center com o Ficus lyrata, a pacová em vaso preto e o letreiro no muro verde.
+- Primeira versão: recortes fechados de detalhes dessas fotos para preencher 28 lugares. O dono reprovou: zoom forte, a mesma foto virando várias e a placa repetida três vezes. Na revisão, cada foto entra quase inteira (só o corte mínimo para a proporção) e os lugares sem foto própria do assunto usam Pexels. Plantas: só a pacová e o Ficus lyrata são da loja; as outras são espécies da lista "Aqui você encontra" (costela-de-adão, zamioculca, lírio-da-paz) e, na faixa, calatéia e antúrio.
+- Avaliações usam a mesma fachada das outras landing pages (`src/assets/fachada.jpg`), como pediu o dono. A placa aparece uma vez, em Nossa História.
+- A etiqueta do saquinho de adubo teve a linha do preço coberta com a cor da etiqueta, porque a página não mostra preço. Os riscos vermelhos das fotos de celular ficam de fora pelo alinhamento do corte.
+- Legendas da faixa Vasos começam pelo material da foto: duas de cerâmica da loja, barro, cerâmica rasa e polietileno preto.
+- O carrossel de terras se chama "Terras e substratos", porque as fotos mostram sacos de 30 L e pacotes menores. O texto da categoria ("Substrato em saco de 40 L") não mudou.
