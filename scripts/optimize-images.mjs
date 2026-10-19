@@ -15,6 +15,10 @@
  *   assets-src/loja-fisica/fachada-rua.jpg
  *                                   -> loja-fachada-mobile-{480,900} e
  *                                      loja-fachada-lado-{960,1360}.{avif,webp}
+ *   assets-src/loja-fisica/corredor-plantas.jpg
+ *                                   -> loja-foto-corredor-{640,960,1280}.{avif,webp}
+ *   assets-src/loja-fisica/letreiro.jpg
+ *                                   -> loja-foto-letreiro-{640,1280}.{avif,webp}
  *   assets-src/loja-fisica/categorias/<nome>.<ext>
  *                                   -> loja-cat-<nome>-{320,640}.{avif,webp}
  *
@@ -62,6 +66,16 @@ const STORE_FACADE_CROPS = [
   { name: "lado", area: { left: 0.22, top: 0.25, width: 0.68, height: 0.75 }, widths: [960, 1360] },
 ];
 const STORE_CATEGORY_WIDTHS = [320, 640];
+
+/**
+ * Fotos da equipe dentro da página, recortadas em frações da foto original.
+ * O corredor (16:9) abre a lista de mudas; o letreiro (4:3) fica na visita e
+ * deixa de fora o risco vermelho do canto superior direito da foto.
+ */
+const STORE_PHOTO_CROPS = [
+  { file: "corredor-plantas.jpg", name: "corredor", area: { left: 0, top: 0.32, width: 1, height: 0.422 }, widths: [640, 960, 1280] },
+  { file: "letreiro.jpg", name: "letreiro", area: { left: 0, top: 0.11, width: 1, height: 0.5625 }, widths: [640, 1280] },
+];
 
 function ensureDir(dir) {
   mkdirSync(dir, { recursive: true });
@@ -133,7 +147,7 @@ async function emitCroppedVariants(sourcePath, area, widths, outputPrefix) {
   return written;
 }
 
-/** Hero e categorias da loja física; pasta ausente não gera nada. */
+/** Hero, fotos e categorias da loja física; pasta ausente não gera nada. */
 async function emitStoreVariants() {
   const written = [];
   const facade = join(STORE_SOURCE_DIR, "fachada-rua.jpg");
@@ -141,6 +155,12 @@ async function emitStoreVariants() {
     for (const crop of STORE_FACADE_CROPS) {
       written.push(...(await emitCroppedVariants(facade, crop.area, crop.widths, `loja-fachada-${crop.name}`)));
     }
+  }
+
+  for (const photo of STORE_PHOTO_CROPS) {
+    const source = join(STORE_SOURCE_DIR, photo.file);
+    if (!existsSync(source)) continue;
+    written.push(...(await emitCroppedVariants(source, photo.area, photo.widths, `loja-foto-${photo.name}`)));
   }
 
   const categoryDir = join(STORE_SOURCE_DIR, "categorias");

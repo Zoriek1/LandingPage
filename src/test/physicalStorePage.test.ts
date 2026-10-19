@@ -48,6 +48,17 @@ describe("conteúdo estático da loja física", () => {
     }
   });
 
+  it("usa só fotos próprias da loja, com texto alternativo e sem salto ao carregar", () => {
+    const sources = [...page.querySelectorAll("main img, main source")].map((el) => el.getAttribute("src") ?? el.getAttribute("srcset")!);
+    for (const src of sources) expect(src).toMatch(/^\/src\/assets\/generated\/loja-/);
+    for (const id of ["mudas", "visite"]) {
+      const img = page.querySelector<HTMLImageElement>(`#${id} .store-photo img`)!;
+      expect(img.alt.length).toBeGreaterThan(20);
+      expect(img.getAttribute("loading")).toBe("lazy");
+      expect(Number(img.getAttribute("width")) * Number(img.getAttribute("height"))).toBeGreaterThan(0);
+    }
+  });
+
   it("mostra o logo da marca no cabeçalho, com o nome para leitor de tela", () => {
     const brand = page.querySelector(".site-header .brand")!;
     expect(brand.querySelector(".brand-logo")?.getAttribute("aria-hidden")).toBe("true");
