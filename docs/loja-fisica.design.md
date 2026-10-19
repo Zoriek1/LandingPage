@@ -71,3 +71,11 @@ Pedido do dono depois da rodada de plantas e mudas: tirar o "round corner" do to
 - Acessibilidade: com texto ampliado pelo usuário (media query em `em`) botões, categorias e sumário viram uma coluna e nada vaza; no celular o `scroll-padding-bottom` impede que o foco fique escondido sob a barra fixa; em cores forçadas o logo vira `CanvasText` e os botões ganham borda; o nome acessível do Waze contém o texto visível; `#store-status` só é reescrito quando o texto muda.
 - Rastreio sem mudança: mesmos `data-*`, ids e hrefs, e a mesma ordem de links fixada em `physicalStorePage.test.ts`. Os links internos (sumário e "Ver a lista") não têm `data-*` e não disparam evento; o teste confere isso.
 - Lighthouse mobile local (`scripts/perf/lighthouse-run.mjs`, 10 rodadas intercaladas com a versão anterior, mediana): nota 85 e 85; LCP 2,48 s e 2,42 s; CLS 0,053 e 0,002. Com GTM e gtag bloqueados, 95 nas duas, TBT 0: a oscilação da nota vem dos scripts do Google. No desktop a foto do topo caiu de 88 KB para 38 a 62 KB (AVIF).
+
+## Fotos próprias de 19/10/2026
+
+- As quatro miniaturas das categorias trocaram o Unsplash por fotos feitas na loja: vaso de cerâmica, adubo NPK 04-14-08 fracionado, substrato Jeronima e uma folhagem do pátio. Os recortes deixam de fora as etiquetas de preço (o preço muda e a foto ficaria velha) e os riscos vermelhos das fotos enviadas. Sem recorte especial no CSS: saíram a ampliação do adubo e a posição do saco de terra.
+- `#mudas` ganhou a foto do pátio do garden center logo abaixo do texto de abertura (16:9 no celular, 5:2 no desktop). A seção continua sendo a lista em texto; a foto só mostra que as plantas estão lá.
+- A visita ganhou a foto do letreiro no muro verde, depois da dica de rota, com a legenda "Procure o muro verde com o letreiro na Rua 132." Fica na coluna do texto no desktop para não alongar o mapa fixo.
+- Todas as fotos novas carregam com `loading="lazy"`, `width`/`height` e `aspect-ratio`, então não mexem no LCP (a fachada do topo continua sendo o maior elemento) nem no CLS.
+- Fotos enviadas e não usadas: sacos Terral (suculentas, samambaia e orquídeas, com etiqueta de preço), vaso azul ainda no plástico e terra ensacada sem rótulo.

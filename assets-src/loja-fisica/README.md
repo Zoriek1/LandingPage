@@ -1,10 +1,14 @@
 # Fotos da loja física
 
-- `fachada-rua.jpg`: foto da entrada da loja (Rua 132), feita pela equipe.
-- `categorias/*.jpg`: fotos do Unsplash (licença Unsplash: uso comercial livre, sem atribuição obrigatória). Não são produtos da loja; trocar por fotos próprias quando houver.
-  - `vasos.jpg`: Nathalie Klippert, https://unsplash.com/photos/brown-clay-pots-with-green-plants-9II6ibogNLk
-  - `terras.jpg`: Alicia Christin Gerald, https://unsplash.com/photos/bQ9y93kdk4c
-  - `adubos.jpg`: Zemos, https://unsplash.com/photos/pile-of-small-light-brown-granular-material-on-black-5-LBYIucVGM
-  - `plantas.jpg`: Sehajpal Singh, https://unsplash.com/photos/a-bunch-of-plants-that-are-on-a-shelf-BjvKS274fk8
+Todas as fotos desta pasta foram feitas pela equipe na loja (Rua 132, Setor Sul).
+
+- `fachada-rua.jpg`: entrada da loja, usada no topo.
+- `corredor-plantas.jpg`: pátio do garden center, abre a seção de plantas e mudas (`loja-foto-corredor-*`).
+- `letreiro.jpg`: muro verde com o letreiro, na seção de visita (`loja-foto-letreiro-*`). O recorte em `scripts/optimize-images.mjs` deixa de fora o risco vermelho do canto superior direito.
+- `categorias/*.jpg`: miniaturas das categorias, já recortadas em quadrado a partir das fotos de 19/10/2026, sem as etiquetas de preço.
+  - `vasos.jpg`: vaso de cerâmica esmaltada da prateleira.
+  - `adubos.jpg`: saco de adubo NPK 04-14-08 fracionado na loja.
+  - `terras.jpg`: saco de substrato Jeronima de 30 L.
+  - `plantas.jpg`: folhagem em vaso no pátio.
 
 Depois de trocar qualquer arquivo, rode `npm run images`.
