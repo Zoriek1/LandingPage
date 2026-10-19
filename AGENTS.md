@@ -124,6 +124,7 @@ continuam rodando e podem alimentar outra coisa — verificar antes).
 |-------|-----------|
 | `src/assets/` | Imagens/fontes da landing principal; `src/assets/generated/` tem os AVIF/WebP responsivos gerados por `npm run images`. |
 | `assets-src/heros/` | Fotos-fonte dos heroes das LPs de anúncio — ver [`assets-src/heros/README.md`](assets-src/heros/README.md). |
+| `assets-src/loja-fisica/` | Fotos-fonte da `/loja-fisica/` (fachada, carrosséis das categorias e faixas). Hoje as de categorias e faixas são PLACEHOLDER até chegarem as fotos reais. Ver [`assets-src/loja-fisica/README.md`](assets-src/loja-fisica/README.md) e [`docs/loja-fisica.md`](docs/loja-fisica.md). |
 
 ### Hooks Customizados
 
@@ -220,7 +221,7 @@ npm run typecheck         # TypeScript (app + node), sem emitir
 npm run test               # Vitest (unitários)
 npm run check               # typecheck + lint + test
 npm run check:build          # check + build completo + testes de dist + inspeção do bundle
-npm run images                # Gera AVIF/WebP responsivos a partir de assets-src/heros
+npm run images                # Gera AVIF/WebP responsivos a partir de assets-src/heros e assets-src/loja-fisica
 ```
 
 Deploy acontece automaticamente ao fazer push na branch `main`.

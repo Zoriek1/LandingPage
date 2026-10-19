@@ -1,6 +1,6 @@
 # Loja física — registro de design
 
-Escopo: somente `/loja-fisica/`. Modo: Persuade. Registro da revisão final de 24/09/2026; decisões implementadas, sem substituir a identidade das demais páginas.
+Escopo: somente `/loja-fisica/`. Modo: Persuade. Registro da revisão final de 24/09/2026; decisões implementadas, sem substituir a identidade das demais páginas. Os redesenhos de 25/09, 11/10 e 17/10/2026 vêm em ordem cronológica no fim; o último prevalece onde houver conflito (categorias, `#mudas`, avaliações).
 
 ## Identidade e hierarquia
 
@@ -38,6 +38,8 @@ Disposição visual/frontend: ship, condicionada à conclusão dos gates de inte
 
 ## Plantas e mudas de 11/10/2026
 
+Substituído em 17/10/2026: a seção `#mudas` deixou de listar frutíferas e árvores, as categorias ganharam carrossel e as âncoras por grupo saíram (ver "Foco ornamental de 17/10/2026").
+
 Motivo: experiência na página de destino "Abaixo da média" em 12 de 13 palavras-chave da campanha "PESQUISA | IR PARA LOJA". "loja de plantas" é 60% do gasto e boa parte das buscas procura muda, frutífera ou uma planta específica, termos que a página não citava.
 
 - Topo: H1 "Plantas, mudas, vasos e adubo para levar na hora." e subtítulo com "loja de plantas" e "jardinagem". Ligar, WhatsApp e Como chegar em três colunas iguais; no celular o ícone fica sobre o rótulo para caberem lado a lado. Ligar segue cheio em verde; WhatsApp e Como chegar em contorno, com o ícone do WhatsApp no verde próprio do DS (`--color-whatsapp-base`).
@@ -51,6 +53,8 @@ Motivo: experiência na página de destino "Abaixo da média" em 12 de 13 palavr
 - Lighthouse mobile local (`scripts/perf/lighthouse-run.mjs`, mediana de 5): 88 antes e 88 depois; LCP 2,49 s e 2,45 s; CLS 0,052 e 0,053.
 
 ## Repaginação de 11/10/2026
+
+Substituído em 17/10/2026 nos itens de categorias (miniatura no celular, quatro colunas em 4:3), de plantas e mudas (sumário e âncoras por grupo) e de avaliações (sem foto); os demais itens seguem valendo.
 
 Pedido do dono depois da rodada de plantas e mudas: tirar o "round corner" do topo (o card creme de cantos orgânicos), fazer um degradê da foto para o texto, nada de caixa abaulada no desktop, logo real da empresa no lugar do texto "Plante Uma Flor" e seções mais organizadas. Plano escolhido entre três direções (pesquisa no 21st, Aceternity, Magic UI e React Bits; tudo portado para HTML e CSS, sem React).
 
@@ -72,10 +76,65 @@ Pedido do dono depois da rodada de plantas e mudas: tirar o "round corner" do to
 - Rastreio sem mudança: mesmos `data-*`, ids e hrefs, e a mesma ordem de links fixada em `physicalStorePage.test.ts`. Os links internos (sumário e "Ver a lista") não têm `data-*` e não disparam evento; o teste confere isso.
 - Lighthouse mobile local (`scripts/perf/lighthouse-run.mjs`, 10 rodadas intercaladas com a versão anterior, mediana): nota 85 e 85; LCP 2,48 s e 2,42 s; CLS 0,053 e 0,002. Com GTM e gtag bloqueados, 95 nas duas, TBT 0: a oscilação da nota vem dos scripts do Google. No desktop a foto do topo caiu de 88 KB para 38 a 62 KB (AVIF).
 
+## Foco ornamental de 17/10/2026
+
+Pedido do dono, a partir de um wireframe: falar com o morador de casa e apartamento (planta ornamental, vaso bonito, adubo e terra para o vaso), e não com quem procura muda frutífera, árvore, chácara ou fazenda. Hero, faixa "Na loja" e visita ficam como estão, porque ele gosta deles. Sem entrega, forma de pagamento nem preço. Estética premium dentro da identidade existente: Fraunces e Jost, verde, dourado e creme dos tokens, sem glow, glassmorphism, gradiente decorativo nem excesso de pills.
+
+### Hierarquia e ritmo
+
+- Ordem: topo, "Na loja", categorias, "Aqui você encontra / não encontra", Ornamentais, Vasos, Nossa História, avaliações e visita. A ação primária segue sendo ligar ou chamar no WhatsApp; as faixas novas não têm CTA, e o bloco de `#mudas` mantém Ligar e WhatsApp.
+- Cada faixa tem um formato próprio para a página não repetir a mesma seção: mosaico assimétrico (Ornamentais), fila que rola de lado (Vasos) e foto grande com texto curto (Nossa História). A segunda e a terceira faixas dividem o espaço de uma seção só (`.strip + .strip`), então o respiro entre elas não dobra. Avaliações continua sendo a única faixa tonal (`--color-surface-sunken`).
+- Sem Cards aninhados: foto com raio do token `--radius`, texto solto e espaço fazendo a separação. Legendas em 15 px (`--text-h6-size`) na cor muted.
+
+### Categorias com carrossel
+
+- Celular: o carrossel passa a ocupar a largura inteira, 4:5, com o texto abaixo e uma categoria por vez. A miniatura de 6 rem à esquerda era pequena demais para mais de uma foto. Tablet em duas colunas (a partir de 40em) e desktop em quatro (a partir de 64em), em `em` para o texto ampliado não espremer o carrossel. Saíram o recorte baixo (`.category-art--low`) e o ajuste de `#terras`, feitos para as fotos de banco de imagem.
+- Mecânica do feature-carousel do 21st.dev, adaptada: pilha de cartões com o ativo no centro e o anterior e o próximo espiando atrás (`scale` 0,86, 3 graus de rotação, `opacity` 0,45, deslocamento de 18% do cartão), spring do `framer-motion` e troca animada. O cartão ocupa 76% do palco e o palco tem proporção 100 / 95, o que dá foto 4:5. Se o inset do CSS mudar, `PEEK_X` no componente muda junto.
+- Fora do porte, por ferir o `CLAUDE.md`: painel azul, chips de feature, gradientes, glow, "Live Session", ícones hugeicons e Tailwind inline. Moldura clara de 6 px no token `--color-surface-card`, ícones de traço simples em SVG próprio, estilo todo em `style.css` com tokens.
+- Controles em duas linhas de 3 rem (alvo de 48 px): pausa e indicadores, depois seta anterior, legenda e seta próxima. A legenda ("Vasos e pratos de barro, 1 de 4") mostra o texto inteiro, sem corte; em coluna estreita (container abaixo de 18 rem) as setas ficam nas pontas, em cima, e a legenda ocupa a linha de baixo com altura de duas linhas reservada. Hover só em ponteiro que passa por cima, para não grudar no toque.
+- Movimento: autoplay de 4,5 s, parado por mouse em cima, foco de teclado, arrasto, carrossel fora da tela (menos de 25% visível) e botão de pausa. Com `prefers-reduced-motion`: sem autoplay, sem botão de pausa e troca instantânea.
+- Acessibilidade: grupo com `aria-roledescription="carrossel"` e nome da categoria, cartões inativos em `aria-hidden`, indicador ativo com `aria-current`, só o indicador ativo no Tab e as setas do teclado trocando a foto (o foco acompanha o indicador). Legenda anunciada por região `status` somente depois de ação da pessoa, nunca no autoplay. Em cores forçadas os botões ganham borda e os traços dos indicadores viram cores de sistema (`CanvasText` e `Highlight`).
+- Sem JavaScript, ou se o chunk não chegar: primeira foto estática na mesma caixa do cartão montado (sem salto de layout), com os `alt` no HTML que o Google lê. A ilha só baixa perto da tela e não toca o LCP do hero (detalhes em `docs/loja-fisica.md`).
+
+### "Aqui você encontra / não encontra"
+
+- Duas colunas a partir de 768 px (7fr e 5fr), empilhadas no celular. "Encontra" em Fraunces 500 no verde da marca, com 16 itens em lista tipográfica de colunas automáticas (mínimo de 9,5 rem) e fio fino entre as linhas, não pills nem badges. "Não encontra" em Jost 400 na cor muted, em duas colunas, sem texto riscado: a diferença é só de hierarquia.
+- O remate "Falta de atenção e carinho também não. Aqui sobra." usa Fraunces, com "Aqui sobra." em verde. Texto provisório; o dono escolhe a versão final.
+- Um fio separa o bloco do CTA ("Não achou na lista ou quer garantir a sua planta?"), com Ligar cheio e WhatsApp em contorno, lado a lado a partir de 768 px.
+- Risco de SEO e Ads registrado em `docs/loja-fisica.md`: sai o vocabulário de frutíferas que a rodada de 11/10 tinha acrescentado.
+
+### Faixas
+
+- Ornamentais: título à esquerda e linha de apoio à direita no desktop (grade de 12 colunas); mosaico com a foto 3:2 em 6 colunas e duas verticais 4:5 em 3 colunas cada, a primeira alinhada pela base da linha e a segunda pelo topo. No celular a horizontal ocupa a linha e as verticais ficam lado a lado.
+- Vasos: região rolável de borda a borda com `scroll-snap` obrigatório, cartões de 15 rem (no máximo 68% da tela) e o seguinte aparecendo em parte no celular, o que mostra que rola. O primeiro cartão parte do alinhamento do `.container`. A partir de 1280 px as cinco fotos cabem e viram grade; a região só é parada de Tab enquanto há o que rolar. Legendas de material em muted.
+- Nossa História: título, foto 4:3 da entrada, três parágrafos curtos e duas fotos 4:5. A partir de 64em, foto grande à esquerda e, à direita, título, texto e as duas fotos, com a foto alta descendo até a base das verticais.
+- Todas as fotos reservam a proporção por classe (`photo-3x2`, `photo-4x3`, `photo-4x5`), então não há deslocamento de layout quando carregam. Um teste confere que a classe bate com as dimensões `width` e `height` do HTML.
+- Movimento reduzido, cores forçadas e texto ampliado têm regras próprias no CSS das faixas (conferidas por teste).
+
+### Avaliações
+
+- Foto da loja à esquerda (5 colunas) e, à direita, título "Quem já passou por aqui" com os três números; embaixo, a citação em destaque (6 colunas) e as outras duas. No celular tudo empilha: título, números, foto, citações.
+- Números em Fraunces 500, do tamanho de `--text-h2-size` (`--text-h1-size` a partir de 64em), com o rótulo (`dt`) vindo antes no HTML e aparecendo embaixo, então a leitura é "nota no Google, 4,8". Estrela em SVG ao lado de "nota no Google", em dourado. Fio fino em cima da linha de números.
+- O count-up segue as três regras do `CountUpValue.tsx` das LPs de anúncio: valor final no HTML, mesma quantidade de dígitos na partida e `prefers-reduced-motion` desliga. Uma vez só, ao ficar 40% visível. A Fraunces do subset não tem algarismos tabulares: a largura do número oscila, mas ele fica sozinho na linha e nada se desloca.
+- Dados: 4,8, mais de 200 avaliações e mais de 40 anos são os mesmos do topo. Divergência com `public/lpb/google-reviews.json` (4,9 e 203) registrada em `docs/loja-fisica.md`; nenhum dos dois foi alterado.
+
+### Fotos
+
+- Fotos reais do dono, nunca geradas por IA. Desde 19/10/2026 todas as fotos de categorias e faixas são da loja (detalhes na seção "Fotos próprias de 19/10/2026").
+- Os recortes pequenos (os mais fechados) saem mais macios que uma foto real de 1400 px. É esperado e some quando a foto real entrar.
+- `alt` e legendas foram escritos para o que cada recorte mostra hoje; ao trocar a foto, reescrever os dois. Origem, recorte e a tabela de fotos pendentes: `assets-src/loja-fisica/README.md` e `docs/loja-fisica.md`.
+
+### Evidência e limites
+
+- Cobertura automática: `physicalStorePage.test.ts` (conteúdo, âncoras, ordem das seções, proporção das fotos, CSS das faixas, tracking e carregamento tardio), `categoryCarousel*.test.tsx` (montagem, teclado, pausa, movimento reduzido, foto quebrada, arrasto e falha), `lojaCountUp.test.ts`, `lojaMainEnhancements.test.ts` e `theme.tokens.test.ts` (CSS sem cor literal).
+- Não consta aqui captura de tela do redesenho. Antes de publicar, rodar `scripts/qa-loja-fisica.cjs` (Playwright, porta 4179) em 375, 768 e 1280 px e conferir: sem rolagem horizontal; carrossel girando e parando com hover, foco e pausa; setas, teclado e arrasto; sem autoplay com movimento reduzido; página sem JavaScript com a primeira foto de cada categoria, as listas, as faixas e os valores finais das avaliações; `dataLayer` com os mesmos `store_phone_click`, `store_directions_click` e `whatsapp_click` de antes e nenhum evento vindo dos controles do carrossel. Registrar o resultado neste arquivo.
+- Lighthouse mobile do redesenho não foi medido. O de 11/10 (nota 85, LCP 2,42 s, CLS 0,002) é a referência para comparar: o LCP do hero, o CLS e o JavaScript inicial não devem piorar.
+- Contraste, auditoria completa de acessibilidade e as pendências do dono (fotos, lista de plantas, frase final, história, fonte da nota) continuam abertos.
+
 ## Fotos próprias de 19/10/2026
 
-- As quatro miniaturas das categorias trocaram o Unsplash por fotos feitas na loja: vaso de cerâmica, adubo NPK 04-14-08 fracionado, substrato Jeronima e uma folhagem do pátio. Os recortes deixam de fora as etiquetas de preço (o preço muda e a foto ficaria velha) e os riscos vermelhos das fotos enviadas. Sem recorte especial no CSS: saíram a ampliação do adubo e a posição do saco de terra.
-- `#mudas` ganhou a foto do pátio do garden center logo abaixo do texto de abertura (16:9 no celular, 5:2 no desktop). A seção continua sendo a lista em texto; a foto só mostra que as plantas estão lá.
-- A visita ganhou a foto do letreiro no muro verde, depois da dica de rota, com a legenda "Procure o muro verde com o letreiro na Rua 132." Fica na coluna do texto no desktop para não alongar o mapa fixo.
-- Todas as fotos novas carregam com `loading="lazy"`, `width`/`height` e `aspect-ratio`, então não mexem no LCP (a fachada do topo continua sendo o maior elemento) nem no CLS.
-- Fotos enviadas e não usadas: sacos Terral (suculentas, samambaia e orquídeas, com etiqueta de preço), vaso azul ainda no plástico e terra ensacada sem rótulo.
+- Treze fotos de celular do dono substituem todos os placeholders: vasos de cerâmica, saquinho de adubo NPK, sacos de substrato, terra ensacada, o pátio do garden center, uma folhagem em vaso e o letreiro no muro verde. Cada foto foi recortada na proporção final (4:5, 3:2 ou 4:3) antes do `npm run images`.
+- Os recortes deixam de fora as etiquetas de preço, porque a página não mostra preço, e os riscos vermelhos que vieram em algumas fotos.
+- Legendas da faixa Vasos começam pelo material real da foto: duas de cerâmica, uma de barro e duas de polietileno (antes eram todas "Barro").
+- O carrossel de terras se chama "Terras e substratos", porque as fotos mostram sacos de 30 L e pacotes menores, não o saco de 40 L do rótulo antigo. O texto da categoria ("Substrato em saco de 40 L") não mudou.
+- Pontos fracos conhecidos: o carrossel de adubos usa três recortes do mesmo saquinho; vasos tem só duas fotos de vaso de verdade e repete enquadramentos na faixa; recortes de 400 a 520 px saem macios em tela grande. Fotos novas desses assuntos resolvem sem mexer no layout.

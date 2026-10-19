@@ -1,4 +1,5 @@
 import "./style.css";
+import { initCountUp } from "./count-up";
 import { calculateDrivingDistance, getStoreStatus, googleDirections, type Coordinates } from "./store";
 import type { StoreAction } from "../lib/tracking";
 
@@ -115,3 +116,53 @@ locate.addEventListener("click", () => {
       : "Não conseguimos localizar você a tempo. Tente novamente ou abra Google Maps ou Waze acima.";
   }, { timeout: 10_000, maximumAge: 60_000, enableHighAccuracy: false });
 });
+
+// Melhorias progressivas que nunca podem atrapalhar a conversão: o HTML estático já mostra tudo
+// (primeira foto de cada categoria, números finais), então qualquer falha aqui só deixa a página como veio.
+
+// Carrosséis das categorias (ilha React). O chunk só é baixado quando o primeiro carrossel chega a ~200 px da
+// tela (observar a seção inteira não adiantava: no celular ela já começa a menos de 600 px da dobra).
+// Sem IntersectionObserver (navegador antigo), carrega quando o navegador está ocioso.
+function loadCategoryCarousels() {
+  import("./carousels")
+    .then((module) => module.initCategoryCarousels())
+    .catch(() => {
+      // Fica a primeira foto estática; a marca libera o espaço que o CSS reservava para os controles.
+      document.querySelectorAll("[data-carousel]:not([data-carousel-ready])").forEach((element) => element.setAttribute("data-carousel-failed", ""));
+    });
+}
+try {
+  const firstCarousel = document.querySelector("[data-carousel]");
+  if (firstCarousel) {
+    const hasObserver = "IntersectionObserver" in window;
+    if (hasObserver) {
+      const observer = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        observer.disconnect();
+        loadCategoryCarousels();
+      }, { rootMargin: "0px 0px 200px 0px" });
+      observer.observe(firstCarousel);
+    } else if (typeof window.requestIdleCallback === "function") {
+      window.requestIdleCallback(loadCategoryCarousels, { timeout: 4000 });
+    } else {
+      window.setTimeout(loadCategoryCarousels, 2000);
+    }
+  }
+} catch { /* sem carrossel, a foto estática continua */ }
+
+// A fila de Vasos só é uma região rolável (e parada de Tab) enquanto as fotos passam da largura da tela;
+// a partir de 1280 px cabem todas e não há o que rolar. Sem JS o HTML mantém tabindex="0".
+try {
+  const scroller = document.querySelector<HTMLElement>(".strip-scroller");
+  if (scroller) {
+    const syncScroller = () => { scroller.tabIndex = scroller.scrollWidth > scroller.clientWidth + 1 ? 0 : -1; };
+    syncScroller();
+    if (typeof ResizeObserver === "function") new ResizeObserver(syncScroller).observe(scroller);
+    else window.addEventListener("resize", syncScroller);
+  }
+} catch { /* o tabindex do HTML continua valendo */ }
+
+// Números das avaliações: o valor final já está no HTML; o script só conta ao entrar na tela.
+try {
+  if (document.querySelector("[data-count-up]")) initCountUp();
+} catch { /* o número do HTML continua valendo */ }
