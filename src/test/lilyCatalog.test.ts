@@ -6,8 +6,8 @@ import { PRICE_RANGE_CONFIGS } from "@/lib/price-ranges";
 
 const EXPECTED_PRICES = {
   "arranjo-mao-lirios-p": "R$ 159,90",
-  "arranjo-mao-lirios-m": "R$ 229,90",
-  "arranjo-mao-lirios-g": "R$ 289,90",
+  "arranjo-mao-lirios-m": "R$ 199,90",
+  "arranjo-mao-lirios-g": "R$ 249,90",
   "buque-lirios-p": "R$ 299,90",
   "buque-lirios-m": "R$ 389,90",
   "buque-lirios-g": "R$ 424,90",

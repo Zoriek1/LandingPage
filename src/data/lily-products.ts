@@ -34,11 +34,32 @@ if (
 
 export const LILY_CATALOG_SNAPSHOT = parsedSnapshot;
 
+/**
+ * Preços definidos pela loja para o atendimento no WhatsApp (23/10/2026). Valem
+ * sobre o snapshot da Nuvemshop, que ainda pode mostrar outro valor. Quando o
+ * site tiver o mesmo preço, a entrada pode sair daqui.
+ */
+export const LILY_PRICE_OVERRIDES: Partial<Record<string, string>> = {
+  "arranjo-mao-lirios-p": "R$ 159,90",
+  "arranjo-mao-lirios-m": "R$ 199,90",
+  "arranjo-mao-lirios-g": "R$ 249,90",
+};
+
+function withPriceOverride(product: LilyProductSnapshot): LilyProductSnapshot {
+  const priceBrl = LILY_PRICE_OVERRIDES[product.id];
+  if (!priceBrl || priceBrl === product.priceBrl) return product;
+  return {
+    ...product,
+    priceBrl,
+    waText: product.waText.split(product.priceBrl).join(priceBrl),
+  };
+}
+
 export const LILY_PRODUCTS: LilyProductSnapshot[] = (["arranjo", "buque"] as const).flatMap(
   (family) =>
-    [...LILY_CATALOG_SNAPSHOT.families[family].products].sort(
-      (a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size),
-    ),
+    LILY_CATALOG_SNAPSHOT.families[family].products
+      .map(withPriceOverride)
+      .sort((a, b) => SIZE_ORDER.indexOf(a.size) - SIZE_ORDER.indexOf(b.size)),
 );
 
 export const LILY_PRODUCTS_BY_ID = Object.fromEntries(
