@@ -485,7 +485,7 @@ describe("ad LP CRO — vitrine da /lirios-apt", () => {
     const lines = intro.querySelectorAll("p");
     expect(lines).toHaveLength(2);
     expect(lines[0]).toHaveTextContent("Arranjo de mão");
-    expect(lines[0]).toHaveTextContent("R$ 159,90 a R$ 289,90.");
+    expect(lines[0]).toHaveTextContent("R$ 159,90 a R$ 249,90.");
     expect(lines[1]).toHaveTextContent("Buquê");
     expect(lines[1]).toHaveTextContent("R$ 299,90 a R$ 424,90.");
 
