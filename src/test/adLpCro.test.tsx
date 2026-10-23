@@ -487,7 +487,7 @@ describe("ad LP CRO — vitrine da /lirios-apt", () => {
     expect(lines[0]).toHaveTextContent("Arranjo de mão");
     expect(lines[0]).toHaveTextContent("R$ 159,90 a R$ 249,90.");
     expect(lines[1]).toHaveTextContent("Buquê");
-    expect(lines[1]).toHaveTextContent("R$ 299,90 a R$ 424,90.");
+    expect(lines[1]).toHaveTextContent("R$ 299,90 a R$ 465,00.");
 
     // Acima da grade, dentro da vitrine.
     const grid = document.querySelector(".ad-lp-vitrine__grid")!;
@@ -510,9 +510,9 @@ describe("ad LP CRO — vitrine da /lirios-apt", () => {
       cta_label: "produto_whatsapp",
       product_id: "buque-lirios-m",
       product_name: "Buquê de Lírios M",
-      product_price: "R$ 389,90",
+      product_price: "R$ 404,90",
     });
-    expect(message).toContain("Buquê de Lírios M - R$ 389,90");
+    expect(message).toContain("Buquê de Lírios M - R$ 404,90");
   });
 
   it("leaves the other LPs without intent lines, pledge or intro", async () => {
