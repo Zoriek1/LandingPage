@@ -382,8 +382,7 @@ describe("ad LP CRO — redesign da /lirios-apt", () => {
       expect(freight).toHaveTextContent(fee.label);
       expect(freight).toHaveTextContent(fee.value);
     }
-    expect(freight).toHaveTextContent("Na maioria dos bairros, o frete custa R$ 15,00");
-    expect(freight).toHaveTextContent("R$ 25,00 é o teto, não o valor padrão");
+    expect(freight).toHaveTextContent("R$ 10,00 até 4 km e R$ 15,00 até 9 km");
     expect(freight).toHaveTextContent(/CEP no WhatsApp/);
   });
 

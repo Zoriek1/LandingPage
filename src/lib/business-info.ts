@@ -21,16 +21,19 @@ export const BUSINESS_INFO = {
 } as const;
 
 /**
- * Frete por faixa, confirmado pelo cliente em 24/08/2026. Fonte única: quem
- * precisar do valor consome daqui, não copia a string. R$ 25,00 é o teto para
- * as entregas usuais de até 20 km, não o preço padrão dos demais bairros.
+ * Frete por distância de carro até a loja, definido pelo cliente em 24/10/2026:
+ * R$ 5,00 a menos que o entregador cobra em cada faixa. Fonte única: quem
+ * precisar do valor consome daqui, não copia a string. O limite de cada faixa
+ * entra nela (4,01 km já é a faixa seguinte).
  */
 export const DELIVERY_FEES: { label: string; value: string }[] = [
-  { label: "Setor Sul e Marista", value: "R$ 10,00" },
-  { label: "Maioria dos bairros", value: "R$ 15,00" },
-  { label: "Outras regiões, até 20 km", value: "até R$ 25,00" },
-  { label: "De 20 a 30 km", value: "R$ 30,00" },
+  { label: "Até 4 km da loja", value: "R$ 10,00" },
+  { label: "De 4 a 9 km", value: "R$ 15,00" },
+  { label: "De 9 a 14 km", value: "R$ 20,00" },
+  { label: "De 14 a 20 km", value: "R$ 25,00" },
+  { label: "De 20 a 25 km", value: "R$ 30,00" },
+  { label: "De 25 a 30 km", value: "R$ 40,00" },
 ];
 
 export const DELIVERY_FEE_GUIDANCE =
-  "Na maioria dos bairros, o frete custa R$ 15,00. Para entregas usuais de até 20 km, R$ 25,00 é o teto, não o valor padrão.";
+  "O frete depende da distância de carro até a loja, no Setor Sul: R$ 10,00 até 4 km e R$ 15,00 até 9 km.";
