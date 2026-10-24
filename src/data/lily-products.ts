@@ -36,13 +36,16 @@ export const LILY_CATALOG_SNAPSHOT = parsedSnapshot;
 
 /**
  * Preços definidos pela loja para o atendimento no WhatsApp (23/10/2026). Valem
- * sobre o snapshot da Nuvemshop, que ainda pode mostrar outro valor. Quando o
- * site tiver o mesmo preço, a entrada pode sair daqui.
+ * sobre o snapshot da Nuvemshop, que fica mais caro de propósito: lá o frete é
+ * grátis, e aqui a entrega é somada no fechamento pelo WhatsApp.
  */
 export const LILY_PRICE_OVERRIDES: Partial<Record<string, string>> = {
   "arranjo-mao-lirios-p": "R$ 159,90",
   "arranjo-mao-lirios-m": "R$ 199,90",
   "arranjo-mao-lirios-g": "R$ 249,90",
+  "buque-lirios-p": "R$ 299,90",
+  "buque-lirios-m": "R$ 404,90",
+  "buque-lirios-g": "R$ 465,00",
 };
 
 function withPriceOverride(product: LilyProductSnapshot): LilyProductSnapshot {

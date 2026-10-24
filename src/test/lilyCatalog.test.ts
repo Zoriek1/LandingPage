@@ -9,8 +9,8 @@ const EXPECTED_PRICES = {
   "arranjo-mao-lirios-m": "R$ 199,90",
   "arranjo-mao-lirios-g": "R$ 249,90",
   "buque-lirios-p": "R$ 299,90",
-  "buque-lirios-m": "R$ 389,90",
-  "buque-lirios-g": "R$ 424,90",
+  "buque-lirios-m": "R$ 404,90",
+  "buque-lirios-g": "R$ 465,00",
 } as const;
 
 describe("catálogo sistêmico de lírios", () => {
@@ -56,6 +56,6 @@ describe("catálogo sistêmico de lírios", () => {
   it("deixa o override exclusivo da rota vazio sem afetar preço", () => {
     const config = LP_CONFIGS["lirios-apt"];
     expect(config.productImageOverrides).toEqual({});
-    expect(PRODUCTS["buque-lirios-g"].priceBrl).toBe("R$ 424,90");
+    expect(PRODUCTS["buque-lirios-g"].priceBrl).toBe("R$ 465,00");
   });
 });
